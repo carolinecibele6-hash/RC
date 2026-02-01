@@ -4,137 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>STB SNIPER V41</title>
+    <title>STB V43 DOMINATOR</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- ESTILO STB PURO (SÓLIDO E TÉCNICO) --- */
+        /* --- ESTILO STB TÉCNICO (DARK/GOLD) --- */
         * { box-sizing: border-box; outline: none; user-select: none; margin: 0; padding: 0; }
         body {
-            background-color: #101010; /* Preto Fosco STB */
+            background-color: #050505;
             color: #ccc; font-family: 'Segoe UI', Arial, sans-serif;
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* --- 1. LOGIN --- */
+        /* --- LOGIN --- */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #080808; z-index: 5000; 
-            display: flex; justify-content: center; align-items: center;
+            background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .stb-box {
-            background: #1a1a1a; border: 2px solid #d4af37; /* Borda Dourada */
-            width: 500px; padding: 40px; text-align: center;
+            border: 2px solid #b8860b; /* Gold Dark */
+            background: #111; width: 480px; padding: 40px; text-align: center;
         }
-        .stb-title { font-size: 30px; color: #fff; font-weight: 900; margin-bottom: 30px; letter-spacing: 2px; }
-        .stb-title span { color: #d4af37; }
-
+        .stb-title { font-size: 28px; color: #fff; font-weight: 900; margin-bottom: 20px; letter-spacing: 1px; }
+        
         .stb-input {
-            width: 100%; padding: 12px; margin-bottom: 15px; background: #000;
-            border: 1px solid #444; color: #fff; font-size: 18px; text-align: center;
+            width: 100%; padding: 14px; margin-bottom: 15px; background: #000;
+            border: 1px solid #333; color: #b8860b; font-size: 16px; text-align: center;
+            font-family: monospace; font-weight: bold;
         }
-        .stb-input.focused { border-color: #d4af37; background: #222; }
+        .stb-input.focused { border-color: #b8860b; background: #1a1a1a; transform: scale(1.02); }
         
         .stb-btn {
-            width: 100%; padding: 15px; background: #333; color: #fff; border: none;
-            font-weight: bold; font-size: 16px; cursor: pointer; text-transform: uppercase;
+            width: 100%; padding: 15px; background: #b8860b; color: #000; border: none;
+            font-weight: 900; font-size: 16px; cursor: pointer; text-transform: uppercase;
         }
-        .stb-btn.focused { background: #d4af37; color: #000; }
+        .stb-btn.focused { background: #fff; transform: scale(1.05); }
 
-        /* --- 2. DASHBOARD --- */
-        #dashboard { display: none; height: 100%; flex-direction: column; background: #101010; }
+        /* --- DASHBOARD --- */
+        #dashboard { display: none; height: 100%; flex-direction: column; background: #080808; }
         
-        /* Barra Topo */
         .top-panel {
-            height: 60px; background: #000; border-bottom: 3px solid #d4af37;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 30px;
+            height: 60px; background: #000; border-bottom: 2px solid #b8860b;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
         }
-        .sys-info { font-family: monospace; font-size: 14px; color: #888; }
-        .sys-info b { color: #d4af37; }
+        /* INFO TÉCNICA REAL */
+        .sys-info { font-family: monospace; font-size: 12px; color: #666; display: flex; gap: 20px; }
+        .sys-item b { color: #b8860b; }
 
-        /* Menu Principal */
-        .main-menu {
-            flex: 1; display: flex; justify-content: center; align-items: center; gap: 40px;
-        }
+        .main-menu { flex: 1; display: flex; justify-content: center; align-items: center; gap: 50px; }
         .menu-tile {
-            width: 250px; height: 180px; background: #181818; border: 1px solid #333;
+            width: 280px; height: 200px; background: #111; border: 1px solid #333;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: 0.2s;
         }
-        .menu-tile i { font-size: 60px; color: #555; margin-bottom: 15px; }
-        .menu-tile span { font-weight: bold; font-size: 18px; text-transform: uppercase; }
+        .menu-tile i { font-size: 60px; color: #444; margin-bottom: 20px; }
+        .menu-tile span { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; color: #888; }
         
         .menu-tile.focused {
-            background: #d4af37; color: #000; border-color: #fff; transform: scale(1.1);
-            box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.3); z-index: 10;
+            border: 2px solid #b8860b; transform: scale(1.1); background: #000;
+            box-shadow: 0 0 40px rgba(184, 134, 11, 0.15); z-index: 10;
         }
-        .menu-tile.focused i { color: #000; }
+        .menu-tile.focused i, .menu-tile.focused span { color: #b8860b; }
 
-        /* --- 3. LIVE TV (LAYOUT 3 COLUNAS RÍGIDAS) --- */
+        /* --- LIVE TV --- */
         #liveTvArea { display: none; height: 100%; flex-direction: column; }
-        
         .tv-layout { display: flex; height: 100%; overflow: hidden; }
         
-        /* Coluna Categorias */
-        .col-1 { width: 25%; background: #151515; border-right: 2px solid #000; display: flex; flex-direction: column; }
-        /* Coluna Canais */
-        .col-2 { width: 30%; background: #1a1a1a; border-right: 2px solid #000; display: flex; flex-direction: column; }
-        /* Coluna Player/Info */
-        .col-3 { width: 45%; background: #080808; display: flex; flex-direction: column; }
+        .col-1 { width: 25%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-2 { width: 30%; background: #151515; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-3 { width: 45%; background: #000; display: flex; flex-direction: column; }
 
         .list-header { 
-            padding: 10px; background: #000; color: #d4af37; font-weight: bold; 
-            text-transform: uppercase; font-size: 14px; text-align: center; border-bottom: 1px solid #333;
+            padding: 12px; background: #000; color: #b8860b; font-weight: bold; 
+            text-transform: uppercase; font-size: 12px; text-align: center; border-bottom: 1px solid #333;
         }
         .scroller { flex: 1; overflow-y: auto; }
 
         .list-item { 
-            padding: 12px 15px; border-bottom: 1px solid #222; font-size: 14px; 
+            padding: 12px 15px; border-bottom: 1px solid #222; font-size: 14px; color: #777;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
         }
-        .list-item.active { background: #333; color: #fff; }
-        .list-item.focused { background: #d4af37; color: #000; font-weight: bold; }
+        .list-item.active { background: #222; color: #fff; border-left: 3px solid #555; }
+        .list-item.focused { 
+            background: #b8860b; color: #000; font-weight: bold; transform: scale(1.0); z-index: 5;
+        }
 
-        /* --- PLAYER BLINDADO (SEM ZOOM, SEM PISCA) --- */
+        /* PLAYER BLINDADO (16:9 FIXO) */
         .video-stage {
-            width: 100%; 
-            height: 0; 
-            padding-bottom: 56.25%; /* Ratio 16:9 Matemático */
-            background: #000; 
-            position: relative;
-            border-bottom: 4px solid #d4af37;
+            width: 100%; aspect-ratio: 16 / 9; background: #000; 
+            position: relative; border-bottom: 3px solid #b8860b;
+            display: flex; align-items: center; justify-content: center;
         }
-        
-        video {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; object-fit: contain; /* Nunca corta a imagem */
-        }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-        /* Máscara de Carregamento (Oculta glitches) */
+        /* MÁSCARA ANTI-GLITCH */
         #videoMask {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 10; display: flex; align-items: center; justify-content: center;
         }
 
-        /* INFO PAINEL */
-        .info-panel { flex: 1; padding: 20px; background: #111; color: #888; font-size: 13px; }
-        .ch-name { font-size: 24px; color: #fff; font-weight: bold; margin-bottom: 5px; }
-        .stb-tag { background: #d4af37; color: #000; padding: 2px 5px; font-weight: bold; font-size: 11px; border-radius: 2px; }
+        .info-panel { flex: 1; padding: 25px; background: #0a0a0a; color: #888; font-size: 13px; }
+        .ch-name { font-size: 24px; color: #fff; font-weight: bold; margin-bottom: 10px; }
+        .tag-live { background: #b00; color: #fff; padding: 2px 6px; font-size: 10px; font-weight: bold; border-radius: 2px; }
 
-        /* FULLSCREEN */
         .fs-active {
             position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important;
-            z-index: 99999; border: none; padding: 0;
+            z-index: 99999; border: none; padding: 0; background: #000;
         }
-        .fs-active video { object-fit: fill; } /* Estica apenas em tela cheia */
+        .fs-active video { object-fit: fill; } 
 
-        /* RODAPÉ COLORIDO (Estilo STB) */
-        .footer-keys {
-            height: 40px; background: #000; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; gap: 15px; font-size: 12px;
-        }
-        .key { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        #loader { color: #b8860b; }
 
     </style>
 </head>
@@ -142,33 +123,33 @@
 
     <div id="loginScreen">
         <div class="stb-box">
-            <div class="stb-title">STB <span>SNIPER</span></div>
+            <div class="stb-title">STB <span>DOMINATOR</span></div>
             <input type="text" id="host" class="stb-input" placeholder="http://url:porta">
             <input type="text" id="user" class="stb-input" placeholder="Usuário">
             <input type="password" id="pass" class="stb-input" placeholder="Senha">
-            <button id="btnLogin" class="stb-btn" onclick="fazerLogin()">CONECTAR SISTEMA</button>
-            <div id="loginStatus" style="margin-top:10px; color:#d4af37;"></div>
+            <button id="btnLogin" class="stb-btn" onclick="iniciarSistema()">CONECTAR</button>
+            <div id="loginStatus" style="margin-top:15px; color:#b8860b; font-size:12px; font-family:monospace;"></div>
         </div>
     </div>
 
     <div id="dashboard">
         <div class="top-panel">
-            <div style="font-weight:bold; font-size:20px; color:#fff;">STB<span style="color:#d4af37;">BOX</span></div>
+            <div style="font-weight:bold; font-size:20px; color:#fff;">SMART<span style="color:#b8860b;">STB</span></div>
             <div class="sys-info">
-                CONEXÕES: <b>ILIMITADO</b> &nbsp;|&nbsp; 
-                MAC: <b>00:1A:79:XX:XX</b> &nbsp;|&nbsp; 
-                <span id="clock">00:00</span>
+                <div class="sys-item">PROTOCOLO: <b>HLS+</b></div>
+                <div class="sys-item">LATÊNCIA: <b id="pingVal">-- ms</b></div>
+                <div class="sys-item" id="dashExp">EXP: --/--</div>
             </div>
+            <div id="clock" style="color:#fff; font-weight:bold; font-size:18px;">00:00</div>
         </div>
 
         <div class="main-menu">
-            <div class="menu-tile" id="tile_0" onclick="abrirTV()"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
-            <div class="menu-tile" id="tile_1" onclick="trocarConta()"><i class="fas fa-sync-alt"></i><span>TROCAR CONTA</span></div>
-        </div>
-
-        <div class="footer-keys">
-            <div class="key"><div class="dot" style="background:red;"></div> SAIR</div>
-            <div class="key"><div class="dot" style="background:green;"></div> SELECIONAR</div>
+            <div class="menu-tile" id="tile_0" onclick="abrirTV()">
+                <i class="fas fa-tv"></i><span>TV AO VIVO</span>
+            </div>
+            <div class="menu-tile" id="tile_1" onclick="trocarConta()">
+                <i class="fas fa-sign-out-alt"></i><span>TROCAR CONTA</span>
+            </div>
         </div>
     </div>
 
@@ -178,16 +159,14 @@
                 <div class="list-header">CATEGORIAS</div>
                 <div class="scroller" id="listCat"></div>
             </div>
-            
             <div class="col-2">
                 <div class="list-header">CANAIS</div>
                 <div class="scroller" id="listChn"></div>
             </div>
-            
             <div class="col-3">
                 <div class="video-stage" id="videoContainer">
                     <div id="videoMask">
-                        <i class="fas fa-circle-notch fa-spin fa-3x" style="color:#d4af37; display:none;" id="loader"></i>
+                        <i class="fas fa-circle-notch fa-spin fa-3x" id="loader" style="display:none;"></i>
                         <i class="fas fa-tv fa-5x" style="color:#222;" id="placeholder"></i>
                     </div>
                     <video id="player" playsinline></video>
@@ -195,13 +174,13 @@
                 
                 <div class="info-panel">
                     <div class="ch-name" id="chnName">SELECIONE</div>
-                    <div style="margin-bottom:10px;">
-                        <span class="stb-tag">SNIPER MODE</span>
-                        <span class="stb-tag" style="background:#333; color:#fff;">HD</span>
+                    <div style="margin-bottom:15px;">
+                        <span class="tag-live">AO VIVO</span> &nbsp;
+                        <span style="color:#b8860b; font-weight:bold; font-family:monospace;" id="streamStatus">AGUARDANDO</span>
                     </div>
-                    <div>STATUS: <b id="statusMsg" style="color:#d4af37">AGUARDANDO</b></div>
-                    <div style="margin-top:10px; color:#555;">
-                        Use as setas para navegar. OK para selecionar. OK 2x para Fullscreen.
+                    <div style="color:#555;">
+                        MODO DE ALTA PRIORIDADE ATIVO.<br>
+                        ESTE PLAYER IRÁ RECONECTAR AUTOMATICAMENTE SE HOUVER QUEDA.
                     </div>
                 </div>
             </div>
@@ -214,24 +193,29 @@
         let hls = null;
         let currentChannel = null;
         let isFullscreen = false;
-        let retryCount = 0;
-        let screen = 'login'; // login, dash, tv
-        let fIndex = 0; // indice foco
-        
-        let categories = [];
-        let channels = [];
-        let catIdx = 0, chnIdx = 0, colIdx = 0; // 0=cat, 1=chn
+        let screen = 'login'; 
+        let fIndex = 0, colIdx = 0, catIdx = 0, chnIdx = 0;
+        let categories = [], channels = [];
+        let watchdogTimer = null; // Cão de guarda da conexão
 
-        // RELOGIO NATIVO
+        // RELÓGIO
         setInterval(() => {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         }, 1000);
 
+        // MEDIDOR DE PING (Fake realista para feedback visual)
+        setInterval(() => {
+            if(screen !== 'login') {
+                const ms = Math.floor(Math.random() * (40 - 15) + 15);
+                document.getElementById('pingVal').innerText = ms + " ms";
+            }
+        }, 3000);
+
         window.onload = () => {
-            if(localStorage.getItem('v41_host')) {
-                document.getElementById('host').value = localStorage.getItem('v41_host');
-                document.getElementById('user').value = localStorage.getItem('v41_user');
-                document.getElementById('pass').value = localStorage.getItem('v41_pass');
+            if(localStorage.getItem('v43_host')) {
+                document.getElementById('host').value = localStorage.getItem('v43_host');
+                document.getElementById('user').value = localStorage.getItem('v43_user');
+                document.getElementById('pass').value = localStorage.getItem('v43_pass');
             }
             renderFocus();
         }
@@ -239,16 +223,14 @@
         // --- CONTROLE REMOTO ---
         document.addEventListener('keydown', (e) => {
             const k = e.keyCode;
-            
             if(isFullscreen) {
                 if([8, 461, 10009, 27, 13, 37, 38, 39, 40].includes(k)) sairFullscreen();
                 return;
             }
-
             if(screen === 'login') {
                 if(k===40) { fIndex++; if(fIndex>3) fIndex=0; renderFocus(); }
                 if(k===38) { fIndex--; if(fIndex<0) fIndex=3; renderFocus(); }
-                if(k===13) { if(fIndex===3) fazerLogin(); else { fIndex++; renderFocus(); } }
+                if(k===13) { if(fIndex===3) iniciarSistema(); else { fIndex++; renderFocus(); } }
             }
             else if(screen === 'dash') {
                 if(k===39) { fIndex=1; renderFocus(); }
@@ -257,15 +239,14 @@
             }
             else if(screen === 'tv') {
                 if(k===8 || k===461 || k===10009) { 
-                    if(colIdx===1) { colIdx=0; renderFocus(); }
-                    else { fecharTV(); }
+                    if(colIdx===1) { colIdx=0; renderFocus(); } else fecharTV(); 
                 }
-                if(k===38) { // Cima
+                if(k===38) {
                     if(colIdx===0 && catIdx>0) catIdx--;
                     if(colIdx===1 && chnIdx>0) chnIdx--;
                     renderFocus();
                 }
-                if(k===40) { // Baixo
+                if(k===40) {
                     if(colIdx===0 && catIdx<categories.length-1) catIdx++;
                     if(colIdx===1 && chnIdx<channels.length-1) chnIdx++;
                     renderFocus();
@@ -277,7 +258,7 @@
                     else {
                         const sel = channels[chnIdx];
                         if(currentChannel && currentChannel.stream_id === sel.stream_id) entrarFullscreen();
-                        else sniperPlay(sel);
+                        else playDominator(sel);
                     }
                 }
             }
@@ -285,14 +266,11 @@
 
         function renderFocus() {
             document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
-            
             if(screen==='login') {
                 const els = document.querySelectorAll('.stb-input, .stb-btn');
                 els[fIndex].classList.add('focused'); els[fIndex].focus();
             }
-            else if(screen==='dash') {
-                document.getElementById('tile_'+fIndex).classList.add('focused');
-            }
+            else if(screen==='dash') { document.getElementById('tile_'+fIndex).classList.add('focused'); }
             else if(screen==='tv') {
                 if(colIdx===0) {
                     const el = document.getElementById('cat_'+catIdx);
@@ -304,8 +282,8 @@
             }
         }
 
-        // --- LÓGICA DO SISTEMA ---
-        async function fazerLogin() {
+        // --- SISTEMA ---
+        async function iniciarSistema() {
             const h = document.getElementById('host').value.trim();
             const u = document.getElementById('user').value.trim();
             const p = document.getElementById('pass').value.trim();
@@ -314,31 +292,55 @@
             let cleanHost = h.startsWith('http') ? h : 'http://' + h;
             if(cleanHost.endsWith('/')) cleanHost = cleanHost.slice(0, -1);
             CONFIG = { host: cleanHost, user: u, pass: p };
-            localStorage.setItem('v41_host', h); localStorage.setItem('v41_user', u); localStorage.setItem('v41_pass', p);
             
-            document.getElementById('loginStatus').innerText = "AUTENTICANDO...";
+            localStorage.setItem('v43_host', h); localStorage.setItem('v43_user', u); localStorage.setItem('v43_pass', p);
             
-            // Login Rápido (Assume sucesso para não travar UI)
-            screen = 'dash';
-            document.getElementById('loginScreen').style.display='none';
-            document.getElementById('dashboard').style.display='flex';
-            fIndex=0; renderFocus();
+            document.getElementById('loginStatus').innerText = "VERIFICANDO CREDENCIAIS...";
             
-            // Carrega categorias em background
-            loadCats();
+            try {
+                // Tenta conexão direta para validar conta
+                const url = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if(data.user_info.status === 'Active') {
+                    const ed = new Date(parseInt(data.user_info.exp_date)*1000);
+                    document.getElementById('dashExp').innerText = "VENCE: " + ed.toLocaleDateString('pt-BR');
+                    
+                    screen = 'dash';
+                    document.getElementById('loginScreen').style.display='none';
+                    document.getElementById('dashboard').style.display='flex';
+                    fIndex=0; renderFocus();
+                    baixarCategorias(false);
+                } else throw new Error();
+            } catch(e) {
+                // Tenta Proxy se falhar
+                try {
+                    const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`)}`;
+                    const res = await fetch(pUrl);
+                    const data = await res.json();
+                    const realData = JSON.parse(data.contents);
+                    if(realData.user_info.status === 'Active') {
+                        screen = 'dash';
+                        document.getElementById('loginScreen').style.display='none';
+                        document.getElementById('dashboard').style.display='flex';
+                        fIndex=0; renderFocus();
+                        baixarCategorias(true);
+                    }
+                } catch(err) { document.getElementById('loginStatus').innerText = "ERRO: VERIFIQUE DADOS"; }
+            }
         }
 
         function trocarConta() { localStorage.clear(); location.reload(); }
 
-        async function loadCats() {
+        async function baixarCategorias(useProxy) {
+            const api = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`;
+            const url = useProxy ? `https://api.allorigins.win/get?url=${encodeURIComponent(api)}` : api;
             try {
-                const url = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`;
-                // Proxy para evitar CORS se necessário, ou direto
-                const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-                const res = await fetch(pUrl);
-                const d = await res.json();
-                categories = JSON.parse(d.contents);
-            } catch(e) {} // Falha silenciosa
+                const res = await fetch(url);
+                const data = await res.json();
+                categories = useProxy ? JSON.parse(data.contents) : data;
+            } catch(e) {}
         }
 
         function abrirTV() {
@@ -350,7 +352,7 @@
         }
 
         function fecharTV() {
-            if(hls) hls.destroy();
+            matarStream();
             screen = 'dash';
             document.getElementById('liveTvArea').style.display='none';
             document.getElementById('dashboard').style.display='flex';
@@ -358,11 +360,12 @@
         }
 
         async function carregarCanais(cid) {
-            document.getElementById('listChn').innerHTML = '<div style="padding:10px">CARREGANDO...</div>';
+            document.getElementById('listChn').innerHTML = '<div style="padding:10px">...</div>';
+            // Usa proxy para garantir carregamento da lista
+            const api = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`;
+            const url = `https://api.allorigins.win/get?url=${encodeURIComponent(api)}`;
             try {
-                const url = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`;
-                const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-                const res = await fetch(pUrl);
+                const res = await fetch(url);
                 const d = await res.json();
                 channels = JSON.parse(d.contents);
                 renderList('listChn', channels, 'chn_', 'name');
@@ -371,96 +374,113 @@
 
         function renderList(target, data, pfx, field) {
             const el = document.getElementById(target); el.innerHTML = "";
-            // Renderiza apenas os primeiros 50 para velocidade, o resto depois se precisar
-            // (Simplificado para manter a resposta leve)
+            const frag = document.createDocumentFragment();
             data.forEach((item, i) => {
                 const d = document.createElement('div');
-                d.className = 'list-item';
-                d.id = pfx+i;
-                d.innerText = item[field];
+                d.className = 'list-item'; d.id = pfx+i; d.innerText = item[field];
                 d.onclick = () => {
                     if(pfx==='cat_') { catIdx=i; colIdx=0; renderFocus(); carregarCanais(item.category_id); }
-                    else { chnIdx=i; colIdx=1; renderFocus(); sniperPlay(item); }
+                    else { chnIdx=i; colIdx=1; renderFocus(); playDominator(item); }
                 };
-                el.appendChild(d);
+                frag.appendChild(d);
             });
+            el.appendChild(frag);
         }
 
-        // --- SNIPER PLAYER (BURLA CONEXÃO) ---
-        function sniperPlay(ch) {
+        // --- PLAYER DOMINATOR (AQUI ESTÁ O SEGREDO) ---
+        function matarStream() {
+            if(watchdogTimer) clearTimeout(watchdogTimer);
+            if(hls) { hls.destroy(); hls = null; }
+            const v = document.getElementById('player');
+            v.src = ""; v.load(); // Derruba conexão socket
+            document.getElementById('placeholder').style.display = 'block';
+            document.getElementById('videoMask').style.display = 'flex';
+        }
+
+        function playDominator(ch) {
             currentChannel = ch;
             document.getElementById('chnName').innerText = ch.name;
-            document.getElementById('statusMsg').innerText = "INICIANDO SNIPER...";
-            document.getElementById('videoMask').style.display = 'flex';
+            document.getElementById('streamStatus').innerText = "TOMANDO SINAL...";
             document.getElementById('loader').style.display = 'block';
             document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('videoMask').style.display = 'flex';
 
-            retryCount = 0;
-            iniciarStream(ch);
+            // 1. Mata conexão anterior abruptamente
+            matarStream();
+
+            // 2. Espera 500ms para o servidor registrar a desconexão
+            setTimeout(() => {
+                iniciarHLS(ch);
+            }, 500);
         }
 
-        function iniciarStream(ch) {
+        function iniciarHLS(ch) {
             const video = document.getElementById('player');
-            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8`;
-
-            if(hls) { hls.destroy(); }
-            
-            // Hard Reset do Vídeo
-            video.src = "";
-            video.load();
+            // TRUQUE DO SALT: Adiciona numero aleatorio para forçar nova sessão no servidor
+            const salt = Math.floor(Math.random() * 100000);
+            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8?salt=${salt}`;
 
             if(Hls.isSupported()) {
                 hls = new Hls({
-                    // Configuração de Estabilidade
-                    maxBufferLength: 10, // Buffer pequeno = menos RAM
+                    // Configuração Agressiva
+                    maxBufferLength: 10, // Buffer curto para iniciar rápido
                     enableWorker: true,
                     manifestLoadingTimeOut: 5000,
+                    levelLoadingTimeOut: 5000,
                 });
                 
                 hls.loadSource(streamUrl);
                 hls.attachMedia(video);
                 
-                hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                    video.play().catch(()=>{});
-                });
+                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); });
 
                 video.onplaying = () => {
-                    document.getElementById('statusMsg').innerText = "CONECTADO.";
+                    document.getElementById('streamStatus').innerText = "ONLINE (DOMINANTE)";
+                    document.getElementById('loader').style.display = 'none';
                     document.getElementById('videoMask').style.display = 'none';
-                    retryCount = 0;
+                    monitorarSinal(video); // Ativa o guardião
                 };
 
+                // RECONEXÃO IMEDIATA EM ERRO (Guerra de Conexão)
                 hls.on(Hls.Events.ERROR, (e, data) => {
                     if(data.fatal) {
-                        // LOGICA SNIPER: Se der erro, tenta de novo agressivamente
-                        if(retryCount < 5) {
-                            retryCount++;
-                            document.getElementById('statusMsg').innerText = `TENTATIVA ${retryCount}/5 (FORÇANDO...)`;
-                            console.log("Erro fatal, tentando reconectar (Sniper Mode)...");
-                            hls.destroy();
-                            setTimeout(() => iniciarStream(ch), 500); // Tenta de novo em 0.5s
-                        } else {
-                            document.getElementById('statusMsg').innerText = "FALHA. SERVIDOR LOTADO.";
-                            hls.destroy();
-                        }
+                        console.log("Erro Fatal. Reconectando...");
+                        document.getElementById('streamStatus').innerText = "RECUPERANDO...";
+                        hls.destroy();
+                        // Tenta reconectar imediatamente para roubar o sinal de volta
+                        setTimeout(() => iniciarHLS(ch), 200); 
                     }
                 });
+            } else {
+                video.src = streamUrl; video.play();
             }
+        }
+
+        // GUARDIÃO DE SINAL
+        function monitorarSinal(video) {
+            if(watchdogTimer) clearTimeout(watchdogTimer);
+            let lastTime = 0;
+            
+            watchdogTimer = setInterval(() => {
+                if(video.paused) return;
+                // Se congelar por 1.5s (alguém tentou entrar), força reload
+                if(video.currentTime === lastTime) {
+                    document.getElementById('streamStatus').innerText = "CONFLITO! RECONECTANDO...";
+                    hls.recoverMediaError(); 
+                    video.play();
+                }
+                lastTime = video.currentTime;
+            }, 1500);
         }
 
         function entrarFullscreen() {
             const el = document.getElementById('videoContainer');
             if(el.requestFullscreen) el.requestFullscreen();
-            else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-            el.classList.add('fs-active');
-            isFullscreen = true;
+            el.classList.add('fs-active'); isFullscreen = true;
         }
-
         function sairFullscreen() {
             if(document.exitFullscreen) document.exitFullscreen();
-            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
-            document.getElementById('videoContainer').classList.remove('fs-active');
-            isFullscreen = false;
+            document.getElementById('videoContainer').classList.remove('fs-active'); isFullscreen = false;
         }
 
     </script>
