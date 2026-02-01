@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>STB V44 HYPER-SPEED</title>
+    <title>STB V45 LITE FILTER</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -18,18 +18,15 @@
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* --- LOGIN --- */
+        /* LOGIN */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .stb-box {
-            border: 2px solid #d4af37; /* Ouro */
-            background: #111; width: 480px; padding: 40px; text-align: center;
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1);
+            border: 2px solid #d4af37; background: #111; width: 480px; padding: 40px; text-align: center;
         }
         .stb-title { font-size: 28px; color: #fff; font-weight: 900; margin-bottom: 20px; letter-spacing: 1px; }
-        .stb-title span { color: #d4af37; }
         
         .stb-input {
             width: 100%; padding: 14px; margin-bottom: 15px; background: #000;
@@ -44,7 +41,7 @@
         }
         .stb-btn.focused { background: #fff; transform: scale(1.05); }
 
-        /* --- DASHBOARD --- */
+        /* DASHBOARD */
         #dashboard { display: none; height: 100%; flex-direction: column; background: #080808; }
         
         .top-panel {
@@ -58,18 +55,18 @@
         .menu-tile {
             width: 280px; height: 200px; background: #111; border: 1px solid #333;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: 0.2s;
+            transition: 0.1s; /* Rápido */
         }
         .menu-tile i { font-size: 60px; color: #444; margin-bottom: 20px; }
-        .menu-tile span { font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+        .menu-tile span { font-weight: bold; font-size: 18px; text-transform: uppercase; color: #888; }
         
         .menu-tile.focused {
-            border: 2px solid #d4af37; transform: scale(1.1); background: #000;
-            box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); z-index: 10;
+            border: 3px solid #d4af37; transform: scale(1.05); background: #000;
+            z-index: 10;
         }
         .menu-tile.focused i, .menu-tile.focused span { color: #d4af37; }
 
-        /* --- LIVE TV --- */
+        /* LIVE TV */
         #liveTvArea { display: none; height: 100%; flex-direction: column; }
         .tv-layout { display: flex; height: 100%; overflow: hidden; }
         
@@ -78,19 +75,19 @@
         .col-3 { width: 45%; background: #000; display: flex; flex-direction: column; }
 
         .list-header { 
-            padding: 12px; background: #000; color: #d4af37; font-weight: bold; 
+            padding: 10px; background: #000; color: #d4af37; font-weight: bold; 
             text-transform: uppercase; font-size: 12px; text-align: center; border-bottom: 1px solid #333;
         }
         .scroller { flex: 1; overflow-y: auto; }
 
-        /* LISTA OTIMIZADA */
         .list-item { 
-            padding: 12px 15px; border-bottom: 1px solid #222; font-size: 14px; color: #777;
+            padding: 10px 15px; border-bottom: 1px solid #222; font-size: 14px; color: #777;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
         }
         .list-item.active { background: #222; color: #fff; border-left: 3px solid #555; }
+        /* Foco Simples e Rápido (Sem Sombra Pesada) */
         .list-item.focused { 
-            background: #d4af37; color: #000; font-weight: bold; transform: scale(1.0); z-index: 5;
+            background: #d4af37; color: #000; font-weight: bold;
         }
 
         /* PLAYER 16:9 FIXO */
@@ -101,16 +98,9 @@
         }
         video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-        /* MÁSCARA ANTI-GLITCH */
-        #videoMask {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10; display: flex; align-items: center; justify-content: center;
-        }
-
         .info-panel { flex: 1; padding: 25px; background: #0a0a0a; color: #888; font-size: 13px; }
         .ch-name { font-size: 24px; color: #fff; font-weight: bold; margin-bottom: 10px; }
-        .acc-details { color: #d4af37; font-family: monospace; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-
+        
         .fs-active {
             position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important;
             z-index: 99999; border: none; padding: 0; background: #000;
@@ -125,11 +115,11 @@
 
     <div id="loginScreen">
         <div class="stb-box">
-            <div class="stb-title">STB <span>HYPER</span></div>
+            <div class="stb-title">STB <span>LITE V45</span></div>
             <input type="text" id="host" class="stb-input" placeholder="http://url:porta">
             <input type="text" id="user" class="stb-input" placeholder="Usuário">
             <input type="password" id="pass" class="stb-input" placeholder="Senha">
-            <button id="btnLogin" class="stb-btn" onclick="iniciarSistema()">CONECTAR FAST</button>
+            <button id="btnLogin" class="stb-btn" onclick="iniciarSistema()">CONECTAR</button>
             <div id="loginStatus" style="margin-top:15px; color:#d4af37; font-size:12px; font-family:monospace;"></div>
         </div>
     </div>
@@ -138,8 +128,8 @@
         <div class="top-panel">
             <div style="font-weight:bold; font-size:20px; color:#fff;">SMART<span style="color:#d4af37;">STB</span></div>
             <div class="sys-info">
-                <div class="sys-item">ENGINE: <b>V44 TURBO</b></div>
-                <div class="sys-item">BUFFER: <b>OTIMIZADO</b></div>
+                <div class="sys-item">FILTRO: <b>ATIVO</b></div>
+                <div class="sys-item">VENCIMENTO: <b id="dashExp">--/--</b></div>
             </div>
             <div id="clock" style="color:#fff; font-weight:bold; font-size:18px;">00:00</div>
         </div>
@@ -157,7 +147,7 @@
     <div id="liveTvArea">
         <div class="tv-layout">
             <div class="col-1">
-                <div class="list-header">CATEGORIAS</div>
+                <div class="list-header">CATEGORIAS (FILTRADO)</div>
                 <div class="scroller" id="listCat"></div>
             </div>
             <div class="col-2">
@@ -166,21 +156,20 @@
             </div>
             <div class="col-3">
                 <div class="video-stage" id="videoContainer">
-                    <div id="videoMask">
-                        <i class="fas fa-circle-notch fa-spin fa-3x" id="loader" style="display:none;"></i>
-                        <i class="fas fa-tv fa-5x" style="color:#222;" id="placeholder"></i>
-                    </div>
+                    <i class="fas fa-circle-notch fa-spin fa-3x" id="loader" style="display:none;"></i>
+                    <i class="fas fa-tv fa-5x" style="color:#222;" id="placeholder"></i>
                     <video id="player" playsinline></video>
                 </div>
                 
                 <div class="info-panel">
                     <div class="ch-name" id="chnName">SELECIONE</div>
-                    <div class="acc-details">
-                        CRIADO: <span id="infoCreated">--/--</span> | VENCE: <span id="infoExp">--/--</span>
+                    <div style="margin-bottom:15px;">
+                        STATUS: <b id="streamStatus" style="color:#d4af37">PRONTO</b>
                     </div>
-                    <div>STATUS: <b id="statusMsg" style="color:#d4af37">AGUARDANDO</b></div>
-                    <div style="margin-top:10px; color:#555;">
-                        • OK 2x: Tela Cheia | VOLTAR: Menu
+                    <div style="color:#555;">
+                        • OK 1x: Reproduzir<br>
+                        • OK 2x: Tela Cheia<br>
+                        • Script de Filtragem Ativo (Removidos Filmes/Séries da lista)
                     </div>
                 </div>
             </div>
@@ -196,7 +185,6 @@
         let screen = 'login'; 
         let fIndex = 0, colIdx = 0, catIdx = 0, chnIdx = 0;
         let categories = [], channels = [];
-        let watchdogTimer = null;
 
         // RELÓGIO
         setInterval(() => {
@@ -204,10 +192,10 @@
         }, 1000);
 
         window.onload = () => {
-            if(localStorage.getItem('v44_host')) {
-                document.getElementById('host').value = localStorage.getItem('v44_host');
-                document.getElementById('user').value = localStorage.getItem('v44_user');
-                document.getElementById('pass').value = localStorage.getItem('v44_pass');
+            if(localStorage.getItem('v45_host')) {
+                document.getElementById('host').value = localStorage.getItem('v45_host');
+                document.getElementById('user').value = localStorage.getItem('v45_user');
+                document.getElementById('pass').value = localStorage.getItem('v45_pass');
             }
             renderFocus();
         }
@@ -250,7 +238,7 @@
                     else {
                         const sel = channels[chnIdx];
                         if(currentChannel && currentChannel.stream_id === sel.stream_id) entrarFullscreen();
-                        else playDominator(sel);
+                        else playChannel(sel);
                     }
                 }
             }
@@ -268,7 +256,7 @@
                     const el = document.getElementById('cat_'+catIdx);
                     if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); }
                 } else {
-                    const el = document.getElementById('chn_'+chnIdx);
+                    const el = document.getElementById('chn_'+chnIndex);
                     if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); }
                 }
             }
@@ -285,21 +273,18 @@
             if(cleanHost.endsWith('/')) cleanHost = cleanHost.slice(0, -1);
             CONFIG = { host: cleanHost, user: u, pass: p };
             
-            localStorage.setItem('v44_host', h); localStorage.setItem('v44_user', u); localStorage.setItem('v44_pass', p);
-            
-            document.getElementById('loginStatus').innerText = "VERIFICANDO...";
+            localStorage.setItem('v45_host', h); localStorage.setItem('v45_user', u); localStorage.setItem('v45_pass', p);
+            document.getElementById('loginStatus').innerText = "AUTENTICANDO...";
             
             try {
-                // Tenta direto
+                // Tenta direto primeiro
                 const url = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`;
                 const res = await fetch(url);
                 const data = await res.json();
 
                 if(data.user_info.status === 'Active') {
-                    const cd = new Date(parseInt(data.user_info.created_at)*1000);
                     const ed = new Date(parseInt(data.user_info.exp_date)*1000);
-                    document.getElementById('infoCreated').innerText = cd.toLocaleDateString('pt-BR');
-                    document.getElementById('infoExp').innerText = ed.toLocaleDateString('pt-BR');
+                    document.getElementById('dashExp').innerText = ed.toLocaleDateString('pt-BR');
                     
                     screen = 'dash';
                     document.getElementById('loginScreen').style.display='none';
@@ -308,25 +293,20 @@
                     baixarCategorias(false);
                 } else throw new Error();
             } catch(e) {
-                // Tenta Proxy
+                // Fallback Proxy
                 try {
                     const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`)}`;
                     const res = await fetch(pUrl);
                     const data = await res.json();
                     const realData = JSON.parse(data.contents);
                     if(realData.user_info.status === 'Active') {
-                        const cd = new Date(parseInt(realData.user_info.created_at)*1000);
-                        const ed = new Date(parseInt(realData.user_info.exp_date)*1000);
-                        document.getElementById('infoCreated').innerText = cd.toLocaleDateString('pt-BR');
-                        document.getElementById('infoExp').innerText = ed.toLocaleDateString('pt-BR');
-
                         screen = 'dash';
                         document.getElementById('loginScreen').style.display='none';
                         document.getElementById('dashboard').style.display='flex';
                         fIndex=0; renderFocus();
                         baixarCategorias(true);
                     }
-                } catch(err) { document.getElementById('loginStatus').innerText = "ERRO LOGIN"; }
+                } catch(err) { document.getElementById('loginStatus').innerText = "ERRO: DADOS INCORRETOS"; }
             }
         }
 
@@ -338,21 +318,31 @@
             try {
                 const res = await fetch(url);
                 const data = await res.json();
-                categories = useProxy ? JSON.parse(data.contents) : data;
-            } catch(e) {}
+                const rawCats = useProxy ? JSON.parse(data.contents) : data;
+                
+                // === FILTRAGEM DO SCRIPT PYTHON (ADAPTADO) ===
+                // Remove tudo que não é TV ao vivo para ficar leve
+                const VOD_KEYWORDS = ['filme', 'movie', 'series', 'serie', 'vod', '4k', 'uhd', 'playback', 'radio'];
+                
+                categories = rawCats.filter(cat => {
+                    const name = cat.category_name.toLowerCase();
+                    // Se o nome conter alguma palavra proibida, remove da lista
+                    return !VOD_KEYWORDS.some(key => name.includes(key));
+                });
+
+            } catch(e) { console.log(e); }
         }
 
         function abrirTV() {
             screen = 'tv';
             document.getElementById('dashboard').style.display='none';
             document.getElementById('liveTvArea').style.display='flex';
-            // Renderiza categorias turbo
-            renderListTurbo('listCat', categories, 'cat_', 'category_name');
+            renderList('listCat', categories, 'cat_', 'category_name');
             colIdx=0; catIdx=0; renderFocus();
         }
 
         function fecharTV() {
-            matarStream();
+            if(hls) hls.destroy();
             screen = 'dash';
             document.getElementById('liveTvArea').style.display='none';
             document.getElementById('dashboard').style.display='flex';
@@ -360,105 +350,79 @@
         }
 
         async function carregarCanais(cid) {
-            document.getElementById('listChn').innerHTML = '<div style="padding:10px">CARREGANDO...</div>';
+            document.getElementById('listChn').innerHTML = '<div style="padding:10px">...</div>';
+            // Usa proxy sempre para garantir o load dos canais se a lista for grande
             const api = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`;
             const url = `https://api.allorigins.win/get?url=${encodeURIComponent(api)}`;
             try {
                 const res = await fetch(url);
                 const d = await res.json();
                 channels = JSON.parse(d.contents);
-                // RENDERIZAÇÃO TURBO (Chunking)
-                renderListTurbo('listChn', channels, 'chn_', 'name');
-            } catch(e) {}
+                renderList('listChn', channels, 'chn_', 'name');
+            } catch(e) { document.getElementById('listChn').innerText = "Erro lista."; }
         }
 
-        // --- SISTEMA TURBO RENDER (LISTA RÁPIDA) ---
-        function renderListTurbo(targetId, data, pfx, field) {
-            const el = document.getElementById(targetId); 
-            el.innerHTML = "";
+        function renderList(target, data, pfx, field) {
+            const el = document.getElementById(target); el.innerHTML = "";
+            const frag = document.createDocumentFragment();
+            // Renderiza apenas os primeiros 100 para não travar (chunk virtual)
+            const limit = Math.min(data.length, 100);
             
-            const CHUNK_SIZE = 20; // Desenha 20 por vez (Muito rápido)
-            let index = 0;
-
-            function renderChunk() {
-                const frag = document.createDocumentFragment();
-                const limit = Math.min(index + CHUNK_SIZE, data.length);
-
-                for(let i = index; i < limit; i++) {
-                    const item = data[i];
-                    const d = document.createElement('div');
-                    d.className = 'list-item';
-                    d.id = pfx+i;
-                    d.innerText = item[field];
-                    d.onclick = () => {
-                        if(pfx==='cat_') { catIdx=i; colIdx=0; renderFocus(); carregarCanais(item.category_id); }
-                        else { chnIdx=i; colIdx=1; renderFocus(); playDominator(item); }
-                    };
-                    frag.appendChild(d);
-                }
-                el.appendChild(frag);
-                index = limit;
-
-                if(index < data.length) {
-                    requestAnimationFrame(renderChunk); // Continua desenhando sem travar a TV
-                }
+            for(let i=0; i<limit; i++) {
+                const item = data[i];
+                const d = document.createElement('div');
+                d.className = 'list-item';
+                d.id = pfx+i;
+                d.innerText = item[field];
+                d.onclick = () => {
+                    if(pfx==='cat_') { catIdx=i; colIdx=0; renderFocus(); carregarCanais(item.category_id); }
+                    else { chnIdx=i; colIdx=1; renderFocus(); playChannel(item); }
+                };
+                frag.appendChild(d);
             }
-            renderChunk();
+            el.appendChild(frag);
         }
 
-        // --- PLAYER DOMINATOR V44 (ULTIMATE) ---
-        function matarStream() {
-            if(hls) { hls.destroy(); hls = null; }
-            const v = document.getElementById('player');
-            v.src = ""; v.load();
-            document.getElementById('placeholder').style.display = 'block';
-            document.getElementById('videoMask').style.display = 'flex';
-        }
-
-        function playDominator(ch) {
+        // --- PLAYER PADRÃO ROBUSTO (SEM TRUQUES QUE QUEBRAM) ---
+        function playChannel(ch) {
             currentChannel = ch;
             document.getElementById('chnName').innerText = ch.name;
-            document.getElementById('statusMsg').innerText = "CONECTANDO...";
+            document.getElementById('streamStatus').innerText = "CONECTANDO...";
             document.getElementById('loader').style.display = 'block';
             document.getElementById('placeholder').style.display = 'none';
-            document.getElementById('videoMask').style.display = 'flex';
 
-            matarStream();
-
-            setTimeout(() => { iniciarHLS(ch); }, 200);
-        }
-
-        function iniciarHLS(ch) {
+            if(hls) hls.destroy();
             const video = document.getElementById('player');
-            // Salt para conexão única
-            const salt = Math.floor(Math.random() * 999999);
-            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8?token=${salt}`;
+            
+            // URL LIMPA (Sem tokens falsos que bloqueiam o sinal)
+            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8`;
 
             if(Hls.isSupported()) {
                 hls = new Hls({
-                    // CONFIGURAÇÃO ULTIMATE
-                    enableWorker: true, // Multi-core
-                    lowLatencyMode: true, // Baixa latência
-                    backBufferLength: 90, // Buffer traseiro longo
-                    startLevel: -1,
-                    manifestLoadingTimeOut: 10000,
+                    // Configuração para Internet Instável / TV Fraca
+                    maxBufferLength: 10, // Buffer pequeno para não estourar RAM
+                    maxMaxBufferLength: 20,
+                    enableWorker: true,
+                    manifestLoadingTimeOut: 15000,
                 });
                 
                 hls.loadSource(streamUrl);
                 hls.attachMedia(video);
                 
-                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); });
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(()=>{});
+                });
 
                 video.onplaying = () => {
-                    document.getElementById('statusMsg').innerText = "ONLINE";
+                    document.getElementById('streamStatus').innerText = "ONLINE";
                     document.getElementById('loader').style.display = 'none';
-                    document.getElementById('videoMask').style.display = 'none';
                 };
 
                 hls.on(Hls.Events.ERROR, (e, data) => {
                     if(data.fatal) {
-                        console.log("Reconectando...");
-                        hls.startLoad(); // Tenta recuperar sem destruir
+                        // Tenta recuperar 1 vez
+                        hls.startLoad();
+                        document.getElementById('streamStatus').innerText = "RECONECTANDO...";
                     }
                 });
             } else {
@@ -469,12 +433,10 @@
         function entrarFullscreen() {
             const el = document.getElementById('videoContainer');
             if(el.requestFullscreen) el.requestFullscreen();
-            else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
             el.classList.add('fs-active'); isFullscreen = true;
         }
         function sairFullscreen() {
             if(document.exitFullscreen) document.exitFullscreen();
-            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
             document.getElementById('videoContainer').classList.remove('fs-active'); isFullscreen = false;
         }
 
