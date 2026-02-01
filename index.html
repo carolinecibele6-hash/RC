@@ -3,31 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD V81</title>
+    <title>SKY GOLD V82</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- ESTILO ULTRA MINIMALISTA V81 --- */
+        /* --- ESTILO DE ALTO CONTRASTE V82 --- */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
         body { background: #000; color: #fff; font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; }
 
         /* LOGIN */
-        #loginScreen {
-            position: absolute; width: 100%; height: 100%; background: #000;
-            z-index: 5000; display: flex; justify-content: center; align-items: center;
-        }
+        #loginScreen { position: absolute; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center; }
         .login-box { background: #0a0a0a; border-top: 4px solid #d4af37; width: 450px; padding: 40px; text-align: center; }
         .login-input { width: 100%; height: 50px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; text-align: center; font-size: 18px; }
-        .login-input:focus { border-color: #d4af37; background: #000; }
+        .login-input:focus { background: #fff; color: #000; border-color: #d4af37; }
         .login-btn { width: 100%; height: 55px; background: #d4af37; color: #000; font-weight: bold; font-size: 18px; border: none; cursor: pointer; }
+        .login-btn:focus { background: #fff; }
 
         /* INTERFACE */
         #mainInterface { display: none; width: 100%; height: 100%; }
 
         /* SIDEBAR */
         .sidebar { width: 80px; background: #080808; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; }
-        .menu-icon { font-size: 22px; color: #333; margin-bottom: 20px; padding: 10px; }
+        .menu-icon { font-size: 22px; color: #333; margin-bottom: 20px; padding: 10px; border: 3px solid transparent; }
         .menu-icon.active { color: #d4af37; }
-        .menu-icon.focused { background: #d4af37; color: #000; border-radius: 5px; }
+        /* Foco forçado na Sidebar */
+        .menu-icon.focused { background: #d4af37; color: #000; border-radius: 5px; border: 3px solid #fff; }
 
         /* CONTEÚDO */
         .main-content { flex: 1; display: flex; flex-direction: column; }
@@ -42,22 +41,25 @@
         .scroll-area { flex: 1; overflow-y: auto; }
         
         .list-item {
-            padding: 15px 20px; border-bottom: 1px solid #111; color: #666; font-size: 16px;
+            padding: 15px 20px; border-bottom: 1px solid #111; color: #777; font-size: 16px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            border: 3px solid transparent; /* Reserva espaço para a borda não mexer a lista */
+            border: 4px solid transparent; /* Borda invisível para não tremer a lista */
         }
-        .list-item.active { color: #d4af37; font-weight: bold; background: #0a0a00; }
+        .list-item.active { color: #d4af37; font-weight: bold; }
 
-        /* CONTORNO DE SELEÇÃO (ÚNICA COISA QUE MUDA) */
+        /* FOCO FORÇADO POR JAVASCRIPT - MÁXIMA VISIBILIDADE */
         .list-item.focused { 
-            border: 3px solid #d4af37 !important; 
-            color: #fff !important;
-            background: #111;
+            background: #fff !important; 
+            color: #000 !important; 
+            font-weight: 900 !important;
+            border: 4px solid #d4af37 !important;
+            transform: scale(1.02);
+            z-index: 10;
         }
 
-        /* PLAYER FIXO (SEM NADA EMBAIXO) */
+        /* PLAYER */
         #player { width: 100%; height: 100%; background: #000; object-fit: contain; }
-        .player-container { width: 100%; height: 100%; background: #000; position: relative; }
+        .player-container { width: 100%; height: 100%; background: #000; }
 
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; }
         ::-webkit-scrollbar { width: 0; }
@@ -115,10 +117,10 @@
         setInterval(runClock, 1000); runClock();
 
         function init() {
-            if(localStorage.getItem('sg81_h')) {
-                document.getElementById('host').value = localStorage.getItem('sg81_h');
-                document.getElementById('user').value = localStorage.getItem('sg81_u');
-                document.getElementById('pass').value = localStorage.getItem('sg81_p');
+            if(localStorage.getItem('sg82_h')) {
+                document.getElementById('host').value = localStorage.getItem('sg82_h');
+                document.getElementById('user').value = localStorage.getItem('sg82_u');
+                document.getElementById('pass').value = localStorage.getItem('sg82_p');
             }
             document.getElementById('host').focus();
         }
@@ -132,7 +134,7 @@
                 let res = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                 let data = await res.json();
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('sg81_h', h); localStorage.setItem('sg81_u', u); localStorage.setItem('sg81_p', p);
+                    localStorage.setItem('sg82_h', h); localStorage.setItem('sg82_u', u); localStorage.setItem('sg82_p', p);
                     CONFIG = { host: h, user: u, pass: p };
                     state.screen = 'app';
                     document.getElementById('loginScreen').style.display = 'none';
@@ -146,13 +148,13 @@
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`);
             let raw = await res.json();
             DATA.cats = raw.filter(c => !VOD_FILTERS.some(f => c.category_name.toLowerCase().includes(f)));
-            state.mode = 'cat'; state.lIdx = 0; renderList();
+            state.mode = 'cat'; state.lIdx = 0; state.zone = 1; renderList();
         }
 
         async function loadChns(cid) {
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`);
             DATA.chns = await res.json();
-            state.mode = 'chn'; state.lIdx = 0; renderList();
+            state.mode = 'chn'; state.lIdx = 0; state.zone = 1; renderList();
         }
 
         function renderList() {
@@ -160,12 +162,19 @@
             const container = document.getElementById('listContainer');
             container.innerHTML = '';
             document.getElementById('listTitle').innerText = state.mode === 'cat' ? 'CATEGORIAS' : 'CANAIS';
+            
             list.forEach((item, i) => {
                 let div = document.createElement('div');
-                div.className = 'list-item' + (i === state.lIdx && state.zone === 1 ? ' focused' : '');
+                div.className = 'list-item';
+                div.id = 'item_' + i;
+                
+                // Aplica a classe focused se for o índice atual
+                if(i === state.lIdx && state.zone === 1) div.classList.add('focused');
+                
                 if(state.mode === 'chn' && currentCh === item.stream_id) div.classList.add('active');
                 div.innerText = state.mode === 'cat' ? item.category_name : item.name;
                 container.appendChild(div);
+                
                 if(i === state.lIdx && state.zone === 1) div.scrollIntoView({block: 'center'});
             });
         }
@@ -181,12 +190,12 @@
             if(state.fs) { if([8, 461, 13].includes(k)) { document.getElementById('vidFrame').classList.remove('fs'); state.fs=false; } return; }
             
             if(state.screen === 'login') {
-                if(k === 40) { 
+                if(k === 40) { // Baixo
                     if(active.id === 'host') document.getElementById('user').focus();
                     else if(active.id === 'user') document.getElementById('pass').focus();
                     else if(active.id === 'pass') document.getElementById('btnLogin').focus();
                 }
-                if(k === 38) {
+                if(k === 38) { // Cima
                     if(active.id === 'user') document.getElementById('host').focus();
                     else if(active.id === 'pass') document.getElementById('user').focus();
                     else if(active.id === 'btnLogin') document.getElementById('pass').focus();
@@ -194,28 +203,41 @@
                 if(k === 13 && active.id === 'btnLogin') startApp(); return;
             }
 
-            if(state.zone === 0) {
-                if(k===38 && state.sIdx>0) state.sIdx--; if(k===40 && state.sIdx<1) state.sIdx++; if(k===39) state.zone = 1;
+            if(state.zone === 0) { // Sidebar
+                if(k===38 && state.sIdx>0) state.sIdx--; 
+                if(k===40 && state.sIdx<1) state.sIdx++; 
+                if(k===39) state.zone = 1;
                 if(k===13 && state.sIdx===1) reset();
-            } else {
+            } else { // Lista
                 const list = state.mode === 'cat' ? DATA.cats : DATA.chns;
-                if(k===38 && state.lIdx>0) state.lIdx--; if(k===40 && state.lIdx<list.length-1) state.lIdx++;
-                if(k===37) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; renderList(); } else state.zone=0; }
+                if(k===38 && state.lIdx>0) state.lIdx--; 
+                else if(k===40 && state.lIdx<list.length-1) state.lIdx++;
+                
+                if(k===37) { 
+                    if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } 
+                    else state.zone=0; 
+                }
+                
                 if(k===13) {
                     let item = list[state.lIdx];
                     if(state.mode === 'cat') loadChns(item.category_id);
-                    else { if(currentCh === item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } else play(item); }
+                    else { 
+                        if(currentCh === item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } 
+                        else play(item); 
+                    }
                 }
-                if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; renderList(); } }
+                if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } }
             }
-            renderList(); renderFocus();
+            renderList(); // O renderList agora cuida da classe .focused
+            renderFocus();
         });
 
         function renderFocus() {
-            document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+            document.querySelectorAll('.menu-icon').forEach(el => el.classList.remove('focused'));
             if(state.zone === 0) document.getElementById('menu_'+state.sIdx).classList.add('focused');
         }
-        function reset() { localStorage.clear(); location.reload(); }
+
+        function reset() { if(confirm("Deseja sair?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
