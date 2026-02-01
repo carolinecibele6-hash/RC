@@ -4,63 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY GOLD V68</title>
+    <title>IPTV SKY GOLD V69</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA SKY GOLD (REMOTE CONTROL EDITION) --- */
+        /* --- SKY GOLD V69 (REMOTE CONTROL EDITION) --- */
         * { box-sizing: border-box; outline: none; user-select: none; margin: 0; padding: 0; }
         body {
             background-color: #000;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
             height: 100vh; overflow: hidden; display: flex;
+            cursor: none; /* ESCONDE O MOUSE */
         }
 
-        /* 1. LOGIN (OTIMIZADO PARA CONTROLE) */
+        /* 1. LOGIN */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #1a1500 0%, #000 100%);
             z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: #0a0a0a; 
-            border-left: 6px solid #d4af37;
-            width: 50vw; /* Bem largo */
-            padding: 50px; 
-            text-align: center;
-            box-shadow: 0 0 100px rgba(212, 175, 55, 0.1);
+            background: #080808; 
+            border-left: 8px solid #d4af37;
+            width: 50vw; padding: 50px; text-align: center;
+            box-shadow: 0 0 100px rgba(212, 175, 55, 0.2);
             border-radius: 12px;
         }
-        .logo-text { 
-            font-size: 32px; font-weight: 900; margin-bottom: 30px; color: #fff; 
-            letter-spacing: 2px; text-transform: uppercase;
-        }
-        .logo-text span { color: #d4af37; display: block; font-size: 40px; margin-top: 5px; }
+        .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 40px; }
+        .logo-text span { color: #d4af37; font-size: 42px; display: block; }
 
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-label { color: #888; font-size: 12px; margin-bottom: 5px; font-weight: bold; margin-left: 2px; }
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .label { font-size: 14px; color: #888; font-weight: bold; margin-bottom: 8px; margin-left: 5px; }
 
-        /* CAMPOS DE TEXTO - ESTILO SMARTERS */
+        /* CAMPOS DE TEXTO */
         .login-input {
-            width: 100%; height: 50px; padding: 10px; background: #1a1a1a;
-            border: 2px solid #333; color: #fff; font-size: 18px; 
-            font-weight: bold; border-radius: 6px; transition: 0.2s;
+            width: 100%; height: 60px; padding: 10px; background: #1a1a1a;
+            border: 2px solid #333; color: #777; font-size: 20px; 
+            font-weight: bold; border-radius: 8px; text-align: center; transition: 0.1s;
         }
         
-        /* QUANDO SELECIONADO PELO CONTROLE */
-        .login-input:focus { 
+        /* ESTADO FOCADO (QUANDO O CONTROLE ESTÁ EM CIMA) */
+        .login-input:focus, .login-input.focused { 
             background: #fff; color: #000; border-color: #d4af37; 
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8); transform: scale(1.03);
         }
         
         .login-btn {
-            width: 100%; height: 55px; background: #d4af37; color: #000; border: none;
-            font-weight: 900; font-size: 20px; margin-top: 20px; cursor: pointer; border-radius: 6px;
+            width: 100%; height: 65px; background: #333; color: #888; border: none;
+            font-weight: 900; font-size: 22px; margin-top: 20px; border-radius: 8px;
             text-transform: uppercase;
         }
-        .login-btn:focus { 
-            background: #fff; transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.5); 
+        /* BOTÃO FOCADO */
+        .login-btn:focus, .login-btn.focused { 
+            background: #d4af37; color: #000; transform: scale(1.05); 
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
         }
 
         /* 2. APP */
@@ -73,13 +71,10 @@
         }
         .menu-icon {
             width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            font-size: 26px; color: #444; margin-bottom: 15px; border-radius: 12px; transition: 0.1s;
+            font-size: 26px; color: #444; margin-bottom: 15px; border-radius: 12px;
         }
         .menu-icon.active { color: #d4af37; border-right: 4px solid #d4af37; }
-        .menu-icon.focused { 
-            background: #d4af37; color: #000; transform: scale(1.15); font-weight: bold;
-            box-shadow: 0 0 20px rgba(212,175,55,0.4);
-        }
+        .menu-icon.focused { background: #d4af37; color: #000; transform: scale(1.15); font-weight: bold; }
 
         /* CONTEÚDO */
         .main-content { flex: 1; display: flex; flex-direction: column; background: #000; }
@@ -88,7 +83,7 @@
             height: 80px; background: #080808; display: flex; align-items: center; justify-content: space-between;
             padding: 0 50px; border-bottom: 2px solid #d4af37;
         }
-        .app-title { font-size: 26px; font-weight: 900; letter-spacing: 1px; }
+        .app-title { font-size: 26px; font-weight: 900; }
         .app-title span { color: #d4af37; }
         #clock { font-size: 28px; font-weight: bold; color: #d4af37; font-family: monospace; }
 
@@ -99,7 +94,7 @@
 
         .list-header { 
             padding: 20px; background: #111; font-weight: bold; color: #d4af37; 
-            font-size: 16px; border-bottom: 1px solid #222; letter-spacing: 1px;
+            font-size: 16px; border-bottom: 1px solid #222;
         }
         .scroll-area { flex: 1; overflow-y: auto; }
         
@@ -108,10 +103,7 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .list-item.active { background: #1a1500; color: #fff; border-left: 4px solid #d4af37; }
-        .list-item.focused { 
-            background: #d4af37; color: #000; font-weight: bold; transform: scale(1.02); z-index: 5;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-        }
+        .list-item.focused { background: #d4af37; color: #000; font-weight: bold; transform: scale(1.02); z-index: 5; }
 
         .pagination { padding: 12px; text-align: center; background: #080808; color: #666; font-size: 13px; }
 
@@ -123,7 +115,6 @@
         }
         video { width: 100%; height: 100%; object-fit: contain; }
 
-        /* PAINEL INFO */
         .info-panel { padding: 30px; flex: 1; background: #050505; display: flex; flex-direction: column; justify-content: space-between; }
         .chn-big-title { font-size: 34px; color: #fff; font-weight: bold; }
         
@@ -134,12 +125,12 @@
         .acc-row { font-size: 14px; color: #777; font-family: monospace; }
         .acc-row span { color: #d4af37; font-weight: bold; font-size: 15px; float: right;}
 
-        /* FULLSCREEN */
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:99999; background:#000; border: none !important; }
         .fs video { object-fit: fill; border: none !important; }
+        
+        /* Remove contornos padrão */
         :focus { outline: none !important; }
 
-        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; }
@@ -153,21 +144,21 @@
             <div class="logo-text">IPTV <br><span>SKY GOLD</span></div>
             
             <div class="input-group">
-                <div class="input-label">SERVIDOR DNS (http://...)</div>
-                <input type="text" id="host" class="login-input" placeholder="http://url..." onkeydown="moveFocus(event, 'user')">
+                <div class="label">SERVIDOR (http://...)</div>
+                <input type="text" id="host" class="login-input" placeholder="http://..." tabindex="1">
             </div>
             
             <div class="input-group">
-                <div class="input-label">USUÁRIO</div>
-                <input type="text" id="user" class="login-input" placeholder="Usuário" onkeydown="moveFocus(event, 'pass')">
+                <div class="label">USUÁRIO</div>
+                <input type="text" id="user" class="login-input" placeholder="Usuário" tabindex="2">
             </div>
             
             <div class="input-group">
-                <div class="input-label">SENHA</div>
-                <input type="password" id="pass" class="login-input" placeholder="Senha" onkeydown="moveFocus(event, 'btnEnter')">
+                <div class="label">SENHA</div>
+                <input type="password" id="pass" class="login-input" placeholder="Senha" tabindex="3">
             </div>
 
-            <button id="btnEnter" class="login-btn" onclick="startApp()">ENTRAR NO SISTEMA</button>
+            <button id="btnEnter" class="login-btn" onclick="startApp()" tabindex="4">ACESSAR</button>
             
             <div id="loginStatus" style="margin-top:20px; color:#d4af37; font-size:16px; font-weight:bold;"></div>
         </div>
@@ -231,11 +222,11 @@
         let currentPlayingChannel = null;
         const PAGE_SIZE = 50;
 
-        // --- RELÓGIO ---
+        // --- RELÓGIO (UTC-4) ---
         function runClock() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const time = new Date(utc + (3600000 * -4)); // UTC-4
+            const time = new Date(utc + (3600000 * -4));
             const h = String(time.getHours()).padStart(2, '0');
             const m = String(time.getMinutes()).padStart(2, '0');
             document.getElementById('clock').innerText = `${h}:${m}`;
@@ -243,45 +234,26 @@
         setInterval(runClock, 1000);
         runClock();
 
-        // --- INICIALIZAÇÃO ---
+        // --- INICIALIZAÇÃO AGRESSIVA DE FOCO ---
         window.onload = () => {
-            if(localStorage.getItem('v68_host')) {
-                document.getElementById('host').value = localStorage.getItem('v68_host');
-                document.getElementById('user').value = localStorage.getItem('v68_user');
-                document.getElementById('pass').value = localStorage.getItem('v68_pass');
+            if(localStorage.getItem('v69_host')) {
+                // Preenche
+                document.getElementById('host').value = localStorage.getItem('v69_host');
+                document.getElementById('user').value = localStorage.getItem('v69_user');
+                document.getElementById('pass').value = localStorage.getItem('v69_pass');
                 
-                // Tenta conectar, mas deixa os campos visíveis caso queira mudar
-                document.getElementById('host').focus();
+                // Manda o foco pro botão ENTRAR para facilitar
+                setTimeout(() => document.getElementById('btnEnter').focus(), 500);
             } else {
-                // Foco inicial no primeiro campo
-                document.getElementById('host').focus();
+                // Manda o foco pra primeira caixa imediatamente
+                setTimeout(() => document.getElementById('host').focus(), 500);
             }
         };
-
-        // --- FUNÇÃO DE NAVEGAÇÃO DOS INPUTS ---
-        function moveFocus(e, nextId) {
-            if (e.key === "Enter" || e.keyCode === 13 || e.key === "ArrowDown" || e.keyCode === 40) {
-                e.preventDefault();
-                document.getElementById(nextId).focus();
-            }
-            if (e.key === "ArrowUp" || e.keyCode === 38) {
-                // Lógica pra voltar
-                e.preventDefault();
-                const current = e.target.id;
-                if(current === 'pass') document.getElementById('user').focus();
-                if(current === 'user') document.getElementById('host').focus();
-            }
-        }
 
         async function startApp() {
             let h = document.getElementById('host').value.trim();
             let u = document.getElementById('user').value.trim();
             let p = document.getElementById('pass').value.trim();
-
-            if(!h || !u || !p) {
-                document.getElementById('loginStatus').innerText = "Preencha todos os campos!";
-                return;
-            }
 
             if(!h.startsWith('http')) h = 'http://' + h;
             if(h.endsWith('/')) h = h.slice(0, -1);
@@ -295,9 +267,9 @@
                 let data = await res.json();
 
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('v68_host', h);
-                    localStorage.setItem('v68_user', u);
-                    localStorage.setItem('v68_pass', p);
+                    localStorage.setItem('v69_host', h);
+                    localStorage.setItem('v69_user', u);
+                    localStorage.setItem('v69_pass', p);
                     
                     const dateExp = new Date(parseInt(data.user_info.exp_date)*1000);
                     const dateCre = new Date(parseInt(data.user_info.created_at)*1000);
@@ -312,7 +284,7 @@
                     document.getElementById('mainInterface').style.display = 'flex';
                     loadCategories();
                 } else {
-                    document.getElementById('loginStatus').innerText = "Conta Inativa";
+                    document.getElementById('loginStatus').innerText = "Erro: Conta Inativa";
                 }
             } catch(e) {
                 document.getElementById('loginStatus').innerText = "Erro de Conexão";
@@ -320,7 +292,7 @@
         }
 
         function reset() {
-            if(confirm("Sair do sistema?")) {
+            if(confirm("Sair?")) {
                 localStorage.clear();
                 location.reload();
             }
@@ -332,7 +304,6 @@
                 let res = await fetch(url);
                 let raw = await res.json();
                 DATA.categories = raw.filter(c => !c.category_name.toLowerCase().match(/filme|movie|serie|vod|4k|radio|adult/));
-                
                 state.mode = 'cat';
                 state.page = 0;
                 state.listIdx = 0;
@@ -355,7 +326,7 @@
                 state.zone = 1;
                 renderList();
                 renderFocus();
-            } catch(e) { document.getElementById('listContainer').innerText = "Erro lista."; }
+            } catch(e) { document.getElementById('listContainer').innerText = "Erro."; }
         }
 
         function renderList() {
@@ -392,32 +363,46 @@
                 document.getElementById('chnStatus').innerText = "Reproduzindo";
                 renderList(); 
             }).catch(e => {
-                document.getElementById('chnStatus').innerText = "Erro de Stream";
+                document.getElementById('chnStatus').innerText = "Erro Stream";
             });
         }
 
-        // --- NAVEGAÇÃO PRINCIPAL ---
+        // --- SISTEMA DE CONTROLE REMOTO ---
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             
-            // Fullscreen
             if(state.fullscreen) {
                 if([8, 461, 13].includes(k)) toggleFullscreen();
                 return;
             }
 
-            // Login (Navegação via Inputs é controlada pelos 'onkeydown' no HTML, aqui só evita bugs)
-            if(state.screen === 'login') return;
+            // TELA DE LOGIN (NAVEGAÇÃO SIMPLIFICADA)
+            if(state.screen === 'login') {
+                const els = ['host', 'user', 'pass', 'btnEnter'];
+                const currentId = document.activeElement.id;
+                let idx = els.indexOf(currentId);
 
-            // App
+                if(k === 40) { // Baixo
+                    if(idx < 3) document.getElementById(els[idx+1]).focus();
+                }
+                if(k === 38) { // Cima
+                    if(idx > 0) document.getElementById(els[idx-1]).focus();
+                }
+                if(k === 13) { // Enter
+                    if(currentId === 'btnEnter') startApp();
+                }
+                return;
+            }
+
+            // APP
             if(state.screen === 'app') {
-                if(state.zone === 0) { // MENU
+                if(state.zone === 0) { // Sidebar
                     if(k === 38) { if(state.sidebarIdx > 0) state.sidebarIdx--; }
                     if(k === 40) { if(state.sidebarIdx < 1) state.sidebarIdx++; }
                     if(k === 39) { state.zone = 1; }
                     if(k === 13) { if(state.sidebarIdx === 1) reset(); }
                 }
-                else if(state.zone === 1) { // LISTA
+                else if(state.zone === 1) { // Lista
                     const list = state.mode === 'cat' ? DATA.categories : DATA.channels;
                     const maxOnPage = Math.min(PAGE_SIZE, list.length - (state.page * PAGE_SIZE)) - 1;
 
