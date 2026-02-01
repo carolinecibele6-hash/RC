@@ -4,23 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY BOX V58</title>
+    <title>IPTV SKY BOX V59</title>
     
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA SKY BOX DARK/RED (V58 STABLE) --- */
+        /* --- TEMA DARK / RED (SKY BOX FINAL) --- */
         * { box-sizing: border-box; outline: none; user-select: none; margin: 0; padding: 0; }
         body {
-            background-color: #050505;
-            color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #080808;
+            color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif;
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
         /* 1. LOGIN */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #000 0%, #1a0000 100%);
+            background: linear-gradient(135deg, #000 0%, #150000 100%);
             z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .login-box {
@@ -35,7 +36,7 @@
         .logo-text span { color: #e50914; font-size: 40px; display: block; margin-top: 5px; }
 
         .login-input {
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #080808;
+            width: 100%; padding: 15px; margin-bottom: 15px; background: #000;
             border: 1px solid #333; color: #fff; font-size: 16px; text-align: center;
             font-weight: bold; border-radius: 4px;
         }
@@ -50,7 +51,7 @@
         #mainInterface { display: none; height: 100%; flex-direction: column; }
 
         .top-nav {
-            height: 75px; background: #080808; display: flex; align-items: center; padding: 0 40px;
+            height: 70px; background: #0a0a0a; display: flex; align-items: center; padding: 0 40px;
             border-bottom: 3px solid #e50914; justify-content: space-between;
         }
         .top-logo { font-size: 24px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
@@ -59,11 +60,11 @@
         .account-info { display: flex; gap: 25px; font-size: 13px; color: #999; font-family: monospace; }
         .acc-item b { color: #e50914; }
 
-        /* RELÓGIO AFASTADO */
+        /* RELÓGIO CORRIGIDO */
         .top-right { display: flex; align-items: center; }
         #clock { 
-            color: #e50914; font-weight: bold; font-size: 22px; 
-            margin-right: 60px; /* AFASTAMENTO DO BOTÃO SAIR */
+            color: #e50914; font-weight: bold; font-size: 24px; 
+            margin-right: 80px; /* BEM AFASTADO DO BOTÃO */
             font-family: monospace; letter-spacing: 2px;
         }
         
@@ -81,7 +82,7 @@
         .col-player { width: 45%; background: #000; display: flex; flex-direction: column; }
 
         .list-header { 
-            padding: 18px; font-size: 14px; font-weight: bold; color: #e50914; 
+            padding: 15px; font-size: 14px; font-weight: bold; color: #e50914; 
             background: #020202; border-bottom: 1px solid #222; text-transform: uppercase; letter-spacing: 1px;
         }
         .scroll-list { flex: 1; overflow-y: auto; }
@@ -96,7 +97,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-left: none;
         }
 
-        /* PLAYER NATIVO ESTÁVEL */
+        /* PLAYER */
         .video-wrapper {
             width: 100%; aspect-ratio: 16/9; background: #000; position: relative;
             display: flex; align-items: center; justify-content: center;
@@ -151,7 +152,6 @@
             <div class="account-info">
                 <div class="acc-item">CRIADO: <b id="infoCreated">--/--</b></div>
                 <div class="acc-item">VENCE: <b id="infoExp">--/--</b></div>
-                <div class="acc-item">CONEXÕES: <b>1 ATIVA</b></div>
             </div>
 
             <div class="top-right">
@@ -185,10 +185,9 @@
                     </div>
 
                     <div style="font-size:14px; color:#666; line-height:1.6;">
-                        <i class="fas fa-info-circle"></i> <b>INSTRUÇÕES:</b><br>
-                        • Pressione <b>OK</b> para Iniciar o Canal.<br>
-                        • Pressione <b>OK Novamente</b> para Tela Cheia.<br>
-                        • Sistema Anti-Travamento Ativo.
+                        • 1x OK: Iniciar | 2x OK: Tela Cheia<br>
+                        • V59: Correção de Reprodução e Relógio<br>
+                        • Filtro VOD Ativo
                     </div>
                 </div>
             </div>
@@ -205,54 +204,43 @@
         let colIndex = 0; 
         let catIndex = 0, chnIndex = 0;
         let categories = [], channels = [];
-        let watchdogTimer = null; // Monitor de travamento
+        
+        // Controle de Duplo Clique
+        let lastOkTime = 0;
 
-        // --- FILTROS (VOD KILLER) ---
-        // Baseado no seu script Python ssiptv_master.py
+        // --- FILTROS (VOD KILLER - Baseado no seu script) ---
         const VOD_TRIGGERS = [
             'filme', 'movie', 'serie', 'series', 'vod', 'box', 
             'playback', 'radio', 'adult', 'xxx', '+18', '4k',
             'ondemand', 'show', 'desenho', 'animes'
         ];
 
-        // --- RELÓGIO VIA INTERNET (HORA CERTA) ---
-        let timeOffset = 0;
-        
-        // Pega a hora certa de um servidor NTP/HTTP ao iniciar
-        async function syncTime() {
-            try {
-                const res = await fetch('https://worldtimeapi.org/api/timezone/America/Sao_Paulo');
-                const data = await res.json();
-                const serverTime = new Date(data.datetime).getTime();
-                const localTime = new Date().getTime();
-                timeOffset = serverTime - localTime;
-            } catch(e) {
-                // Se falhar, usa UTC-3 manual
-                const now = new Date();
-                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-                const brTime = utc + (3600000 * -3);
-                timeOffset = brTime - now.getTime();
-            }
-        }
-
+        // --- RELÓGIO MATEMÁTICO (UTC-3 BRASÍLIA) ---
         function updateClock() {
-            const now = new Date(new Date().getTime() + timeOffset);
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const now = new Date();
+            // Converte hora local para UTC
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            // Adiciona -3 horas (Brasília) fixo
+            const brTime = new Date(utc + (3600000 * -3));
+            
+            const h = String(brTime.getHours()).padStart(2, '0');
+            const m = String(brTime.getMinutes()).padStart(2, '0');
+            
             const el = document.getElementById('clock');
-            if(el) el.innerText = `${hours}:${minutes}`;
+            if(el) el.innerText = `${h}:${m}`;
         }
         
-        // Sincroniza e inicia o relógio
-        syncTime();
+        // Inicia relógio imediatamente
         setInterval(updateClock, 1000);
+        updateClock();
 
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
+            updateClock();
             try {
-                const savedHost = localStorage.getItem('v58_host');
-                const savedUser = localStorage.getItem('v58_user');
-                const savedPass = localStorage.getItem('v58_pass');
+                const savedHost = localStorage.getItem('v59_host');
+                const savedUser = localStorage.getItem('v59_user');
+                const savedPass = localStorage.getItem('v59_pass');
 
                 if(savedHost && savedUser && savedPass) {
                     document.getElementById('host').value = savedHost;
@@ -283,9 +271,9 @@
 
             CONFIG = { host: h, user: u, pass: p };
             
-            localStorage.setItem('v58_host', h); 
-            localStorage.setItem('v58_user', u); 
-            localStorage.setItem('v58_pass', p);
+            localStorage.setItem('v59_host', h); 
+            localStorage.setItem('v59_user', u); 
+            localStorage.setItem('v59_pass', p);
 
             document.getElementById('loginMsg').innerText = "Conectando...";
 
@@ -304,7 +292,7 @@
                     iniciarApp(data);
                 } else throw new Error("Conta Invalida");
             } catch(e) { 
-                document.getElementById('loginMsg').innerText = "Erro: Dados Incorretos";
+                document.getElementById('loginMsg').innerText = "Erro: Verifique URL/Usuário";
             }
         }
 
@@ -356,19 +344,22 @@
                 if(k===39) { if(colIndex===0 && channels.length>0) { colIndex=1; chnIndex=0; updateFocus(); } }
                 if(k===37) { if(colIndex===1) colIndex=0; updateFocus(); }
                 
-                // LÓGICA OK V58 (CORRIGIDA)
+                // LÓGICA OK V59 (DUPLO CLIQUE REAL)
                 if(k===13) { 
                     if(colIndex===2) logoutTotal();
                     else if(colIndex===0) carregarCanais(categories[catIndex].category_id);
                     else if(colIndex===1) {
                         const sel = channels[chnIndex];
-                        // LÓGICA: Se já está tocando ESTE canal, vai pra Fullscreen
-                        if(currentChannel && currentChannel.stream_id === sel.stream_id) {
+                        const now = new Date().getTime();
+                        
+                        // Se já está tocando este canal E clicou rápido (menos de 500ms)
+                        if (currentChannel && currentChannel.stream_id === sel.stream_id && (now - lastOkTime < 500)) {
                             entrarTelaCheia();
                         } else {
-                            // Se é novo ou parou, toca
+                            // Se não, inicia ou reinicia o player
                             tocarCanal(sel);
                         }
+                        lastOkTime = now;
                     }
                 }
             }
@@ -437,10 +428,8 @@
             el.appendChild(frag);
         }
 
-        // --- PLAYER COM MONITOR DE TRAVAMENTO ---
+        // --- PLAYER "CAMALEÃO" V59 (AUTO-REPAIR) ---
         function tocarCanal(ch) {
-            if(watchdogTimer) clearInterval(watchdogTimer);
-            
             currentChannel = ch;
             document.getElementById('chnName').innerText = ch.name;
             document.getElementById('statusTxt').innerText = "CONECTANDO...";
@@ -448,6 +437,7 @@
             document.getElementById('iconLoad').style.display = 'block';
             document.getElementById('mask').style.display = 'flex';
 
+            // Limpeza total
             const parent = document.getElementById('vidContainer');
             const oldV = document.getElementById('player');
             if(oldV) parent.removeChild(oldV);
@@ -458,51 +448,45 @@
             video.style.width = '100%'; video.style.height = '100%';
             parent.appendChild(video);
 
-            // Usa .ts para processamento leve
-            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
+            // TENTATIVA 1: HLS Padrão (.m3u8)
+            const urlM3U8 = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8`;
+            const urlTS = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
 
-            video.src = streamUrl;
-            video.play().catch(e => {
-                document.getElementById('statusTxt').innerText = "ERRO AO INICIAR";
-            });
+            if (Hls.isSupported()) {
+                const hls = new Hls({ maxBufferLength: 15, enableWorker: true });
+                hls.loadSource(urlM3U8);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+                
+                // Se der erro, tenta o TS
+                hls.on(Hls.Events.ERROR, (e, data) => {
+                    if (data.fatal) {
+                        console.log("HLS falhou, mudando para TS...");
+                        hls.destroy();
+                        video.src = urlTS;
+                        video.play();
+                    }
+                });
+            } else {
+                // Modo Nativo direto
+                video.src = urlM3U8;
+                video.play().catch(() => {
+                    video.src = urlTS; // Fallback imediato
+                    video.play();
+                });
+            }
 
             video.onplaying = () => {
-                document.getElementById('statusTxt').innerText = "REPRODUZINDO";
+                document.getElementById('statusTxt').innerText = "ONLINE";
                 document.getElementById('iconLoad').style.display = 'none';
                 document.getElementById('mask').style.display = 'none';
-                
-                // Inicia o Guardião (Watchdog)
-                monitorarTravamento(video, streamUrl);
             };
             
             video.onerror = () => {
-                document.getElementById('statusTxt').innerText = "FALHA - RECONECTANDO...";
-                setTimeout(() => video.src = streamUrl, 2000); 
+                document.getElementById('statusTxt').innerText = "ERRO: TENTANDO RECONECTAR...";
+                // Tenta reconexão forçada
+                setTimeout(() => { video.src = urlTS; video.play(); }, 2000);
             };
-        }
-
-        function monitorarTravamento(video, url) {
-            let lastTime = 0;
-            let stuckCount = 0;
-            
-            watchdogTimer = setInterval(() => {
-                if(video.paused) return;
-                
-                if(video.currentTime === lastTime) {
-                    stuckCount++;
-                    // Se ficar travado por 2 verificações (2 segundos)
-                    if(stuckCount > 2) {
-                        document.getElementById('statusTxt').innerText = "DESTAVANDO...";
-                        // Recarrega o src para limpar buffer corrompido
-                        video.src = url; 
-                        video.play();
-                        stuckCount = 0;
-                    }
-                } else {
-                    stuckCount = 0;
-                    lastTime = video.currentTime;
-                }
-            }, 1000);
         }
 
         function entrarTelaCheia() {
