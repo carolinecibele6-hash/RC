@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD V83</title>
+    <title>SKY GOLD V84</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* VISUAL V82 MANTIDO 100% */
+        /* VISUAL V82 PRESERVADO */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
         body { background: #000; color: #fff; font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; }
         #loginScreen { position: absolute; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center; }
@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-view">
                     <div class="player-container" id="vidFrame">
-                        <video id="player" playsinline preload="auto"></video>
+                        <video id="player" playsinline></video>
                     </div>
                 </div>
             </div>
@@ -76,24 +76,24 @@
         let CONFIG = { host: '', user: '', pass: '' };
         let DATA = { cats: [], chns: [] };
         let state = { screen: 'login', zone: 1, sIdx: 0, lIdx: 0, mode: 'cat', fs: false };
-        let currentCh = null;
+        let currentChUrl = "";
         let watchdog = null;
 
-        // --- RELÓGIO AJUSTADO (+2H PARA MARCAR 6 AM) ---
+        // --- RELÓGIO AJUSTADO (+1H ADICIONAL) ---
         function runClock() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            // Ajustado para UTC-3 (Horário de Brasília correto)
-            const br = new Date(utc + (3600000 * -3)); 
+            // Ajustado para UTC-2 para ganhar 1 hora em relação à versão anterior
+            const br = new Date(utc + (3600000 * -2)); 
             document.getElementById('clock').innerText = br.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         }
         setInterval(runClock, 1000); runClock();
 
         function init() {
-            if(localStorage.getItem('sg83_h')) {
-                document.getElementById('host').value = localStorage.getItem('sg83_h');
-                document.getElementById('user').value = localStorage.getItem('sg83_u');
-                document.getElementById('pass').value = localStorage.getItem('sg83_p');
+            if(localStorage.getItem('sg84_h')) {
+                document.getElementById('host').value = localStorage.getItem('sg84_h');
+                document.getElementById('user').value = localStorage.getItem('sg84_u');
+                document.getElementById('pass').value = localStorage.getItem('sg84_p');
             }
             document.getElementById('host').focus();
         }
@@ -107,7 +107,7 @@
                 let res = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                 let data = await res.json();
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('sg83_h', h); localStorage.setItem('sg83_u', u); localStorage.setItem('sg83_p', p);
+                    localStorage.setItem('sg84_h', h); localStorage.setItem('sg84_u', u); localStorage.setItem('sg84_p', p);
                     CONFIG = { host: h, user: u, pass: p };
                     state.screen = 'app';
                     document.getElementById('loginScreen').style.display = 'none';
@@ -140,37 +140,44 @@
                 div.className = 'list-item';
                 div.id = 'item_' + i;
                 if(i === state.lIdx && state.zone === 1) div.classList.add('focused');
-                if(state.mode === 'chn' && currentCh === item.stream_id) div.classList.add('active');
+                if(state.mode === 'chn' && currentChUrl.includes(item.stream_id)) div.classList.add('active');
                 div.innerText = state.mode === 'cat' ? item.category_name : item.name;
                 container.appendChild(div);
                 if(i === state.lIdx && state.zone === 1) div.scrollIntoView({block: 'center'});
             });
         }
 
-        // --- MOTOR ANTI-CONGELAMENTO ---
+        // --- MOTOR ULTRA ESTÁVEL (STABILITY FIX) ---
         function play(ch) {
             const video = document.getElementById('player'); 
-            currentCh = ch.stream_id;
-            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
+            currentChUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
+            
+            if(watchdog) clearInterval(watchdog);
             
             video.pause();
-            video.src = streamUrl;
+            video.src = currentChUrl;
             video.load();
-            video.play();
+            video.play().catch(()=>{});
 
-            // Watchdog: Se o vídeo parar por 4 segundos, reinicia o fluxo
-            if(watchdog) clearInterval(watchdog);
-            let lastTime = 0;
+            // Tolerância de 8 segundos para evitar pisca-pisca
+            let lastPos = 0;
+            let stallCount = 0;
             watchdog = setInterval(() => {
                 if(!video.paused) {
-                    if(video.currentTime === lastTime) {
-                        video.src = streamUrl; // Força recarregamento do buffer
-                        video.load();
-                        video.play();
+                    if(video.currentTime === lastPos) {
+                        stallCount++;
+                        if(stallCount >= 8) { // Só reinicia se travar por 8 segundos reais
+                            video.src = currentChUrl;
+                            video.load();
+                            video.play().catch(()=>{});
+                            stallCount = 0;
+                        }
+                    } else {
+                        stallCount = 0;
+                        lastPos = video.currentTime;
                     }
-                    lastTime = video.currentTime;
                 }
-            }, 4000);
+            }, 1000);
         }
 
         document.addEventListener('keydown', (e) => {
@@ -192,7 +199,7 @@
                 if(k===13) {
                     let item = list[state.lIdx];
                     if(state.mode === 'cat') loadChns(item.category_id);
-                    else { if(currentCh === item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } else play(item); }
+                    else { if(currentChUrl.includes(item.stream_id)) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } else play(item); }
                 }
                 if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } }
             }
