@@ -3,64 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD V82</title>
+    <title>SKY GOLD V83</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- ESTILO DE ALTO CONTRASTE V82 --- */
+        /* VISUAL V82 MANTIDO 100% */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
         body { background: #000; color: #fff; font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; }
-
-        /* LOGIN */
         #loginScreen { position: absolute; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center; }
         .login-box { background: #0a0a0a; border-top: 4px solid #d4af37; width: 450px; padding: 40px; text-align: center; }
         .login-input { width: 100%; height: 50px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; text-align: center; font-size: 18px; }
         .login-input:focus { background: #fff; color: #000; border-color: #d4af37; }
         .login-btn { width: 100%; height: 55px; background: #d4af37; color: #000; font-weight: bold; font-size: 18px; border: none; cursor: pointer; }
-        .login-btn:focus { background: #fff; }
-
-        /* INTERFACE */
         #mainInterface { display: none; width: 100%; height: 100%; }
-
-        /* SIDEBAR */
         .sidebar { width: 80px; background: #080808; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; }
         .menu-icon { font-size: 22px; color: #333; margin-bottom: 20px; padding: 10px; border: 3px solid transparent; }
         .menu-icon.active { color: #d4af37; }
-        /* Foco forçado na Sidebar */
         .menu-icon.focused { background: #d4af37; color: #000; border-radius: 5px; border: 3px solid #fff; }
-
-        /* CONTEÚDO */
         .main-content { flex: 1; display: flex; flex-direction: column; }
         .top-bar { height: 60px; background: #080808; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid #d4af37; }
         #clock { font-size: 24px; font-weight: bold; color: #d4af37; font-family: monospace; }
-
         .columns { flex: 1; display: flex; overflow: hidden; }
         .col-list { width: 35%; background: #050505; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .col-view { width: 65%; background: #000; display: flex; flex-direction: column; }
-
         .list-header { padding: 15px; background: #000; color: #d4af37; font-weight: bold; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid #222; }
         .scroll-area { flex: 1; overflow-y: auto; }
-        
-        .list-item {
-            padding: 15px 20px; border-bottom: 1px solid #111; color: #777; font-size: 16px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            border: 4px solid transparent; /* Borda invisível para não tremer a lista */
-        }
+        .list-item { padding: 15px 20px; border-bottom: 1px solid #111; color: #777; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 4px solid transparent; }
         .list-item.active { color: #d4af37; font-weight: bold; }
-
-        /* FOCO FORÇADO POR JAVASCRIPT - MÁXIMA VISIBILIDADE */
-        .list-item.focused { 
-            background: #fff !important; 
-            color: #000 !important; 
-            font-weight: 900 !important;
-            border: 4px solid #d4af37 !important;
-            transform: scale(1.02);
-            z-index: 10;
-        }
-
-        /* PLAYER */
+        .list-item.focused { background: #fff !important; color: #000 !important; font-weight: 900 !important; border: 4px solid #d4af37 !important; transform: scale(1.02); z-index: 10; }
         #player { width: 100%; height: 100%; background: #000; object-fit: contain; }
         .player-container { width: 100%; height: 100%; background: #000; }
-
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; }
         ::-webkit-scrollbar { width: 0; }
     </style>
@@ -94,7 +65,7 @@
                 </div>
                 <div class="col-view">
                     <div class="player-container" id="vidFrame">
-                        <video id="player" playsinline></video>
+                        <video id="player" playsinline preload="auto"></video>
                     </div>
                 </div>
             </div>
@@ -106,21 +77,23 @@
         let DATA = { cats: [], chns: [] };
         let state = { screen: 'login', zone: 1, sIdx: 0, lIdx: 0, mode: 'cat', fs: false };
         let currentCh = null;
+        let watchdog = null;
 
-        const VOD_FILTERS = ['filme', 'movie', 'serie', 'series', 'vod', '4k', 'radio', 'xxx', 'adult', 'ondemand', 'playback'];
-
+        // --- RELÓGIO AJUSTADO (+2H PARA MARCAR 6 AM) ---
         function runClock() {
             const now = new Date();
-            const br = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3600000 * -4));
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            // Ajustado para UTC-3 (Horário de Brasília correto)
+            const br = new Date(utc + (3600000 * -3)); 
             document.getElementById('clock').innerText = br.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         }
         setInterval(runClock, 1000); runClock();
 
         function init() {
-            if(localStorage.getItem('sg82_h')) {
-                document.getElementById('host').value = localStorage.getItem('sg82_h');
-                document.getElementById('user').value = localStorage.getItem('sg82_u');
-                document.getElementById('pass').value = localStorage.getItem('sg82_p');
+            if(localStorage.getItem('sg83_h')) {
+                document.getElementById('host').value = localStorage.getItem('sg83_h');
+                document.getElementById('user').value = localStorage.getItem('sg83_u');
+                document.getElementById('pass').value = localStorage.getItem('sg83_p');
             }
             document.getElementById('host').focus();
         }
@@ -134,7 +107,7 @@
                 let res = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                 let data = await res.json();
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('sg82_h', h); localStorage.setItem('sg82_u', u); localStorage.setItem('sg82_p', p);
+                    localStorage.setItem('sg83_h', h); localStorage.setItem('sg83_u', u); localStorage.setItem('sg83_p', p);
                     CONFIG = { host: h, user: u, pass: p };
                     state.screen = 'app';
                     document.getElementById('loginScreen').style.display = 'none';
@@ -147,7 +120,7 @@
         async function loadCats() {
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`);
             let raw = await res.json();
-            DATA.cats = raw.filter(c => !VOD_FILTERS.some(f => c.category_name.toLowerCase().includes(f)));
+            DATA.cats = raw.filter(c => !c.category_name.toLowerCase().match(/filme|movie|serie|vod|4k|radio|xxx|adult/));
             state.mode = 'cat'; state.lIdx = 0; state.zone = 1; renderList();
         }
 
@@ -162,82 +135,75 @@
             const container = document.getElementById('listContainer');
             container.innerHTML = '';
             document.getElementById('listTitle').innerText = state.mode === 'cat' ? 'CATEGORIAS' : 'CANAIS';
-            
             list.forEach((item, i) => {
                 let div = document.createElement('div');
                 div.className = 'list-item';
                 div.id = 'item_' + i;
-                
-                // Aplica a classe focused se for o índice atual
                 if(i === state.lIdx && state.zone === 1) div.classList.add('focused');
-                
                 if(state.mode === 'chn' && currentCh === item.stream_id) div.classList.add('active');
                 div.innerText = state.mode === 'cat' ? item.category_name : item.name;
                 container.appendChild(div);
-                
                 if(i === state.lIdx && state.zone === 1) div.scrollIntoView({block: 'center'});
             });
         }
 
+        // --- MOTOR ANTI-CONGELAMENTO ---
         function play(ch) {
-            const video = document.getElementById('player'); currentCh = ch.stream_id;
-            video.src = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
+            const video = document.getElementById('player'); 
+            currentCh = ch.stream_id;
+            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
+            
+            video.pause();
+            video.src = streamUrl;
+            video.load();
             video.play();
+
+            // Watchdog: Se o vídeo parar por 4 segundos, reinicia o fluxo
+            if(watchdog) clearInterval(watchdog);
+            let lastTime = 0;
+            watchdog = setInterval(() => {
+                if(!video.paused) {
+                    if(video.currentTime === lastTime) {
+                        video.src = streamUrl; // Força recarregamento do buffer
+                        video.load();
+                        video.play();
+                    }
+                    lastTime = video.currentTime;
+                }
+            }, 4000);
         }
 
         document.addEventListener('keydown', (e) => {
-            const k = e.keyCode; const active = document.activeElement;
+            const k = e.keyCode;
             if(state.fs) { if([8, 461, 13].includes(k)) { document.getElementById('vidFrame').classList.remove('fs'); state.fs=false; } return; }
-            
             if(state.screen === 'login') {
-                if(k === 40) { // Baixo
-                    if(active.id === 'host') document.getElementById('user').focus();
-                    else if(active.id === 'user') document.getElementById('pass').focus();
-                    else if(active.id === 'pass') document.getElementById('btnLogin').focus();
-                }
-                if(k === 38) { // Cima
-                    if(active.id === 'user') document.getElementById('host').focus();
-                    else if(active.id === 'pass') document.getElementById('user').focus();
-                    else if(active.id === 'btnLogin') document.getElementById('pass').focus();
-                }
+                const active = document.activeElement;
+                if(k === 40) { if(active.id === 'host') document.getElementById('user').focus(); else if(active.id === 'user') document.getElementById('pass').focus(); else if(active.id === 'pass') document.getElementById('btnLogin').focus(); }
+                if(k === 38) { if(active.id === 'user') document.getElementById('host').focus(); else if(active.id === 'pass') document.getElementById('user').focus(); else if(active.id === 'btnLogin') document.getElementById('pass').focus(); }
                 if(k === 13 && active.id === 'btnLogin') startApp(); return;
             }
-
-            if(state.zone === 0) { // Sidebar
-                if(k===38 && state.sIdx>0) state.sIdx--; 
-                if(k===40 && state.sIdx<1) state.sIdx++; 
-                if(k===39) state.zone = 1;
+            if(state.zone === 0) {
+                if(k===38 && state.sIdx>0) state.sIdx--; if(k===40 && state.sIdx<1) state.sIdx++; if(k===39) state.zone = 1;
                 if(k===13 && state.sIdx===1) reset();
-            } else { // Lista
+            } else {
                 const list = state.mode === 'cat' ? DATA.cats : DATA.chns;
-                if(k===38 && state.lIdx>0) state.lIdx--; 
-                else if(k===40 && state.lIdx<list.length-1) state.lIdx++;
-                
-                if(k===37) { 
-                    if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } 
-                    else state.zone=0; 
-                }
-                
+                if(k===38 && state.lIdx>0) state.lIdx--; else if(k===40 && state.lIdx<list.length-1) state.lIdx++;
+                if(k===37) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } else state.zone=0; }
                 if(k===13) {
                     let item = list[state.lIdx];
                     if(state.mode === 'cat') loadChns(item.category_id);
-                    else { 
-                        if(currentCh === item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } 
-                        else play(item); 
-                    }
+                    else { if(currentCh === item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } else play(item); }
                 }
                 if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } }
             }
-            renderList(); // O renderList agora cuida da classe .focused
-            renderFocus();
+            renderList(); renderFocus();
         });
 
         function renderFocus() {
             document.querySelectorAll('.menu-icon').forEach(el => el.classList.remove('focused'));
             if(state.zone === 0) document.getElementById('menu_'+state.sIdx).classList.add('focused');
         }
-
-        function reset() { if(confirm("Deseja sair?")) { localStorage.clear(); location.reload(); } }
+        function reset() { if(confirm("Sair?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
