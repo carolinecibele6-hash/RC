@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY GOLD V71</title>
+    <title>IPTV SKY GOLD V72</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA SKY GOLD V71 (FOCUS FIX) --- */
+        /* --- TEMA SKY GOLD V72 (FORCE KEYBOARD) --- */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
         body {
             background-color: #000;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
             height: 100vh; overflow: hidden; display: flex;
-            cursor: default; /* Mouse visível */
         }
 
         /* 1. LOGIN */
@@ -26,34 +25,38 @@
         }
         .login-box {
             background: #0a0a0a; 
-            border-left: 6px solid #d4af37;
+            border-left: 8px solid #d4af37;
             width: 500px; padding: 50px; text-align: center;
-            box-shadow: 0 0 80px rgba(212, 175, 55, 0.15); border-radius: 12px;
+            box-shadow: 0 0 100px rgba(212, 175, 55, 0.2); border-radius: 12px;
         }
-        .logo-text { font-size: 30px; font-weight: 900; margin-bottom: 30px; }
-        .logo-text span { color: #d4af37; font-size: 40px; display: block; }
+        .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 30px; }
+        .logo-text span { color: #d4af37; font-size: 42px; display: block; }
 
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .label { font-size: 12px; color: #888; font-weight: bold; margin-bottom: 5px; margin-left: 5px; }
+        .input-wrapper { margin-bottom: 20px; text-align: left; }
+        .label { font-size: 14px; color: #888; font-weight: bold; margin-bottom: 5px; margin-left: 5px; }
 
+        /* INPUTS */
         .login-input {
-            width: 100%; padding: 15px; background: #1a1a1a;
-            border: 2px solid #333; color: #fff; font-size: 18px; 
-            font-weight: bold; border-radius: 6px; text-align: center;
-            transition: 0.2s;
+            width: 100%; padding: 18px; background: #1a1a1a;
+            border: 2px solid #333; color: #aaa; font-size: 18px; 
+            font-weight: bold; border-radius: 8px; text-align: center;
+            transition: 0.1s;
         }
-        /* VISUAL DE FOCO MUITO FORTE */
-        .login-input:focus, .login-input.focused { 
-            border-color: #d4af37; background: #fff; color: #000;
-            box-shadow: 0 0 20px rgba(212,175,55,0.8); transform: scale(1.02);
+        
+        /* ESTADO SELECIONADO (SIMULADO PELO JS) */
+        .login-input.active-field { 
+            background: #fff !important; color: #000 !important; 
+            border-color: #d4af37 !important; transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.7);
         }
         
         .login-btn {
-            width: 100%; padding: 15px; background: #d4af37; color: #000; border: none;
-            font-weight: 900; font-size: 18px; margin-top: 20px; border-radius: 6px; cursor: pointer;
+            width: 100%; padding: 18px; background: #333; color: #888; border: none;
+            font-weight: 900; font-size: 20px; margin-top: 20px; border-radius: 8px; cursor: pointer;
         }
-        .login-btn:hover, .login-btn:focus { 
-            background: #fff; transform: scale(1.05); box-shadow: 0 0 20px #fff;
+        .login-btn.active-field { 
+            background: #d4af37 !important; color: #000 !important; 
+            transform: scale(1.05); box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
         }
 
         /* 2. APP */
@@ -62,49 +65,49 @@
         /* SIDEBAR */
         .sidebar {
             width: 90px; background: #080808; display: flex; flex-direction: column; align-items: center;
-            padding-top: 30px; border-right: 1px solid #222; z-index: 20;
+            padding-top: 40px; border-right: 1px solid #222; z-index: 20;
         }
         .menu-icon {
             width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: #555; margin-bottom: 15px; border-radius: 12px; cursor: pointer;
+            font-size: 26px; color: #444; margin-bottom: 15px; border-radius: 12px;
         }
         .menu-icon.active { color: #d4af37; border-right: 4px solid #d4af37; }
-        .menu-icon.focused, .menu-icon:hover { 
-            background: #d4af37; color: #000; transform: scale(1.1); font-weight: bold;
+        .menu-icon.focused { 
+            background: #d4af37; color: #000; transform: scale(1.15); font-weight: bold;
         }
 
         /* CONTEÚDO */
         .main-content { flex: 1; display: flex; flex-direction: column; background: #000; }
 
         .top-bar {
-            height: 70px; background: #080808; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 40px; border-bottom: 2px solid #d4af37;
+            height: 80px; background: #080808; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 50px; border-bottom: 2px solid #d4af37;
         }
-        .app-title { font-size: 24px; font-weight: 900; }
+        .app-title { font-size: 26px; font-weight: 900; }
         .app-title span { color: #d4af37; }
-        #clock { font-size: 26px; font-weight: bold; color: #d4af37; font-family: monospace; }
+        #clock { font-size: 28px; font-weight: bold; color: #d4af37; font-family: monospace; }
 
         .columns { flex: 1; display: flex; overflow: hidden; }
 
-        .col-list { width: 35%; background: #0b0b0b; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .col-view { width: 65%; background: #000; position: relative; display: flex; flex-direction: column; }
+        .col-list { width: 32%; background: #0b0b0b; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .col-view { width: 68%; background: #000; position: relative; display: flex; flex-direction: column; }
 
         .list-header { 
-            padding: 18px; background: #111; font-weight: bold; color: #d4af37; 
-            font-size: 14px; border-bottom: 1px solid #222;
+            padding: 20px; background: #111; font-weight: bold; color: #d4af37; 
+            font-size: 16px; border-bottom: 1px solid #222;
         }
         .scroll-area { flex: 1; overflow-y: auto; }
         
         .list-item {
-            padding: 14px 20px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 15px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+            padding: 16px 25px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 16px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .list-item.active { background: #1a1500; color: #fff; border-left: 4px solid #d4af37; }
-        .list-item.focused, .list-item:hover { 
-            background: #d4af37; color: #000; font-weight: bold; z-index: 5;
+        .list-item.focused { 
+            background: #d4af37; color: #000; font-weight: bold; transform: scale(1.02); z-index: 5;
         }
 
-        .pagination { padding: 10px; text-align: center; background: #080808; color: #555; font-size: 12px; }
+        .pagination { padding: 12px; text-align: center; background: #080808; color: #666; font-size: 13px; }
 
         /* PLAYER */
         .player-frame {
@@ -115,24 +118,21 @@
         video { width: 100%; height: 100%; object-fit: contain; }
 
         .info-panel { padding: 30px; flex: 1; background: #050505; display: flex; flex-direction: column; justify-content: space-between; }
-        .chn-big-title { font-size: 32px; color: #fff; font-weight: bold; }
+        .chn-big-title { font-size: 34px; color: #fff; font-weight: bold; }
         
         .account-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
             background: #111; padding: 15px; border-radius: 8px; border: 1px solid #222;
         }
         .acc-row { font-size: 14px; color: #777; font-family: monospace; }
-        .acc-row span { color: #d4af37; font-weight: bold; float: right; }
+        .acc-row span { color: #d4af37; font-weight: bold; font-size: 15px; float: right;}
 
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:99999; background:#000; border: none !important; }
         .fs video { object-fit: fill; border: none !important; }
         
-        :focus { outline: none !important; }
-
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+        ::-webkit-scrollbar-thumb { background: #333; }
 
     </style>
 </head>
@@ -142,28 +142,31 @@
         <div class="login-box">
             <div class="logo-text">IPTV <br><span>SKY GOLD</span></div>
             
-            <div class="input-group">
-                <div class="label">SERVIDOR DNS</div>
-                <input type="text" id="host" class="login-input" placeholder="http://url..." tabindex="1">
-            </div>
-            <div class="input-group">
+            <div class="input-wrapper">
+                <div class="label">SERVIDOR DNS (http://...)</div>
+                <input type="text" id="host" class="login-input active-field" placeholder="http://url..." readonly> 
+                </div>
+            
+            <div class="input-wrapper">
                 <div class="label">USUÁRIO</div>
-                <input type="text" id="user" class="login-input" placeholder="Usuário" tabindex="2">
+                <input type="text" id="user" class="login-input" placeholder="Usuário" readonly>
             </div>
-            <div class="input-group">
+            
+            <div class="input-wrapper">
                 <div class="label">SENHA</div>
-                <input type="password" id="pass" class="login-input" placeholder="Senha" tabindex="3">
+                <input type="password" id="pass" class="login-input" placeholder="Senha" readonly>
             </div>
 
-            <button class="login-btn" id="btnConnect" onclick="startApp()" tabindex="4">ENTRAR</button>
-            <div id="loginStatus" style="margin-top:20px; color:#d4af37; font-size:14px; font-weight:bold;"></div>
+            <button id="btnEnter" class="login-btn">ENTRAR NO SISTEMA</button>
+            
+            <div id="loginStatus" style="margin-top:20px; color:#d4af37; font-size:16px; font-weight:bold;"></div>
         </div>
     </div>
 
     <div id="mainInterface">
         <div class="sidebar">
-            <div class="menu-icon active" id="menu_0" onclick="changeZone(0); state.sidebarIdx=0; renderFocus();"><i class="fas fa-tv"></i></div>
-            <div class="menu-icon" id="menu_1" onclick="reset()"><i class="fas fa-sign-out-alt"></i></div>
+            <div class="menu-icon active" id="menu_0"><i class="fas fa-tv"></i></div>
+            <div class="menu-icon" id="menu_1"><i class="fas fa-sign-out-alt"></i></div>
         </div>
 
         <div class="main-content">
@@ -206,6 +209,8 @@
         
         let state = {
             screen: 'login',
+            loginIdx: 0, // Índice manual do login (0=Host, 1=User, 2=Pass, 3=Btn)
+            
             zone: 1, 
             sidebarIdx: 0,
             listIdx: 0,
@@ -218,11 +223,11 @@
         let currentPlayingChannel = null;
         const PAGE_SIZE = 50;
 
-        // --- RELÓGIO (UTC-4) ---
+        // --- RELÓGIO ---
         function runClock() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const time = new Date(utc + (3600000 * -4));
+            const time = new Date(utc + (3600000 * -4)); // UTC-4
             const h = String(time.getHours()).padStart(2, '0');
             const m = String(time.getMinutes()).padStart(2, '0');
             document.getElementById('clock').innerText = `${h}:${m}`;
@@ -230,47 +235,34 @@
         setInterval(runClock, 1000);
         runClock();
 
-        // --- INICIALIZAÇÃO E AUTO-FOCO ---
+        // --- INICIALIZAÇÃO ---
         window.onload = () => {
-            // Recupera dados
-            if(localStorage.getItem('v71_host')) {
-                document.getElementById('host').value = localStorage.getItem('v71_host');
-                document.getElementById('user').value = localStorage.getItem('v71_user');
-                document.getElementById('pass').value = localStorage.getItem('v71_pass');
+            if(localStorage.getItem('v72_host')) {
+                document.getElementById('host').value = localStorage.getItem('v72_host');
+                document.getElementById('user').value = localStorage.getItem('v72_user');
+                document.getElementById('pass').value = localStorage.getItem('v72_pass');
             }
-            // FORÇA O FOCO NA PRIMEIRA CAIXA
-            setTimeout(forceLoginFocus, 300);
+            updateLoginVisual(); // Força o visual no primeiro campo
         };
 
-        function forceLoginFocus() {
-            if(state.screen === 'login') {
-                const el = document.getElementById('host');
-                if(el) {
-                    el.focus();
-                    el.select(); // Seleciona o texto pra facilitar reescrita
-                }
+        // --- LÓGICA MANUAL DE LOGIN ---
+        function updateLoginVisual() {
+            const ids = ['host', 'user', 'pass', 'btnEnter'];
+            // Limpa todos
+            ids.forEach(id => document.getElementById(id).classList.remove('active-field'));
+            // Ativa o atual
+            const current = document.getElementById(ids[state.loginIdx]);
+            current.classList.add('active-field');
+            
+            // Foca o elemento real, mas remove readonly temporariamente para permitir escrita se for input
+            if(state.loginIdx < 3) {
+                current.removeAttribute('readonly');
+                current.focus();
+            } else {
+                current.focus();
             }
         }
 
-        // Se clicar em qualquer lugar da tela de login (ok do controle), foca no input
-        document.getElementById('loginScreen').addEventListener('click', (e) => {
-            if(e.target.id === 'loginScreen' || e.target.classList.contains('login-box')) {
-                forceLoginFocus();
-            }
-        });
-
-        // Captura primeira tecla para garantir foco
-        document.addEventListener('keydown', (e) => {
-            if(state.screen === 'login') {
-                const active = document.activeElement;
-                // Se o foco estiver no "limbo" (body), joga pro input
-                if (!active || active === document.body) {
-                    forceLoginFocus();
-                }
-            }
-        });
-
-        // --- LÓGICA DO SISTEMA ---
         async function startApp() {
             let h = document.getElementById('host').value.trim();
             let u = document.getElementById('user').value.trim();
@@ -288,15 +280,12 @@
                 let data = await res.json();
 
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('v71_host', h);
-                    localStorage.setItem('v71_user', u);
-                    localStorage.setItem('v71_pass', p);
+                    localStorage.setItem('v72_host', h);
+                    localStorage.setItem('v72_user', u);
+                    localStorage.setItem('v72_pass', p);
                     
-                    const d1 = new Date(parseInt(data.user_info.exp_date)*1000);
-                    const d2 = new Date(parseInt(data.user_info.created_at)*1000);
-                    
-                    document.getElementById('valExp').innerText = d1.toLocaleDateString('pt-BR');
-                    document.getElementById('valCre').innerText = d2.toLocaleDateString('pt-BR');
+                    document.getElementById('valExp').innerText = new Date(parseInt(data.user_info.exp_date)*1000).toLocaleDateString('pt-BR');
+                    document.getElementById('valCre').innerText = new Date(parseInt(data.user_info.created_at)*1000).toLocaleDateString('pt-BR');
                     document.getElementById('valMax').innerText = data.user_info.max_connections;
                     document.getElementById('valStat').innerText = data.user_info.status.toUpperCase();
 
@@ -326,8 +315,7 @@
                 let raw = await res.json();
                 DATA.categories = raw.filter(c => !c.category_name.toLowerCase().match(/filme|movie|serie|vod|4k|radio|adult/));
                 state.mode = 'cat'; state.page = 0; state.listIdx = 0; state.zone = 1;
-                renderList();
-                renderFocus();
+                renderList(); renderFocus();
             } catch(e) {}
         }
 
@@ -338,9 +326,8 @@
                 let res = await fetch(url);
                 DATA.channels = await res.json();
                 state.mode = 'chn'; state.catId = catId; state.page = 0; state.listIdx = 0; state.zone = 1;
-                renderList();
-                renderFocus();
-            } catch(e) { document.getElementById('listContainer').innerText = "Erro lista."; }
+                renderList(); renderFocus();
+            } catch(e) { document.getElementById('listContainer').innerText = "Erro."; }
         }
 
         function renderList() {
@@ -362,7 +349,7 @@
                 }
                 let name = state.mode === 'cat' ? item.category_name : item.name;
                 div.innerText = name;
-                div.onclick = () => {
+                div.onclick = () => { // Mouse support
                     state.listIdx = i; state.zone = 1; executeItemAction(item); renderFocus();
                 };
                 container.appendChild(div);
@@ -405,32 +392,40 @@
                 return;
             }
 
+            // --- LÓGICA DE LOGIN MANUAL ---
             if(state.screen === 'login') {
-                // Navegação vertical simples nos inputs
-                const inputs = ['host', 'user', 'pass', 'btnConnect'];
-                const activeId = document.activeElement.id;
-                let idx = inputs.indexOf(activeId);
-
+                const ids = ['host', 'user', 'pass', 'btnEnter'];
+                
                 if(k === 40) { // Baixo
-                    if(idx < 3) document.getElementById(inputs[idx+1]).focus();
+                    if(state.loginIdx < 3) state.loginIdx++;
+                    updateLoginVisual();
                 }
                 if(k === 38) { // Cima
-                    if(idx > 0) document.getElementById(inputs[idx-1]).focus();
+                    if(state.loginIdx > 0) state.loginIdx--;
+                    updateLoginVisual();
                 }
-                if(k === 13) {
-                    if(activeId === 'btnConnect') startApp();
+                if(k === 13) { // Enter
+                    if(state.loginIdx === 3) {
+                        startApp(); // Botão Entrar
+                    } else {
+                        // FORCE FOCUS NA CAIXA DE TEXTO
+                        const el = document.getElementById(ids[state.loginIdx]);
+                        el.focus();
+                        el.click(); // Força abertura do teclado em WebOS
+                    }
                 }
                 return;
             }
 
+            // APP
             if(state.screen === 'app') {
-                if(state.zone === 0) { // MENU
+                if(state.zone === 0) { // Sidebar
                     if(k === 38) { if(state.sidebarIdx > 0) state.sidebarIdx--; }
                     if(k === 40) { if(state.sidebarIdx < 1) state.sidebarIdx++; }
                     if(k === 39) { state.zone = 1; }
                     if(k === 13) { if(state.sidebarIdx === 1) reset(); }
                 }
-                else if(state.zone === 1) { // LISTA
+                else if(state.zone === 1) { // Lista
                     const list = state.mode === 'cat' ? DATA.categories : DATA.channels;
                     const maxOnPage = Math.min(PAGE_SIZE, list.length - (state.page * PAGE_SIZE)) - 1;
 
@@ -483,8 +478,6 @@
                 state.fullscreen = false;
             }
         }
-
-        function changeZone(z) { state.zone = z; }
 
     </script>
 </body>
