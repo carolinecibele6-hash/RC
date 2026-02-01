@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY BOX V59</title>
+    <title>IPTV SKY BOX V60</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA DARK / RED (SKY BOX FINAL) --- */
+        /* --- TEMA SKY BOX (DARK/RED) --- */
         * { box-sizing: border-box; outline: none; user-select: none; margin: 0; padding: 0; }
         body {
-            background-color: #080808;
-            color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #050505;
+            color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* 1. LOGIN */
+        /* 1. LOGIN (REVERTIDO PARA O MODELO V58 - ESTÁVEL) */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #000 0%, #150000 100%);
+            background: linear-gradient(135deg, #000 0%, #1a0000 100%);
             z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: #111; border-top: 5px solid #e50914;
+            background: #111; border-top: 5px solid #e50914; /* Vermelho Sky */
             width: 450px; padding: 50px; text-align: center; border-radius: 8px;
             box-shadow: 0 0 80px rgba(229, 9, 20, 0.15);
         }
@@ -36,54 +36,53 @@
         .logo-text span { color: #e50914; font-size: 40px; display: block; margin-top: 5px; }
 
         .login-input {
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #000;
-            border: 1px solid #333; color: #fff; font-size: 16px; text-align: center;
+            width: 100%; padding: 15px; margin-bottom: 15px; 
+            background: #222; /* Fundo mais claro para ver onde clica */
+            border: 1px solid #444; color: #fff; font-size: 16px; text-align: center;
             font-weight: bold; border-radius: 4px;
         }
-        .login-input.focused { border-color: #e50914; background: #1a1a1a; transform: scale(1.02); }
+        .login-input:focus { border-color: #e50914; background: #333; }
+        
         .login-btn {
             width: 100%; padding: 15px; background: #e50914; color: #fff; border: none;
             font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; border-radius: 4px;
         }
-        .login-btn.focused { background: #ff1f2f; transform: scale(1.05); color: #fff; }
+        .login-btn:hover, .login-btn.focused { background: #ff1f2f; transform: scale(1.02); }
 
-        /* 2. INTERFACE */
+        /* 2. INTERFACE PRINCIPAL */
         #mainInterface { display: none; height: 100%; flex-direction: column; }
 
         .top-nav {
-            height: 70px; background: #0a0a0a; display: flex; align-items: center; padding: 0 40px;
+            height: 75px; background: #080808; display: flex; align-items: center; padding: 0 40px;
             border-bottom: 3px solid #e50914; justify-content: space-between;
         }
-        .top-logo { font-size: 24px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
+        .top-logo { font-size: 24px; font-weight: 900; color: #fff; text-transform: uppercase; }
         .top-logo span { color: #e50914; }
         
         .account-info { display: flex; gap: 25px; font-size: 13px; color: #999; font-family: monospace; }
         .acc-item b { color: #e50914; }
 
-        /* RELÓGIO CORRIGIDO */
         .top-right { display: flex; align-items: center; }
         #clock { 
             color: #e50914; font-weight: bold; font-size: 24px; 
-            margin-right: 80px; /* BEM AFASTADO DO BOTÃO */
-            font-family: monospace; letter-spacing: 2px;
+            margin-right: 80px; font-family: monospace; letter-spacing: 2px;
         }
         
         .btn-change { 
             background: #151515; padding: 10px 25px; border: 1px solid #333; color: #aaa; 
-            cursor: pointer; font-weight: bold; font-size: 13px; border-radius: 4px; transition: 0.2s;
+            cursor: pointer; font-weight: bold; font-size: 13px; border-radius: 4px;
         }
-        .btn-change.focused { background: #e50914; color: #fff; border-color: #fff; transform: scale(1.1); }
+        .btn-change.focused { background: #e50914; color: #fff; border-color: #fff; }
 
         .content-area { flex: 1; display: flex; overflow: hidden; }
 
-        /* COLUNAS */
         .col-cat { width: 25%; background: #050505; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .col-chn { width: 30%; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .col-player { width: 45%; background: #000; display: flex; flex-direction: column; }
 
         .list-header { 
             padding: 15px; font-size: 14px; font-weight: bold; color: #e50914; 
-            background: #020202; border-bottom: 1px solid #222; text-transform: uppercase; letter-spacing: 1px;
+            background: #020202; border-bottom: 1px solid #222; text-transform: uppercase;
         }
         .scroll-list { flex: 1; overflow-y: auto; }
 
@@ -137,10 +136,10 @@
     <div id="loginScreen">
         <div class="login-box">
             <div class="logo-text">IPTV <br><span>SKY BOX</span></div>
-            <input type="text" id="host" class="login-input" placeholder="http://url-do-servidor">
+            <input type="text" id="host" class="login-input" placeholder="http://url-do-servidor:porta">
             <input type="text" id="user" class="login-input" placeholder="Usuário">
             <input type="password" id="pass" class="login-input" placeholder="Senha">
-            <button class="login-btn" onclick="iniciarConexao()">ACESSAR SISTEMA</button>
+            <button class="login-btn" onclick="iniciarConexao()">CONECTAR</button>
             <div id="loginMsg" style="margin-top:15px; color:#e50914; font-size:13px; font-weight:bold;"></div>
         </div>
     </div>
@@ -185,9 +184,9 @@
                     </div>
 
                     <div style="font-size:14px; color:#666; line-height:1.6;">
-                        • 1x OK: Iniciar | 2x OK: Tela Cheia<br>
-                        • V59: Correção de Reprodução e Relógio<br>
-                        • Filtro VOD Ativo
+                        • Sistema Auto-Repair Ativo (V60)<br>
+                        • Filtro de Filmes/Séries Ativo<br>
+                        • Relógio Sincronizado (Brasília)
                     </div>
                 </div>
             </div>
@@ -204,43 +203,34 @@
         let colIndex = 0; 
         let catIndex = 0, chnIndex = 0;
         let categories = [], channels = [];
-        
-        // Controle de Duplo Clique
-        let lastOkTime = 0;
+        let lastOkTime = 0; // Para duplo clique
 
-        // --- FILTROS (VOD KILLER - Baseado no seu script) ---
+        // --- FILTROS (DO SEU SCRIPT) ---
         const VOD_TRIGGERS = [
             'filme', 'movie', 'serie', 'series', 'vod', 'box', 
             'playback', 'radio', 'adult', 'xxx', '+18', '4k',
             'ondemand', 'show', 'desenho', 'animes'
         ];
 
-        // --- RELÓGIO MATEMÁTICO (UTC-3 BRASÍLIA) ---
+        // --- RELÓGIO (CORRIGIDO) ---
         function updateClock() {
             const now = new Date();
-            // Converte hora local para UTC
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            // Adiciona -3 horas (Brasília) fixo
             const brTime = new Date(utc + (3600000 * -3));
-            
             const h = String(brTime.getHours()).padStart(2, '0');
             const m = String(brTime.getMinutes()).padStart(2, '0');
-            
             const el = document.getElementById('clock');
             if(el) el.innerText = `${h}:${m}`;
         }
-        
-        // Inicia relógio imediatamente
         setInterval(updateClock, 1000);
-        updateClock();
 
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
             updateClock();
             try {
-                const savedHost = localStorage.getItem('v59_host');
-                const savedUser = localStorage.getItem('v59_user');
-                const savedPass = localStorage.getItem('v59_pass');
+                const savedHost = localStorage.getItem('v60_host');
+                const savedUser = localStorage.getItem('v60_user');
+                const savedPass = localStorage.getItem('v60_pass');
 
                 if(savedHost && savedUser && savedPass) {
                     document.getElementById('host').value = savedHost;
@@ -258,7 +248,7 @@
             }
         }
 
-        // --- SISTEMA ---
+        // --- SISTEMA DE LOGIN (CLÁSSICO) ---
         async function iniciarConexao() {
             let h = document.getElementById('host').value.trim();
             const u = document.getElementById('user').value.trim();
@@ -271,9 +261,9 @@
 
             CONFIG = { host: h, user: u, pass: p };
             
-            localStorage.setItem('v59_host', h); 
-            localStorage.setItem('v59_user', u); 
-            localStorage.setItem('v59_pass', p);
+            localStorage.setItem('v60_host', h); 
+            localStorage.setItem('v60_user', u); 
+            localStorage.setItem('v60_pass', p);
 
             document.getElementById('loginMsg').innerText = "Conectando...";
 
@@ -344,7 +334,7 @@
                 if(k===39) { if(colIndex===0 && channels.length>0) { colIndex=1; chnIndex=0; updateFocus(); } }
                 if(k===37) { if(colIndex===1) colIndex=0; updateFocus(); }
                 
-                // LÓGICA OK V59 (DUPLO CLIQUE REAL)
+                // LÓGICA DUPLO CLIQUE (OK)
                 if(k===13) { 
                     if(colIndex===2) logoutTotal();
                     else if(colIndex===0) carregarCanais(categories[catIndex].category_id);
@@ -352,11 +342,10 @@
                         const sel = channels[chnIndex];
                         const now = new Date().getTime();
                         
-                        // Se já está tocando este canal E clicou rápido (menos de 500ms)
+                        // Se clicou rápido 2x no mesmo canal -> Tela Cheia
                         if (currentChannel && currentChannel.stream_id === sel.stream_id && (now - lastOkTime < 500)) {
                             entrarTelaCheia();
                         } else {
-                            // Se não, inicia ou reinicia o player
                             tocarCanal(sel);
                         }
                         lastOkTime = now;
@@ -394,7 +383,7 @@
                 });
                 renderList('listCat', categories, 'cat_', 'category_name');
                 colIndex=0; catIndex=0; updateFocus();
-            } catch(e) { alert("Erro de conexão com a lista."); }
+            } catch(e) { alert("Erro ao baixar lista."); }
         }
 
         async function carregarCanais(cid) {
@@ -428,7 +417,7 @@
             el.appendChild(frag);
         }
 
-        // --- PLAYER "CAMALEÃO" V59 (AUTO-REPAIR) ---
+        // --- PLAYER CAMALEÃO (AUTO REPAIR) ---
         function tocarCanal(ch) {
             currentChannel = ch;
             document.getElementById('chnName').innerText = ch.name;
@@ -437,7 +426,6 @@
             document.getElementById('iconLoad').style.display = 'block';
             document.getElementById('mask').style.display = 'flex';
 
-            // Limpeza total
             const parent = document.getElementById('vidContainer');
             const oldV = document.getElementById('player');
             if(oldV) parent.removeChild(oldV);
@@ -448,30 +436,30 @@
             video.style.width = '100%'; video.style.height = '100%';
             parent.appendChild(video);
 
-            // TENTATIVA 1: HLS Padrão (.m3u8)
+            // TENTATIVA 1: M3U8 (Padrão)
             const urlM3U8 = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8`;
             const urlTS = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
 
             if (Hls.isSupported()) {
-                const hls = new Hls({ maxBufferLength: 15, enableWorker: true });
+                const hls = new Hls({ maxBufferLength: 10, enableWorker: true });
                 hls.loadSource(urlM3U8);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
                 
-                // Se der erro, tenta o TS
+                // Se falhar, muda para TS
                 hls.on(Hls.Events.ERROR, (e, data) => {
                     if (data.fatal) {
-                        console.log("HLS falhou, mudando para TS...");
                         hls.destroy();
+                        console.log("M3U8 falhou, tentando TS...");
                         video.src = urlTS;
                         video.play();
                     }
                 });
             } else {
-                // Modo Nativo direto
+                // Modo Nativo
                 video.src = urlM3U8;
                 video.play().catch(() => {
-                    video.src = urlTS; // Fallback imediato
+                    video.src = urlTS; // Fallback
                     video.play();
                 });
             }
@@ -483,9 +471,8 @@
             };
             
             video.onerror = () => {
-                document.getElementById('statusTxt').innerText = "ERRO: TENTANDO RECONECTAR...";
-                // Tenta reconexão forçada
-                setTimeout(() => { video.src = urlTS; video.play(); }, 2000);
+                document.getElementById('statusTxt').innerText = "ERRO: TENTANDO REPARO...";
+                setTimeout(() => { video.src = urlTS; video.play(); }, 1500);
             };
         }
 
