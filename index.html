@@ -3,113 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV SKY GOLD STB</title>
+    <title>IPTV SKY GOLD V74</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- ESTILO DNS STB PURE GOLD --- */
-        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
+        /* --- TEMA SKY GOLD RESTORED --- */
+        * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
         body {
-            background-color: #000;
-            color: #fff; font-family: sans-serif;
+            background-color: #000; color: #fff; font-family: sans-serif;
             height: 100vh; overflow: hidden; display: flex;
         }
 
-        /* 1. LOGIN (ESTILO CONFIG TV ANTIGA) */
+        /* 1. LOGIN */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a1500 0%, #000 100%);
+            z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: #111; border-top: 4px solid #d4af37;
-            width: 450px; padding: 40px; text-align: center;
+            background: #0a0a0a; border-left: 6px solid #d4af37;
+            width: 480px; padding: 45px; text-align: center;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.1); border-radius: 10px;
         }
-        .logo-text { font-size: 28px; font-weight: bold; margin-bottom: 30px; color: #d4af37; }
-        
-        .input-item { margin-bottom: 15px; }
-        
-        /* INPUTS NATIVOS (MELHOR PARA TV) */
+        .logo-text { font-size: 28px; font-weight: 900; margin-bottom: 30px; text-transform: uppercase; }
+        .logo-text span { color: #d4af37; font-size: 38px; display: block; }
+
+        .input-item { margin-bottom: 15px; text-align: left; }
+        .label { font-size: 12px; color: #666; margin-bottom: 5px; font-weight: bold; }
+
+        /* INPUTS NATIVOS QUE FUNCIONAM COM SETAS */
         .login-input {
-            width: 100%; padding: 15px; background: #222; border: 2px solid #444;
-            color: #fff; font-size: 18px; text-align: center; font-weight: bold;
+            width: 100%; padding: 15px; background: #1a1a1a; border: 1px solid #333;
+            color: #fff; font-size: 18px; border-radius: 5px; text-align: center;
         }
-        /* FOCO NATIVO DA TV */
-        .login-input:focus { border-color: #d4af37; background: #333; color: #fff; }
+        .login-input:focus { border-color: #d4af37; background: #000; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
         
         .login-btn {
             width: 100%; padding: 15px; background: #d4af37; color: #000; border: none;
-            font-weight: bold; font-size: 18px; margin-top: 10px; cursor: pointer;
+            font-weight: 900; font-size: 18px; margin-top: 15px; border-radius: 5px; cursor: pointer;
         }
-        .login-btn:focus { background: #fff; color: #000; }
+        .login-btn:focus { background: #fff; transform: scale(1.02); }
 
-        /* 2. APP PRINCIPAL */
+        /* 2. APP */
         #mainInterface { display: none; width: 100%; height: 100%; }
 
-        /* MENU LATERAL SLIM */
         .sidebar {
-            width: 70px; background: #080808; display: flex; flex-direction: column; align-items: center;
-            padding-top: 20px; border-right: 1px solid #222;
+            width: 85px; background: #080808; display: flex; flex-direction: column; align-items: center;
+            padding-top: 30px; border-right: 1px solid #222;
         }
         .menu-icon {
-            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
-            font-size: 22px; color: #444; margin-bottom: 10px;
+            width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: #444; margin-bottom: 20px; border-radius: 10px;
         }
-        .menu-icon.active { color: #d4af37; }
-        .menu-icon.focused { background: #d4af37; color: #000; }
+        .menu-icon.active { color: #d4af37; border-right: 3px solid #d4af37; }
+        .menu-icon.focused { background: #d4af37; color: #000; transform: scale(1.1); }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; }
+        .main-content { flex: 1; display: flex; flex-direction: column; background: #000; }
 
         .top-bar {
-            height: 60px; background: #0a0a0a; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 30px; border-bottom: 2px solid #d4af37;
+            height: 70px; background: #080808; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; border-bottom: 2px solid #d4af37;
         }
-        .app-title { font-size: 20px; font-weight: bold; text-transform: uppercase; }
-        #clock { font-size: 22px; font-weight: bold; color: #d4af37; }
+        .app-title { font-size: 22px; font-weight: 900; }
+        #clock { font-size: 24px; font-weight: bold; color: #d4af37; font-family: monospace; }
 
         .columns { flex: 1; display: flex; overflow: hidden; }
-        .col-list { width: 35%; background: #0f0f0f; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .col-list { width: 35%; background: #0b0b0b; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .col-view { width: 65%; background: #000; display: flex; flex-direction: column; }
 
-        .list-header { padding: 15px; background: #111; color: #d4af37; font-weight: bold; font-size: 14px; }
+        .list-header { padding: 18px; background: #111; color: #d4af37; font-weight: bold; font-size: 14px; }
         .scroll-area { flex: 1; overflow-y: auto; }
         
         .list-item {
-            padding: 12px 20px; border-bottom: 1px solid #1a1a1a; color: #999; font-size: 15px;
+            padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 16px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .list-item.active { background: #1a1500; color: #fff; border-left: 3px solid #d4af37; }
-        .list-item.focused { background: #d4af37; color: #000; font-weight: bold; }
+        .list-item.focused { background: #d4af37; color: #000; font-weight: bold; transform: scale(1.02); z-index: 5; }
 
-        /* PLAYER NATIVO (O MAIS LEVE) */
-        .player-frame {
-            width: 100%; aspect-ratio: 16/9; background: #000; border-bottom: 2px solid #d4af37;
-        }
-        video { width: 100%; height: 100%; background: #000; }
+        .player-frame { width: 100%; aspect-ratio: 16/9; background: #000; border-bottom: 3px solid #d4af37; }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-        .info-panel { padding: 20px; flex: 1; background: #050505; }
+        .info-panel { padding: 30px; flex: 1; background: #050505; }
         .account-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-            background: #111; padding: 12px; border: 1px solid #222; margin-top: 15px;
+            background: #111; padding: 15px; border: 1px solid #222; margin-top: 20px;
         }
-        .acc-row { font-size: 13px; color: #777; }
-        .acc-row span { color: #d4af37; float: right; font-weight: bold; }
+        .acc-row { font-size: 14px; color: #777; font-family: monospace; }
+        .acc-row span { color: #d4af37; font-weight: bold; float: right; }
 
-        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; border:none !important; }
-        
-        ::-webkit-scrollbar { width: 0; } /* Esconde scroll para TV */
+        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; border: none !important; }
+        ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
-<body onload="initFocus()">
+<body onload="setup()">
 
     <div id="loginScreen">
         <div class="login-box">
-            <div class="logo-text">SKY GOLD <span>DNS STB</span></div>
-            <div class="input-item"><input type="text" id="host" class="login-input" placeholder="Servidor"></div>
-            <div class="input-item"><input type="text" id="user" class="login-input" placeholder="Usuário"></div>
-            <div class="input-item"><input type="password" id="pass" class="login-input" placeholder="Senha"></div>
+            <div class="logo-text">IPTV <br><span>SKY GOLD</span></div>
+            <div class="input-item">
+                <div class="label">SERVIDOR</div>
+                <input type="text" id="host" class="login-input" placeholder="http://...">
+            </div>
+            <div class="input-item">
+                <div class="label">USUÁRIO</div>
+                <input type="text" id="user" class="login-input" placeholder="Usuário">
+            </div>
+            <div class="input-item">
+                <div class="label">SENHA</div>
+                <input type="password" id="pass" class="login-input" placeholder="Senha">
+            </div>
             <button class="login-btn" id="btnLogin" onclick="startApp()">ENTRAR</button>
-            <div id="loginStatus" style="margin-top:15px; color:#d4af37; font-size:13px;"></div>
+            <div id="loginStatus" style="margin-top:15px; color:#d4af37; font-size:13px; font-weight:bold;"></div>
         </div>
     </div>
 
@@ -125,14 +131,14 @@
             </div>
             <div class="columns">
                 <div class="col-list">
-                    <div class="list-header" id="listTitle">LISTA</div>
+                    <div class="list-header" id="listTitle">CATEGORIAS</div>
                     <div class="scroll-area" id="listContainer"></div>
                 </div>
                 <div class="col-view">
                     <div class="player-frame" id="vidFrame"><video id="player" playsinline></video></div>
                     <div class="info-panel">
-                        <div id="chnName" style="font-size:22px; font-weight:bold;">Bem-vindo</div>
-                        <div id="chnStatus" style="color:#666; font-size:14px;">Aguardando...</div>
+                        <div id="chnName" style="font-size:28px; font-weight:bold;">Bem-vindo</div>
+                        <div id="chnStatus" style="color:#666; margin-top:5px;">Aguardando...</div>
                         <div class="account-grid">
                             <div class="acc-row">VENCIMENTO: <span id="valExp">--/--</span></div>
                             <div class="acc-row">ATIVAS: <span id="valMax">1</span></div>
@@ -146,24 +152,25 @@
     <script>
         let CONFIG = { host: '', user: '', pass: '' };
         let DATA = { categories: [], channels: [] };
-        let state = { screen: 'login', zone: 1, sIdx: 0, lIdx: 0, mode: 'cat', page: 0, fs: false };
+        let state = { screen: 'login', zone: 1, sIdx: 0, lIdx: 0, mode: 'cat', fs: false };
         let currentCh = null;
 
-        // --- RELÓGIO (CORRIGIDO -1H BRASÍLIA) ---
+        // --- RELÓGIO (CORRIGIDO) ---
         function runClock() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const br = new Date(utc + (3600000 * -4)); // Correção
+            const br = new Date(utc + (3600000 * -4)); // Brasília -1h
             document.getElementById('clock').innerText = br.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         }
         setInterval(runClock, 1000); runClock();
 
-        function initFocus() {
-            if(localStorage.getItem('stb_host')) {
-                document.getElementById('host').value = localStorage.getItem('stb_host');
-                document.getElementById('user').value = localStorage.getItem('stb_user');
-                document.getElementById('pass').value = localStorage.getItem('stb_pass');
+        function setup() {
+            if(localStorage.getItem('v74_host')) {
+                document.getElementById('host').value = localStorage.getItem('v74_host');
+                document.getElementById('user').value = localStorage.getItem('v74_user');
+                document.getElementById('pass').value = localStorage.getItem('v74_pass');
             }
+            // FOCO AUTOMÁTICO NA PRIMEIRA CAIXA
             document.getElementById('host').focus();
         }
 
@@ -178,7 +185,7 @@
                 let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`);
                 let data = await res.json();
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('stb_host', h); localStorage.setItem('stb_user', u); localStorage.setItem('stb_pass', p);
+                    localStorage.setItem('v74_host', h); localStorage.setItem('v74_user', u); localStorage.setItem('v74_pass', p);
                     document.getElementById('valExp').innerText = new Date(parseInt(data.user_info.exp_date)*1000).toLocaleDateString('pt-BR');
                     document.getElementById('valMax').innerText = data.user_info.max_connections;
                     state.screen = 'app';
@@ -186,21 +193,21 @@
                     document.getElementById('mainInterface').style.display = 'flex';
                     loadCats();
                 } else throw new Error();
-            } catch(e) { document.getElementById('loginStatus').innerText = "Falha no Login."; }
+            } catch(e) { document.getElementById('loginStatus').innerText = "Dados incorretos."; }
         }
 
         async function loadCats() {
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`);
             let raw = await res.json();
-            DATA.categories = raw.filter(c => !c.category_name.toLowerCase().match(/filme|movie|serie|vod|4k|radio/));
-            state.mode = 'cat'; state.lIdx = 0; renderList();
+            DATA.categories = raw.filter(c => !c.category_name.toLowerCase().match(/filme|movie|serie|vod|radio/));
+            state.mode = 'cat'; state.lIdx = 0; state.zone = 1; renderList(); renderFocus();
         }
 
         async function loadChns(cid) {
             document.getElementById('listContainer').innerHTML = '...';
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`);
             DATA.channels = await res.json();
-            state.mode = 'chn'; state.lIdx = 0; renderList();
+            state.mode = 'chn'; state.lIdx = 0; renderList(); renderFocus();
         }
 
         function renderList() {
@@ -210,11 +217,11 @@
             document.getElementById('listTitle').innerText = state.mode === 'cat' ? 'CATEGORIAS' : 'CANAIS';
             list.slice(0, 300).forEach((item, i) => {
                 let div = document.createElement('div');
-                div.className = 'list-item' + (i === state.lIdx ? ' focused' : '');
+                div.className = 'list-item' + (i === state.lIdx && state.zone === 1 ? ' focused' : '');
                 if(state.mode==='chn' && currentCh && currentCh.stream_id === item.stream_id) div.classList.add('active');
                 div.innerText = state.mode === 'cat' ? item.category_name : item.name;
                 container.appendChild(div);
-                if(i === state.lIdx) div.scrollIntoView({block: 'center'});
+                if(i === state.lIdx && state.zone === 1) div.scrollIntoView({block: 'center'});
             });
         }
 
@@ -226,26 +233,32 @@
             video.play().then(() => { document.getElementById('chnStatus').innerText = "Online"; renderList(); });
         }
 
+        // --- NAVEGAÇÃO COMPLETA ---
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             if(state.fs) { if([8, 461, 13].includes(k)) { document.getElementById('vidFrame').classList.remove('fs'); state.fs=false; } return; }
-            if(state.screen === 'login') return; // TV foca campos nativamente
+            
+            if(state.screen === 'login') {
+                if(k===13 && document.activeElement.id === 'pass') startApp();
+                return; // Deixa o navegador gerenciar as setas no login
+            }
 
-            if(state.zone === 0) { // Sidebar
+            if(state.zone === 0) { // SIDEBAR
                 if(k===38 && state.sIdx>0) state.sIdx--;
                 if(k===40 && state.sIdx<1) state.sIdx++;
                 if(k===39) state.zone = 1;
                 if(k===13 && state.sIdx===1) reset();
-            } else { // List
+            } else { // LISTA
                 const list = state.mode === 'cat' ? DATA.categories : DATA.channels;
                 if(k===38 && state.lIdx>0) state.lIdx--;
                 if(k===40 && state.lIdx<list.length-1) state.lIdx++;
-                if(k===37) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; } else state.zone=0; }
+                if(k===37) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } else state.zone=0; }
                 if(k===13) {
                     let item = list[state.lIdx];
                     if(state.mode==='cat') loadChns(item.category_id);
                     else { if(currentCh && currentCh.stream_id===item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } else play(item); }
                 }
+                if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } }
             }
             renderList(); renderFocus();
         });
@@ -253,6 +266,7 @@
         function renderFocus() {
             document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
             if(state.zone===0) document.getElementById('menu_'+state.sIdx).classList.add('focused');
+            else renderList();
         }
         function reset() { if(confirm("Sair?")) { localStorage.clear(); location.reload(); } }
     </script>
