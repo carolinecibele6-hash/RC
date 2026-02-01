@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD Philco Fix</title>
+    <title>SKY GOLD V76</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- ESTILO SKY GOLD --- */
+        /* --- ESTILO SKY GOLD V76 --- */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; }
         body { background-color: #000; color: #fff; font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; }
 
@@ -16,27 +16,19 @@
             background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: #111; border-top: 5px solid #d4af37;
-            width: 500px; padding: 40px; text-align: center; border-radius: 10px;
+            background: #0a0a0a; border-left: 6px solid #d4af37;
+            width: 500px; padding: 40px; text-align: center; border-radius: 12px;
         }
         .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 30px; color: #d4af37; }
 
-        /* INPUTS GRANDES PARA FACILITAR NO CONTROLE */
         .input-group { margin-bottom: 20px; text-align: left; }
         .label { font-size: 14px; color: #888; font-weight: bold; margin-bottom: 8px; }
-        
         .login-input {
             width: 100%; height: 60px; padding: 10px; background: #1a1a1a;
             border: 2px solid #333; color: #fff; font-size: 20px; 
             font-weight: bold; border-radius: 8px; text-align: center;
         }
-        
-        /* O FOCO QUE VOCÊ VERÁ AO USAR A SETA */
-        .login-input:focus { 
-            background: #fff !important; color: #000 !important; 
-            border-color: #d4af37 !important;
-        }
-        
+        .login-input:focus { background: #fff !important; color: #000 !important; border-color: #d4af37 !important; }
         .login-btn {
             width: 100%; height: 60px; background: #d4af37; color: #000; border: none;
             font-weight: 900; font-size: 22px; margin-top: 20px; border-radius: 8px; cursor: pointer;
@@ -45,27 +37,45 @@
 
         /* INTERFACE APP */
         #mainInterface { display: none; width: 100%; height: 100%; flex-direction: row; }
-        .sidebar { width: 90px; background: #080808; display: flex; flex-direction: column; align-items: center; padding-top: 40px; border-right: 1px solid #222; }
-        .menu-icon { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #444; margin-bottom: 15px; }
+
+        /* SIDEBAR OTIMIZADA COM INFO DA CONTA */
+        .sidebar { 
+            width: 110px; background: #080808; display: flex; flex-direction: column; 
+            align-items: center; padding-top: 30px; border-right: 1px solid #222; 
+        }
+        .menu-icon { 
+            width: 65px; height: 65px; display: flex; align-items: center; 
+            justify-content: center; font-size: 26px; color: #444; margin-bottom: 10px; 
+        }
         .menu-icon.active { color: #d4af37; }
         .menu-icon.focused { background: #d4af37; color: #000; border-radius: 12px; }
 
+        /* INFO DA CONTA NA SIDEBAR */
+        .sidebar-info { 
+            margin-top: auto; margin-bottom: 20px; width: 100%; text-align: center; 
+            font-size: 10px; color: #555; padding: 0 5px;
+        }
+        .sidebar-info b { display: block; color: #d4af37; margin-top: 10px; font-size: 11px; }
+
         .main-content { flex: 1; display: flex; flex-direction: column; background: #000; }
-        .top-bar { height: 80px; background: #080808; display: flex; align-items: center; justify-content: space-between; padding: 0 50px; border-bottom: 2px solid #d4af37; }
-        #clock { font-size: 28px; font-weight: bold; color: #d4af37; font-family: monospace; }
+        .top-bar { 
+            height: 70px; background: #080808; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 40px; border-bottom: 2px solid #d4af37; 
+        }
+        #clock { font-size: 24px; font-weight: bold; color: #d4af37; font-family: monospace; }
 
         .columns { flex: 1; display: flex; overflow: hidden; }
         .col-list { width: 35%; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .col-view { width: 65%; background: #000; display: flex; flex-direction: column; }
 
-        .list-header { padding: 20px; background: #111; font-weight: bold; color: #d4af37; }
+        .list-header { padding: 18px; background: #111; font-weight: bold; color: #d4af37; font-size: 14px; }
         .scroll-area { flex: 1; overflow-y: auto; }
-        .list-item { padding: 16px 25px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 16px; }
+        .list-item { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .list-item.active { background: #1a1500; color: #fff; border-left: 4px solid #d4af37; }
         .list-item.focused { background: #d4af37; color: #000; font-weight: bold; }
 
         video { width: 100%; aspect-ratio: 16/9; background: #000; border-bottom: 3px solid #d4af37; }
-        .info-panel { padding: 30px; flex: 1; background: #050505; }
+        .info-panel { padding: 25px; flex: 1; background: #050505; }
 
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; border:none !important; }
     </style>
@@ -75,35 +85,39 @@
     <div id="loginScreen">
         <div class="login-box">
             <div class="logo-text">SKY GOLD</div>
-            
             <div class="input-group">
                 <div class="label">SERVIDOR</div>
                 <input type="text" id="host" class="login-input" placeholder="http://...">
             </div>
-            
             <div class="input-group">
                 <div class="label">USUÁRIO</div>
                 <input type="text" id="user" class="login-input" placeholder="Seu Usuário">
             </div>
-            
             <div class="input-group">
                 <div class="label">SENHA</div>
                 <input type="password" id="pass" class="login-input" placeholder="Sua Senha">
             </div>
-
             <button id="btnLogin" class="login-btn" onclick="startApp()">ENTRAR</button>
-            <div id="loginStatus" style="margin-top:20px; color:#d4af37; font-weight:bold;"></div>
+            <div id="loginStatus" style="margin-top:20px; color:#d4af37; font-weight:bold; font-size: 14px;"></div>
         </div>
     </div>
 
     <div id="mainInterface">
         <div class="sidebar">
             <div class="menu-icon active" id="menu_0"><i class="fas fa-tv"></i></div>
+            
+            <div class="sidebar-info">
+                STATUS:<br><b id="sideStat">ATIVO</b><br>
+                VENCE EM:<br><b id="sideExp">--/--/--</b><br>
+                TELAS:<br><b id="sideMax">1/1</b>
+            </div>
+
             <div class="menu-icon" id="menu_1" onclick="reset()"><i class="fas fa-sign-out-alt"></i></div>
         </div>
+        
         <div class="main-content">
             <div class="top-bar">
-                <div style="font-size:24px; font-weight:bold;">SKY <span style="color:#d4af37">GOLD</span></div>
+                <div style="font-size:22px; font-weight:900;">SKY <span style="color:#d4af37">GOLD</span></div>
                 <div id="clock">00:00</div>
             </div>
             <div class="columns">
@@ -114,8 +128,11 @@
                 <div class="col-view">
                     <video id="player" playsinline></video>
                     <div class="info-panel">
-                        <div id="chnName" style="font-size:28px; font-weight:bold;">Bem-vindo</div>
-                        <div id="valExp" style="color:#d4af37; margin-top:10px; font-family:monospace;">VENCE EM: --/--/--</div>
+                        <div id="chnName" style="font-size:26px; font-weight:bold;">Bem-vindo</div>
+                        <div style="color:#444; margin-top:15px; font-size:12px;">
+                            • 1º OK: Tocar Canal<br>
+                            • 2º OK: Tela Cheia
+                        </div>
                     </div>
                 </div>
             </div>
@@ -127,7 +144,6 @@
         let DATA = { cats: [], chns: [] };
         let state = { screen: 'login', zone: 1, sIdx: 0, lIdx: 0, mode: 'cat', fs: false };
 
-        // --- RELÓGIO CORRIGIDO ---
         function runClock() {
             const now = new Date();
             const br = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (3600000 * -4));
@@ -135,7 +151,6 @@
         }
         setInterval(runClock, 1000); runClock();
 
-        // --- FOCO INICIAL ---
         window.onload = () => {
             if(localStorage.getItem('sg_host')) {
                 document.getElementById('host').value = localStorage.getItem('sg_host');
@@ -145,20 +160,17 @@
             document.getElementById('host').focus();
         };
 
-        // --- NAVEGAÇÃO POR SETAS NO LOGIN (A CORREÇÃO) ---
         document.addEventListener('keydown', (e) => {
             const k = e.keyCode;
             const active = document.activeElement;
 
             if (state.screen === 'login') {
-                if (k === 40) { // SETA PARA BAIXO
-                    e.preventDefault();
+                if (k === 40) { // BAIXO
                     if (active.id === 'host') document.getElementById('user').focus();
                     else if (active.id === 'user') document.getElementById('pass').focus();
                     else if (active.id === 'pass') document.getElementById('btnLogin').focus();
                 }
-                if (k === 38) { // SETA PARA CIMA
-                    e.preventDefault();
+                if (k === 38) { // CIMA
                     if (active.id === 'user') document.getElementById('host').focus();
                     else if (active.id === 'pass') document.getElementById('user').focus();
                     else if (active.id === 'btnLogin') document.getElementById('pass').focus();
@@ -167,8 +179,8 @@
                 return;
             }
 
-            // NAVEGAÇÃO APP
-            if(state.fs) { if([8, 461, 13].includes(k)) { document.body.classList.remove('fs-active'); document.getElementById('player').classList.remove('fs'); state.fs=false; } return; }
+            if(state.fs) { if([8, 461, 13].includes(k)) { document.getElementById('player').classList.remove('fs'); state.fs=false; } return; }
+            
             if(state.zone === 0) { 
                 if(k===38 && state.sIdx>0) state.sIdx--; if(k===40 && state.sIdx<1) state.sIdx++; if(k===39) state.zone = 1;
                 if(k===13 && state.sIdx===1) reset();
@@ -185,20 +197,24 @@
             renderFocus();
         });
 
-        // --- SISTEMA ---
         async function startApp() {
             let h = document.getElementById('host').value.trim();
             let u = document.getElementById('user').value.trim();
             let p = document.getElementById('pass').value.trim();
             if(!h.startsWith('http')) h = 'http://' + h;
-            document.getElementById('loginStatus').innerText = "Conectando...";
+            document.getElementById('loginStatus').innerText = "Verificando...";
             try {
                 let res = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                 let data = await res.json();
                 if(data.user_info.status === 'Active') {
                     localStorage.setItem('sg_host', h); localStorage.setItem('sg_user', u); localStorage.setItem('sg_pass', p);
                     CONFIG = { host: h, user: u, pass: p };
-                    document.getElementById('valExp').innerText = "VENCE EM: " + new Date(parseInt(data.user_info.exp_date)*1000).toLocaleDateString('pt-BR');
+                    
+                    // PREENCHE INFO NA SIDEBAR
+                    document.getElementById('sideExp').innerText = new Date(parseInt(data.user_info.exp_date)*1000).toLocaleDateString('pt-BR');
+                    document.getElementById('sideStat').innerText = "ATIVO";
+                    document.getElementById('sideMax').innerText = "1 / " + data.user_info.max_connections;
+
                     state.screen = 'app';
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainInterface').style.display = 'flex';
@@ -211,14 +227,14 @@
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`);
             let raw = await res.json();
             DATA.cats = raw.filter(c => !c.category_name.toLowerCase().match(/filme|movie|serie|vod|4k/));
-            state.mode = 'cat'; state.lIdx = 0; renderList();
+            state.mode = 'cat'; state.lIdx = 0; state.zone = 1; renderList(); renderFocus();
         }
 
         async function loadChns(cid) {
             document.getElementById('listContainer').innerHTML = '...';
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`);
             DATA.chns = await res.json();
-            state.mode = 'chn'; state.lIdx = 0; renderList();
+            state.mode = 'chn'; state.lIdx = 0; renderList(); renderFocus();
         }
 
         function renderList() {
@@ -248,7 +264,7 @@
             else renderList();
         }
 
-        function reset() { if(confirm("Sair?")) { localStorage.clear(); location.reload(); } }
+        function reset() { if(confirm("Deseja sair?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
