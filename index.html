@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY BOX V56</title>
+    <title>IPTV SKY BOX V57</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -56,12 +56,13 @@
         .top-logo { font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; }
         .top-logo span { color: #e50914; }
         
-        /* INFO CONTA NO TOPO */
+        /* INFO CONTA */
         .account-info { display: flex; gap: 20px; font-size: 12px; color: #888; font-family: monospace; }
         .acc-item b { color: #e50914; }
-        .acc-item i { color: #fff; }
 
-        .top-right { display: flex; gap: 20px; align-items: center; font-size: 14px; }
+        /* TOPO DIREITO (RELÓGIO AFASTADO) */
+        .top-right { display: flex; gap: 40px; align-items: center; font-size: 14px; }
+        
         .btn-change { 
             background: #1a1a1a; padding: 8px 20px; border: 1px solid #333; color: #aaa; 
             cursor: pointer; font-weight: bold; font-size: 12px; border-radius: 4px;
@@ -142,13 +143,13 @@
             <div class="top-logo">IPTV <span>SKY BOX</span></div>
             
             <div class="account-info">
-                <div class="acc-item">CRIADO: <i id="infoCreated">--/--/--</i></div>
-                <div class="acc-item">VENCE: <i id="infoExp">--/--/--</i></div>
-                <div class="acc-item">ATIVAS: <b>1/unl</b></div>
+                <div class="acc-item">CRIADO: <i id="infoCreated">--/--</i></div>
+                <div class="acc-item">VENCE: <i id="infoExp">--/--</i></div>
+                <div class="acc-item">ATIVAS: <b>1/1</b></div>
             </div>
 
             <div class="top-right">
-                <div id="clock" style="color:#e50914; font-weight:bold; font-size:18px;">00:00</div>
+                <div id="clock" style="color:#e50914; font-weight:bold; font-size:18px;">--:--</div>
                 <div class="btn-change" id="btnExit" onclick="logoutTotal()">SAIR</div>
             </div>
         </div>
@@ -175,13 +176,12 @@
                     
                     <div class="chn-details">
                         STATUS: <span id="statusTxt" style="color:#e50914; font-weight:bold">AGUARDANDO</span><br>
-                        RESOLUÇÃO: <span id="resTxt">AUTO</span>
                     </div>
 
                     <div style="font-size:13px; color:#555; line-height:1.5;">
-                        • Pressione <b>OK 2x</b> rápido para Tela Cheia<br>
-                        • VODs removidos (Lista Otimizada)<br>
-                        • Horário: Brasília (UTC-3)
+                        • 1º Clique OK: Inicia Canal<br>
+                        • 2º Clique OK: Tela Cheia<br>
+                        • VODs filtrados (Leve)
                     </div>
                 </div>
             </div>
@@ -198,9 +198,6 @@
         let colIndex = 0; 
         let catIndex = 0, chnIndex = 0;
         let categories = [], channels = [];
-        
-        // Variável para Duplo Clique
-        let lastOkPress = 0;
 
         // --- FILTROS ---
         const VOD_TRIGGERS = [
@@ -209,8 +206,8 @@
             'ondemand', 'show', 'desenho', 'animes'
         ];
 
-        // --- RELÓGIO CORRIGIDO (UTC-3 BRASÍLIA) ---
-        setInterval(() => {
+        // --- RELÓGIO (CORRIGIDO E IMEDIATO) ---
+        function updateClock() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const brasiliaTime = new Date(utc + (3600000 * -3));
@@ -218,28 +215,30 @@
             const hours = String(brasiliaTime.getHours()).padStart(2, '0');
             const minutes = String(brasiliaTime.getMinutes()).padStart(2, '0');
             
-            document.getElementById('clock').innerText = `${hours}:${minutes}`;
-        }, 1000);
+            const clockEl = document.getElementById('clock');
+            if(clockEl) clockEl.innerText = `${hours}:${minutes}`;
+        }
+        setInterval(updateClock, 1000);
 
-        // --- INICIALIZAÇÃO SEGURA ---
+        // --- INICIALIZAÇÃO ---
         window.onload = () => {
+            updateClock(); // Chama relógio na hora
+            
             try {
-                const savedHost = localStorage.getItem('v56_host');
-                const savedUser = localStorage.getItem('v56_user');
-                const savedPass = localStorage.getItem('v56_pass');
+                const savedHost = localStorage.getItem('v57_host');
+                const savedUser = localStorage.getItem('v57_user');
+                const savedPass = localStorage.getItem('v57_pass');
 
                 if(savedHost && savedUser && savedPass) {
                     document.getElementById('host').value = savedHost;
                     document.getElementById('user').value = savedUser;
                     document.getElementById('pass').value = savedPass;
-                    // Auto Conecta
                     iniciarConexao();
                 } else {
                     screen = 'login';
                     updateFocus();
                 }
             } catch(e) {
-                // Se der erro no localStorage, reseta
                 localStorage.clear();
                 screen = 'login';
                 updateFocus();
@@ -254,16 +253,14 @@
             
             if(!h || !u || !p) return;
 
-            // Limpa URL
             if(!h.startsWith('http')) h = 'http://' + h;
             if(h.endsWith('/')) h = h.slice(0, -1);
 
             CONFIG = { host: h, user: u, pass: p };
             
-            // Salva
-            localStorage.setItem('v56_host', h); 
-            localStorage.setItem('v56_user', u); 
-            localStorage.setItem('v56_pass', p);
+            localStorage.setItem('v57_host', h); 
+            localStorage.setItem('v57_user', u); 
+            localStorage.setItem('v57_pass', p);
 
             document.getElementById('loginMsg').innerText = "Conectando...";
 
@@ -273,7 +270,6 @@
                 const data = await res.json();
 
                 if(data.user_info && data.user_info.status === 'Active') {
-                    // Preenche as datas
                     const created = new Date(parseInt(data.user_info.created_at)*1000);
                     const exp = new Date(parseInt(data.user_info.exp_date)*1000);
                     
@@ -283,7 +279,7 @@
                     iniciarApp(data);
                 } else throw new Error("Conta Invalida");
             } catch(e) { 
-                document.getElementById('loginMsg').innerText = "Erro: Verifique URL/Usuário";
+                document.getElementById('loginMsg').innerText = "Erro: Dados Incorretos";
             }
         }
 
@@ -305,7 +301,6 @@
         document.addEventListener('keydown', (e) => {
             const k = e.keyCode;
             
-            // Saída de Fullscreen
             if(isFullscreen) {
                 if([8, 461, 10009, 27, 13, 37, 38, 39, 40].includes(k)) sairTelaCheia();
                 return;
@@ -336,25 +331,19 @@
                 if(k===39) { if(colIndex===0 && channels.length>0) { colIndex=1; chnIndex=0; updateFocus(); } }
                 if(k===37) { if(colIndex===1) colIndex=0; updateFocus(); }
                 
-                // LÓGICA OK (DUPLO CLIQUE)
+                // LÓGICA OK V57 (SIMPLIFICADA)
                 if(k===13) { 
                     if(colIndex===2) logoutTotal();
                     else if(colIndex===0) carregarCanais(categories[catIndex].category_id);
                     else if(colIndex===1) {
-                        const now = new Date().getTime();
-                        // Se apertou OK novamente em menos de 400ms -> TELA CHEIA
-                        if (now - lastOkPress < 400) {
+                        const sel = channels[chnIndex];
+                        // Se já é o canal atual, vai para Fullscreen
+                        if(currentChannel && currentChannel.stream_id === sel.stream_id) {
                             entrarTelaCheia();
                         } else {
-                            // Clique simples -> Tocar
-                            const sel = channels[chnIndex];
-                            if(currentChannel && currentChannel.stream_id === sel.stream_id) {
-                                // Já está tocando, não faz nada (espera o 2º clique pra fullscreen)
-                            } else {
-                                tocarCanal(sel);
-                            }
+                            // Se é novo, toca
+                            tocarCanal(sel);
                         }
-                        lastOkPress = now;
                     }
                 }
             }
