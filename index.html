@@ -2,177 +2,159 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>SKY GOLD IPTV</title>
+    <title>SKY GOLD - Native Player</title>
     <style>
-        /* --- VARIÁVEIS DE COR (TEMA SKY GOLD DARK) --- */
+        /* --- TEMA SKY GOLD (DARK/GOLD) --- */
         :root {
-            --gold-accent: #FFD700; /* Dourado Principal */
-            --gold-dark: #DAA520;   /* Dourado mais escuro para detalhes */
-            --bg-main: #0a0a0a;     /* Preto quase absoluto */
-            --bg-panel: #141414;    /* Fundo de painéis */
-            --bg-item: #1f1f1f;     /* Fundo de itens/inputs */
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
+            --gold: #FFD700;
+            --gold-dim: #B8860B;
+            --bg-deep: #000000;
+            --bg-surface: #121212;
+            --bg-focus: #F0E68C; /* Dourado claro para foco */
+            --text-main: #FFFFFF;
+            --text-dim: #888888;
         }
 
-        /* --- ESTILO GERAL OTIMIZADO PARA TV --- */
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            user-select: none;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden; /* Trava rolagem */
         }
 
-        /* Classes Utilitárias */
+        /* Utilitários */
         .hidden { display: none !important; }
         .view {
             width: 100%; height: 100%;
             position: absolute; top: 0; left: 0;
             display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
         }
 
-        /* ESTADOS DE FOCO (CRUCIAL PARA TV) */
-        /* Otimizado: usa box-shadow e border cores, sem animações pesadas */
-        input:focus, button:focus, .item:focus, .card:focus {
-            border-color: var(--gold-accent) !important;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); /* Brilho dourado suave */
-            outline: none;
-            transform: scale(1.02); /* Leve aumento para feedback visual */
+        /* --- CLASSE DE FOCO MANUAL (A MÁGICA DO CONTROLE) --- */
+        /* Isso substitui o :hover e :focus nativos que bugam na TV */
+        .focused {
+            border: 3px solid var(--gold) !important;
+            background-color: rgba(255, 215, 0, 0.15) !important;
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            z-index: 10;
         }
-
-        /* --- TELA DE LOGIN --- */
-        #login-view {
-            /* Gradiente sutil e escuro */
-            background: linear-gradient(135deg, var(--bg-main) 0%, var(--bg-panel) 100%);
-        }
-        .logo {
-            font-size: 3.5em; font-weight: 800; margin-bottom: 40px;
-            text-transform: uppercase; letter-spacing: 4px;
-            color: var(--text-primary);
-        }
-        .logo span { 
-            color: var(--gold-accent);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); /* Leve brilho no GOLD */
-        }
-
-        .input-group {
-            display: flex; flex-direction: column; gap: 15px; width: 320px;
-        }
-        input {
-            padding: 15px; border-radius: 4px; 
-            border: 2px solid var(--bg-item); /* Borda discreta inicialmente */
-            background: var(--bg-item); 
-            color: var(--text-primary); font-size: 1.1em; outline: none;
-            transition: border-color 0.2s;
-        }
-        ::placeholder { color: var(--text-secondary); }
-
-        button {
-            padding: 15px; 
-            background: linear-gradient(to bottom, var(--gold-accent), var(--gold-dark)); /* Botão dourado metálico */
-            color: #000; /* Texto preto para contraste no dourado */
-            font-weight: 900; border: none; font-size: 1.2em; cursor: pointer;
-            border-radius: 4px;
-            border: 2px solid transparent;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* --- MENU PRINCIPAL (HOME) --- */
-        #home-view {
-            flex-direction: row; gap: 30px;
-            background: var(--bg-main);
-        }
-        .card {
-            width: 220px; height: 260px;
-            background: var(--bg-panel);
-            border: 2px solid transparent;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            border-radius: 8px; transition: all 0.2s;
-        }
-        .card i { font-size: 3.5em; margin-bottom: 20px; color: var(--text-secondary); transition: color 0.2s;}
-        /* Quando focar no card, o ícone fica dourado */
-        .card:focus i { color: var(--gold-accent); }
-        .card-title { font-size: 1.4em; font-weight: bold; }
-
-        /* --- TELA DE CANAIS --- */
-        #channels-view {
-            display: grid;
-            grid-template-columns: 280px 1fr; 
-            grid-template-rows: 60px 1fr;
-            width: 100%; height: 100%;
-            background: var(--bg-main);
-        }
-
-        .top-bar {
-            grid-column: 1 / -1;
-            background: var(--bg-panel);
-            /* Linha dourada fina no topo para separar */
-            border-bottom: 2px solid var(--gold-dark);
-            display: flex; align-items: center; padding: 0 25px;
-            font-size: 1.3em; font-weight: bold; color: var(--gold-accent);
-            letter-spacing: 1px;
-        }
-
-        .category-list {
-            background: var(--bg-panel);
-            overflow-y: auto;
-            border-right: 1px solid #333;
-            padding: 10px 0;
-        }
-
-        .channel-area {
-            display: flex; flex-direction: column;
-            background: var(--bg-main);
-            padding: 20px;
-            position: relative;
-        }
-
-        .video-preview-container {
-            width: 100%;
-            height: 420px;
-            background: #000;
-            margin-bottom: 20px;
-            border: 2px solid var(--bg-item); /* Borda discreta */
-            position: relative;
-             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        /* Quando o player está ativo ou focado indiretamente, borda dourada */
-        .video-preview-container.active-play {
-             border-color: var(--gold-dark);
-        }
-
-        video { width: 100%; height: 100%; object-fit: contain; }
-
-        .channel-list-items {
-            flex: 1; overflow-y: auto;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 12px; align-content: start;
-        }
-
-        .item {
-            padding: 12px; background: var(--bg-item);
-            border: 2px solid transparent;
-            border-radius: 4px;
-            text-align: center; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis;
-            cursor: pointer; font-weight: 500;
-            transition: all 0.1s;
-        }
-        /* Item que está tocando atualmente */
-        .item.playing {
-            color: var(--gold-accent); 
-            border-color: var(--gold-accent);
-            background-color: rgba(255, 215, 0, 0.05); /* Fundo dourado muito sutil */
+        
+        /* Ajuste específico para texto dentro de elemento focado */
+        .focused span, .focused i, .focused {
+            color: var(--gold) !important;
             font-weight: bold;
         }
-         .item:focus {
-             background-color: var(--bg-item) !important; /* Reseta fundo no foco para não misturar */
-         }
+
+        /* --- 1. TELA LOGIN --- */
+        #login-view {
+            justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #000000 100%);
+        }
+        .logo { font-size: 4em; font-weight: 900; margin-bottom: 30px; letter-spacing: 5px; }
+        .logo span { color: var(--gold); }
+        
+        .input-box {
+            display: flex; flex-direction: column; gap: 15px; width: 350px;
+        }
+        input {
+            padding: 15px; background: #222; border: 2px solid #333;
+            color: white; font-size: 1.2em; text-align: center;
+        }
+        button {
+            padding: 15px; background: var(--gold); border: none;
+            font-weight: 900; font-size: 1.2em; text-transform: uppercase;
+        }
+
+        /* --- 2. TELA HOME --- */
+        #home-view {
+            flex-direction: row; justify-content: center; align-items: center; gap: 40px;
+        }
+        .home-card {
+            width: 250px; height: 300px;
+            background: var(--bg-surface);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            border: 2px solid #333;
+            transition: 0.1s;
+        }
+        .home-card i { font-size: 4em; margin-bottom: 20px; color: #555; }
+
+        /* --- 3. TELA CANAIS (LAYOUT STB) --- */
+        #channels-view {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            grid-template-columns: 280px 1fr;
+            height: 100%;
+        }
+
+        /* Header */
+        .top-bar {
+            grid-column: 1 / -1;
+            background: #111;
+            border-bottom: 2px solid var(--gold);
+            display: flex; align-items: center; padding: 0 30px;
+            font-size: 1.4em; font-weight: bold;
+            color: var(--gold);
+        }
+
+        /* Esquerda: Categorias */
+        .sidebar {
+            background: #080808;
+            border-right: 1px solid #333;
+            overflow: hidden; /* Rolagem controlada via JS */
+            padding-top: 10px;
+        }
+        .cat-item {
+            padding: 15px 20px;
+            font-size: 1.1em;
+            color: #aaa;
+            border-left: 4px solid transparent;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .cat-item.active-cat {
+            background-color: #222;
+            color: white;
+            border-left-color: var(--gold-dim);
+        }
+
+        /* Direita: Conteúdo */
+        .content-area {
+            background: #000;
+            padding: 20px;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Player Preview */
+        .preview-window {
+            width: 100%; height: 40%;
+            background: #000;
+            border: 2px solid #333;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        video { width: 100%; height: 100%; background: #000; }
+
+        /* Grade de Canais */
+        .grid-channels {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 Colunas fixas */
+            grid-template-rows: repeat(3, 1fr);   /* 3 Linhas fixas visíveis */
+            gap: 10px;
+            overflow: hidden; /* Paginação controlada via JS */
+        }
+        
+        .chan-item {
+            background: var(--bg-surface);
+            border: 2px solid #222;
+            display: flex; justify-content: center; align-items: center;
+            text-align: center; font-size: 1em; padding: 5px;
+            word-break: break-word;
+        }
 
     </style>
 </head>
@@ -180,200 +162,308 @@
 
     <div id="login-view" class="view">
         <div class="logo">SKY <span>GOLD</span></div>
-        <div class="input-group">
-            <input type="text" id="server" placeholder="URL do Servidor (http://...)" value="http://">
-            <input type="text" id="username" placeholder="Usuário">
-            <input type="password" id="password" placeholder="Senha">
-            <button id="btn-login" onclick="app.login()">ENTRAR NA SKY GOLD</button>
+        <div class="input-box">
+            <input type="text" id="server" placeholder="URL DNS" value="http://line.sv" class="focusable">
+            <input type="text" id="username" placeholder="Usuário" class="focusable">
+            <input type="password" id="password" placeholder="Senha" class="focusable">
+            <button onclick="App.login()" class="focusable">ENTRAR</button>
         </div>
     </div>
 
     <div id="home-view" class="view hidden">
-        <div class="card" tabindex="0" onclick="app.openLiveTV()" data-nav="true">
+        <div class="home-card focusable" onclick="App.loadTV()">
             <i>📺</i>
-            <span class="card-title">TV ao Vivo</span>
+            <span>AO VIVO</span>
         </div>
-        <div class="card" tabindex="0" data-nav="true">
+        <div class="home-card focusable">
             <i>🎬</i>
-            <span class="card-title">Filmes On-Demand</span>
+            <span>FILMES</span>
         </div>
-        <div class="card" tabindex="0" data-nav="true">
-            <i>🍿</i>
-            <span class="card-title">Séries</span>
+        <div class="home-card focusable">
+            <i>⚙️</i>
+            <span>AJUSTES</span>
         </div>
     </div>
 
     <div id="channels-view" class="view hidden">
-        <div class="top-bar">SKY GOLD AO VIVO <span id="clock" style="margin-left:auto; font-size:0.8em; color:var(--text-secondary);">00:00</span></div>
+        <div class="top-bar">GUIA DE CANAIS <span style="margin-left:auto; font-size:0.7em" id="clock">00:00</span></div>
         
-        <div class="category-list" id="cat-list">
+        <div class="sidebar" id="cat-list-container">
             </div>
 
-        <div class="channel-area">
-            <div class="video-preview-container" id="preview-box">
-                <video id="main-player"></video>
-                <div id="loading-msg" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:none; color: var(--gold-accent);">Carregando...</div>
+        <div class="content-area">
+            <div class="preview-window">
+                <video id="player" playsinline webkit-playsinline></video>
+                <div id="status-msg" style="position:absolute; top:10px; right:10px; color:var(--gold); font-weight:bold;"></div>
             </div>
-            
-            <div class="channel-list-items" id="chan-list">
+            <div class="grid-channels" id="chan-grid-container">
                 </div>
         </div>
     </div>
 
     <script>
         /**
-         * LÓGICA DO APLICATIVO (Idêntica à anterior, apenas ajustes visuais)
+         * SISTEMA DE NAVEGAÇÃO ESPACIAL PURO (Sem Mouse)
+         * Controla o foco manualmente baseado em matrizes.
          */
-        const app = {
-            data: {
-                server: '', user: '', pass: '',
-                categories: [], channels: [],
-                currentStreamUrl: null
-            },
+        const Nav = {
+            index: 0,
+            elements: [],
+            area: 'login', // login, home, categories, channels
             
-            init: function() {
-                document.getElementById('server').focus();
-                this.updateClock();
-                setInterval(this.updateClock, 60000);
+            // Atualiza a lista de elementos focáveis da área atual
+            refreshScope: function() {
+                if(this.area === 'login') {
+                    this.elements = document.querySelectorAll('#login-view .focusable');
+                } else if(this.area === 'home') {
+                    this.elements = document.querySelectorAll('#home-view .focusable');
+                } else if(this.area === 'categories') {
+                    this.elements = document.querySelectorAll('#cat-list-container .cat-item');
+                } else if(this.area === 'channels') {
+                    this.elements = document.querySelectorAll('#chan-grid-container .chan-item');
+                }
+                
+                // Remove foco antigo e reseta
+                document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+                if(this.elements.length > 0) {
+                    if(this.index >= this.elements.length) this.index = 0;
+                    this.elements[this.index].classList.add('focused');
+                    this.elements[this.index].scrollIntoView({block: "center", behavior: "smooth"});
+                }
             },
 
-            updateClock: function() {
-                const now = new Date();
-                const time = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-                const clock = document.getElementById('clock');
-                if(clock) clock.innerText = time;
-            },
+            move: function(dir) {
+                if(this.elements.length === 0) return;
 
-            login: function() {
-                this.data.server = document.getElementById('server').value.replace(/\/$/, "");
-                this.data.user = document.getElementById('username').value;
-                this.data.pass = document.getElementById('password').value;
+                const cols = 4; // Colunas na grade de canais
 
-                if(!this.data.server || !this.data.user || !this.data.pass) {
-                    // Exemplo de feedback visual simples
-                    document.getElementById('btn-login').innerText = "PREENCHA TUDO!";
-                    setTimeout(() => document.getElementById('btn-login').innerText = "ENTRAR NA SKY GOLD", 2000);
-                    return;
+                // Lógica de Movimento por Área
+                if (this.area === 'channels') {
+                    if(dir === 'right') {
+                        if((this.index + 1) % cols !== 0 && this.index < this.elements.length - 1) this.index++;
+                    } else if(dir === 'left') {
+                        if(this.index % cols === 0) {
+                            // Borda esquerda da grade: Voltar para Categorias
+                            this.area = 'categories';
+                            this.refreshScope();
+                            return; 
+                        } else {
+                            this.index--;
+                        }
+                    } else if(dir === 'down') {
+                         if(this.index + cols < this.elements.length) this.index += cols;
+                    } else if(dir === 'up') {
+                         if(this.index - cols >= 0) this.index -= cols;
+                    }
+                } 
+                else if (this.area === 'categories') {
+                    if(dir === 'down') {
+                        if(this.index < this.elements.length - 1) this.index++;
+                    } else if(dir === 'up') {
+                        if(this.index > 0) this.index--;
+                    } else if(dir === 'right') {
+                        // Ir para canais
+                        this.area = 'channels';
+                        this.index = 0; // Foca no primeiro canal
+                        this.refreshScope();
+                        return;
+                    }
+                }
+                else {
+                    // Login e Home (Linear simples)
+                    if(dir === 'down' || dir === 'right') {
+                        if(this.index < this.elements.length - 1) this.index++;
+                    } else if(dir === 'up' || dir === 'left') {
+                        if(this.index > 0) this.index--;
+                    }
                 }
 
-                // --- MOCK DATA (Substitua pela sua chamada API Xtream real) ---
-                this.mockDataLoad(); 
-                // -----------------------------------------------------------
+                // Aplica o foco visual
+                document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+                this.elements[this.index].classList.add('focused');
+                
+                // Scroll manual para garantir visibilidade
+                this.elements[this.index].scrollIntoView({block: "nearest", behavior: "smooth"});
+
+                // Se estiver nas categorias, carrega os canais automaticamente ao focar (opcional, estilo STB)
+                if(this.area === 'categories') {
+                    App.loadChannelsForCategory(this.index);
+                }
+            },
+
+            enter: function() {
+                const el = this.elements[this.index];
+                if(el) el.click();
+            }
+        };
+
+        /**
+         * LÓGICA DO APP
+         */
+        const App = {
+            creds: { url: '', user: '', pass: '' },
+            categories: [], 
+            
+            login: function() {
+                this.creds.url = document.getElementById('server').value;
+                this.creds.user = document.getElementById('username').value;
+                this.creds.pass = document.getElementById('password').value;
+                
+                // MOCK DATA PARA TESTE
+                this.mockLoad();
                 
                 document.getElementById('login-view').classList.add('hidden');
                 document.getElementById('home-view').classList.remove('hidden');
-                setTimeout(() => document.querySelector('.card').focus(), 100);
+                
+                Nav.area = 'home';
+                Nav.index = 0;
+                Nav.refreshScope();
             },
 
-            mockDataLoad: function() {
-                this.data.categories = ['Variedades', 'Esportes Gold', 'Telecine', 'Notícias 24h', 'Infantil'];
-                this.data.channels = [];
-                for(let i=1; i<=25; i++) {
-                    this.data.channels.push({
-                        name: `SKY Gold Canal ${i}`,
-                        stream_id: i,
-                        // URL de teste pública
-                        url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' 
-                    });
+            mockLoad: function() {
+                // Simula 10 Categorias
+                this.categories = [];
+                for(let i=0; i<10; i++) {
+                    let chans = [];
+                    // Simula 50 canais por categoria
+                    for(let c=0; c<50; c++) {
+                        chans.push({ 
+                            name: `SKY Canal ${i}-${c}`, 
+                            id: c,
+                            // URL TS direta (formato Xtream padrão)
+                            // A TV entende melhor .ts do que .m3u8 em alguns casos
+                            url: `http://mock/${i}/${c}.ts` 
+                        });
+                    }
+                    this.categories.push({ name: `Categoria ${i}`, channels: chans });
                 }
             },
 
-            openLiveTV: function() {
+            loadTV: function() {
                 document.getElementById('home-view').classList.add('hidden');
                 document.getElementById('channels-view').classList.remove('hidden');
-                this.renderCategories();
-                this.renderChannels();
-            },
-
-            renderCategories: function() {
-                const list = document.getElementById('cat-list');
-                list.innerHTML = '';
-                this.data.categories.forEach((cat, index) => {
+                
+                // Renderizar Sidebar
+                const catContainer = document.getElementById('cat-list-container');
+                catContainer.innerHTML = '';
+                this.categories.forEach((cat, idx) => {
                     const div = document.createElement('div');
-                    div.className = 'item';
-                    div.innerText = cat;
-                    div.tabIndex = 0;
-                    list.appendChild(div);
+                    div.className = 'cat-item';
+                    div.innerText = cat.name;
+                    // Ao clicar (Enter), apenas define foco, a carga é no movimento
+                    div.onclick = () => {
+                        Nav.area = 'channels';
+                        Nav.index = 0;
+                        Nav.refreshScope();
+                    }; 
+                    catContainer.appendChild(div);
                 });
+
+                // Inicia nas categorias
+                Nav.area = 'categories';
+                Nav.index = 0;
+                Nav.refreshScope();
+                this.loadChannelsForCategory(0);
             },
 
-            renderChannels: function() {
-                const list = document.getElementById('chan-list');
-                list.innerHTML = '';
-                this.data.channels.forEach((chan) => {
+            loadChannelsForCategory: function(catIndex) {
+                // Marca visualmente a categoria ativa
+                document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active-cat'));
+                document.querySelectorAll('.cat-item')[catIndex].classList.add('active-cat');
+
+                const chanContainer = document.getElementById('chan-grid-container');
+                chanContainer.innerHTML = '';
+                
+                const channels = this.categories[catIndex].channels;
+                
+                channels.forEach(chan => {
                     const div = document.createElement('div');
-                    div.className = 'item';
+                    div.className = 'chan-item';
                     div.innerText = chan.name;
-                    div.tabIndex = 0;
-                    div.onclick = () => this.handleChannelClick(div, chan.url);
-                    list.appendChild(div);
+                    div.onclick = () => this.playChannel(chan.url);
+                    chanContainer.appendChild(div);
                 });
-                
-                setTimeout(() => {
-                    const firstCat = document.querySelector('#cat-list .item');
-                    if(firstCat) firstCat.focus();
-                }, 100);
+
+                // Se o foco já estava nos canais, atualiza a lista de elementos navegáveis
+                if(Nav.area === 'channels') {
+                    Nav.refreshScope();
+                }
             },
 
-            handleChannelClick: function(element, url) {
-                const player = document.getElementById('main-player');
-                const previewBox = document.getElementById('preview-box');
+            playChannel: function(url) {
+                const player = document.getElementById('player');
+                const status = document.getElementById('status-msg');
                 
-                // Lógica de 2 Cliques (Preview -> Fullscreen)
-                if (this.data.currentStreamUrl === url && !player.paused) {
-                    if (player.requestFullscreen) player.requestFullscreen();
-                    else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
-                    else if (player.mozRequestFullScreen) player.mozRequestFullScreen();
-                    else if (player.msRequestFullscreen) player.msRequestFullscreen();
-                } 
-                else {
-                    document.querySelectorAll('.item').forEach(i => i.classList.remove('playing'));
-                    element.classList.add('playing');
-                    previewBox.classList.add('active-play'); // Adiciona borda dourada ao player
+                // MONTAGEM DA URL XTREAM CODES REAL (TS HARDWARE)
+                // Se fosse real: `${this.creds.url}/live/${this.creds.user}/${this.creds.pass}/${streamID}.ts`
+                
+                // Usando BigBuckBunny para teste
+                const realUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 
-                    this.data.currentStreamUrl = url;
-                    // NOTA: Se for Xtream real, monte a URL aqui:
-                    // const finalUrl = `${this.data.server}/live/${this.data.user}/${this.data.pass}/${chan.stream_id}.ts`;
-                    player.src = url;
-                    player.play();
+                // Lógica de 2 Cliques
+                if(player.src === realUrl && !player.paused) {
+                    // SEGUNDO CLIQUE: TELA CHEIA
+                    if(player.requestFullscreen) player.requestFullscreen();
+                    else if(player.webkitRequestFullscreen) player.webkitRequestFullscreen();
+                } else {
+                    // PRIMEIRO CLIQUE: PLAY NO PREVIEW
+                    status.innerText = "CONECTANDO...";
+                    player.src = realUrl;
+                    player.play().then(() => {
+                        status.innerText = "";
+                    }).catch(e => {
+                        status.innerText = "ERRO STREAM";
+                    });
                 }
             }
         };
 
         /**
-         * CONTROLE REMOTO (KeyMapping Genérico para TVs)
+         * CONTROLE REMOTO (EVENT LISTENERS)
          */
         document.addEventListener('keydown', function(e) {
+            e.preventDefault(); // Impede comportamento padrão do navegador
+            
             const key = e.keyCode;
-            const active = document.activeElement;
             
-            // Enter (OK)
-            if (key === 13) { 
-                if (active && active.onclick) active.click();
-            }
+            if(key === 37) Nav.move('left');
+            else if(key === 38) Nav.move('up');
+            else if(key === 39) Nav.move('right');
+            else if(key === 40) Nav.move('down');
+            else if(key === 13) Nav.enter(); // OK/ENTER
             
-            // Voltar / Back (Códigos comuns: 461, 8, 10009, 27)
-            else if ([461, 8, 10009, 27].includes(key)) { 
-                if(!document.getElementById('channels-view').classList.contains('hidden')) {
-                    // Se estiver na tela de canais, para o vídeo e volta pra home
-                    const player = document.getElementById('main-player');
-                    player.pause(); player.src = "";
-                    document.getElementById('preview-box').classList.remove('active-play');
-                    
+            // Voltar (Back/Return/Esc)
+            else if([461, 8, 10009, 27].includes(key)) {
+                if(Nav.area === 'channels') {
+                    // Volta para categorias
+                    Nav.area = 'categories';
+                    Nav.refreshScope();
+                } else if(Nav.area === 'categories') {
+                    // Volta para Home
                     document.getElementById('channels-view').classList.add('hidden');
                     document.getElementById('home-view').classList.remove('hidden');
-                    document.querySelector('.card').focus(); 
-                } else if (!document.getElementById('home-view').classList.contains('hidden')) {
-                    document.getElementById('home-view').classList.add('hidden');
-                    document.getElementById('login-view').classList.remove('hidden');
-                    document.getElementById('server').focus();
+                    // Para o player
+                    document.getElementById('player').pause();
+                    document.getElementById('player').src = "";
+                    
+                    Nav.area = 'home';
+                    Nav.refreshScope();
                 }
             }
-            // As setas (37,38,39,40) são tratadas nativamente pelo navegador da TV
-            // graças ao uso de tabIndex="0" nos elementos focáveis.
         });
 
-        window.onload = () => app.init();
+        // Relógio
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = 
+                now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+        }, 1000);
+
+        // Init
+        window.onload = () => {
+            Nav.area = 'login';
+            Nav.refreshScope();
+        };
 
     </script>
 </body>
