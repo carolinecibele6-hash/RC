@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD LIVE V80</title>
+    <title>SKY GOLD V81</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- ESTILO SKY GOLD V80 --- */
+        /* --- ESTILO ULTRA MINIMALISTA V81 --- */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
         body { background: #000; color: #fff; font-family: sans-serif; height: 100vh; overflow: hidden; display: flex; }
 
@@ -15,72 +15,51 @@
             position: absolute; width: 100%; height: 100%; background: #000;
             z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
-        .login-box {
-            background: #0a0a0a; border-left: 6px solid #d4af37;
-            width: 450px; padding: 40px; text-align: center; border-radius: 8px;
-        }
-        .login-input {
-            width: 100%; height: 55px; margin-bottom: 15px; background: #1a1a1a;
-            border: 2px solid #333; color: #fff; font-size: 18px; text-align: center; border-radius: 5px;
-        }
-        .login-input:focus { border-color: #d4af37; background: #fff; color: #000; font-weight: bold; }
-        .login-btn {
-            width: 100%; height: 55px; background: #d4af37; color: #000;
-            font-weight: 900; font-size: 20px; border: none; cursor: pointer; border-radius: 5px;
-        }
-        .login-btn:focus { background: #fff; transform: scale(1.05); }
+        .login-box { background: #0a0a0a; border-top: 4px solid #d4af37; width: 450px; padding: 40px; text-align: center; }
+        .login-input { width: 100%; height: 50px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; text-align: center; font-size: 18px; }
+        .login-input:focus { border-color: #d4af37; background: #000; }
+        .login-btn { width: 100%; height: 55px; background: #d4af37; color: #000; font-weight: bold; font-size: 18px; border: none; cursor: pointer; }
 
         /* INTERFACE */
         #mainInterface { display: none; width: 100%; height: 100%; }
 
         /* SIDEBAR */
-        .sidebar {
-            width: 90px; background: #080808; display: flex; flex-direction: column;
-            align-items: center; padding: 25px 0; border-right: 1px solid #222;
-        }
-        .menu-icon { font-size: 24px; color: #444; margin-bottom: 25px; padding: 12px; }
+        .sidebar { width: 80px; background: #080808; display: flex; flex-direction: column; align-items: center; padding-top: 20px; border-right: 1px solid #222; }
+        .menu-icon { font-size: 22px; color: #333; margin-bottom: 20px; padding: 10px; }
         .menu-icon.active { color: #d4af37; }
-        .menu-icon.focused { background: #d4af37; color: #000; border-radius: 10px; border: 3px solid #fff; }
-
-        .acc-info { margin-top: auto; font-size: 10px; color: #555; text-align: center; }
-        .acc-info b { color: #d4af37; display: block; font-size: 11px; margin-bottom: 8px; }
+        .menu-icon.focused { background: #d4af37; color: #000; border-radius: 5px; }
 
         /* CONTEÚDO */
-        .main-content { flex: 1; display: flex; flex-direction: column; background: #000; }
-        .top-bar {
-            height: 70px; background: #080808; display: flex; align-items: center;
-            justify-content: space-between; padding: 0 40px; border-bottom: 2px solid #d4af37;
-        }
+        .main-content { flex: 1; display: flex; flex-direction: column; }
+        .top-bar { height: 60px; background: #080808; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid #d4af37; }
         #clock { font-size: 24px; font-weight: bold; color: #d4af37; font-family: monospace; }
 
         .columns { flex: 1; display: flex; overflow: hidden; }
-        .col-list { width: 35%; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-list { width: 35%; background: #050505; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .col-view { width: 65%; background: #000; display: flex; flex-direction: column; }
 
-        .list-header { padding: 18px; background: #111; color: #d4af37; font-weight: bold; font-size: 14px; text-transform: uppercase; }
+        .list-header { padding: 15px; background: #000; color: #d4af37; font-weight: bold; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid #222; }
         .scroll-area { flex: 1; overflow-y: auto; }
         
         .list-item {
-            padding: 15px 20px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 16px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 2px solid transparent;
+            padding: 15px 20px; border-bottom: 1px solid #111; color: #666; font-size: 16px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            border: 3px solid transparent; /* Reserva espaço para a borda não mexer a lista */
         }
-        .list-item.active { border-left: 5px solid #d4af37; color: #fff; background: #1a1500; }
+        .list-item.active { color: #d4af37; font-weight: bold; background: #0a0a00; }
 
-        /* FOCO MEGA VISÍVEL (CONTORNO GOLD) */
+        /* CONTORNO DE SELEÇÃO (ÚNICA COISA QUE MUDA) */
         .list-item.focused { 
-            background: #d4af37 !important; 
-            color: #000 !important; 
-            font-weight: bold; 
-            border: 3px solid #fff !important; 
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.8);
-            transform: scale(1.01);
+            border: 3px solid #d4af37 !important; 
+            color: #fff !important;
+            background: #111;
         }
 
-        /* PLAYER */
-        #player { width: 100%; aspect-ratio: 16/9; background: #000; border-bottom: 3px solid #d4af37; }
-        .info-panel { padding: 30px; flex: 1; background: #050505; }
+        /* PLAYER FIXO (SEM NADA EMBAIXO) */
+        #player { width: 100%; height: 100%; background: #000; object-fit: contain; }
+        .player-container { width: 100%; height: 100%; background: #000; position: relative; }
 
-        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; border:none; outline:none; }
+        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; }
         ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
@@ -88,28 +67,22 @@
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:#d4af37; margin-bottom:25px;">SKY GOLD</h2>
-            <input type="text" id="host" class="login-input" placeholder="Servidor DNS">
+            <h2 style="color:#d4af37; margin-bottom:20px;">SKY GOLD</h2>
+            <input type="text" id="host" class="login-input" placeholder="DNS">
             <input type="text" id="user" class="login-input" placeholder="Usuário">
             <input type="password" id="pass" class="login-input" placeholder="Senha">
-            <button class="login-btn" id="btnLogin" onclick="startApp()">ACESSAR</button>
-            <p id="msg" style="color:#d4af37; font-size:12px; margin-top:15px; font-weight:bold;"></p>
+            <button class="login-btn" id="btnLogin" onclick="startApp()">ENTRAR</button>
         </div>
     </div>
 
     <div id="mainInterface">
         <div class="sidebar">
             <div class="menu-icon active" id="menu_0"><i class="fas fa-tv"></i></div>
-            <div class="acc-info">
-                STATUS:<b id="s_stat">ATIVO</b>
-                VENCE:<b id="s_exp">--/--</b>
-                TELAS:<b id="s_max">1/1</b>
-            </div>
             <div class="menu-icon" id="menu_1" style="margin-top:auto" onclick="reset()"><i class="fas fa-sign-out-alt"></i></div>
         </div>
         <div class="main-content">
             <div class="top-bar">
-                <div style="font-weight:900; font-size:20px;">SKY <span style="color:#d4af37">GOLD</span></div>
+                <div style="font-weight:bold; color:#fff;">SKY <span style="color:#d4af37">GOLD</span></div>
                 <div id="clock">00:00</div>
             </div>
             <div class="columns">
@@ -118,10 +91,8 @@
                     <div class="scroll-area" id="listContainer"></div>
                 </div>
                 <div class="col-view">
-                    <video id="player" playsinline></video>
-                    <div class="info-panel">
-                        <h2 id="chnName" style="color:#d4af37">Bem-vindo</h2>
-                        <p id="chnStatus" style="color:#555; font-size:14px; margin-top:10px;">Selecione um canal para assistir.</p>
+                    <div class="player-container" id="vidFrame">
+                        <video id="player" playsinline></video>
                     </div>
                 </div>
             </div>
@@ -144,10 +115,10 @@
         setInterval(runClock, 1000); runClock();
 
         function init() {
-            if(localStorage.getItem('sg80_h')) {
-                document.getElementById('host').value = localStorage.getItem('sg80_h');
-                document.getElementById('user').value = localStorage.getItem('sg80_u');
-                document.getElementById('pass').value = localStorage.getItem('sg80_p');
+            if(localStorage.getItem('sg81_h')) {
+                document.getElementById('host').value = localStorage.getItem('sg81_h');
+                document.getElementById('user').value = localStorage.getItem('sg81_u');
+                document.getElementById('pass').value = localStorage.getItem('sg81_p');
             }
             document.getElementById('host').focus();
         }
@@ -157,35 +128,28 @@
             let u = document.getElementById('user').value.trim();
             let p = document.getElementById('pass').value.trim();
             if(!h.startsWith('http')) h = 'http://' + h;
-            document.getElementById('msg').innerText = "Conectando...";
             try {
                 let res = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                 let data = await res.json();
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('sg80_h', h); localStorage.setItem('sg80_u', u); localStorage.setItem('sg80_p', p);
+                    localStorage.setItem('sg81_h', h); localStorage.setItem('sg81_u', u); localStorage.setItem('sg81_p', p);
                     CONFIG = { host: h, user: u, pass: p };
-                    document.getElementById('s_exp').innerText = new Date(parseInt(data.user_info.exp_date)*1000).toLocaleDateString('pt-BR');
-                    document.getElementById('s_max').innerText = "1/" + data.user_info.max_connections;
                     state.screen = 'app';
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainInterface').style.display = 'flex';
                     loadCats();
-                } else throw new Error();
-            } catch(e) { document.getElementById('msg').innerText = "Erro nos dados."; }
+                }
+            } catch(e) {}
         }
 
         async function loadCats() {
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_categories`);
             let raw = await res.json();
-            DATA.cats = raw.filter(c => {
-                const name = c.category_name.toLowerCase();
-                return !VOD_FILTERS.some(f => name.includes(f));
-            });
+            DATA.cats = raw.filter(c => !VOD_FILTERS.some(f => c.category_name.toLowerCase().includes(f)));
             state.mode = 'cat'; state.lIdx = 0; renderList();
         }
 
         async function loadChns(cid) {
-            document.getElementById('listContainer').innerHTML = '<div style="padding:20px; color:#d4af37">Carregando...</div>';
             let res = await fetch(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`);
             DATA.chns = await res.json();
             state.mode = 'chn'; state.lIdx = 0; renderList();
@@ -208,15 +172,13 @@
 
         function play(ch) {
             const video = document.getElementById('player'); currentCh = ch.stream_id;
-            document.getElementById('chnName').innerText = ch.name;
-            document.getElementById('chnStatus').innerText = "Reproduzindo...";
             video.src = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
             video.play();
         }
 
         document.addEventListener('keydown', (e) => {
             const k = e.keyCode; const active = document.activeElement;
-            if(state.fs) { if([8, 461, 13].includes(k)) { document.getElementById('player').classList.remove('fs'); state.fs=false; } return; }
+            if(state.fs) { if([8, 461, 13].includes(k)) { document.getElementById('vidFrame').classList.remove('fs'); state.fs=false; } return; }
             
             if(state.screen === 'login') {
                 if(k === 40) { 
@@ -242,9 +204,9 @@
                 if(k===13) {
                     let item = list[state.lIdx];
                     if(state.mode === 'cat') loadChns(item.category_id);
-                    else { if(currentCh === item.stream_id) { document.getElementById('player').classList.add('fs'); state.fs=true; } else play(item); }
+                    else { if(currentCh === item.stream_id) { document.getElementById('vidFrame').classList.add('fs'); state.fs=true; } else play(item); }
                 }
-                if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; loadCats(); } }
+                if(k===8 || k===461) { if(state.mode==='chn') { state.mode='cat'; state.lIdx=0; renderList(); } }
             }
             renderList(); renderFocus();
         });
@@ -253,7 +215,7 @@
             document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
             if(state.zone === 0) document.getElementById('menu_'+state.sIdx).classList.add('focused');
         }
-        function reset() { if(confirm("Deseja sair?")) { localStorage.clear(); location.reload(); } }
+        function reset() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
