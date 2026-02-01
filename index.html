@@ -4,124 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>BLUE HORIZON V46</title>
+    <title>ROBSON & CAROL TV</title>
     
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA BLUE HORIZON (ER12 REPLICA) --- */
+        /* --- TEMA DARK / GOLD (ROBSON & CAROL) --- */
         * { box-sizing: border-box; outline: none; user-select: none; margin: 0; padding: 0; }
         body {
-            background-color: #0b0f19; /* Azul Muito Escuro */
-            color: #fff; font-family: 'Segoe UI', sans-serif;
+            background-color: #050505; /* Preto Quase Absoluto */
+            color: #ddd; font-family: sans-serif;
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* --- 1. TELA DE LOGIN --- */
+        /* --- 1. LOGIN --- */
         #loginScreen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #05070a 0%, #1a202c 100%);
-            z-index: 5000; display: flex; justify-content: center; align-items: center;
+            background: #000; z-index: 5000; 
+            display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: rgba(20, 30, 50, 0.9); border: 1px solid #333;
-            width: 450px; padding: 50px; text-align: center; border-radius: 10px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            background: #111; border: 2px solid #d4af37; /* Borda Dourada */
+            width: 450px; padding: 40px; text-align: center;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.1);
         }
-        .logo-text { font-size: 35px; font-weight: 900; margin-bottom: 30px; letter-spacing: 1px; }
-        .logo-text span { color: #ff0048; } /* Vermelho Destaque */
+        .logo-text { 
+            font-size: 26px; font-weight: bold; margin-bottom: 20px; letter-spacing: 1px; color: #fff;
+            text-transform: uppercase;
+        }
+        .logo-text span { color: #d4af37; display: block; font-size: 32px; margin-top: 5px; }
 
         .login-input {
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #0b0f19;
-            border: 1px solid #444; color: #fff; font-size: 16px; text-align: center; border-radius: 5px;
+            width: 100%; padding: 12px; margin-bottom: 15px; background: #000;
+            border: 1px solid #333; color: #d4af37; font-size: 16px; text-align: center;
+            font-family: monospace; font-weight: bold;
         }
-        .login-input.focused { border-color: #ff0048; background: #151a28; transform: scale(1.02); }
+        .login-input.focused { border-color: #d4af37; background: #1a1a1a; transform: scale(1.02); }
         
         .login-btn {
-            width: 100%; padding: 15px; background: #ff0048; color: #fff; border: none;
-            font-weight: bold; font-size: 16px; cursor: pointer; text-transform: uppercase; border-radius: 5px;
+            width: 100%; padding: 12px; background: #d4af37; color: #000; border: none;
+            font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer;
         }
-        .login-btn.focused { background: #ff4d7d; transform: scale(1.05); }
+        .login-btn.focused { background: #fff; transform: scale(1.05); }
 
-        /* --- 2. INTERFACE PRINCIPAL (LAYOUT ER12) --- */
+        /* --- 2. INTERFACE PRINCIPAL --- */
         #mainInterface { display: none; height: 100%; flex-direction: column; }
 
-        /* TOPO (MENU) */
+        /* TOPO */
         .top-nav {
-            height: 60px; background: #0b0f19; display: flex; align-items: center; padding: 0 30px;
-            border-bottom: 1px solid #222; justify-content: space-between;
+            height: 60px; background: #080808; display: flex; align-items: center; padding: 0 30px;
+            border-bottom: 2px solid #d4af37; justify-content: space-between;
         }
-        .nav-items { display: flex; gap: 30px; font-size: 14px; font-weight: bold; color: #aaa; text-transform: uppercase; }
-        .nav-item { display: flex; align-items: center; gap: 8px; }
-        .nav-item i { font-size: 16px; }
-        .nav-item.active { color: #fff; }
+        .top-logo { font-size: 20px; font-weight: bold; color: #fff; text-transform: uppercase; }
+        .top-logo b { color: #d4af37; }
         
-        .top-right { display: flex; align-items: center; gap: 20px; font-size: 18px; font-weight: bold; }
+        .top-right { display: flex; gap: 20px; align-items: center; font-size: 14px; }
+        
+        .btn-change { 
+            background: #111; padding: 8px 20px; border: 1px solid #444; color: #aaa; 
+            cursor: pointer; font-weight: bold; font-size: 12px;
+        }
+        .btn-change.focused { background: #d4af37; color: #000; border-color: #fff; }
 
         /* COLUNAS */
         .content-area { flex: 1; display: flex; overflow: hidden; }
 
-        /* COLUNA 1: CATEGORIAS */
-        .col-cat { width: 25%; background: #111625; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        
-        /* COLUNA 2: CANAIS */
-        .col-chn { width: 30%; background: #0e121e; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        
-        /* COLUNA 3: PLAYER + EPG */
-        .col-player { width: 45%; background: #05070a; display: flex; flex-direction: column; position: relative; }
+        .col-cat { width: 25%; background: #111; border-right: 1px solid #333; display: flex; flex-direction: column; }
+        .col-chn { width: 30%; background: #151515; border-right: 1px solid #333; display: flex; flex-direction: column; }
+        .col-player { width: 45%; background: #000; display: flex; flex-direction: column; }
 
         .list-header { 
-            padding: 15px; font-size: 12px; font-weight: bold; color: #888; text-transform: uppercase;
-            border-bottom: 1px solid #222; background: #151a28;
+            padding: 12px; font-size: 12px; font-weight: bold; color: #d4af37; 
+            background: #080808; border-bottom: 1px solid #333; text-transform: uppercase;
         }
         .scroll-list { flex: 1; overflow-y: auto; }
 
-        /* ESTILO DOS ITENS (CATEGORIAS E CANAIS) */
         .list-item {
-            padding: 12px 20px; font-size: 14px; color: #ccc; border-bottom: 1px solid #1a202c;
-            transition: all 0.1s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 12px 15px; font-size: 14px; color: #bbb; border-bottom: 1px solid #222;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .list-item.active { background: #222; color: #fff; border-left: 3px solid #555; }
         
-        /* Item Selecionado (Vermelho - Igual Foto) */
-        .list-item.active { background: #ff0048; color: #fff; font-weight: bold; border-left: 4px solid #fff; }
-        
-        /* Foco do Controle (Borda Branca/Vermelha) */
+        /* FOCO GOLD */
         .list-item.focused {
-            background: #2d3748; border-left: 4px solid #ff0048; color: #fff; transform: scale(1.02); z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: #d4af37; color: #000; font-weight: bold; transform: scale(1.0);
+            border-left: 4px solid #fff;
         }
 
-        /* --- PLAYER 16:9 --- */
+        /* --- PLAYER --- */
         .video-wrapper {
             width: 100%; aspect-ratio: 16/9; background: #000; position: relative;
             display: flex; align-items: center; justify-content: center;
+            border-bottom: 2px solid #d4af37;
         }
         video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-        /* INFO EPG (CAIXA AZUL EMBAIXO - IGUAL FOTO) */
+        #mask {
+            position: absolute; top:0; left:0; width:100%; height:100%; background:#000;
+            display:flex; align-items:center; justify-content:center; z-index:2;
+        }
+
+        /* EPG */
         .epg-box {
-            flex: 1; 
-            background: linear-gradient(to bottom, rgba(20, 40, 80, 0.9), rgba(10, 20, 40, 1)); /* Azul Translúcido */
-            padding: 20px; color: #fff; display: flex; flex-direction: column; justify-content: center;
-            border-top: 2px solid #ff0048;
+            flex: 1; background: #0a0a0a; padding: 20px; color: #fff;
         }
-        .epg-title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
-        .epg-time { 
-            font-size: 14px; background: rgba(0,0,0,0.3); display: inline-block; 
-            padding: 5px 10px; border-radius: 4px; margin-bottom: 10px; color: #ffd700;
-        }
-        .epg-desc { font-size: 13px; color: #ccc; line-height: 1.4; }
+        .chn-title { font-size: 22px; color: #d4af37; font-weight: bold; margin-bottom: 5px; }
+        .chn-info { font-size: 12px; color: #888; margin-bottom: 10px; font-family: monospace; }
+        .chn-status { font-weight: bold; color: #d4af37; }
 
-        /* Fullscreen */
-        .fullscreen-active {
+        /* FULLSCREEN */
+        .fs-mode {
             position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important;
-            z-index: 99999; background: #000;
+            z-index: 99999; background: #000; padding: 0; border: none;
         }
-        .fullscreen-active video { object-fit: fill; }
+        .fs-mode video { object-fit: fill; }
 
-        #loader { color: #ff0048; position: absolute; z-index: 5; display: none; }
-        #placeholder { color: #222; font-size: 80px; position: absolute; z-index: 1; }
+        /* SCROLLBAR CUSTOMIZADA (GOLD) */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
 
     </style>
 </head>
@@ -129,26 +132,21 @@
 
     <div id="loginScreen">
         <div class="login-box">
-            <div class="logo-text">BLUE<span>HORIZON</span></div>
+            <div class="logo-text">IPTV <br><span>ROBSON & CAROL</span></div>
             <input type="text" id="host" class="login-input" placeholder="http://url:porta">
             <input type="text" id="user" class="login-input" placeholder="Usuário">
             <input type="password" id="pass" class="login-input" placeholder="Senha">
             <button class="login-btn" onclick="conectar()">ENTRAR</button>
-            <div id="loginMsg" style="margin-top:15px; color:#ff0048; font-size:12px;"></div>
+            <div id="loginMsg" style="margin-top:10px; color:#d4af37; font-size:12px;"></div>
         </div>
     </div>
 
     <div id="mainInterface">
         <div class="top-nav">
-            <div class="nav-items">
-                <div class="nav-item active"><i class="fas fa-home"></i> INÍCIO</div>
-                <div class="nav-item"><i class="fas fa-tv"></i> TV</div>
-                <div class="nav-item" style="opacity:0.5"><i class="fas fa-film"></i> FILMES</div>
-                <div class="nav-item" style="opacity:0.5"><i class="fas fa-video"></i> SÉRIES</div>
-            </div>
+            <div class="top-logo">IPTV <b>ROBSON & CAROL</b></div>
             <div class="top-right">
-                <i class="fas fa-search"></i>
-                <span id="clock">00:00</span>
+                <div id="clock" style="color:#d4af37; font-weight:bold;">00:00</div>
+                <div class="btn-change" id="btnExit" onclick="trocarPlaylist()">TROCAR PLAYLIST</div>
             </div>
         </div>
 
@@ -164,19 +162,23 @@
             </div>
 
             <div class="col-player">
-                <div class="video-wrapper" id="videoContainer">
-                    <div id="loader"><i class="fas fa-circle-notch fa-spin"></i></div>
-                    <div id="placeholder"><i class="fas fa-tv"></i></div>
+                <div class="video-wrapper" id="vidContainer">
+                    <div id="mask">
+                        <i class="fas fa-tv fa-3x" style="color:#222;" id="iconTv"></i>
+                        <i class="fas fa-circle-notch fa-spin fa-3x" style="color:#d4af37; display:none;" id="iconLoad"></i>
+                    </div>
                     <video id="player" playsinline></video>
                 </div>
                 
                 <div class="epg-box">
-                    <div class="epg-title" id="chnName">Bem-vindo</div>
-                    <div class="epg-time" id="progTime">00:00 - 00:00</div>
-                    <div class="epg-desc" id="progDesc">
-                        <b>Status da Conta:</b> Ativa (Ilimitada)<br>
-                        <b>Vencimento:</b> <span id="expDate">--/--/--</span><br><br>
-                        Use as setas para navegar. OK 2x para Tela Cheia.
+                    <div class="chn-title" id="chnName">Bem-vindo</div>
+                    <div class="chn-info">
+                        Status: <span id="statusTxt" class="chn-status">PRONTO</span>
+                    </div>
+                    <div style="font-size:12px; color:#666;">
+                        • OK 1x: Reproduzir<br>
+                        • OK 2x: Tela Cheia<br>
+                        • Sistema Otimizado para TV Antiga
                     </div>
                 </div>
             </div>
@@ -190,27 +192,25 @@
         let currentChannel = null;
         let isFullscreen = false;
         
-        // Dados
-        let categories = [];
-        let channels = [];
-        
-        // Navegação
-        let screen = 'login'; // login, app
-        let focusIndex = 0; // Para login
-        let colIndex = 0; // 0=Cat, 1=Chn
+        let screen = 'login';
+        let focusIndex = 0; 
+        let colIndex = 0; // 0=Cat, 1=Chn, 2=TopBtn
         let catIndex = 0;
         let chnIndex = 0;
+        
+        let categories = [];
+        let channels = [];
 
-        // Relógio
+        // RELÓGIO
         setInterval(() => {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
         }, 1000);
 
         window.onload = () => {
-            if(localStorage.getItem('v46_host')) {
-                document.getElementById('host').value = localStorage.getItem('v46_host');
-                document.getElementById('user').value = localStorage.getItem('v46_user');
-                document.getElementById('pass').value = localStorage.getItem('v46_pass');
+            if(localStorage.getItem('v48_host')) {
+                document.getElementById('host').value = localStorage.getItem('v48_host');
+                document.getElementById('user').value = localStorage.getItem('v48_user');
+                document.getElementById('pass').value = localStorage.getItem('v48_pass');
             }
             updateFocus();
         }
@@ -232,16 +232,19 @@
             else if(screen === 'app') {
                 if(k===8 || k===461 || k===10009) { // Voltar
                     if(colIndex===1) { colIndex=0; updateFocus(); }
-                    else if(confirm("Sair da conta?")) { localStorage.clear(); location.reload(); }
+                    else if(colIndex===2) { colIndex=0; updateFocus(); }
                 }
+                
                 if(k===38) { // Cima
                     if(colIndex===0 && catIndex>0) catIndex--;
                     if(colIndex===1 && chnIndex>0) chnIndex--;
+                    if(colIndex===0 && catIndex===0) { colIndex=2; } 
                     updateFocus();
                 }
                 if(k===40) { // Baixo
-                    if(colIndex===0 && catIndex<categories.length-1) catIndex++;
-                    if(colIndex===1 && chnIndex<channels.length-1) chnIndex++;
+                    if(colIndex===2) { colIndex=0; } 
+                    else if(colIndex===0 && catIndex<categories.length-1) catIndex++;
+                    else if(colIndex===1 && chnIndex<channels.length-1) chnIndex++;
                     updateFocus();
                 }
                 if(k===39) { // Dir
@@ -251,8 +254,9 @@
                     if(colIndex===1) { colIndex=0; updateFocus(); }
                 }
                 if(k===13) { // Enter
-                    if(colIndex===0) carregarCanais(categories[catIndex].category_id);
-                    else {
+                    if(colIndex===2) trocarPlaylist();
+                    else if(colIndex===0) carregarCanais(categories[catIndex].category_id);
+                    else if(colIndex===1) {
                         const sel = channels[chnIndex];
                         if(currentChannel && currentChannel.stream_id === sel.stream_id) entrarTelaCheia();
                         else tocarCanal(sel);
@@ -269,17 +273,26 @@
                 inputs[focusIndex].classList.add('focused'); inputs[focusIndex].focus();
             }
             else if(screen === 'app') {
-                if(colIndex===0) {
+                if(colIndex===2) {
+                    document.getElementById('btnExit').classList.add('focused');
+                } else if(colIndex===0) {
                     const el = document.getElementById('cat_'+catIndex);
                     if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center', behavior:'smooth'}); }
-                } else {
+                } else if(colIndex===1) {
                     const el = document.getElementById('chn_'+chnIndex);
                     if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center', behavior:'smooth'}); }
                 }
             }
         }
 
-        // --- CONEXÃO ---
+        // --- SISTEMA ---
+        function trocarPlaylist() {
+            if(confirm("Sair da conta de Robson & Carol?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
         async function conectar() {
             const h = document.getElementById('host').value.trim();
             const u = document.getElementById('user').value.trim();
@@ -289,12 +302,12 @@
             let cleanHost = h.startsWith('http') ? h : 'http://' + h;
             if(cleanHost.endsWith('/')) cleanHost = cleanHost.slice(0, -1);
             CONFIG = { host: cleanHost, user: u, pass: p };
-            localStorage.setItem('v46_host', h); localStorage.setItem('v46_user', u); localStorage.setItem('v46_pass', p);
+            localStorage.setItem('v48_host', h); localStorage.setItem('v48_user', u); localStorage.setItem('v48_pass', p);
             
-            document.getElementById('loginMsg').innerText = "Autenticando...";
+            document.getElementById('loginMsg').innerText = "Conectando...";
 
             try {
-                // Tenta Login Direto
+                // Rota Direta
                 const url = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`;
                 const res = await fetch(url);
                 const data = await res.json();
@@ -303,28 +316,21 @@
                     iniciarApp(data, false);
                 } else throw new Error("Inativo");
             } catch(e) {
-                // Fallback Proxy (Se direto falhar)
-                document.getElementById('loginMsg').innerText = "Tentando Rota 2...";
+                // Rota Proxy (Fallback)
                 try {
                     const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}`)}`;
                     const res = await fetch(pUrl);
                     const data = await res.json();
                     const realData = JSON.parse(data.contents);
-                    if(realData.user_info.status === 'Active') {
-                        iniciarApp(realData, true);
-                    } else throw new Error("Inativo");
-                } catch(err) { document.getElementById('loginMsg').innerText = "Erro ao conectar. Verifique URL."; }
+                    if(realData.user_info.status === 'Active') iniciarApp(realData, true);
+                } catch(err) { document.getElementById('loginMsg').innerText = "Falha no Login"; }
             }
         }
 
         function iniciarApp(data, useProxy) {
-            const ed = new Date(parseInt(data.user_info.exp_date)*1000);
-            document.getElementById('expDate').innerText = ed.toLocaleDateString('pt-BR');
-            
             screen = 'app';
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainInterface').style.display = 'flex';
-            
             baixarCategorias(useProxy);
         }
 
@@ -335,49 +341,41 @@
             try {
                 const res = await fetch(url);
                 const data = await res.json();
-                const rawCats = useProxy ? JSON.parse(data.contents) : data;
+                const raw = useProxy ? JSON.parse(data.contents) : data;
                 
-                // === FILTRO AUTOMÁTICO (REMOVE FILMES/SÉRIES) ===
-                const blockList = ['filme', 'movie', 'serie', 'vod', '4k', 'playback', 'radio'];
-                categories = rawCats.filter(cat => {
-                    const name = cat.category_name.toLowerCase();
-                    return !blockList.some(term => name.includes(term));
-                });
+                // Filtro para leveza (Mantém a lista limpa)
+                const blocked = ['filme', 'movie', 'serie', 'vod', '4k', 'radio', 'adult', 'xxx'];
+                categories = raw.filter(c => !blocked.some(b => c.category_name.toLowerCase().includes(b)));
 
                 renderList('listCat', categories, 'cat_', 'category_name');
                 colIndex=0; catIndex=0; updateFocus();
-            } catch(e) { alert("Erro ao carregar categorias."); }
+            } catch(e) {}
         }
 
         async function carregarCanais(cid) {
-            document.getElementById('listChn').innerHTML = '<div style="padding:15px">Carregando...</div>';
-            // Sempre via proxy se necessário, ou direto. Vou usar direto por padrão agora e proxy no erro.
+            document.getElementById('listChn').innerHTML = '<div style="padding:10px; color:#d4af37">Carregando...</div>';
             const api = `${CONFIG.host}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_live_streams&category_id=${cid}`;
             
             try {
-                // Tenta direto primeiro (mais rápido)
                 let res = await fetch(api);
                 let data = await res.json();
                 channels = data;
                 renderList('listChn', channels, 'chn_', 'name');
             } catch(e) {
                 try {
-                    // Proxy Fallback
                     const pUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(api)}`;
                     let res = await fetch(pUrl);
                     let data = await res.json();
                     channels = JSON.parse(data.contents);
                     renderList('listChn', channels, 'chn_', 'name');
-                } catch(err) { document.getElementById('listChn').innerHTML = "Erro lista."; }
+                } catch(err) { document.getElementById('listChn').innerText = "Erro lista."; }
             }
         }
 
         function renderList(target, data, pfx, field) {
             const el = document.getElementById(target); el.innerHTML = "";
             const frag = document.createDocumentFragment();
-            // Renderização Turbo (Batch de 100)
             const limit = Math.min(data.length, 100); 
-            
             for(let i=0; i<limit; i++) {
                 const item = data[i];
                 const d = document.createElement('div');
@@ -386,12 +384,10 @@
                 d.innerText = item[field];
                 d.onclick = () => {
                     if(pfx==='cat_') { 
-                        // Visual Active
                         document.querySelectorAll('.col-cat .active').forEach(e=>e.classList.remove('active'));
                         d.classList.add('active');
                         catIndex=i; colIndex=0; updateFocus(); carregarCanais(item.category_id); 
                     } else { 
-                        // Visual Active
                         document.querySelectorAll('.col-chn .active').forEach(e=>e.classList.remove('active'));
                         d.classList.add('active');
                         chnIndex=i; colIndex=1; updateFocus(); tocarCanal(item); 
@@ -402,60 +398,67 @@
             el.appendChild(frag);
         }
 
-        // --- PLAYER COM TOKEN (BURLAR) ---
+        // --- PLAYER HÍBRIDO (ANTI-TELA PRETA) ---
         function tocarCanal(ch) {
             currentChannel = ch;
             document.getElementById('chnName').innerText = ch.name;
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('placeholder').style.display = 'none';
-            
-            // Hard Reset do Vídeo
-            if(hls) { hls.destroy(); hls = null; }
-            const video = document.getElementById('player');
-            video.src = ""; video.load();
+            document.getElementById('statusTxt').innerText = "CONECTANDO...";
+            document.getElementById('iconTv').style.display = 'none';
+            document.getElementById('iconLoad').style.display = 'block';
+            document.getElementById('mask').style.display = 'flex';
 
-            // Token Aleatório para forçar nova sessão
-            const token = Math.floor(Math.random() * 9999999);
-            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8?token=${token}`;
+            const oldV = document.getElementById('player');
+            const parent = oldV.parentNode;
+            parent.removeChild(oldV);
 
-            if(Hls.isSupported()) {
+            const video = document.createElement('video');
+            video.id = 'player';
+            video.setAttribute('playsinline', '');
+            video.style.width = '100%'; video.style.height = '100%';
+            parent.appendChild(video);
+
+            const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.m3u8`;
+
+            if (Hls.isSupported()) {
+                if(hls) hls.destroy();
                 hls = new Hls({
-                    maxBufferLength: 30, // 30s buffer
-                    maxMaxBufferLength: 60,
-                    enableWorker: true, // Multi-thread
-                    manifestLoadingTimeOut: 10000,
+                    maxBufferLength: 10, enableWorker: true, manifestLoadingTimeOut: 15000
                 });
                 hls.loadSource(streamUrl);
                 hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
                 
-                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); });
-                video.onplaying = () => { document.getElementById('loader').style.display = 'none'; };
-                
-                // Reconexão Automática
                 hls.on(Hls.Events.ERROR, (e, data) => {
                     if(data.fatal) {
+                        console.log("HLS falhou, tentando Nativo...");
                         hls.destroy();
                         video.src = streamUrl; 
                         video.play();
                     }
                 });
-            } else {
+            } 
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = streamUrl;
-                video.play();
+                video.addEventListener('loadedmetadata', () => video.play());
             }
+
+            video.onplaying = () => {
+                document.getElementById('statusTxt').innerText = "REPRODUZINDO";
+                document.getElementById('iconLoad').style.display = 'none';
+                document.getElementById('mask').style.display = 'none';
+            };
         }
 
         function entrarTelaCheia() {
-            const el = document.getElementById('videoContainer');
+            const el = document.getElementById('vidContainer');
             if(el.requestFullscreen) el.requestFullscreen();
-            else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-            el.classList.add('fullscreen-active'); isFullscreen = true;
+            el.classList.add('fs-mode'); isFullscreen = true;
         }
 
         function sairTelaCheia() {
             if(document.exitFullscreen) document.exitFullscreen();
-            else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
-            document.getElementById('videoContainer').classList.remove('fullscreen-active'); isFullscreen = false;
+            document.getElementById('vidContainer').classList.remove('fs-mode');
+            isFullscreen = false;
         }
 
     </script>
