@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY BOX V57</title>
+    <title>IPTV SKY BOX V58</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA DARK / RED (SKY BOX) --- */
+        /* --- TEMA SKY BOX DARK/RED (V58 STABLE) --- */
         * { box-sizing: border-box; outline: none; user-select: none; margin: 0; padding: 0; }
         body {
-            background-color: #0a0a0a;
-            color: #e0e0e0; font-family: 'Segoe UI', sans-serif;
+            background-color: #050505;
+            color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
@@ -24,79 +24,83 @@
             z-index: 5000; display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: #111; border-top: 4px solid #e50914;
+            background: #111; border-top: 5px solid #e50914;
             width: 450px; padding: 50px; text-align: center; border-radius: 8px;
-            box-shadow: 0 0 60px rgba(229, 9, 20, 0.2);
+            box-shadow: 0 0 80px rgba(229, 9, 20, 0.15);
         }
         .logo-text { 
             font-size: 28px; font-weight: 900; margin-bottom: 25px; color: #fff; 
             letter-spacing: 2px; text-transform: uppercase;
         }
-        .logo-text span { color: #e50914; font-size: 36px; display: block; margin-top: 5px; }
+        .logo-text span { color: #e50914; font-size: 40px; display: block; margin-top: 5px; }
 
         .login-input {
-            width: 100%; padding: 14px; margin-bottom: 15px; background: #000;
+            width: 100%; padding: 15px; margin-bottom: 15px; background: #080808;
             border: 1px solid #333; color: #fff; font-size: 16px; text-align: center;
             font-weight: bold; border-radius: 4px;
         }
         .login-input.focused { border-color: #e50914; background: #1a1a1a; transform: scale(1.02); }
         .login-btn {
-            width: 100%; padding: 14px; background: #e50914; color: #fff; border: none;
+            width: 100%; padding: 15px; background: #e50914; color: #fff; border: none;
             font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; border-radius: 4px;
         }
-        .login-btn.focused { background: #ff1f2f; transform: scale(1.05); }
+        .login-btn.focused { background: #ff1f2f; transform: scale(1.05); color: #fff; }
 
         /* 2. INTERFACE */
         #mainInterface { display: none; height: 100%; flex-direction: column; }
 
         .top-nav {
-            height: 70px; background: #000; display: flex; align-items: center; padding: 0 40px;
-            border-bottom: 2px solid #e50914; justify-content: space-between;
+            height: 75px; background: #080808; display: flex; align-items: center; padding: 0 40px;
+            border-bottom: 3px solid #e50914; justify-content: space-between;
         }
-        .top-logo { font-size: 22px; font-weight: 900; color: #fff; text-transform: uppercase; }
+        .top-logo { font-size: 24px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
         .top-logo span { color: #e50914; }
         
-        /* INFO CONTA */
-        .account-info { display: flex; gap: 20px; font-size: 12px; color: #888; font-family: monospace; }
+        .account-info { display: flex; gap: 25px; font-size: 13px; color: #999; font-family: monospace; }
         .acc-item b { color: #e50914; }
 
-        /* TOPO DIREITO (RELÓGIO AFASTADO) */
-        .top-right { display: flex; gap: 40px; align-items: center; font-size: 14px; }
+        /* RELÓGIO AFASTADO */
+        .top-right { display: flex; align-items: center; }
+        #clock { 
+            color: #e50914; font-weight: bold; font-size: 22px; 
+            margin-right: 60px; /* AFASTAMENTO DO BOTÃO SAIR */
+            font-family: monospace; letter-spacing: 2px;
+        }
         
         .btn-change { 
-            background: #1a1a1a; padding: 8px 20px; border: 1px solid #333; color: #aaa; 
-            cursor: pointer; font-weight: bold; font-size: 12px; border-radius: 4px;
+            background: #151515; padding: 10px 25px; border: 1px solid #333; color: #aaa; 
+            cursor: pointer; font-weight: bold; font-size: 13px; border-radius: 4px; transition: 0.2s;
         }
-        .btn-change.focused { background: #e50914; color: #fff; border-color: #fff; }
+        .btn-change.focused { background: #e50914; color: #fff; border-color: #fff; transform: scale(1.1); }
 
         .content-area { flex: 1; display: flex; overflow: hidden; }
 
         /* COLUNAS */
-        .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .col-chn { width: 30%; background: #0c0c0c; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-cat { width: 25%; background: #050505; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-chn { width: 30%; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .col-player { width: 45%; background: #000; display: flex; flex-direction: column; }
 
         .list-header { 
-            padding: 15px; font-size: 13px; font-weight: bold; color: #e50914; 
-            background: #000; border-bottom: 1px solid #222; text-transform: uppercase;
+            padding: 18px; font-size: 14px; font-weight: bold; color: #e50914; 
+            background: #020202; border-bottom: 1px solid #222; text-transform: uppercase; letter-spacing: 1px;
         }
         .scroll-list { flex: 1; overflow-y: auto; }
 
         .list-item {
-            padding: 14px 20px; font-size: 14px; color: #999; border-bottom: 1px solid #1a1a1a;
+            padding: 15px 20px; font-size: 15px; color: #888; border-bottom: 1px solid #151515;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: 0.1s;
         }
-        .list-item.active { background: #1a1a1a; color: #fff; border-left: 3px solid #666; }
+        .list-item.active { background: #111; color: #fff; border-left: 3px solid #666; }
         .list-item.focused { 
             background: #e50914; color: #fff; font-weight: bold; transform: scale(1.02); z-index: 5;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); border-left: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); border-left: none;
         }
 
-        /* PLAYER NATIVO */
+        /* PLAYER NATIVO ESTÁVEL */
         .video-wrapper {
             width: 100%; aspect-ratio: 16/9; background: #000; position: relative;
             display: flex; align-items: center; justify-content: center;
-            border-bottom: 3px solid #e50914;
+            border-bottom: 4px solid #e50914;
         }
         video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
@@ -105,11 +109,11 @@
             display:flex; align-items:center; justify-content:center; z-index:2;
         }
 
-        .epg-box { flex: 1; background: #050505; padding: 25px; }
-        .chn-title { font-size: 26px; color: #fff; font-weight: bold; margin-bottom: 10px; }
+        .epg-box { flex: 1; background: #080808; padding: 30px; }
+        .chn-title { font-size: 28px; color: #fff; font-weight: bold; margin-bottom: 15px; }
         
         .chn-details {
-            font-size: 13px; color: #777; margin-bottom: 15px; border-top: 1px solid #222; padding-top: 10px;
+            font-size: 14px; color: #777; margin-bottom: 20px; border-top: 1px solid #222; padding-top: 15px;
         }
         .chn-details b { color: #e50914; }
 
@@ -119,9 +123,11 @@
         }
         .fs-mode video { object-fit: fill; }
 
-        ::-webkit-scrollbar { width: 6px; }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e50914; }
 
     </style>
 </head>
@@ -130,11 +136,11 @@
     <div id="loginScreen">
         <div class="login-box">
             <div class="logo-text">IPTV <br><span>SKY BOX</span></div>
-            <input type="text" id="host" class="login-input" placeholder="http://dns.com">
+            <input type="text" id="host" class="login-input" placeholder="http://url-do-servidor">
             <input type="text" id="user" class="login-input" placeholder="Usuário">
             <input type="password" id="pass" class="login-input" placeholder="Senha">
             <button class="login-btn" onclick="iniciarConexao()">ACESSAR SISTEMA</button>
-            <div id="loginMsg" style="margin-top:15px; color:#e50914; font-size:12px; font-weight:bold;"></div>
+            <div id="loginMsg" style="margin-top:15px; color:#e50914; font-size:13px; font-weight:bold;"></div>
         </div>
     </div>
 
@@ -143,13 +149,13 @@
             <div class="top-logo">IPTV <span>SKY BOX</span></div>
             
             <div class="account-info">
-                <div class="acc-item">CRIADO: <i id="infoCreated">--/--</i></div>
-                <div class="acc-item">VENCE: <i id="infoExp">--/--</i></div>
-                <div class="acc-item">ATIVAS: <b>1/1</b></div>
+                <div class="acc-item">CRIADO: <b id="infoCreated">--/--</b></div>
+                <div class="acc-item">VENCE: <b id="infoExp">--/--</b></div>
+                <div class="acc-item">CONEXÕES: <b>1 ATIVA</b></div>
             </div>
 
             <div class="top-right">
-                <div id="clock" style="color:#e50914; font-weight:bold; font-size:18px;">--:--</div>
+                <div id="clock">00:00</div>
                 <div class="btn-change" id="btnExit" onclick="logoutTotal()">SAIR</div>
             </div>
         </div>
@@ -175,13 +181,14 @@
                     <div class="chn-title" id="chnName">Bem-vindo</div>
                     
                     <div class="chn-details">
-                        STATUS: <span id="statusTxt" style="color:#e50914; font-weight:bold">AGUARDANDO</span><br>
+                        STATUS: <span id="statusTxt" style="color:#e50914; font-weight:bold">AGUARDANDO</span>
                     </div>
 
-                    <div style="font-size:13px; color:#555; line-height:1.5;">
-                        • 1º Clique OK: Inicia Canal<br>
-                        • 2º Clique OK: Tela Cheia<br>
-                        • VODs filtrados (Leve)
+                    <div style="font-size:14px; color:#666; line-height:1.6;">
+                        <i class="fas fa-info-circle"></i> <b>INSTRUÇÕES:</b><br>
+                        • Pressione <b>OK</b> para Iniciar o Canal.<br>
+                        • Pressione <b>OK Novamente</b> para Tela Cheia.<br>
+                        • Sistema Anti-Travamento Ativo.
                     </div>
                 </div>
             </div>
@@ -198,36 +205,54 @@
         let colIndex = 0; 
         let catIndex = 0, chnIndex = 0;
         let categories = [], channels = [];
+        let watchdogTimer = null; // Monitor de travamento
 
-        // --- FILTROS ---
+        // --- FILTROS (VOD KILLER) ---
+        // Baseado no seu script Python ssiptv_master.py
         const VOD_TRIGGERS = [
             'filme', 'movie', 'serie', 'series', 'vod', 'box', 
             'playback', 'radio', 'adult', 'xxx', '+18', '4k',
             'ondemand', 'show', 'desenho', 'animes'
         ];
 
-        // --- RELÓGIO (CORRIGIDO E IMEDIATO) ---
-        function updateClock() {
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const brasiliaTime = new Date(utc + (3600000 * -3));
-            
-            const hours = String(brasiliaTime.getHours()).padStart(2, '0');
-            const minutes = String(brasiliaTime.getMinutes()).padStart(2, '0');
-            
-            const clockEl = document.getElementById('clock');
-            if(clockEl) clockEl.innerText = `${hours}:${minutes}`;
+        // --- RELÓGIO VIA INTERNET (HORA CERTA) ---
+        let timeOffset = 0;
+        
+        // Pega a hora certa de um servidor NTP/HTTP ao iniciar
+        async function syncTime() {
+            try {
+                const res = await fetch('https://worldtimeapi.org/api/timezone/America/Sao_Paulo');
+                const data = await res.json();
+                const serverTime = new Date(data.datetime).getTime();
+                const localTime = new Date().getTime();
+                timeOffset = serverTime - localTime;
+            } catch(e) {
+                // Se falhar, usa UTC-3 manual
+                const now = new Date();
+                const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+                const brTime = utc + (3600000 * -3);
+                timeOffset = brTime - now.getTime();
+            }
         }
+
+        function updateClock() {
+            const now = new Date(new Date().getTime() + timeOffset);
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const el = document.getElementById('clock');
+            if(el) el.innerText = `${hours}:${minutes}`;
+        }
+        
+        // Sincroniza e inicia o relógio
+        syncTime();
         setInterval(updateClock, 1000);
 
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
-            updateClock(); // Chama relógio na hora
-            
             try {
-                const savedHost = localStorage.getItem('v57_host');
-                const savedUser = localStorage.getItem('v57_user');
-                const savedPass = localStorage.getItem('v57_pass');
+                const savedHost = localStorage.getItem('v58_host');
+                const savedUser = localStorage.getItem('v58_user');
+                const savedPass = localStorage.getItem('v58_pass');
 
                 if(savedHost && savedUser && savedPass) {
                     document.getElementById('host').value = savedHost;
@@ -258,9 +283,9 @@
 
             CONFIG = { host: h, user: u, pass: p };
             
-            localStorage.setItem('v57_host', h); 
-            localStorage.setItem('v57_user', u); 
-            localStorage.setItem('v57_pass', p);
+            localStorage.setItem('v58_host', h); 
+            localStorage.setItem('v58_user', u); 
+            localStorage.setItem('v58_pass', p);
 
             document.getElementById('loginMsg').innerText = "Conectando...";
 
@@ -331,17 +356,17 @@
                 if(k===39) { if(colIndex===0 && channels.length>0) { colIndex=1; chnIndex=0; updateFocus(); } }
                 if(k===37) { if(colIndex===1) colIndex=0; updateFocus(); }
                 
-                // LÓGICA OK V57 (SIMPLIFICADA)
+                // LÓGICA OK V58 (CORRIGIDA)
                 if(k===13) { 
                     if(colIndex===2) logoutTotal();
                     else if(colIndex===0) carregarCanais(categories[catIndex].category_id);
                     else if(colIndex===1) {
                         const sel = channels[chnIndex];
-                        // Se já é o canal atual, vai para Fullscreen
+                        // LÓGICA: Se já está tocando ESTE canal, vai pra Fullscreen
                         if(currentChannel && currentChannel.stream_id === sel.stream_id) {
                             entrarTelaCheia();
                         } else {
-                            // Se é novo, toca
+                            // Se é novo ou parou, toca
                             tocarCanal(sel);
                         }
                     }
@@ -395,7 +420,7 @@
         function renderList(target, data, pfx, field) {
             const el = document.getElementById(target); el.innerHTML = "";
             const frag = document.createDocumentFragment();
-            const limit = Math.min(data.length, 100); 
+            const limit = Math.min(data.length, 150); 
             for(let i=0; i<limit; i++) {
                 const item = data[i];
                 const d = document.createElement('div');
@@ -412,17 +437,18 @@
             el.appendChild(frag);
         }
 
-        // --- PLAYER TS (NATIVO & LEVE) ---
+        // --- PLAYER COM MONITOR DE TRAVAMENTO ---
         function tocarCanal(ch) {
+            if(watchdogTimer) clearInterval(watchdogTimer);
+            
             currentChannel = ch;
             document.getElementById('chnName').innerText = ch.name;
-            document.getElementById('statusTxt').innerText = "CONECTANDO TS...";
+            document.getElementById('statusTxt').innerText = "CONECTANDO...";
             document.getElementById('iconTv').style.display = 'none';
             document.getElementById('iconLoad').style.display = 'block';
             document.getElementById('mask').style.display = 'flex';
 
             const parent = document.getElementById('vidContainer');
-            // Remove video antigo
             const oldV = document.getElementById('player');
             if(oldV) parent.removeChild(oldV);
 
@@ -432,24 +458,51 @@
             video.style.width = '100%'; video.style.height = '100%';
             parent.appendChild(video);
 
-            // Tenta forçar TS (Menos CPU)
+            // Usa .ts para processamento leve
             const streamUrl = `${CONFIG.host}/live/${CONFIG.user}/${CONFIG.pass}/${ch.stream_id}.ts`;
 
             video.src = streamUrl;
             video.play().catch(e => {
-                console.log("Erro Play");
-                document.getElementById('statusTxt').innerText = "ERRO: TENTE NOVAMENTE";
+                document.getElementById('statusTxt').innerText = "ERRO AO INICIAR";
             });
 
             video.onplaying = () => {
-                document.getElementById('statusTxt').innerText = "ONLINE (TS)";
-                if(document.getElementById('mask')) document.getElementById('mask').style.display = 'none';
+                document.getElementById('statusTxt').innerText = "REPRODUZINDO";
+                document.getElementById('iconLoad').style.display = 'none';
+                document.getElementById('mask').style.display = 'none';
+                
+                // Inicia o Guardião (Watchdog)
+                monitorarTravamento(video, streamUrl);
             };
             
             video.onerror = () => {
                 document.getElementById('statusTxt').innerText = "FALHA - RECONECTANDO...";
                 setTimeout(() => video.src = streamUrl, 2000); 
             };
+        }
+
+        function monitorarTravamento(video, url) {
+            let lastTime = 0;
+            let stuckCount = 0;
+            
+            watchdogTimer = setInterval(() => {
+                if(video.paused) return;
+                
+                if(video.currentTime === lastTime) {
+                    stuckCount++;
+                    // Se ficar travado por 2 verificações (2 segundos)
+                    if(stuckCount > 2) {
+                        document.getElementById('statusTxt').innerText = "DESTAVANDO...";
+                        // Recarrega o src para limpar buffer corrompido
+                        video.src = url; 
+                        video.play();
+                        stuckCount = 0;
+                    }
+                } else {
+                    stuckCount = 0;
+                    lastTime = video.currentTime;
+                }
+            }, 1000);
         }
 
         function entrarTelaCheia() {
