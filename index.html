@@ -1,384 +1,56 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD FINAL STABLE</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        /* --- VISUAL SKY GOLD (Inalterado) --- */
-        :root {
-            --gold: #FFD700;
-            --bg-deep: #000000;
-            --bg-panel: #0a0a0a;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+// --- GLOBAL KEY LISTENER ---
+        function doLogin() { App.login(); } // Wrapper
         
-        body { 
-            background: var(--bg-deep); color: #fff; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            height: 100vh; overflow: hidden; 
-            display: flex; flex-direction: column;
-        }
-
-        /* LOGIN */
-        #loginScreen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 5000;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .login-box {
-            background: #080808; border-top: 4px solid var(--gold);
-            width: 400px; padding: 40px; text-align: center;
-        }
-        .lg-inp {
-            width: 100%; height: 50px; margin-bottom: 15px;
-            background: #151515; border: 1px solid #333; color: white;
-            text-align: center; font-size: 18px;
-        }
-        .lg-inp:focus { border-color: var(--gold); background: #222; }
-        .lg-btn {
-            width: 100%; height: 50px; background: var(--gold); color: #000;
-            font-weight: bold; border: none; cursor: pointer; margin-top: 10px;
-        }
-        .lg-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
-
-        /* APP */
-        #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
-
-        /* TOPO */
-        .top-bar {
-            height: 60px; background: #111; border-bottom: 2px solid #333;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 30px;
-        }
-        .logo { font-size: 22px; font-weight: 900; }
-        .logo span { color: var(--gold); }
-        
-        .tabs { display: flex; height: 100%; gap: 10px; }
-        .tab-btn {
-            padding: 0 15px; height: 100%; display: flex; align-items: center; gap: 5px;
-            color: #777; font-weight: bold; border-bottom: 4px solid transparent; font-size: 14px;
-        }
-        .tab-btn.active { color: #fff; border-bottom-color: var(--gold); background: #1a1a1a; }
-        .tab-btn.focused { background: var(--gold); color: #000; border-color: #fff; }
-
-        .top-right { display: flex; align-items: center; gap: 20px; }
-        .exit-btn { font-size: 12px; border: 1px solid #333; padding: 5px 10px; border-radius: 4px; color: #888; }
-        .exit-btn.focused { background: #b00; color: #fff; border-color: #f00; }
-        #clock { font-size: 22px; color: #fff; font-weight: bold; }
-
-        /* CORPO */
-        .main-container { flex: 1; display: flex; overflow: hidden; }
-
-        /* Col 1 */
-        .col-cats { width: 280px; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .list-header { padding: 12px; background: #000; color: var(--gold); text-align: center; font-weight: bold; font-size: 12px; }
-        .scroll-cats { flex: 1; overflow-y: auto; }
-        .item-cat { padding: 12px 20px; color: #888; font-size: 14px; border-left: 4px solid transparent; }
-        .item-cat.active { background: #151515; color: #fff; border-left-color: #555; font-weight: bold; }
-        .item-cat.focused { background: var(--gold); color: #000; border-left-color: #fff; font-weight: 900; }
-
-        /* Col 2 */
-        .col-chans { width: 350px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .scroll-chans { flex: 1; overflow-y: auto; }
-        .item-chan { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .item-chan.playing { color: var(--gold); }
-        .item-chan.focused { background: rgba(255, 215, 0, 0.2); border: 1px solid var(--gold); color: #fff; font-weight: bold; transform: scale(1.02); }
-
-        /* Col 3 */
-        .col-player { flex: 1; background: #050505; display: flex; flex-direction: column; padding: 20px; }
-        .video-wrapper { 
-            width: 100%; aspect-ratio: 16/9; background: #000; 
-            border: 1px solid #333; position: relative; margin-bottom: 20px; 
-            display:flex; justify-content:center; align-items:center;
-        }
-        .video-wrapper.active { border-color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.3); }
-        video { width: 100%; height: 100%; object-fit: contain; }
-        .fullscreen { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index:9999; border:none; background:#000; }
-        #loader { display: none; color: var(--gold); font-weight: bold; position: absolute; }
-        .info-title { color: #fff; font-size: 18px; font-weight: bold; }
-
-    </style>
-</head>
-<body onload="init()">
-
-    <div id="loginScreen">
-        <div class="login-box">
-            <h2 style="color:#fff; margin-bottom:20px">SKY <span style="color:var(--gold)">GOLD</span></h2>
-            <input type="text" id="lg-h" class="lg-inp" placeholder="http://url">
-            <input type="text" id="lg-u" class="lg-inp" placeholder="Usuário">
-            <input type="password" id="lg-p" class="lg-inp" placeholder="Senha">
-            <button id="lg-btn" class="lg-btn" onclick="doLogin()">ENTRAR</button>
-            <div id="login-msg" style="color:red; margin-top:10px; font-size:12px;"></div>
-        </div>
-    </div>
-
-    <div id="appInterface">
-        <div class="top-bar">
-            <div class="logo">SKY <span>GOLD</span></div>
-            <div class="tabs">
-                <div class="tab-btn active" id="tab-0"><i class="fas fa-tv"></i> TV</div>
-                <div class="tab-btn" id="tab-1"><i class="fas fa-film"></i> FILMES</div>
-                <div class="tab-btn" id="tab-2"><i class="fas fa-video"></i> SÉRIES</div>
-            </div>
-            <div class="top-right">
-                <div class="exit-btn" id="btn-exit">SAIR</div>
-                <div id="clock">00:00</div>
-            </div>
-        </div>
-
-        <div class="main-container">
-            <div class="col-cats">
-                <div class="list-header">CATEGORIAS</div>
-                <div class="scroll-cats" id="list-cats"></div>
-            </div>
-            <div class="col-chans">
-                <div class="list-header">CONTEÚDO</div>
-                <div class="scroll-chans" id="list-items">
-                    <div style="padding:20px; text-align:center; color:#555">Selecione ao lado</div>
-                </div>
-            </div>
-            <div class="col-player">
-                <div class="video-wrapper" id="v-wrap">
-                    <div id="loader">CARREGANDO...</div>
-                    <video id="player" playsinline webkit-playsinline></video>
-                </div>
-                <div class="info-panel">
-                    <div class="info-title" id="info-title">Bem vindo</div>
-                    <div style="color:#666">Navegue com as setas</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const App = {
-            scr: 'login', mode: 'live', zone: 0, fIdx: 0,
-            cats: [], items: [], creds: {}, currId: null,
-
-            init: function() {
-                this.startClock();
-                if(localStorage.getItem('sh')) {
-                    document.getElementById('lg-h').value = localStorage.getItem('sh');
-                    document.getElementById('lg-u').value = localStorage.getItem('su');
-                    document.getElementById('lg-p').value = localStorage.getItem('sp');
-                }
-                document.getElementById('lg-h').focus();
-            },
-
-            startClock: function() {
-                setInterval(() => {
-                    let d = new Date();
-                    d.setHours(d.getHours() + 1);
-                    document.getElementById('clock').innerText = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-                }, 1000);
-            },
-
-            doLogin: async function() {
-                let h = document.getElementById('lg-h').value.trim();
-                let u = document.getElementById('lg-u').value.trim();
-                let p = document.getElementById('lg-p').value.trim();
-                let msg = document.getElementById('login-msg');
-                let btn = document.getElementById('lg-btn');
-
-                if(!h || !u || !p) { msg.innerText = "Preencha tudo"; return; }
-                if(!h.startsWith('http')) h = 'http://'+h; // Força protocolo
-
-                btn.innerText = "CONECTANDO...";
-                btn.disabled = true;
-                msg.innerText = "";
-
-                try {
-                    // Timeout manual para TVs antigas
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), 15000); // 15s
-
-                    let url = `${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`;
-                    let res = await fetch(url, { signal: controller.signal });
-                    clearTimeout(id);
-                    
-                    let json = await res.json();
-
-                    if(Array.isArray(json)) {
-                        localStorage.setItem('sh', h); localStorage.setItem('su', u); localStorage.setItem('sp', p);
-                        this.creds = {h,u,p};
-                        
-                        document.getElementById('loginScreen').style.display = 'none';
-                        document.getElementById('appInterface').style.display = 'flex';
-                        this.scr = 'app';
-                        this.loadCats('live');
-                    } else {
-                        throw new Error("Dados incorretos");
-                    }
-                } catch(e) {
-                    btn.innerText = "ENTRAR";
-                    btn.disabled = false;
-                    if(e.name === 'AbortError') msg.innerText = "Tempo esgotado. Servidor lento.";
-                    else msg.innerText = "Falha: Verifique URL/Internet (Erro CORS/Mixed)";
-                }
-            },
-
-            loadCats: async function(m) {
-                this.mode = m;
-                this.items = [];
-                document.getElementById('list-items').innerHTML = '';
-                
-                // Visual Tabs
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                if(m==='live') document.getElementById('tab-0').classList.add('active');
-                if(m==='vod') document.getElementById('tab-1').classList.add('active');
-                if(m==='series') document.getElementById('tab-2').classList.add('active');
-
-                let act = m==='live'?'get_live_categories':(m==='vod'?'get_vod_categories':'get_series_categories');
-                
-                try {
-                    let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`);
-                    this.cats = await res.json();
-                    
-                    let html = '';
-                    this.cats.forEach((c, i) => html += `<div class="item-cat" id="cat-${i}">${c.category_name}</div>`);
-                    document.getElementById('list-cats').innerHTML = html;
-                    
-                    this.zone = 1; this.fIdx = 0;
-                    this.render();
-                } catch(e) { alert("Erro ao carregar categorias"); }
-            },
-
-            loadItems: async function() {
-                let cat = this.cats[this.fIdx];
-                let cid = cat.category_id;
-                document.getElementById('list-items').innerHTML = '<div style="padding:10px;text-align:center">Carregando...</div>';
-                
-                // Marca Categoria
-                document.querySelectorAll('.item-cat').forEach(c => c.classList.remove('active'));
-                document.getElementById(`cat-${this.fIdx}`).classList.add('active');
-
-                let act = this.mode==='live'?'get_live_streams':(this.mode==='vod'?'get_vod_streams':'get_series');
-                
-                try {
-                    let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}&category_id=${cid}`);
-                    this.items = await res.json();
-                    
-                    let html = '';
-                    // Limite de segurança para não travar renderização
-                    let max = this.items.length > 500 ? 500 : this.items.length;
-                    for(let i=0; i<max; i++) html += `<div class="item-chan" id="itm-${i}"><i class="fas fa-play"></i> ${this.items[i].name}</div>`;
-                    
-                    document.getElementById('list-items').innerHTML = html;
-                    this.zone = 2; this.fIdx = 0;
-                    this.render();
-                } catch(e) { document.getElementById('list-items').innerHTML = 'Erro'; }
-            },
-
-            play: function() {
-                let it = this.items[this.fIdx];
-                let vid = document.getElementById('player');
-                let box = document.getElementById('v-wrap');
-                
-                let sid = it.stream_id || it.series_id;
-                let ext = this.mode==='live'?'ts':'mp4';
-                let type = this.mode==='live'?'live':(this.mode==='vod'?'movie':'series');
-                
-                // Trata VOD extension
-                if(this.mode==='vod' && it.container_extension) ext = it.container_extension;
-
-                let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${sid}.${ext}`;
-
-                if(this.currId === sid && !vid.paused) {
-                    if(box.requestFullscreen) box.requestFullscreen();
-                    else if(vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
-                } else {
-                    this.currId = sid;
-                    
-                    // Limpeza
-                    vid.pause(); vid.removeAttribute('src'); vid.load();
-
-                    document.querySelectorAll('.item-chan').forEach(x => x.classList.remove('playing'));
-                    document.getElementById(`itm-${this.fIdx}`).classList.add('playing');
-                    box.classList.add('active');
-                    document.getElementById('info-title').innerText = it.name;
-                    document.getElementById('loader').style.display = 'block';
-
-                    vid.src = url;
-                    vid.play().then(()=>document.getElementById('loader').style.display='none').catch(e=>console.log(e));
-                }
-            },
-
-            render: function() {
-                document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
-                let id = '';
-                if(this.zone === 0) id = ['tab-0','tab-1','tab-2','btn-exit'][this.fIdx];
-                if(this.zone === 1) id = `cat-${this.fIdx}`;
-                if(this.zone === 2) id = `itm-${this.fIdx}`;
-                
-                let el = document.getElementById(id);
-                if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); }
-            },
-
-            back: function() {
-                if(document.fullscreenElement) { document.exitFullscreen(); return; }
-                if(this.zone === 2) { 
-                    this.zone = 1; 
-                    // Tenta restaurar index da categoria
-                    let act = document.querySelector('.item-cat.active');
-                    this.fIdx = act ? parseInt(act.id.split('-')[1]) : 0;
-                }
-                else if(this.zone === 1) { this.zone = 0; this.fIdx = 0; }
-                this.render();
-            }
-        };
-
-        // Hooks
-        function doLogin() { App.doLogin(); }
-        function init() { App.init(); }
-
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
-            if(App.scr === 'login') {
+            
+            // LOGIN INPUTS (Navegação básica)
+            if(App.screen === 'login') {
                 if(k===13) document.activeElement.click();
-                if(k===40) { // Seta Baixo no Login
-                    let inputs = ['lg-h','lg-u','lg-p','lg-btn'];
-                    let curr = inputs.indexOf(document.activeElement.id);
-                    if(curr < 3) document.getElementById(inputs[curr+1]).focus();
+                if(k===40) { // Descer input
+                    let map = ['h','u','p','btnEnter'];
+                    let curr = map.indexOf(document.activeElement.id);
+                    if(curr < 3) document.getElementById(map[curr+1]).focus();
+                }
+                if(k===38) { // Subir input
+                    let map = ['h','u','p','btnEnter'];
+                    let curr = map.indexOf(document.activeElement.id);
+                    if(curr > 0) document.getElementById(map[curr-1]).focus();
                 }
                 return;
             }
 
-            if([37,38,39,40].includes(k)) e.preventDefault();
+            // APP
+            if([37,38,39,40].includes(k)) e.preventDefault(); // Previne scroll
 
-            // VOLTAR (Vários códigos de TV)
-            if([8, 27, 461, 10009, 88].includes(k)) { App.back(); return; }
+            // LÓGICA DO BOTÃO VOLTAR (CORRIGIDA)
+            // 8: Backspace, 461: Return (LG), 27: Esc, 10009: Return (Tizen)
+            if(k === 8 || k === 461 || k === 27 || k === 10009) {
+                if(document.fullscreenElement) {
+                    document.exitFullscreen();
+                } 
+                else if(App.zone === 2) { 
+                    // Estava na lista de filmes -> Volta para categorias
+                    App.zone = 1; 
+                    
+                    // Tenta focar na categoria que estava ativa
+                    let active = document.querySelector('.item-cat.active');
+                    if(active) {
+                        let id = parseInt(active.id.split('-')[1]);
+                        App.focusIdx = id;
+                    } else {
+                        App.focusIdx = 0;
+                    }
+                    App.renderFocus(); 
+                }
+                else if(App.zone === 1) {
+                    // Estava nas categorias -> Volta para o menu do topo
+                    App.zone = 0;
+                    App.focusIdx = 0; // Foca no primeiro item do topo
+                    App.renderFocus();
+                }
+                return;
+            }
 
-            if(App.zone === 0) { // Topo
-                if(k===39 && App.fIdx < 3) App.fIdx++;
-                if(k===37 && App.fIdx > 0) App.fIdx--;
-                if(k===40) { App.zone = 1; App.fIdx = 0; }
-                if(k===13) {
-                    if(App.fIdx===0) App.loadCats('live');
-                    if(App.fIdx===1) App.loadCats('vod');
-                    if(App.fIdx===2) App.loadCats('series');
-                    if(App.fIdx===3 && confirm("Sair?")) { localStorage.clear(); location.reload(); }
-                }
-            }
-            else if(App.zone === 1) { // Cats
-                if(k===38) {
-                    if(App.fIdx>0) App.fIdx--; 
-                    else { App.zone = 0; App.fIdx = 0; }
-                }
-                if(k===40 && App.fIdx < App.cats.length-1) App.fIdx++;
-                if(k===13 || k===39) App.loadItems();
-            }
-            else if(App.zone === 2) { // Itens
-                if(k===38) {
-                    if(App.fIdx>0) App.fIdx--;
-                    else { App.zone = 0; App.fIdx = 0; }
-                }
-                if(k===40 && App.fIdx < App.items.length-1) App.fIdx++;
-                if(k===37) App.back();
-                if(k===13) App.play();
-            }
-            App.render();
+            App.handleKey(k);
         });
-    </script>
-</body>
-</html>
