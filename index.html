@@ -4,19 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
-    <title>IPTV SKY GOLD V70</title>
+    <title>IPTV SKY GOLD V71</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- TEMA SKY GOLD HYBRID (V70) --- */
+        /* --- TEMA SKY GOLD V71 (FOCUS FIX) --- */
         * { box-sizing: border-box; outline: none; margin: 0; padding: 0; user-select: none; }
         body {
             background-color: #000;
             color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
             height: 100vh; overflow: hidden; display: flex;
-            /* CURSOR VISÍVEL AGORA */
-            cursor: default;
+            cursor: default; /* Mouse visível */
         }
 
         /* 1. LOGIN */
@@ -39,13 +38,14 @@
 
         .login-input {
             width: 100%; padding: 15px; background: #1a1a1a;
-            border: 1px solid #333; color: #fff; font-size: 16px; 
+            border: 2px solid #333; color: #fff; font-size: 18px; 
             font-weight: bold; border-radius: 6px; text-align: center;
+            transition: 0.2s;
         }
-        /* Efeito ao Clicar ou Focar */
-        .login-input:focus, .login-input:hover { 
-            border-color: #d4af37; background: #000; 
-            box-shadow: 0 0 10px rgba(212,175,55,0.3);
+        /* VISUAL DE FOCO MUITO FORTE */
+        .login-input:focus, .login-input.focused { 
+            border-color: #d4af37; background: #fff; color: #000;
+            box-shadow: 0 0 20px rgba(212,175,55,0.8); transform: scale(1.02);
         }
         
         .login-btn {
@@ -53,7 +53,7 @@
             font-weight: 900; font-size: 18px; margin-top: 20px; border-radius: 6px; cursor: pointer;
         }
         .login-btn:hover, .login-btn:focus { 
-            background: #fff; transform: scale(1.02); 
+            background: #fff; transform: scale(1.05); box-shadow: 0 0 20px #fff;
         }
 
         /* 2. APP */
@@ -69,7 +69,6 @@
             font-size: 24px; color: #555; margin-bottom: 15px; border-radius: 12px; cursor: pointer;
         }
         .menu-icon.active { color: #d4af37; border-right: 4px solid #d4af37; }
-        /* Foco (Teclado) ou Hover (Mouse) */
         .menu-icon.focused, .menu-icon:hover { 
             background: #d4af37; color: #000; transform: scale(1.1); font-weight: bold;
         }
@@ -101,7 +100,6 @@
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
         }
         .list-item.active { background: #1a1500; color: #fff; border-left: 4px solid #d4af37; }
-        /* Hibrido: Funciona com Hover do mouse e Foco do controle */
         .list-item.focused, .list-item:hover { 
             background: #d4af37; color: #000; font-weight: bold; z-index: 5;
         }
@@ -119,7 +117,6 @@
         .info-panel { padding: 30px; flex: 1; background: #050505; display: flex; flex-direction: column; justify-content: space-between; }
         .chn-big-title { font-size: 32px; color: #fff; font-weight: bold; }
         
-        /* INFO GRID */
         .account-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
             background: #111; padding: 15px; border-radius: 8px; border: 1px solid #222;
@@ -146,7 +143,7 @@
             <div class="logo-text">IPTV <br><span>SKY GOLD</span></div>
             
             <div class="input-group">
-                <div class="label">SERVIDOR</div>
+                <div class="label">SERVIDOR DNS</div>
                 <input type="text" id="host" class="login-input" placeholder="http://url..." tabindex="1">
             </div>
             <div class="input-group">
@@ -158,7 +155,7 @@
                 <input type="password" id="pass" class="login-input" placeholder="Senha" tabindex="3">
             </div>
 
-            <button class="login-btn" onclick="startApp()" tabindex="4">ENTRAR</button>
+            <button class="login-btn" id="btnConnect" onclick="startApp()" tabindex="4">ENTRAR</button>
             <div id="loginStatus" style="margin-top:20px; color:#d4af37; font-size:14px; font-weight:bold;"></div>
         </div>
     </div>
@@ -221,7 +218,7 @@
         let currentPlayingChannel = null;
         const PAGE_SIZE = 50;
 
-        // --- RELÓGIO UTC-4 (Brasília -1h do offset padrão browser) ---
+        // --- RELÓGIO (UTC-4) ---
         function runClock() {
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -233,15 +230,47 @@
         setInterval(runClock, 1000);
         runClock();
 
-        // --- INICIALIZAÇÃO ---
+        // --- INICIALIZAÇÃO E AUTO-FOCO ---
         window.onload = () => {
-            if(localStorage.getItem('v70_host')) {
-                document.getElementById('host').value = localStorage.getItem('v70_host');
-                document.getElementById('user').value = localStorage.getItem('v70_user');
-                document.getElementById('pass').value = localStorage.getItem('v70_pass');
+            // Recupera dados
+            if(localStorage.getItem('v71_host')) {
+                document.getElementById('host').value = localStorage.getItem('v71_host');
+                document.getElementById('user').value = localStorage.getItem('v71_user');
+                document.getElementById('pass').value = localStorage.getItem('v71_pass');
             }
+            // FORÇA O FOCO NA PRIMEIRA CAIXA
+            setTimeout(forceLoginFocus, 300);
         };
 
+        function forceLoginFocus() {
+            if(state.screen === 'login') {
+                const el = document.getElementById('host');
+                if(el) {
+                    el.focus();
+                    el.select(); // Seleciona o texto pra facilitar reescrita
+                }
+            }
+        }
+
+        // Se clicar em qualquer lugar da tela de login (ok do controle), foca no input
+        document.getElementById('loginScreen').addEventListener('click', (e) => {
+            if(e.target.id === 'loginScreen' || e.target.classList.contains('login-box')) {
+                forceLoginFocus();
+            }
+        });
+
+        // Captura primeira tecla para garantir foco
+        document.addEventListener('keydown', (e) => {
+            if(state.screen === 'login') {
+                const active = document.activeElement;
+                // Se o foco estiver no "limbo" (body), joga pro input
+                if (!active || active === document.body) {
+                    forceLoginFocus();
+                }
+            }
+        });
+
+        // --- LÓGICA DO SISTEMA ---
         async function startApp() {
             let h = document.getElementById('host').value.trim();
             let u = document.getElementById('user').value.trim();
@@ -259,9 +288,9 @@
                 let data = await res.json();
 
                 if(data.user_info.status === 'Active') {
-                    localStorage.setItem('v70_host', h);
-                    localStorage.setItem('v70_user', u);
-                    localStorage.setItem('v70_pass', p);
+                    localStorage.setItem('v71_host', h);
+                    localStorage.setItem('v71_user', u);
+                    localStorage.setItem('v71_pass', p);
                     
                     const d1 = new Date(parseInt(data.user_info.exp_date)*1000);
                     const d2 = new Date(parseInt(data.user_info.created_at)*1000);
@@ -319,7 +348,6 @@
             const container = document.getElementById('listContainer');
             container.innerHTML = '';
             document.getElementById('listTitle').innerText = state.mode === 'cat' ? 'CATEGORIAS' : 'CANAIS';
-            
             const start = state.page * PAGE_SIZE;
             const end = start + PAGE_SIZE;
             const pageItems = list.slice(start, end);
@@ -329,28 +357,18 @@
                 let div = document.createElement('div');
                 div.className = 'list-item';
                 div.id = 'item_' + i;
-                
-                // Marca ativo se estiver tocando
                 if (state.mode === 'chn' && currentPlayingChannel && currentPlayingChannel.stream_id === item.stream_id) {
                     div.classList.add('active');
                 }
-                
                 let name = state.mode === 'cat' ? item.category_name : item.name;
                 div.innerText = name;
-                
-                // SUPORTE AO MOUSE: Clicar seleciona e executa
                 div.onclick = () => {
-                    state.listIdx = i; // Atualiza o "foco virtual" do controle para onde o mouse clicou
-                    state.zone = 1;
-                    executeItemAction(item);
-                    renderFocus(); // Atualiza visual
+                    state.listIdx = i; state.zone = 1; executeItemAction(item); renderFocus();
                 };
-                
                 container.appendChild(div);
             });
         }
 
-        // Ação centralizada (usada por Mouse e Teclado)
         function executeItemAction(item) {
             if(state.mode === 'cat') {
                 loadChannels(item.category_id);
@@ -387,25 +405,32 @@
                 return;
             }
 
-            // Permite navegação normal no Login (Tab, Enter, etc)
             if(state.screen === 'login') {
+                // Navegação vertical simples nos inputs
+                const inputs = ['host', 'user', 'pass', 'btnConnect'];
+                const activeId = document.activeElement.id;
+                let idx = inputs.indexOf(activeId);
+
+                if(k === 40) { // Baixo
+                    if(idx < 3) document.getElementById(inputs[idx+1]).focus();
+                }
+                if(k === 38) { // Cima
+                    if(idx > 0) document.getElementById(inputs[idx-1]).focus();
+                }
                 if(k === 13) {
-                    // Se estiver no campo senha e apertar Enter, tenta logar
-                    if(document.activeElement.id === 'pass') startApp();
+                    if(activeId === 'btnConnect') startApp();
                 }
                 return;
             }
 
             if(state.screen === 'app') {
-                // ZONE 0: MENU
-                if(state.zone === 0) {
+                if(state.zone === 0) { // MENU
                     if(k === 38) { if(state.sidebarIdx > 0) state.sidebarIdx--; }
                     if(k === 40) { if(state.sidebarIdx < 1) state.sidebarIdx++; }
                     if(k === 39) { state.zone = 1; }
                     if(k === 13) { if(state.sidebarIdx === 1) reset(); }
                 }
-                // ZONE 1: LISTA
-                else if(state.zone === 1) {
+                else if(state.zone === 1) { // LISTA
                     const list = state.mode === 'cat' ? DATA.categories : DATA.channels;
                     const maxOnPage = Math.min(PAGE_SIZE, list.length - (state.page * PAGE_SIZE)) - 1;
 
@@ -422,10 +447,7 @@
                         else { state.zone = 0; }
                     }
                     if(k === 13) {
-                        let listOnPage = state.mode === 'cat' ? DATA.categories : DATA.channels;
-                        // Calcula índice global
-                        let globalIdx = (state.page * PAGE_SIZE) + state.listIdx;
-                        let item = listOnPage[globalIdx];
+                        let item = (state.mode === 'cat' ? DATA.categories : DATA.channels)[(state.page * PAGE_SIZE) + state.listIdx];
                         executeItemAction(item);
                     }
                     if(k === 8 || k === 461) {
@@ -444,10 +466,7 @@
                     document.getElementById('menu_' + state.sidebarIdx).classList.add('focused');
                 } else if(state.zone === 1) {
                     let el = document.getElementById('item_' + state.listIdx);
-                    if(el) {
-                        el.classList.add('focused');
-                        el.scrollIntoView({block: 'center', behavior: 'auto'});
-                    }
+                    if(el) { el.classList.add('focused'); el.scrollIntoView({block: 'center', behavior: 'auto'}); }
                 }
             }
         }
@@ -465,7 +484,6 @@
             }
         }
 
-        // Helpers para Mouse no Menu
         function changeZone(z) { state.zone = z; }
 
     </script>
