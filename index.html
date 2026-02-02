@@ -1,6 +1,231 @@
-<script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAREZ TV - GREEN EDITION</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #050505;
+            --bg-card: #151515;
+            --warez-green: #2ecc71; 
+            --focus-glow: 0 0 20px rgba(46, 204, 113, 0.6);
+            --text-main: #eee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        
+        body { 
+            background: radial-gradient(circle at center, #111 0%, #000 100%); 
+            color: var(--text-main); font-family: 'Roboto', sans-serif; 
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* --- LOADER --- */
+        #loader {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: #000;
+            z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--warez-green);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- TELA LOGIN --- */
+        #loginScreen {
+            position: absolute; width: 100%; height: 100%; z-index: 5000;
+            display: flex; justify-content: center; align-items: center; background: #000;
+        }
+        .login-box {
+            width: 400px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 10px;
+            text-align: center; border-top: 4px solid var(--warez-green);
+        }
+        .lg-inp {
+            width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
+            text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 5px;
+        }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--warez-green); font-weight: bold; }
+        .lg-btn {
+            width: 100%; height: 50px; background: var(--warez-green); border: none; font-weight: bold;
+            font-size: 18px; cursor: pointer; border-radius: 5px; color: #000;
+        }
+        .lg-btn:focus { box-shadow: var(--focus-glow); transform: scale(1.05); }
+
+        /* --- MENU PRINCIPAL --- */
+        #mainMenu {
+            display: none; width: 100%; height: 100%; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 100; position: relative;
+        }
+        .logo-area { margin-bottom: 40px; text-align: center; }
+        .logo-txt { font-size: 50px; font-weight: 900; color: #fff; letter-spacing: -2px; }
+        .logo-txt span { color: var(--warez-green); }
+        
+        .cards-container { display: flex; gap: 30px; }
+        .nav-card {
+            width: 220px; height: 220px; background: var(--bg-card); border-radius: 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 3px solid transparent; transition: transform 0.2s, box-shadow 0.2s; color: #888;
+        }
+        .nav-card i { font-size: 60px; margin-bottom: 20px; }
+        .nav-card span { font-size: 20px; font-weight: bold; }
+        
+        .nav-card.focused {
+            border-color: var(--warez-green); color: #fff; background: #1a1a1a;
+            box-shadow: var(--focus-glow); transform: scale(1.1);
+        }
+
+        /* INFOS DA CONTA NO MENU */
+        .account-bar {
+            position: absolute; bottom: 30px; width: 90%; 
+            display: flex; justify-content: space-around;
+            background: rgba(20,20,20,0.9); border: 1px solid #333;
+            padding: 15px; border-radius: 10px; color: #aaa; font-size: 14px;
+        }
+        .acc-item strong { color: var(--warez-green); margin-right: 5px; }
+
+        /* --- INTERFACE DE CONTEÚDO --- */
+        #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
+        
+        /* Coluna 1: Categorias */
+        .col-cats { width: 300px; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .panel-head { padding: 15px; font-weight: bold; color: var(--warez-green); text-transform: uppercase; font-size: 14px; border-bottom: 1px solid #222; }
+        .list-wrap { flex: 1; overflow-y: auto; padding: 10px; scroll-behavior: auto; }
+        .c-item { 
+            padding: 12px; margin-bottom: 5px; color: #aaa; border-radius: 5px; font-size: 15px;
+            border-left: 4px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .c-item.active { background: #151515; color: #fff; border-left-color: #555; }
+        .c-item.focused { background: var(--warez-green); color: #000; font-weight: bold; border-left-color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+        /* Coluna 2: Conteúdo + Busca */
+        .col-list { width: 400px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .search-box { padding: 15px; background: #080808; border-bottom: 1px solid #222; }
+        .s-inp { 
+            width: 100%; padding: 12px; background: #222; border: 1px solid #333; color: #fff; 
+            text-transform: uppercase; border-radius: 5px; text-align: center;
+        }
+        .s-inp.focused { background: #fff; color: #000; border-color: var(--warez-green); }
+
+        .l-item {
+            padding: 14px; margin-bottom: 5px; background: #181818; border-radius: 5px; font-size: 14px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 2px solid transparent;
+        }
+        .l-item.focused { background: #fff; color: #000; font-weight: bold; border-color: var(--warez-green); transform: scale(1.02); z-index: 10; }
+
+        /* Coluna 3: Preview e Info */
+        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 30px; align-items: center; }
+        .frame { 
+            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; border-radius: 10px;
+            margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .frame.focused { border-color: var(--warez-green); }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
+
+        /* Infos */
+        .info-title { font-size: 28px; color: var(--warez-green); font-weight: bold; margin-bottom: 10px; width: 100%; }
+        .info-desc { font-size: 14px; color: #888; line-height: 1.5; width: 100%; }
+        .color-help { margin-top: auto; display: flex; gap: 20px; width: 100%; font-size: 12px; color: #666; font-weight: bold; }
+        .btn-hint i { margin-right: 5px; }
+
+        /* FULLSCREEN */
+        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9000; border:none !important; margin:0 !important; background:#000; border-radius: 0 !important; }
+        
+        /* OSD BARRA VOD */
+        .vod-osd {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 80px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            display: none; align-items: flex-end; padding: 20px;
+        }
+        .prog-bg { width: 100%; height: 5px; background: #555; }
+        .prog-fill { height: 100%; width: 0%; background: var(--warez-green); }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+    </style>
+</head>
+<body onload="App.init()">
+
+    <div id="loader"><div class="spinner"></div><span>CARREGANDO...</span></div>
+
+    <div id="loginScreen">
+        <div class="login-box">
+            <h2 style="color:var(--warez-green); margin-bottom:20px">WAREZ LOGIN</h2>
+            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)">
+            <input type="text" id="u" class="lg-inp" placeholder="Usuário">
+            <input type="password" id="p" class="lg-inp" placeholder="Senha">
+            <button id="btnEnter" class="lg-btn">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="mainMenu">
+        <div class="logo-area">
+            <div class="logo-txt"><i class="fas fa-play-circle"></i> warez<span>tv</span></div>
+        </div>
+        <div class="cards-container">
+            <div class="nav-card focused" id="card-live">
+                <i class="fas fa-tv"></i>
+                <span>TV ao vivo</span>
+            </div>
+            <div class="nav-card" id="card-mov">
+                <i class="fas fa-film"></i>
+                <span>Filmes</span>
+            </div>
+            <div class="nav-card" id="card-ser">
+                <i class="fas fa-video"></i>
+                <span>Séries</span>
+            </div>
+            <div class="nav-card" id="card-cfg">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </div>
+        </div>
+        
+        <div class="account-bar" id="accInfoBar">
+            <div class="acc-item" id="acc-exp"><strong>Vence:</strong> -</div>
+            <div class="acc-item" id="acc-lim"><strong>Telas:</strong> -</div>
+            <div class="acc-item" id="acc-cre"><strong>Criado:</strong> -</div>
+        </div>
+    </div>
+
+    <div id="contentInterface">
+        <div class="col-cats">
+            <div class="panel-head" id="cat-head">CATEGORIAS</div>
+            <div class="list-wrap" id="list-cat"></div>
+        </div>
+        <div class="col-list">
+            <div class="search-box">
+                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR (ENTER)" onkeydown="App.handleSearch(event)">
+            </div>
+            <div class="list-wrap" id="list-cnt"></div>
+        </div>
+        <div class="col-view">
+            <div class="frame" id="v-box">
+                <video id="player" playsinline crossorigin="anonymous"></video>
+                <div class="vod-osd" id="osd">
+                    <div style="color:#fff; margin-bottom:5px; font-weight:bold" id="osd-stat">PAUSADO</div>
+                    <div class="prog-bg"><div class="prog-fill" id="prog-bar"></div></div>
+                </div>
+            </div>
+            <div class="info-title" id="lbl-title">Bem Vindo</div>
+            <div class="info-desc" id="lbl-desc">Selecione um conteúdo.</div>
+            
+            <div class="color-help">
+                <span class="btn-hint" style="color:#ff4444"><i class="fas fa-circle"></i> Tela Cheia</span>
+                <span class="btn-hint" style="color:#00C851"><i class="fas fa-circle"></i> Atualizar</span>
+                <span class="btn-hint" style="color:#ffbb33"><i class="fas fa-circle"></i> Buscar</span>
+                <span class="btn-hint" style="color:#33b5e5"><i class="fas fa-circle"></i> Menu</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
         let hls = null;
-        // Configuração HLS (Mantida a otimização anterior)
+        // Configuração aprimorada do HLS
         const HlsConfig = { 
             autoStartLoad: true, 
             capLevelToPlayerSize: true, 
@@ -13,12 +238,12 @@
             scr: 'login', 
             zone: 0, 
             fIdx: 0,
-            catIdx: 0, // <--- NOVA VARIÁVEL DE MEMÓRIA
+            catIdx: 0, // MEMÓRIA DA CATEGORIA
             creds: {}, mode: 'live',
             cats: [], items: [], viewItems: [],
             isSeries: false, currId: null,
             isPlaying: false,
-            userInfo: null,
+            userInfo: null, 
             lastFocused: null,
 
             init: function() {
@@ -36,7 +261,10 @@
                 v.addEventListener('ended', ()=> this.exitFS());
                 v.addEventListener('play', ()=> { App.isPlaying=true; App.hideOSD(); });
                 v.addEventListener('pause', ()=> { App.isPlaying=false; App.showOSD('PAUSADO'); });
-                v.addEventListener('error', function(e) { console.log("Erro player nativo:", e); });
+                
+                v.addEventListener('error', function(e) {
+                   console.log("Erro player nativo:", e);
+                });
             },
 
             load: function(s) { document.getElementById('loader').style.display = s?'flex':'none'; },
@@ -54,18 +282,21 @@
                     
                     if(d.user_info && (d.user_info.status === 'Active' || d.user_info.status === 'Trial')) {
                         this.creds = {h,u,p};
-                        this.userInfo = d.user_info;
+                        this.userInfo = d.user_info; 
+                        
                         localStorage.setItem('w_h',h); localStorage.setItem('w_h_u',u); localStorage.setItem('w_h_p',p);
+                        
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
-                    } else alert('Conta Inválida');
-                } catch(e) { alert('Erro Conexão'); }
+                    } else alert('Conta Inválida ou Expirada');
+                } catch(e) { alert('Erro de Conexão. Verifique a URL.'); }
                 this.load(false);
             },
 
             formatDate: function(ts) {
                 if(!ts) return '-';
-                return new Date(ts * 1000).toLocaleDateString('pt-BR');
+                let date = new Date(ts * 1000);
+                return date.toLocaleDateString('pt-BR');
             },
 
             goMenu: function() {
@@ -79,10 +310,12 @@
                     let created = this.userInfo.created_at ? this.formatDate(this.userInfo.created_at) : "-";
                     let active = this.userInfo.active_cons || 0;
                     let max = this.userInfo.max_connections || 1;
+                    
                     document.getElementById('acc-exp').innerHTML = `<strong>Vence:</strong> ${exp}`;
                     document.getElementById('acc-cre').innerHTML = `<strong>Criado:</strong> ${created}`;
                     document.getElementById('acc-lim').innerHTML = `<strong>Telas:</strong> ${active} / ${max}`;
                 }
+
                 this.renderCards();
             },
 
@@ -97,9 +330,9 @@
                 
                 this.mode = m; 
                 this.scr = 'content'; 
-                this.zone = 1; this.fIdx = 0; this.catIdx = 0; // Reset inicial
+                this.zone = 1; this.fIdx = 0; this.catIdx = 0; 
                 this.items = []; this.viewItems = []; this.isSeries = false;
-                this.lastFocused = null;
+                this.lastFocused = null; 
 
                 document.getElementById('mainMenu').style.display='none';
                 document.getElementById('contentInterface').style.display='flex';
@@ -121,8 +354,7 @@
             },
 
             loadCat: async function() {
-                // CORREÇÃO: Usa this.catIdx em vez de this.fIdx para garantir a categoria certa
-                let c = this.cats[this.catIdx]; 
+                let c = this.cats[this.catIdx]; // Usa a memória
                 
                 document.querySelectorAll('.c-item').forEach(e=>e.classList.remove('active'));
                 let el = document.getElementById('c-'+this.catIdx);
@@ -137,8 +369,8 @@
                     this.viewItems = [...this.items];
                     this.renderList();
                     
-                    this.zone = 2; // Vai para a busca
-                    this.fIdx = 0; // Reseta índice da lista, mas catIdx está salvo
+                    this.zone = 2; 
+                    this.fIdx = 0;
                     this.lastFocused = null; 
                     document.getElementById('search-inp').focus();
                     this.renderFocus();
@@ -148,7 +380,7 @@
 
             renderList: function() {
                 let h = '';
-                let limit = this.viewItems.slice(0, 200);
+                let limit = this.viewItems.slice(0, 200); 
                 
                 if(this.isSeries) {
                     h += `<div class="l-item" id="l-back" style="color:#aaa">VOLTAR</div>`;
@@ -170,27 +402,44 @@
                 let vid = document.getElementById('player');
                 let sid = it.stream_id || it.id;
                 
-                if(this.currId === sid && vid.src && !vid.paused) { this.enterFS(); return; }
+                if(this.currId === sid && vid.src && !vid.paused) {
+                    this.enterFS();
+                    return;
+                }
                 
                 this.currId = sid;
                 let ext = it.container_extension;
                 if(!ext) ext = this.mode === 'live' ? 'ts' : 'mp4';
+                
                 let type = this.mode==='live'?'live':(this.mode==='ser'?'series':'movie');
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${sid}.${ext}`;
 
                 document.getElementById('lbl-title').innerText = it.name||it.title;
-                document.getElementById('lbl-desc').innerText = "Carregando...";
+                document.getElementById('lbl-desc').innerText = "Carregando reprodução...";
 
                 if(hls) { hls.destroy(); hls=null; }
-                vid.pause(); vid.removeAttribute('src'); vid.load();
+                vid.pause(); 
+                vid.removeAttribute('src'); 
+                vid.load();
+
                 document.activeElement.blur(); 
 
                 if(this.mode === 'live' && Hls.isSupported()) {
-                    hls = new Hls(HlsConfig); hls.loadSource(url); hls.attachMedia(vid);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play().catch(()=>{}));
-                    hls.on(Hls.Events.ERROR, (e,d) => { if(d.fatal) d.type===Hls.ErrorTypes.NETWORK_ERROR ? hls.startLoad() : hls.destroy(); });
+                    hls = new Hls(HlsConfig);
+                    hls.loadSource(url);
+                    hls.attachMedia(vid);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        vid.play().catch(e => console.log("Auto-play blocked", e));
+                    });
+                    hls.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            if(data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+                            else hls.destroy();
+                        }
+                    });
                 } else {
-                    vid.src = url; vid.play().catch(()=>{});
+                    vid.src = url;
+                    vid.play().catch(e => console.log("Erro play nativo", e));
                 }
             },
             
@@ -209,24 +458,40 @@
             },
 
             stopPlayer: function() {
-                let v = document.getElementById('player'); v.pause(); v.removeAttribute('src'); v.load();
+                let v = document.getElementById('player'); 
+                v.pause(); v.removeAttribute('src'); v.load();
                 if(hls) { hls.destroy(); hls=null; }
                 this.currId = null;
             },
 
-            refreshPlayer: function() { if(this.currId && this.zone===3) this.play(this.fIdx); },
+            refreshPlayer: function() {
+                if(!this.currId) return;
+                if(this.zone===3) this.play(this.fIdx); 
+            },
 
             isFS: function() { return document.getElementById('v-box').classList.contains('fs'); },
-            enterFS: function() { document.getElementById('v-box').classList.add('fs'); document.activeElement.blur(); },
-            exitFS: function() { document.getElementById('v-box').classList.remove('fs'); },
+            enterFS: function() {
+                document.getElementById('v-box').classList.add('fs');
+                document.activeElement.blur();
+            },
+            exitFS: function() {
+                document.getElementById('v-box').classList.remove('fs');
+            },
 
             updOSD: function() {
                 if(!App.isFS() || App.mode === 'live') return;
                 let v = document.getElementById('player');
-                if(v.duration) document.getElementById('prog-bar').style.width = ((v.currentTime/v.duration)*100)+'%';
+                if(v.duration) {
+                    let p = (v.currentTime/v.duration)*100;
+                    document.getElementById('prog-bar').style.width = p+'%';
+                }
             },
             
-            showOSD: function(t) { if(this.mode!=='live'){ document.getElementById('osd-stat').innerText=t; document.getElementById('osd').style.display='flex'; } },
+            showOSD: function(txt) {
+                if(this.mode==='live') return;
+                document.getElementById('osd-stat').innerText = txt;
+                document.getElementById('osd').style.display='flex';
+            },
             hideOSD: function() { document.getElementById('osd').style.display='none'; },
 
             handleSearch: function(e) { if(e.keyCode===13) this.doSearch(); },
@@ -241,8 +506,11 @@
             },
 
             renderFocus: function() {
-                if(this.lastFocused) this.lastFocused.classList.remove('focused');
-                else document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
+                if(this.lastFocused) {
+                    this.lastFocused.classList.remove('focused');
+                } else {
+                    document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
+                }
 
                 if(this.scr==='menu') {
                     let ids=['card-live','card-mov','card-ser','card-cfg'];
@@ -250,15 +518,19 @@
                     if(el) { el.classList.add('focused'); this.lastFocused = el; }
                 } else {
                     let el = null;
-                    if(this.zone===1) el = document.getElementById('c-'+this.fIdx);
-                    else if(this.zone===2) el = document.getElementById('search-inp');
-                    else if(this.zone===3) {
+                    if(this.zone===1) {
+                        el = document.getElementById('c-'+this.fIdx);
+                    } else if(this.zone===2) {
+                        el = document.getElementById('search-inp');
+                    } else if(this.zone===3) {
                         let id = (this.isSeries && this.fIdx===-1) ? 'l-back' : 'l-'+this.fIdx;
                         if(this.isSeries && this.fIdx===0) id = 'l-0';
                         el = document.getElementById(id);
                     }
+
                     if(el) {
-                        el.classList.add('focused'); this.lastFocused = el;
+                        el.classList.add('focused');
+                        this.lastFocused = el;
                         if(this.zone !== 2) el.scrollIntoView({block:'nearest', behavior:'auto'});
                     }
                 }
@@ -266,8 +538,7 @@
 
             onKey: function(e) {
                 let k = e.keyCode;
-                
-                // LOGIN
+
                 if(this.scr==='login') {
                     let m=['h','u','p','btnEnter']; let i=m.indexOf(document.activeElement.id);
                     if(k===13) { i<3?document.getElementById(m[i+1]).focus():this.login(); }
@@ -276,30 +547,31 @@
                     return;
                 }
 
-                // CONTROLES DE PLAYER
-                if(this.isFS()) {
-                    e.preventDefault();
-                    let v = document.getElementById('player');
-                    if(k===13 || k===32) v.paused ? v.play() : v.pause();
-                    if(k===8 || k===27 || k===461) this.exitFS();
-                    if(this.mode !== 'live') { if(k===39) v.currentTime+=15; if(k===37) v.currentTime-=15; }
-                    return;
-                }
-
-                // TECLAS COLORIDAS / ATALHOS
                 if(k===403 || k===82) { this.isFS() ? this.exitFS() : this.enterFS(); return; }
                 if(k===404 || k===71) { this.refreshPlayer(); return; }
                 if(k===405 || k===89) { if(this.scr==='content') { this.zone=2; document.getElementById('search-inp').focus(); this.renderFocus(); } return; }
                 if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; }
 
+                if(this.isFS()) {
+                    e.preventDefault();
+                    let v = document.getElementById('player');
+                    if(k===13 || k===32) v.paused ? v.play() : v.pause();
+                    if(k===8 || k===27 || k===461) this.exitFS();
+                    if(this.mode !== 'live') {
+                         if(k===39) v.currentTime+=15;
+                         if(k===37) v.currentTime-=15;
+                    }
+                    return;
+                }
+
                 if([37,38,39,40].includes(k)) e.preventDefault();
                 
-                // BACK (Voltar)
+                // BACK / VOLTAR
                 if([8,27,461,10009].includes(k)) {
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) this.loadCat();
                     else if(this.zone>1) { 
-                        // VOLTAR PARA CATEGORIA MANTENDO A POSIÇÃO
+                        // VOLTA PARA A CATEGORIA SALVA
                         this.zone=1; 
                         this.fIdx = this.catIdx; 
                         this.renderFocus(); 
@@ -313,29 +585,26 @@
                     if(k===37 && this.fIdx>0) this.fIdx--;
                     if(k===13) this.goContent(['live','vod','ser','cfg'][this.fIdx]);
                 }
-                else { // CONTENT
+                else { 
                     if(this.zone===2 && ((k>=48 && k<=90)||k===32)) return;
                     
                     if(this.zone===1) { // CATEGORIAS
                         if(k===40 && this.fIdx<this.cats.length-1) this.fIdx++;
                         if(k===38 && this.fIdx>0) this.fIdx--;
                         if(k===39) { 
-                            // Salva a categoria atual antes de ir para busca
-                            this.catIdx = this.fIdx; 
+                            this.catIdx = this.fIdx; // Salva
                             this.zone=2; document.getElementById('search-inp').focus(); 
                         }
                         if(k===13) { 
-                            // Salva a categoria atual ao selecionar
-                            this.catIdx = this.fIdx; 
+                            this.catIdx = this.fIdx; // Salva
                             this.loadCat(); 
                         }
                     }
                     else if(this.zone===2) { // BUSCA
                         if(k===40 && this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===37) { 
-                            // VOLTA PARA CATEGORIA (RECUPERA POSIÇÃO)
                             this.zone=1; 
-                            this.fIdx = this.catIdx; 
+                            this.fIdx = this.catIdx; // Restaura
                             document.getElementById('search-inp').blur(); 
                         }
                         if(k===13) this.doSearch();
@@ -348,9 +617,8 @@
                         }
                         if(k===40 && this.fIdx < Math.min(this.viewItems.length-1, 199)) this.fIdx++;
                         if(k===37) { 
-                            // VOLTA PARA CATEGORIA (RECUPERA POSIÇÃO)
                             this.zone=1; 
-                            this.fIdx = this.catIdx; 
+                            this.fIdx = this.catIdx; // Restaura
                         }
                         if(k===13) {
                             if(this.isSeries && this.fIdx===-1) this.loadCat();
@@ -363,3 +631,5 @@
             }
         };
     </script>
+</body>
+</html>
