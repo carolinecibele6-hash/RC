@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V29 TURBO</title>
+    <title>R&C GOLD V30 SPEED</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA LITE GOLD (PERFORMANCE MÁXIMA) --- */
-        :root { --bg: #000; --gold: #D4AF37; --panel: #111; --text: #fff; }
+        /* --- TEMA V30 SPEED (LEVEZA TOTAL) --- */
+        :root { --bg: #000; --gold: #D4AF37; --text: #fff; --sel: #1a1a1a; }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
         body { 
             background-color: var(--bg); color: var(--text); 
             font-family: 'Montserrat', sans-serif; 
             width: 100vw; height: 100vh; overflow: hidden; 
-            transform: translateZ(0); /* Aceleração GPU */
+            transform: translateZ(0); /* Força GPU */
         }
 
         .hide { display: none !important; }
@@ -55,7 +56,7 @@
         .col-cat { width: 25%; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .cat-head { padding: 15px; text-align: center; color: var(--gold); border-bottom: 1px solid #222; font-weight: 700; }
         .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { padding: 12px 15px; color: #888; border-bottom: 1px solid #151515; font-size: 13px; white-space: nowrap; overflow: hidden; }
+        .cat-item { padding: 10px 15px; color: #888; border-bottom: 1px solid #151515; font-size: 13px; white-space: nowrap; overflow: hidden; }
         .cat-item.active { background: #1a1a1a; color: #fff; border-left: 4px solid #333; }
         .cat-item.focused { background: var(--gold); color: #000; font-weight: 700; border-left: 4px solid #fff; }
 
@@ -65,9 +66,10 @@
         .inp-search.focused { background: #fff; color: #000; }
         
         .item-list { flex: 1; overflow-y: auto; }
-        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; font-size: 13px; white-space: nowrap; overflow: hidden; }
+        /* Item simplificado para renderização ultra-rápida */
+        .item { padding: 10px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; font-size: 13px; white-space: nowrap; overflow: hidden; height: 38px; line-height: 18px; }
         .item.focused { background: #eee; color: #000; font-weight: 700; transform: scale(1.01); }
-        .fav-star { float: right; color: var(--gold); font-size: 14px; }
+        .fav-star { float: right; color: var(--gold); font-size: 14px; margin-left: 5px; }
 
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; }
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 1px solid #333; position: relative; }
@@ -93,8 +95,8 @@
         <div class="login-box">
             <div class="nr-header">R&C GOLD</div>
             <input type="text" id="inp0" class="nr-input" placeholder="URL ou M3U" autocomplete="off">
-            <input type="text" id="inp1" class="nr-input" placeholder="Usuário (Opcional)" autocomplete="off">
-            <input type="password" id="inp2" class="nr-input" placeholder="Senha (Opcional)" autocomplete="off">
+            <input type="text" id="inp1" class="nr-input" placeholder="Usuário" autocomplete="off">
+            <input type="password" id="inp2" class="nr-input" placeholder="Senha" autocomplete="off">
             <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR</button>
         </div>
     </div>
@@ -151,7 +153,7 @@
             creds: {h:'', u:'', p:''}, modeType: 'xtream', dataM3U: [],
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
             loadedCatId: -1, isSearchMode: false, hls: null, activeReq: null,
-            favs: [],
+            favs: [], favMap: {}, // Otimização de Mapa
 
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -159,17 +161,55 @@
                     document.getElementById('inp1').value = localStorage.getItem('rc_u');
                     document.getElementById('inp2').value = localStorage.getItem('rc_p');
                 }
-                var fs = localStorage.getItem('rc_favs');
-                if(fs) this.favs = JSON.parse(fs);
+                this.loadFavs(); // Inicia mapa de favoritos
 
                 this.idx = 0; this.refreshFocus();
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
+                // Fallback simples
                 v.addEventListener('error', function() {
-                    // Fallback nativo
                     if(!Hls.isSupported()) setTimeout(function(){ v.load(); v.play(); }, 2000);
                 });
+            },
+
+            // --- GESTÃO DE FAVORITOS OTIMIZADA (HASH MAP) ---
+            loadFavs: function() {
+                var fs = localStorage.getItem('rc_favs');
+                this.favs = fs ? JSON.parse(fs) : [];
+                this.favMap = {};
+                // Cria índice rápido para não travar loop
+                for(var i=0; i<this.favs.length; i++) {
+                    var item = this.favs[i];
+                    var uid = item.stream_id || item.series_id || item.id;
+                    this.favMap[uid] = true;
+                }
+            },
+
+            toggleFav: function() {
+                if(this.zone !== 2 || (this.isSeries && this.idx===-1)) return;
+                var item = this.items[this.idx];
+                var uid = item.stream_id || item.series_id || item.id;
+                
+                if(this.favMap[uid]) {
+                    // Remove
+                    delete this.favMap[uid];
+                    this.favs = this.favs.filter(function(f){ return (f.stream_id||f.series_id||f.id) != uid; });
+                } else {
+                    // Adiciona
+                    this.favMap[uid] = true;
+                    item._sm = this.mode; 
+                    this.favs.push(item);
+                }
+                localStorage.setItem('rc_favs', JSON.stringify(this.favs));
+                
+                // Atualiza visual apenas da linha atual (sem recarregar tudo)
+                var el = document.getElementById('i'+this.idx);
+                if(el) {
+                    var n = item.name || item.title;
+                    var star = this.favMap[uid] ? '<span class="fav-star">★</span>' : '';
+                    el.innerHTML = n + star;
+                }
             },
 
             // --- REDE OTIMIZADA ---
@@ -178,9 +218,8 @@
                 document.getElementById('loader').style.display = 'flex';
                 this.activeReq = new XMLHttpRequest();
                 var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q;
-                
                 this.activeReq.open("GET", url, true);
-                this.activeReq.timeout = 25000;
+                this.activeReq.timeout = 20000;
                 this.activeReq.onload = function(){ 
                     document.getElementById('loader').style.display='none'; 
                     if(this.status===200) try{cb(JSON.parse(this.responseText))}catch(e){cb(null)} else cb(null); 
@@ -194,7 +233,6 @@
                 var u = document.getElementById('inp1').value.trim();
                 var p = document.getElementById('inp2').value.trim();
                 if(!h) return;
-                
                 localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
 
                 if(u === "" || h.toLowerCase().includes('.m3u')) {
@@ -212,7 +250,7 @@
                             document.getElementById('d-conn').innerText = (d.user_info.active_cons||0)+"/"+(d.user_info.max_connections||0);
                             document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString('pt-BR') : "Ilimitado";
                             me.setScreen(1);
-                        } else alert("Dados Incorretos");
+                        } else alert("Erro Login");
                     });
                 }
             },
@@ -292,7 +330,6 @@
             },
 
             renderCats: function() {
-                // TURBO RENDER
                 var html = '';
                 for(var i=0; i<this.cats.length; i++) {
                     html += '<div class="cat-item" id="c'+i+'">'+this.cats[i].category_name+'</div>';
@@ -338,32 +375,18 @@
                 var html = [];
                 if(this.isSeries) html.push('<div class="item" id="i-1" style="color:var(--gold)">.. VOLTAR</div>');
                 
-                // TURBO STRING BUILDER
+                // TURBO RENDER + HASH MAP LOOKUP (O(1))
                 for(var i=0; i<max; i++) {
                     var item = this.items[i];
                     var n = item.name || item.title;
-                    var star = this.isFav(item) ? '<span class="fav-star">★</span>' : '';
+                    var uid = item.stream_id || item.series_id || item.id;
+                    
+                    // Checagem instantânea no mapa
+                    var star = this.favMap[uid] ? '<span class="fav-star">★</span>' : '';
+                    
                     html.push('<div class="item" id="i'+i+'">'+n + star+'</div>');
                 }
                 document.getElementById('item-list').innerHTML = html.join('');
-            },
-
-            isFav: function(item) {
-                var uid = item.stream_id || item.series_id || item.id;
-                return this.favs.some(function(f){ return (f.stream_id||f.series_id||f.id) == uid; });
-            },
-
-            toggleFavorite: function() {
-                if(this.zone !== 2 || (this.isSeries && this.idx===-1)) return;
-                var item = this.items[this.idx];
-                var uid = item.stream_id || item.series_id || item.id;
-                var idx = this.favs.findIndex(function(f){ return (f.stream_id||f.series_id||f.id) == uid; });
-                
-                if(idx > -1) this.favs.splice(idx, 1);
-                else { item._sm = this.mode; this.favs.push(item); }
-                
-                localStorage.setItem('rc_favs', JSON.stringify(this.favs));
-                this.renderList(); this.refreshFocus();
             },
 
             globalSearch: function() {
@@ -417,7 +440,6 @@
                     }
                     var ext = (playMode==='live')?'ts':'mp4';
                     if(playMode!=='live' && item.container_extension) ext = item.container_extension;
-                    
                     url = this.creds.h + "/" + (playMode==='live'?'live':(playMode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
                     title = item.name||item.title;
                 }
@@ -427,38 +449,29 @@
                 document.getElementById('vid-box').classList.remove('video-off');
                 var v = document.getElementById('player');
 
-                // --- MOTOR HÍBRIDO V29 (CORREÇÃO FINAL) ---
-                
-                // SE FOR LIVE: USA O MOTOR "COMPLEXO" COM CONVERSÃO TS->M3U8
+                // --- V30 PLAYER ENGINE ---
                 if(playMode === 'live' || url.includes('.m3u8')) {
+                    // LIVE: MODO COMPLEXO (Transmuxing)
                     if(this.hls) { this.hls.destroy(); }
-                    
-                    if(playMode === 'live' && url.includes('.ts')) {
-                        url = url.replace('.ts', '.m3u8'); // TRUQUE DO AO VIVO
-                    }
+                    if(playMode === 'live' && url.includes('.ts')) url = url.replace('.ts', '.m3u8');
 
                     if(Hls.isSupported()) {
                         var hls = new Hls({ enableWorker: true, lowLatencyMode: true });
                         hls.loadSource(url);
                         hls.attachMedia(v);
                         hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
-                        // Fallback
                         var me = this;
                         hls.on(Hls.Events.ERROR, function(e,data){
                             if(data.fatal) { me.hls.destroy(); v.src = url; v.play(); } 
                         });
                         this.hls = hls;
-                    } else {
-                        v.src = url; v.play();
-                    }
-                } 
-                // SE FOR FILME/SERIE: USA O MOTOR "SIMPLES" (PLAY DIRETO)
-                else {
-                    if(this.hls) { this.hls.destroy(); this.hls = null; } // Limpa HLS se existir
+                    } else { v.src = url; v.play(); }
+                } else {
+                    // VOD: MODO DIRETO (Instantâneo)
+                    if(this.hls) { this.hls.destroy(); this.hls=null; }
                     v.src = url; 
                     v.play();
                 }
-                
                 this.zone = 3; this.refreshFocus();
             },
 
@@ -512,7 +525,7 @@
                     this.refreshFocus(); return;
                 }
                 if(this.screen===1) {
-                    if(k===39 && this.idx<4) this.idx++; 
+                    if(k===39 && this.idx<4) this.idx++;
                     if(k===37 && this.idx>0) this.idx--;
                     if(k===13) {
                         if(this.idx===0) this.openMode('live');
@@ -555,10 +568,8 @@
                         if(k===39) v.currentTime+=15;
                         if(k===38) this.zone=2;
                         if(k===13) { 
-                            if(isFull) { 
-                                if(this.mode==='live') { /* nada */ }
-                                else { if(v.paused) v.play(); else v.pause(); } 
-                            } else { this.toggleFull(); }
+                            if(isFull) { if(this.mode!=='live') { if(v.paused) v.play(); else v.pause(); } } 
+                            else { this.toggleFull(); }
                         }
                     }
                     this.refreshFocus();
@@ -569,10 +580,9 @@
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
             
-            // CORES
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } // RED
             if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } // GREEN
-            if(k===405||k===89) { e.preventDefault(); App.toggleFavorite(); return; } // YELLOW (Favoritar)
+            if(k===405||k===89) { e.preventDefault(); App.toggleFav(); return; } // YELLOW
             if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } // BLUE
             
             if(k===8||k===461||k===27) {
