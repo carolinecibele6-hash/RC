@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V14</title>
+    <title>R&C GOLD V15</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA V14 GOLD --- */
+        /* --- TEMA PREMIUM V15 --- */
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
             --gold-dim: #b8860b;
             --text: #ffffff; 
-            --panel: rgba(18,18,18,0.98);
+            --panel: #111;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -30,120 +30,106 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* --- LOGIN (NetRange Style - Navegação Livre) --- */
+        /* --- LOGIN (LÓGICA V7 RESTAURADA) --- */
         #login-layer { background: #080808; z-index: 50; }
         .netrange-box {
-            width: 480px; padding: 50px; 
-            background: #111; border: 1px solid #333; border-radius: 12px;
-            text-align: center; box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            width: 450px; padding: 50px; 
+            background: #111; border: 1px solid #333; border-radius: 10px;
+            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
         .nr-header {
-            color: var(--gold); font-weight: 900; font-size: 26px; 
-            margin-bottom: 40px; letter-spacing: 2px;
+            color: var(--gold); font-weight: 900; font-size: 24px; 
+            margin-bottom: 30px; letter-spacing: 2px;
         }
         
         .nr-input {
-            width: 100%; padding: 14px; margin-bottom: 20px;
-            background: #222; border: 1px solid #444; border-radius: 6px;
-            color: #fff; text-align: center; font-size: 18px; font-weight: 600;
-            transition: 0.2s;
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            background: #222; border: 1px solid #444; border-radius: 4px;
+            color: #fff; text-align: center; font-size: 16px; font-weight: 600;
         }
-        /* Foco Amarelo */
-        .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); transform: scale(1.02); }
+        /* Foco controlado pelo Script (V7) */
+        .nr-input.focused { background: #fff; color: #000; border-color: var(--gold); transform: scale(1.02); }
         
         .nr-btn {
-            width: 100%; padding: 15px; margin-top: 20px;
+            width: 100%; padding: 12px; margin-top: 15px;
             background: linear-gradient(90deg, var(--gold-dim), var(--gold));
-            color: #000; font-weight: 800; font-size: 18px;
-            border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase;
+            color: #000; font-weight: 800; font-size: 16px;
+            border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
         }
-        .nr-btn:focus { transform: scale(1.05); box-shadow: 0 0 25px var(--gold); border: 2px solid #fff; }
+        .nr-btn.focused { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); border: 2px solid #fff; }
 
-        /* --- MENU PRINCIPAL (R&C GOLD) --- */
+        /* --- MENU PRINCIPAL --- */
         #dash-layer { 
-            background: radial-gradient(circle at center, #151515 0%, #000 100%);
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             flex-direction: column;
         }
-        
-        /* Topo */
-        .dash-header { margin-top: 50px; margin-bottom: auto; text-align: center; }
-        .dash-logo { font-size: 55px; font-weight: 900; letter-spacing: -2px; }
+        .dash-header { margin-top: 60px; margin-bottom: auto; text-align: center; }
+        .dash-logo { font-size: 50px; font-weight: 900; letter-spacing: -2px; }
         .dash-logo span { color: var(--gold); }
 
-        /* Centro */
         .cards-container { display: flex; gap: 40px; margin-bottom: auto; }
-        
         .dash-card {
-            width: 220px; height: 220px;
-            background: #151515; border: 2px solid #333; border-radius: 20px;
+            width: 200px; height: 200px;
+            background: #151515; border: 2px solid #333; border-radius: 15px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: all 0.2s;
         }
-        .dash-card i { font-size: 65px; margin-bottom: 25px; color: #666; }
-        .dash-card span { font-size: 16px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .dash-card i { font-size: 60px; margin-bottom: 20px; color: #666; }
+        .dash-card span { font-size: 14px; font-weight: 700; color: #888; text-transform: uppercase; }
         
         .dash-card.focused {
             background: #000; border: 3px solid var(--gold);
-            transform: scale(1.15); box-shadow: 0 0 50px rgba(255, 215, 0, 0.25);
+            transform: scale(1.15); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
             z-index: 10;
         }
         .dash-card.focused i { color: var(--gold); }
         .dash-card.focused span { color: #fff; }
 
-        /* Rodapé Informativo */
         .dash-footer {
             width: 90%; display: flex; justify-content: space-between;
-            background: rgba(255,255,255,0.05); border: 1px solid #333;
-            padding: 20px 40px; border-radius: 50px; margin-bottom: 40px;
-            color: #aaa; font-size: 13px;
+            border-top: 1px solid #333; padding: 20px 0; margin-bottom: 30px;
+            color: #888; font-size: 14px;
         }
-        .foot-item b { color: #fff; display: block; margin-top: 5px; font-size: 15px; }
+        .foot-item b { color: #fff; display: block; margin-top: 5px; font-size: 16px; }
         .foot-item.center { text-align: center; }
         .foot-item.right { text-align: right; }
-        .foot-item span { color: var(--gold); font-weight: bold; }
 
         /* --- CONTEÚDO --- */
         #content-layer { display: flex; background: #000; }
         
         .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .cat-head { padding: 20px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; font-size: 18px; }
+        .cat-head { padding: 15px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; }
         .cat-list { flex: 1; overflow-y: auto; }
-        
-        .cat-item { padding: 14px 20px; color: #888; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 600; }
+        .cat-item { padding: 12px 15px; color: #777; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 600; }
         .cat-item.active { background: #111; color: #fff; border-left: 4px solid #333; }
         .cat-item.focused { background: var(--gold); color: #000; border-left: 4px solid #fff; font-weight: 800; }
 
         .col-list { width: 35%; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .search-box { padding: 15px; background: #000; border-bottom: 1px solid #222; }
-        
+        .search-box { padding: 10px; background: #000; border-bottom: 1px solid #222; }
         .inp-search { 
             width: 100%; background: #222; border: 1px solid #333; color: #fff; 
-            padding: 12px; text-align: center; border-radius: 6px; font-weight: bold; font-size: 16px;
+            padding: 12px; text-align: center; border-radius: 4px; font-weight: bold;
         }
         .inp-search:focus { background: #fff; color: #000; border-color: var(--gold); }
         .inp-search[readonly] { background: #151515; color: #666; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
-        .item { padding: 14px 20px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
+        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
         .item.focused { background: #eee; color: #000; font-weight: 800; transform: scale(1.02); margin: 2px 0; border-radius: 2px; }
 
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
         .vid-box.focused { border: 3px solid var(--gold); }
-        
-        .video-off { opacity: 0 !important; } 
-        
+        .video-off { opacity: 0 !important; }
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
-        .meta { padding: 30px; flex: 1; overflow-y: auto; background: #050505; }
-        .meta-title { font-size: 24px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
-        .meta-desc { font-size: 14px; color: #888; margin-bottom: 25px; }
-        
-        .color-keys { display: flex; gap: 20px; font-size: 12px; font-weight: bold; margin-top: auto; }
+        .meta { padding: 20px; flex: 1; overflow-y: auto; background: #050505; }
+        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
+        .meta-desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+        .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; margin-top: auto; }
         .ck-btn { display: flex; align-items: center; gap: 5px; }
         
         .fs-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 9999; border: none !important; background: #000; }
-        
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: 900; font-size: 24px; }
 
     </style>
@@ -154,11 +140,12 @@
 
     <div id="login-layer" class="layer flex-center">
         <div class="netrange-box">
-            <div class="nr-header">R&C GOLD PLAYER</div>
-            <input type="text" id="url" class="nr-input" placeholder="URL (http://...)" autocomplete="off">
-            <input type="text" id="user" class="nr-input" placeholder="USUÁRIO" autocomplete="off">
-            <input type="password" id="pass" class="nr-input" placeholder="SENHA" autocomplete="off">
-            <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR</button>
+            <div class="nr-header">R&C GOLD</div>
+            <input type="text" id="inp0" class="nr-input" placeholder="URL (http://...)" autocomplete="off">
+            <input type="text" id="inp1" class="nr-input" placeholder="USUÁRIO" autocomplete="off">
+            <input type="password" id="inp2" class="nr-input" placeholder="SENHA" autocomplete="off">
+            <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR</button>
+            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS (Cima/Baixo) e OK</div>
         </div>
     </div>
 
@@ -175,9 +162,9 @@
         </div>
 
         <div class="dash-footer">
-            <div class="foot-item"><span>SERVIDOR</span><b id="d-host">...</b></div>
-            <div class="foot-item center"><span>CONEXÕES</span><b id="d-conn">...</b></div>
-            <div class="foot-item right"><span>VENCIMENTO</span><b id="d-exp">...</b></div>
+            <div class="foot-item">SERVIDOR<b id="d-host">...</b></div>
+            <div class="foot-item center">TELAS<b id="d-conn">...</b></div>
+            <div class="foot-item right">VENCIMENTO<b id="d-exp">...</b></div>
         </div>
     </div>
 
@@ -226,13 +213,11 @@
             
             start: function() {
                 if(localStorage.getItem('rc_h')) {
-                    document.getElementById('url').value = localStorage.getItem('rc_h');
-                    document.getElementById('user').value = localStorage.getItem('rc_u');
-                    document.getElementById('pass').value = localStorage.getItem('rc_p');
+                    document.getElementById('inp0').value = localStorage.getItem('rc_h');
+                    document.getElementById('inp1').value = localStorage.getItem('rc_u');
+                    document.getElementById('inp2').value = localStorage.getItem('rc_p');
                 }
-                // Foco inicial no primeiro input
-                document.getElementById('url').focus();
-                
+                this.idx = 0; this.refreshFocus();
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
@@ -250,24 +235,19 @@
             },
 
             login: function() {
-                var h = document.getElementById('url').value.trim();
-                var u = document.getElementById('user').value.trim();
-                var p = document.getElementById('pass').value.trim();
-                
-                // Correção de URL
+                var h = document.getElementById('inp0').value.trim();
+                var u = document.getElementById('inp1').value.trim();
+                var p = document.getElementById('inp2').value.trim();
                 if(h.endsWith('/')) h = h.slice(0, -1);
                 if(h.indexOf('http')===-1) h='http://'+h;
-                
                 this.creds = {h:h, u:u, p:p};
                 var me = this;
                 this.req("", function(d){
                     if(d && d.user_info && d.user_info.auth===1) {
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
                         
-                        // Infos do Menu
                         var host = h.replace('http://','').replace('https://','');
                         if(host.length > 20) host = host.substring(0, 20) + '...';
-                        
                         document.getElementById('d-host').innerText = host;
                         document.getElementById('d-conn').innerText = (d.user_info.active_cons||0) + "/" + (d.user_info.max_connections||0);
                         document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
@@ -292,10 +272,9 @@
                 if(m==='exit') { localStorage.clear(); location.reload(); return; }
                 this.mode = m; this.isSeries = false;
                 this.setScreen(2);
-                
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
-                document.getElementById('search').value = ''; // Limpa busca
+                document.getElementById('search').value = '';
                 this.clearInfo();
                 
                 var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
@@ -312,9 +291,7 @@
 
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
-                this.stop(); 
-                this.clearInfo();
-                
+                this.stop(); this.clearInfo();
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
                 var el = document.getElementById('c'+i); if(el) el.classList.add('active');
@@ -333,7 +310,6 @@
                 var h = '';
                 var max = this.items.length > 100 ? 100 : this.items.length;
                 if(this.isSeries) h += '<div class="item" id="i-1" style="color:var(--gold)" tabindex="-1">.. VOLTAR</div>';
-                
                 for(var i=0; i<max; i++) {
                     var n = this.items[i].name || this.items[i].title;
                     h += '<div class="item" id="i'+i+'" tabindex="-1">'+n+'</div>';
@@ -350,13 +326,11 @@
             globalSearch: function() {
                 var term = document.getElementById('search').value.toLowerCase().trim();
                 if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
-                
                 this.stop(); this.clearInfo();
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 var me = this;
-                
                 this.req("action="+act, function(d){
                     var all = d || [];
                     var res = [];
@@ -378,11 +352,9 @@
             clickItem: function(i) {
                 if(this.isSeries && i===-1) { this.loadCat(this.memCat); return; }
                 var item = this.items[i];
-                
                 if(this.mode==='series' && !this.isSeries) {
-                    var sid = item.series_id;
                     var me = this;
-                    this.req("action=get_series_info&series_id="+sid, function(d){
+                    this.req("action=get_series_info&series_id="+item.series_id, function(d){
                         var eps = [];
                         if(d && d.episodes) {
                             for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
@@ -391,7 +363,6 @@
                     });
                     return;
                 }
-
                 var ext = (this.mode==='live')?'ts':'mp4';
                 if(this.mode!=='live' && item.container_extension) ext = item.container_extension;
                 var url = this.creds.h + "/" + (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
@@ -399,44 +370,25 @@
                 document.getElementById('meta-title').innerText = item.name||item.title;
                 document.getElementById('meta-desc').innerText = "Reproduzindo...";
                 var v = document.getElementById('player');
-                
                 document.getElementById('vid-box').classList.remove('video-off');
-                
-                v.src = url; 
-                v.play();
-                
+                v.src = url; v.play();
                 this.zone = 3; this.refreshFocus();
             },
 
-            next: function() {
-                if(this.isSeries && this.items[this.idx+1]) { this.idx++; this.clickItem(this.idx); }
-            },
-            
-            stop: function() { 
-                var v=document.getElementById('player'); v.pause(); v.src=""; 
-                document.getElementById('vid-box').classList.add('video-off');
-            },
-            
-            clearInfo: function() {
-                document.getElementById('meta-title').innerText = "R&C PLAYER";
-                document.getElementById('meta-desc').innerText = "Aguardando seleção...";
-            },
+            next: function() { if(this.isSeries && this.items[this.idx+1]) { this.idx++; this.clickItem(this.idx); } },
+            stop: function() { var v=document.getElementById('player'); v.pause(); v.src=""; document.getElementById('vid-box').classList.add('video-off'); },
+            clearInfo: function() { document.getElementById('meta-title').innerText = "R&C PLAYER"; document.getElementById('meta-desc').innerText = "Aguardando seleção..."; },
             
             toggleFull: function() {
                 var v = document.getElementById('player');
                 var box = document.getElementById('vid-box');
-                if(box.classList.contains('fs-mode')) {
-                    box.classList.remove('fs-mode');
-                } else {
-                    box.classList.add('fs-mode');
-                    if(v.paused) v.play();
-                }
+                if(box.classList.contains('fs-mode')) box.classList.remove('fs-mode');
+                else { box.classList.add('fs-mode'); if(v.paused) v.play(); }
             },
 
             refreshFocus: function() {
                 var els = document.querySelectorAll('.focused');
                 for(var i=0; i<els.length; i++) els[i].classList.remove('focused');
-                
                 if(this.zone !== 1) {
                     document.getElementById('search').setAttribute('readonly', true);
                     document.getElementById('search').blur();
@@ -445,9 +397,14 @@
                 }
 
                 var id = null;
-                // LOGIN: Navegação nativa, sem foco manual
-                if(this.screen===0) return;
-
+                // LOGIN: NAVEGAÇÃO MANUAL (RESTAURADA)
+                if(this.screen===0) { 
+                    id = 'inp'+this.idx;
+                    var el = document.getElementById(id);
+                    if(this.idx < 3) el.focus(); else { document.activeElement.blur(); el.classList.add('focused'); }
+                    return;
+                }
+                
                 if(this.screen===1) id='m'+this.idx;
                 if(this.screen===2) {
                     if(this.zone===0) id='c'+this.idx;
@@ -455,7 +412,6 @@
                     if(this.zone===2) id=(this.isSeries && this.idx===-1)?'i-1':'i'+this.idx;
                     if(this.zone===3) id='vid-box';
                 }
-                
                 if(id) {
                     var el = document.getElementById(id);
                     if(el) {
@@ -467,9 +423,14 @@
             },
 
             move: function(k) {
-                // LOGIN: Deixa o navegador cuidar
-                if(this.screen===0) return;
-
+                // LOGIN (RESTAURADO: V7 STYLE)
+                if(this.screen===0) {
+                    if(k===40 && this.idx<3) this.idx++;
+                    if(k===38 && this.idx>0) this.idx--;
+                    if(k===13 && this.idx===3) this.login();
+                    this.refreshFocus(); return;
+                }
+                
                 if(this.screen===1) {
                     if(k===39 && this.idx<3) this.idx++;
                     if(k===37 && this.idx>0) this.idx--;
@@ -477,17 +438,14 @@
                     this.refreshFocus();
                 }
                 if(this.screen===2) {
-                    // CATEGORIA
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
                         if(k===13 || k===39) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
                     }
-                    // BUSCA
                     else if(this.zone===1) {
                         if(k===40) { this.zone=2; this.idx=0; }
                     }
-                    // LISTA
                     else if(this.zone===2) { 
                         var max = (this.items.length>100?100:this.items.length)-1;
                         var min = this.isSeries?-1:0;
@@ -497,20 +455,14 @@
                         if(k===39) { this.zone=3; }
                         if(k===13) this.clickItem(this.idx);
                     }
-                    // PLAYER
                     else if(this.zone===3) { 
                         var v = document.getElementById('player');
                         var box = document.getElementById('vid-box');
                         var isFull = box.classList.contains('fs-mode');
-
                         if(k===37) { if(isFull) v.currentTime-=15; else this.zone=2; }
                         if(k===39) v.currentTime+=15;
                         if(k===38) this.zone=2;
-                        
-                        if(k===13) { 
-                            if(isFull) { if(v.paused) v.play(); else v.pause(); } 
-                            else { this.toggleFull(); } 
-                        }
+                        if(k===13) { if(isFull) { if(v.paused) v.play(); else v.pause(); } else { this.toggleFull(); } }
                     }
                     this.refreshFocus();
                 }
@@ -524,7 +476,6 @@
             if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
             
-            // VOLTAR
             if(k===8||k===461||k===27) {
                 e.preventDefault();
                 if(App.screen===2) {
@@ -538,12 +489,16 @@
             }
 
             if([13,37,38,39,40].indexOf(k)>-1) {
+                // INTERCEPTA SETAS NO INPUT
                 if(document.activeElement.tagName==='INPUT') {
                     if(k===13) { App.triggerSearch(); return; }
-                    // NO LOGIN: Deixa setas funcionarem nativamente
-                    if(App.screen === 0) return; 
-                    
-                    if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
+                    // NO LOGIN (Screen 0): PREVINE PADRAO E MANDA PRO MOVE()
+                    if(App.screen === 0 && (k===38 || k===40)) {
+                        e.preventDefault(); App.move(k); return; 
+                    }
+                    if(App.screen === 2 && (k===38 || k===40)) {
+                        e.preventDefault(); App.move(k); return; 
+                    }
                     return; 
                 }
                 e.preventDefault();
