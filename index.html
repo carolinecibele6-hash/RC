@@ -2,71 +2,350 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Web Smarters Player</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R&C GOLD PLAYER</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        /* --- TEMA PREMIUM GOLD V22 (BASEADO NO SEU ARQUIVO) --- */
+        :root { 
+            --bg: #050505; 
+            --gold: #FFD700; 
+            --gold-dim: #b8860b;
+            --text: #ffffff; 
+            --panel: rgba(18,18,18,0.95);
+            --focus: #FFD700; /* Cor de foco Dourada */
+            --focus-text: #000000;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        
+        body {
+            background-color: var(--bg); color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            width: 100vw; height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+        }
+
+        /* TELA DE CARREGAMENTO */
+        #loading {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #333;
+            border-top: 5px solid var(--gold); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* HEADER */
+        .top-bar {
+            height: 12vh; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 4vw; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+        }
+        .logo h1 { font-size: 2.5vh; color: var(--gold); letter-spacing: 2px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+        .clock { font-size: 2vh; color: #ccc; }
+
+        /* MENU PRINCIPAL (DASHBOARD) */
+        #home-screen {
+            height: 88vh; display: flex; justify-content: center; align-items: center; gap: 3vw;
+        }
+        
+        .menu-card {
+            width: 22vw; height: 35vh;
+            background: linear-gradient(145deg, #151515, #0a0a0a);
+            border: 1px solid #333; border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: all 0.2s; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .menu-card i { font-size: 6vh; color: #555; margin-bottom: 2vh; transition: 0.2s; }
+        .menu-card span { font-size: 2.5vh; font-weight: 600; color: #888; letter-spacing: 1px; }
+
+        /* ESTADO DE FOCO (CONTROLE REMOTO) */
+        .focused {
+            border: 2px solid var(--gold) !important;
+            transform: scale(1.08);
+            background: #1a1a1a !important;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4) !important;
+            z-index: 10;
+        }
+        .focused i { color: var(--gold) !important; text-shadow: 0 0 15px var(--gold); }
+        .focused span { color: #fff !important; }
+        .focused.channel-item { background: var(--gold) !important; color: black !important; }
+
+        /* TELA DE CONTEÚDO (LISTA + PLAYER) */
+        #content-screen {
+            display: none; height: 88vh; width: 100vw;
+        }
+        .sidebar {
+            width: 35vw; height: 100%; background: rgba(0,0,0,0.8);
+            border-right: 1px solid #333; display: flex; flex-direction: column;
+        }
+        .cat-header {
+            padding: 2vh; background: #111; border-bottom: 2px solid var(--gold);
+            font-weight: bold; color: var(--gold);
+        }
+        
+        #list-container {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+        }
+        /* Esconde scrollbar mas mantém scroll */
+        #list-container::-webkit-scrollbar { width: 0px; }
+
+        .channel-item {
+            padding: 2vh; border-bottom: 1px solid #222;
+            font-size: 1.8vh; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .player-area {
+            width: 65vw; height: 100%; background: #000; display: flex; flex-direction: column;
+        }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        
+        .info-panel {
+            padding: 2vh; background: #111; height: 15vh;
+        }
+
+        .helper-text { position: absolute; bottom: 2vh; right: 2vh; color: #444; font-size: 1.5vh; }
+    </style>
 </head>
 <body>
 
-    <div id="loading-screen" class="screen active">
-        <div class="logo-area">
-            <h1>IPTV SMARTERS <span style="color:#0093d5">WEB</span></h1>
-            <p id="status-text">Carregando listas locais...</p>
+    <div id="loading"><div class="spinner"></div><div id="loading-txt">INICIANDO SISTEMA...</div></div>
+
+    <div class="top-bar">
+        <div class="logo"><h1>R&C <span style="color:#fff">GOLD</span> PLAYER</h1></div>
+        <div class="clock" id="clock">00:00</div>
+    </div>
+
+    <div id="home-screen">
+        <div class="menu-card item-menu" id="live" data-file="live_channels.m3u" data-title="TV AO VIVO">
+            <i class="fas fa-tv"></i><span>TV AO VIVO</span>
+        </div>
+        <div class="menu-card item-menu" id="movies" data-file="vod_filmes.m3u" data-title="FILMES">
+            <i class="fas fa-film"></i><span>FILMES</span>
+        </div>
+        <div class="menu-card item-menu" id="series" data-file="vod_series.m3u" data-title="SÉRIES">
+            <i class="fas fa-video"></i><span>SÉRIES</span>
+        </div>
+        <div class="menu-card item-menu" onclick="window.location.reload()">
+            <i class="fas fa-sync"></i><span>RECARREGAR</span>
         </div>
     </div>
 
-    <div id="dashboard-screen" class="screen">
-        <div class="header">
-            <div class="user-info">
-                <div class="avatar">👤</div>
-                <div class="info-text">
-                    <span class="user-name">Usuário Master</span>
-                    <span class="expiry">Validade: Ilimitada</span>
+    <div id="content-screen">
+        <div class="sidebar">
+            <div class="cat-header" id="cat-title">CATEGORIA</div>
+            <div id="list-container">
                 </div>
-            </div>
-            <div class="logo-small">SMARTERS PRO</div>
         </div>
-
-        <div class="menu-grid">
-            <div class="card focusable" id="btn-live" onclick="openCategory('live_channels.m3u', 'TV AO VIVO')">
-                <div class="icon">📺</div>
-                <div class="title">TV AO VIVO</div>
-            </div>
-            
-            <div class="card focusable" id="btn-movies" onclick="openCategory('vod_filmes.m3u', 'FILMES')">
-                <div class="icon">🎬</div>
-                <div class="title">FILMES</div>
-            </div>
-            
-            <div class="card focusable" id="btn-series" onclick="openCategory('vod_series.m3u', 'SÉRIES')">
-                <div class="icon">🍿</div>
-                <div class="title">SÉRIES</div>
-            </div>
-
-            <div class="card focusable" id="btn-install" onclick="window.location.reload()">
-                <div class="icon">🔄</div>
-                <div class="title">ATUALIZAR</div>
-            </div>
+        <div class="player-area">
+            <video id="player" controls></video>
         </div>
     </div>
 
-    <div id="list-screen" class="screen">
-        <div class="list-header">
-            <button class="back-btn focusable" onclick="goBack()">⬅ Voltar</button>
-            <h2 id="category-title">Categoria</h2>
-        </div>
-        <div class="content-container">
-            <ul id="channel-list" class="channel-list">
-                </ul>
-            <div class="preview-area">
-                <div id="video-container">
-                    <video id="main-player" controls preload="none"></video>
-                </div>
-                <div id="synopsis">Selecione um canal para assistir.</div>
-            </div>
-        </div>
-    </div>
+    <script>
+        // --- CONFIGURAÇÃO DO SISTEMA ---
+        const App = {
+            screen: 'home', // 'home' ou 'content'
+            focusIndex: 0,
+            items: [],
+            channels: [], // Dados carregados do M3U
+            player: null,
+            hls: null,
 
-    <script src="app.js"></script>
+            init: function() {
+                this.updateClock();
+                setInterval(this.updateClock, 60000);
+                
+                // Configura itens iniciais (Menu)
+                this.items = document.querySelectorAll('.item-menu');
+                this.updateFocus();
+                
+                // Remove loading
+                setTimeout(() => { document.getElementById('loading').style.display = 'none'; }, 1000);
+
+                // Controle Remoto
+                document.addEventListener('keydown', (e) => this.handleKey(e));
+            },
+
+            updateClock: function() {
+                const now = new Date();
+                document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            },
+
+            // --- LÓGICA DE NAVEGAÇÃO ---
+            handleKey: function(e) {
+                const k = e.keyCode;
+                // Mapeamento: 37(Esq), 38(Cima), 39(Dir), 40(Baixo), 13(Enter), 461/10009/8(Voltar)
+                
+                if (k === 461 || k === 10009 || k === 8) { // Voltar
+                    e.preventDefault();
+                    if(this.screen === 'content') this.goHome();
+                    return;
+                }
+
+                if (this.screen === 'home') {
+                    if (k === 39) this.moveFocus(1); // Direita
+                    if (k === 37) this.moveFocus(-1); // Esquerda
+                    if (k === 13) this.selectItem(); // Enter
+                } 
+                else if (this.screen === 'content') {
+                    if (k === 40) this.moveFocus(1); // Baixo (Lista)
+                    if (k === 38) this.moveFocus(-1); // Cima (Lista)
+                    if (k === 13) this.selectItem(); // Enter (Play)
+                    // Atalho para Fullscreen ou Foco no Player
+                    if (k === 39) document.getElementById('player').focus();
+                }
+            },
+
+            moveFocus: function(direction) {
+                // Remove foco atual
+                if(this.items[this.focusIndex]) this.items[this.focusIndex].classList.remove('focused');
+                
+                // Calcula novo índice
+                this.focusIndex += direction;
+                
+                // Limites
+                if(this.focusIndex < 0) this.focusIndex = 0;
+                if(this.focusIndex >= this.items.length) this.focusIndex = this.items.length - 1;
+                
+                this.updateFocus();
+            },
+
+            updateFocus: function() {
+                const el = this.items[this.focusIndex];
+                if(el) {
+                    el.classList.add('focused');
+                    el.scrollIntoView({block: 'center', behavior: 'smooth'});
+                }
+            },
+
+            selectItem: function() {
+                const el = this.items[this.focusIndex];
+                if (this.screen === 'home') {
+                    if(el.dataset.file) {
+                        this.loadPlaylist(el.dataset.file, el.dataset.title);
+                    } else {
+                        el.click(); // Botão Recarregar
+                    }
+                } 
+                else if (this.screen === 'content') {
+                    // Tocar canal
+                    const url = this.channels[this.focusIndex].url;
+                    this.playStream(url);
+                }
+            },
+
+            // --- LÓGICA DE DADOS (M3U) ---
+            loadPlaylist: function(file, title) {
+                document.getElementById('loading').style.display = 'flex';
+                document.getElementById('loading-txt').innerText = "LENDO " + title + "...";
+
+                fetch(file + '?t=' + new Date().getTime()) // Anti-cache
+                .then(r => {
+                    if(!r.ok) throw new Error("Arquivo não encontrado");
+                    return r.text();
+                })
+                .then(txt => {
+                    this.parseM3U(txt);
+                    document.getElementById('cat-title').innerText = title;
+                    
+                    // Troca de tela
+                    document.getElementById('home-screen').style.display = 'none';
+                    document.getElementById('content-screen').style.display = 'flex';
+                    this.screen = 'content';
+                    
+                    // Configura foco na nova lista
+                    this.renderList();
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch(e => {
+                    alert("Erro ao abrir arquivo: " + file + "\nVerifique se rodou o script Python!");
+                    document.getElementById('loading').style.display = 'none';
+                });
+            },
+
+            parseM3U: function(data) {
+                this.channels = [];
+                const lines = data.split('\n');
+                let currentItem = null;
+
+                lines.forEach(line => {
+                    line = line.trim();
+                    if(line.startsWith('#EXTINF:')) {
+                        let name = line.split(',')[1] || "Sem Nome";
+                        currentItem = { name: name };
+                    } else if (line.length > 5 && !line.startsWith('#')) {
+                        if(currentItem) {
+                            currentItem.url = line;
+                            this.channels.push(currentItem);
+                            currentItem = null;
+                        }
+                    }
+                });
+            },
+
+            renderList: function() {
+                const container = document.getElementById('list-container');
+                container.innerHTML = '';
+                
+                this.channels.forEach((ch, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'channel-item';
+                    div.innerText = ch.name;
+                    container.appendChild(div);
+                });
+
+                // Atualiza referências de foco
+                this.items = document.querySelectorAll('.channel-item');
+                this.focusIndex = 0;
+                this.updateFocus();
+            },
+
+            // --- PLAYER ---
+            playStream: function(url) {
+                const video = document.getElementById('player');
+                
+                if (Hls.isSupported() && url.includes('.m3u8')) {
+                    if(this.hls) this.hls.destroy();
+                    this.hls = new Hls();
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(video);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        video.play();
+                    });
+                } else {
+                    // MP4 ou Nativo
+                    video.src = url;
+                    video.play();
+                }
+            },
+
+            goHome: function() {
+                // Para vídeo
+                const video = document.getElementById('player');
+                video.pause(); video.src = "";
+                
+                document.getElementById('content-screen').style.display = 'none';
+                document.getElementById('home-screen').style.display = 'flex';
+                this.screen = 'home';
+                
+                // Refaz foco no menu inicial
+                this.items = document.querySelectorAll('.item-menu');
+                this.focusIndex = 0;
+                this.updateFocus();
+            }
+        };
+
+        // Inicia
+        window.onload = () => App.init();
+    </script>
 </body>
 </html>
