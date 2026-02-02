@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - AUTO LOGIN FIXED</title>
+    <title>SKY GOLD - FINAL ORIGINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -20,19 +20,19 @@
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
         body { 
-            background: #000; 
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); 
             color: var(--text-main); font-family: 'Montserrat', sans-serif; 
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* --- LOADER --- */
+        /* --- LOADER (Só aparece quando chamado) --- */
         #loader {
-            position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 9999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            position: fixed; top:0; left:0; width:100%; height:100%; background: #000;
+            z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;
         }
         .spinner {
-            width: 60px; height: 60px; border: 4px solid #333; border-top: 4px solid var(--sky-gold);
-            border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 20px;
+            width: 50px; height: 50px; border: 4px solid #222; border-top: 4px solid var(--sky-gold);
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px;
             box-shadow: var(--neon-glow);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -40,115 +40,111 @@
         /* --- TELA LOGIN --- */
         #loginScreen {
             position: absolute; width: 100%; height: 100%; z-index: 5000;
-            display: none; /* JS controla visibilidade */
-            justify-content: center; align-items: center; background: #050505;
+            display: flex; justify-content: center; align-items: center; background: #000;
         }
         .login-box {
-            width: 450px; padding: 50px; background: #111; border: 1px solid #333; border-radius: 15px;
-            text-align: center; border-top: 2px solid var(--sky-gold); box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            width: 420px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 12px;
+            text-align: center; border-top: 3px solid var(--sky-gold); box-shadow: 0 0 40px rgba(0,0,0,0.8);
         }
-        .lg-title { color: var(--sky-gold); margin-bottom: 30px; font-size: 28px; text-shadow: var(--neon-glow); }
+        .lg-title { color: var(--sky-gold); margin-bottom: 25px; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
         
         .lg-inp {
-            width: 100%; height: 55px; background: #222; border: 1px solid #444; color: #fff;
-            text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 8px;
+            width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
+            text-align: center; margin-bottom: 15px; font-size: 15px; border-radius: 6px;
         }
-        .lg-inp:focus { background: #000; border-color: var(--sky-gold); box-shadow: var(--neon-glow); }
+        .lg-inp:focus { background: #000; border-color: var(--sky-gold); color: var(--sky-gold); font-weight: bold; }
         
         .lg-btn {
-            width: 100%; height: 55px; background: linear-gradient(45deg, var(--sky-gold-dim), var(--sky-gold)); 
-            border: none; font-weight: 900; font-size: 18px; cursor: pointer; border-radius: 8px; color: #000;
-            text-transform: uppercase; margin-top: 10px;
+            width: 100%; height: 50px; background: var(--sky-gold); border: none; font-weight: 800;
+            font-size: 16px; cursor: pointer; border-radius: 6px; color: #000; margin-top: 10px;
+            transition: transform 0.2s;
         }
-        .lg-btn:focus { transform: scale(1.05); box-shadow: 0 0 20px var(--sky-gold); }
+        .lg-btn:focus { box-shadow: var(--neon-glow); transform: scale(1.05); }
 
         /* --- MENU PRINCIPAL --- */
         #mainMenu {
             display: none; width: 100%; height: 100%; flex-direction: column; 
             align-items: center; justify-content: center; z-index: 100;
         }
-        .logo-txt { font-size: 60px; font-weight: 900; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
+        .logo-txt { font-size: 60px; font-weight: 900; color: #fff; letter-spacing: -3px; margin-bottom: 40px; }
         .logo-txt span { color: var(--sky-gold); text-shadow: var(--neon-glow); font-style: italic; }
         
-        .cards-container { display: flex; gap: 40px; }
+        .cards-container { display: flex; gap: 35px; }
         .nav-card {
-            width: 200px; height: 200px; background: #111; border-radius: 20px;
+            width: 190px; height: 190px; background: #111; border-radius: 18px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 2px solid #222; transition: all 0.2s; color: #666;
+            border: 2px solid transparent; transition: all 0.2s; color: #666;
         }
         .nav-card i { font-size: 50px; margin-bottom: 20px; }
-        .nav-card span { font-size: 18px; font-weight: 700; text-transform: uppercase; }
+        .nav-card span { font-size: 17px; font-weight: bold; text-transform: uppercase; }
         
         .nav-card.focused {
             border-color: var(--sky-gold); color: var(--sky-gold); background: #1a1a1a;
-            box-shadow: var(--neon-glow); transform: scale(1.15); z-index: 10;
+            box-shadow: var(--neon-glow); transform: scale(1.1);
         }
 
         /* --- INTERFACE DE CONTEÚDO --- */
         #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
         
         .col-cats { width: 280px; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .col-list { width: 420px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 40px; align-items: center; }
-
-        .panel-head { padding: 20px; font-weight: 900; color: var(--sky-gold); text-align: center; font-size: 16px; border-bottom: 1px solid #222; }
+        .panel-head { padding: 18px; font-weight: 800; color: var(--sky-gold); text-align: center; font-size: 14px; border-bottom: 1px solid #222; letter-spacing: 1px; }
         .list-wrap { flex: 1; overflow-y: auto; padding: 10px; }
         
-        .c-item, .l-item { 
-            padding: 15px; margin-bottom: 6px; color: #999; border-radius: 6px; font-size: 14px; font-weight: 600;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        .c-item { 
+            padding: 14px; margin-bottom: 5px; color: #888; border-radius: 5px; font-size: 14px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid transparent;
         }
-        .c-item.active { color: #fff; background: #1a1a1a; border-left: 3px solid #555; }
-        .c-item.focused { background: var(--sky-gold); color: #000; font-weight: 900; box-shadow: var(--neon-glow); transform: scale(1.02); }
-        
+        .c-item.active { background: #151515; color: #fff; border-left-color: #555; }
+        .c-item.focused { background: var(--sky-gold); color: #000; font-weight: bold; border-left-color: #fff; box-shadow: var(--neon-glow); }
+
+        .col-list { width: 420px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .search-box { padding: 15px; background: #080808; border-bottom: 1px solid #222; }
         .s-inp { 
-            width: 100%; padding: 12px; background: #181818; border: 1px solid #333; color: var(--sky-gold); 
+            width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: var(--sky-gold); 
             text-transform: uppercase; border-radius: 5px; text-align: center; font-weight: bold;
         }
         .s-inp.focused { background: #fff; color: #000; border-color: var(--sky-gold); }
 
-        .l-item.focused { 
-            background: #fff; color: #000; font-weight: 900; 
-            border-left: 5px solid var(--sky-gold); transform: scale(1.03); z-index: 5;
+        .l-item {
+            padding: 14px; margin-bottom: 5px; background: #111; border-radius: 5px; font-size: 14px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 2px solid transparent; color: #aaa;
         }
+        .l-item.focused { background: #fff; color: #000; font-weight: bold; border-color: var(--sky-gold); transform: scale(1.02); z-index: 10; }
 
+        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 30px; align-items: center; }
         .frame { 
-            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #222; border-radius: 12px;
-            margin-bottom: 25px; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #222; border-radius: 10px;
+            margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.6);
         }
         .frame.focused { border-color: var(--sky-gold); box-shadow: var(--neon-glow); }
         video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-        .info-title { font-size: 32px; color: var(--sky-gold); font-weight: 900; margin-bottom: 15px; width: 100%; }
-        .info-desc { font-size: 15px; color: #aaa; width: 100%; max-height: 100px; overflow: hidden; }
-
+        .info-title { font-size: 28px; color: var(--sky-gold); font-weight: bold; margin-bottom: 10px; width: 100%; }
+        .info-desc { font-size: 14px; color: #888; line-height: 1.5; width: 100%; }
+        
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9000; border:none !important; margin:0 !important; background:#000; border-radius: 0 !important; }
         
         .vod-osd {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;
-            background: linear-gradient(to top, rgba(0,0,0,1), transparent);
-            display: none; flex-direction: column; justify-content: flex-end; padding: 30px; pointer-events: none;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 90px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            display: none; flex-direction: column; justify-content: flex-end; padding: 25px;
         }
-        .osd-txt { color: #fff; font-size: 20px; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .prog-bg { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-        .prog-fill { height: 100%; width: 0%; background: var(--sky-gold); box-shadow: 0 0 10px var(--sky-gold); }
-        
-        .seek-notify {
+        .prog-bg { width: 100%; height: 6px; background: #333; border-radius: 3px; }
+        .prog-fill { height: 100%; width: 0%; background: var(--sky-gold); border-radius: 3px; box-shadow: 0 0 10px var(--sky-gold); }
+        .osd-info { color: #fff; font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; }
+
+        .seek-toast {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 40px; color: #fff; background: rgba(0,0,0,0.8); padding: 20px 40px;
-            border-radius: 10px; display: none; border: 2px solid var(--sky-gold); box-shadow: var(--neon-glow);
+            background: rgba(0,0,0,0.8); color: var(--sky-gold); border: 2px solid var(--sky-gold);
+            padding: 15px 30px; font-size: 30px; font-weight: 800; border-radius: 10px; display: none;
         }
 
         ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-<body onload="SkyApp.init()">
+<body onload="App.init()">
 
-    <div id="loader">
-        <div class="spinner"></div>
-        <div style="color:#666; font-weight:bold; letter-spacing:2px">CONECTANDO SKY GOLD...</div>
-    </div>
+    <div id="loader"><div class="spinner"></div><span style="color:#666; font-weight:bold; letter-spacing:1px">CARREGANDO...</span></div>
 
     <div id="loginScreen">
         <div class="login-box">
@@ -156,19 +152,17 @@
             <input type="text" id="h" class="lg-inp" placeholder="URL DNS (http://...)">
             <input type="text" id="u" class="lg-inp" placeholder="Usuário">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
-            <button id="btnEnter" class="lg-btn">ACESSAR</button>
+            <button id="btnEnter" class="lg-btn">ENTRAR</button>
         </div>
     </div>
 
     <div id="mainMenu">
-        <div class="logo-area">
-            <div class="logo-txt"><i class="fas fa-star"></i> SKY <span>GOLD</span></div>
-        </div>
+        <div class="logo-txt"><i class="fas fa-star"></i> SKY <span>GOLD</span></div>
         <div class="cards-container">
             <div class="nav-card focused" id="card-live"><i class="fas fa-tv"></i><span>TV Ao Vivo</span></div>
             <div class="nav-card" id="card-mov"><i class="fas fa-film"></i><span>Filmes</span></div>
             <div class="nav-card" id="card-ser"><i class="fas fa-layer-group"></i><span>Séries</span></div>
-            <div class="nav-card" id="card-cfg"><i class="fas fa-power-off"></i><span>Sair</span></div>
+            <div class="nav-card" id="card-cfg"><i class="fas fa-sign-out-alt"></i><span>Sair</span></div>
         </div>
     </div>
 
@@ -179,24 +173,21 @@
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR..." onkeydown="SkyApp.handleSearch(event)">
+                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR" onkeydown="App.handleSearch(event)">
             </div>
             <div class="list-wrap" id="list-cnt"></div>
         </div>
         <div class="col-view">
             <div class="frame" id="v-box">
                 <video id="player" playsinline></video>
-                <div class="seek-notify" id="seek-osd"></div>
+                <div class="seek-toast" id="seek-osd"></div>
                 <div class="vod-osd" id="osd">
-                    <div class="osd-txt">
-                        <span id="osd-stat">PAUSADO</span>
-                        <span id="osd-time">00:00 / 00:00</span>
-                    </div>
+                    <div class="osd-info"><span id="st-tit">Pausado</span><span id="st-time">00:00</span></div>
                     <div class="prog-bg"><div class="prog-fill" id="prog-bar"></div></div>
                 </div>
             </div>
-            <div class="info-title" id="lbl-title">Bem Vindo ao Sky Gold</div>
-            <div class="info-desc" id="lbl-desc">Navegue pelas listas para começar a assistir.</div>
+            <div class="info-title" id="lbl-title">Bem Vindo</div>
+            <div class="info-desc" id="lbl-desc">Selecione um conteúdo.</div>
         </div>
     </div>
 
@@ -205,88 +196,60 @@
         let seekTimer = null;
         let osdTimer = null;
 
-        const SkyApp = {
+        const App = {
             scr: 'login', zone: 0, fIdx: 0,
             creds: {}, mode: 'live',
             cats: [], items: [], viewItems: [],
             renderedCount: 0, isSeries: false, currId: null,
 
             init: function() {
-                // --- LÓGICA DE AUTO LOGIN CORRIGIDA ---
-                let h = localStorage.getItem('sky_h');
-                let u = localStorage.getItem('sky_u');
-                let p = localStorage.getItem('sky_p');
-
-                if(h && u && p) {
-                    // SE TEM DADOS: Preenche e tenta logar (Loader continua ativo)
-                    this.creds = {h,u,p};
-                    document.getElementById('h').value = h;
-                    document.getElementById('u').value = u;
-                    document.getElementById('p').value = p;
-                    this.login(true);
+                // LÓGICA ORIGINAL DO ARQUIVO WAREZ V1
+                // Recupera dados, mas NÃO loga sozinho.
+                if(localStorage.getItem('sky_h')) {
+                    document.getElementById('h').value = localStorage.getItem('sky_h');
+                    document.getElementById('u').value = localStorage.getItem('sky_u');
+                    document.getElementById('p').value = localStorage.getItem('sky_p');
+                    document.getElementById('btnEnter').focus(); // Foca no botão para facilitar
                 } else {
-                    // SE NÃO TEM DADOS: Desativa Loader IMEDIATAMENTE e mostra tela de login
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('loginScreen').style.display = 'flex';
                     document.getElementById('h').focus();
                 }
 
                 document.addEventListener('keydown', this.onKey.bind(this));
                 
+                // Eventos do Player (Mantendo as melhorias)
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
-                v.addEventListener('play', () => this.hideOSD());
-                v.addEventListener('pause', () => this.showOSD('PAUSADO', false));
                 v.addEventListener('ended', () => {
-                    if(this.isSeries && this.fIdx < this.viewItems.length - 1) {
-                        this.fIdx++; this.play(this.fIdx); this.renderFocus();
-                    } else this.exitFS();
+                     if(this.isSeries && this.fIdx < this.viewItems.length-1) {
+                         this.fIdx++; this.play(this.fIdx); this.renderFocus();
+                     } else this.exitFS();
                 });
+                v.addEventListener('play', ()=> { this.hideOSD(); });
+                v.addEventListener('pause', ()=> { this.showOSD('PAUSADO', false); });
             },
 
             load: function(s) { document.getElementById('loader').style.display = s?'flex':'none'; },
 
-            login: async function(isAuto = false) {
-                let h=isAuto ? this.creds.h : document.getElementById('h').value.trim();
-                let u=isAuto ? this.creds.u : document.getElementById('u').value.trim();
-                let p=isAuto ? this.creds.p : document.getElementById('p').value.trim();
-                
+            login: async function() {
+                let h=document.getElementById('h').value.trim();
+                let u=document.getElementById('u').value.trim();
+                let p=document.getElementById('p').value.trim();
+                if(!h) return;
                 if(!h.startsWith('http')) h = 'http://'+h;
 
-                if(!isAuto) this.load(true);
-
+                this.load(true);
                 try {
                     let r = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                     let d = await r.json();
-                    
                     if(d.user_info && d.user_info.status === 'Active') {
                         this.creds = {h,u,p};
                         localStorage.setItem('sky_h',h); localStorage.setItem('sky_u',u); localStorage.setItem('sky_p',p);
                         
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
-                    } else {
-                        // Se falhar o auto login, limpa e mostra a tela
-                        if(isAuto) {
-                            localStorage.clear();
-                            document.getElementById('loader').style.display = 'none';
-                            document.getElementById('loginScreen').style.display = 'flex';
-                            alert('Sessão expirada. Faça login novamente.');
-                        } else {
-                            alert('Dados Inválidos!');
-                            this.load(false);
-                        }
-                    }
-                } catch(e) { 
-                    if(isAuto) {
-                        // Se der erro de conexão no auto login, libera a tela
-                        document.getElementById('loader').style.display = 'none';
-                        document.getElementById('loginScreen').style.display = 'flex';
-                    } else {
-                        alert('Erro de Conexão. Verifique a URL.');
-                        this.load(false);
-                    }
-                }
+                    } else alert('Dados Inválidos');
+                } catch(e) { alert('Erro Conexão'); }
+                this.load(false);
             },
 
             goMenu: function() {
@@ -294,7 +257,6 @@
                 this.stopPlayer();
                 document.getElementById('mainMenu').style.display='flex';
                 document.getElementById('contentInterface').style.display='none';
-                this.load(false);
                 this.renderCards();
             },
 
@@ -313,7 +275,7 @@
 
                 document.getElementById('mainMenu').style.display='none';
                 document.getElementById('contentInterface').style.display='flex';
-                document.getElementById('cat-head').innerText = m==='live'?'CANAIS':(m==='vod'?'FILMES':'SÉRIES');
+                document.getElementById('cat-head').innerText = m==='live'?'CANAIS TV':(m==='vod'?'FILMES':'SÉRIES');
                 document.getElementById('list-cnt').innerHTML = '';
                 
                 this.load(true);
@@ -385,7 +347,10 @@
                 let vid = document.getElementById('player');
                 let sid = it.stream_id || it.id;
                 
-                if(this.currId === sid && vid.src && !vid.paused) { this.enterFS(); return; }
+                if(this.currId === sid && vid.src && !vid.paused) {
+                    this.enterFS();
+                    return;
+                }
                 
                 this.currId = sid;
                 let ext = it.container_extension;
@@ -398,7 +363,7 @@
                 document.getElementById('lbl-title').innerText = it.name||it.title;
                 document.getElementById('lbl-desc').innerText = "Carregando...";
 
-                this.stopPlayer();
+                this.stopPlayer(); // Reseta antes
 
                 if(this.mode === 'live' && Hls.isSupported()) {
                     hls = new Hls({capLevelToPlayerSize:true});
@@ -435,12 +400,20 @@
                 if(!this.currId) return;
                 let v = document.getElementById('player');
                 let t = v.currentTime; let s = v.src;
-                v.src = ""; setTimeout(()=> { v.src=s; v.currentTime=t; v.play(); }, 200);
+                v.src = ""; setTimeout(()=> { v.src=s; v.currentTime=t; v.play(); }, 500);
             },
 
             isFS: function() { return document.getElementById('v-box').classList.contains('fs'); },
-            enterFS: function() { document.getElementById('v-box').classList.add('fs'); document.activeElement.blur(); },
-            exitFS: function() { document.getElementById('v-box').classList.remove('fs'); if(this.zone===3) this.renderFocus(); },
+            
+            enterFS: function() {
+                document.getElementById('v-box').classList.add('fs');
+                document.activeElement.blur();
+            },
+            
+            exitFS: function() {
+                document.getElementById('v-box').classList.remove('fs');
+                if(this.zone===3) this.renderFocus();
+            },
 
             seek: function(val) {
                 let v = document.getElementById('player');
@@ -457,22 +430,23 @@
             },
 
             updOSD: function() {
-                if(!SkyApp.isFS() || SkyApp.mode === 'live') return;
+                if(!App.isFS() || App.mode === 'live') return;
                 let v = document.getElementById('player');
                 if(isNaN(v.duration)) return;
                 let p = (v.currentTime/v.duration)*100;
                 document.getElementById('prog-bar').style.width = p+'%';
                 
-                const fmt = (t) => { let m = Math.floor(t/60); let s = Math.floor(t%60); return `${m}:${s<10?'0'+s:s}`; };
-                document.getElementById('osd-time').innerText = `${fmt(v.currentTime)} / ${fmt(v.duration)}`;
+                let cur = new Date(v.currentTime * 1000).toISOString().substr(11, 8);
+                let tot = new Date(v.duration * 1000).toISOString().substr(11, 8);
+                document.getElementById('st-time').innerText = `${cur} / ${tot}`;
             },
             
             showOSD: function(txt, auto) {
                 if(this.mode==='live') return;
-                document.getElementById('osd-stat').innerText = txt;
+                document.getElementById('st-tit').innerText = txt;
                 document.getElementById('osd').style.display='flex';
                 clearTimeout(osdTimer);
-                if(auto) osdTimer = setTimeout(()=> SkyApp.hideOSD(), 2500);
+                if(auto) osdTimer = setTimeout(() => App.hideOSD(), 2500);
             },
             hideOSD: function() { document.getElementById('osd').style.display='none'; },
 
@@ -481,13 +455,12 @@
                 let t = document.getElementById('search-inp').value.toLowerCase();
                 if(t.length<3) return;
                 this.viewItems = this.items.filter(i=>(i.name||i.title).toLowerCase().includes(t));
-                this.renderedCount = 0; document.getElementById('list-cnt').innerHTML=''; this.appendItems(50);
+                this.renderedCount=0; document.getElementById('list-cnt').innerHTML=''; this.appendItems(50);
                 if(this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); this.renderFocus(); }
             },
 
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
-                
                 if(this.scr==='menu') {
                     let ids=['card-live','card-mov','card-ser','card-cfg'];
                     document.getElementById(ids[this.fIdx]).classList.add('focused');
@@ -509,12 +482,10 @@
                 let k = e.keyCode;
 
                 if(this.scr==='login') {
-                    if(k===13) {
-                        if(document.activeElement.id==='p' || document.activeElement.id==='btnEnter') this.login();
-                        else document.activeElement.nextElementSibling?.focus();
-                    }
-                    else if(k===40) document.activeElement.nextElementSibling?.focus();
-                    else if(k===38) document.activeElement.previousElementSibling?.focus();
+                    let m=['h','u','p','btnEnter']; let i=m.indexOf(document.activeElement.id);
+                    if(k===13) { i<3?document.getElementById(m[i+1]).focus():this.login(); }
+                    else if(k===40 && i<3) document.getElementById(m[i+1]).focus();
+                    else if(k===38 && i>0) document.getElementById(m[i-1]).focus();
                     return;
                 }
 
