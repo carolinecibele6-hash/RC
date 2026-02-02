@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD FINAL</title>
+    <title>R&C GOLD PREMIUM</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA R&C GOLD --- */
-        :root { --bg: #050505; --gold: #D4AF37; --text: #fff; --panel: #111; }
+        /* --- TEMA PREMIUM LUXO --- */
+        :root { --bg: #050505; --gold: #D4AF37; --text: #e0e0e0; --panel: rgba(20,20,20,0.95); }
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
         body {
@@ -22,74 +22,113 @@
         /* UTILITÁRIOS */
         .hide { display: none !important; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
-        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: var(--bg); }
+        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
         /* LOGIN (NETRANGE STYLE) */
-        #login-layer { background: #080808; z-index: 50; }
-        .netrange-card {
-            width: 400px; padding: 40px; background: #111; border-radius: 10px;
-            border: 1px solid #333; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        #login-layer { 
+            background: url('https://img.freepik.com/free-vector/luxury-black-background-with-golden-lines_1017-25272.jpg') no-repeat center center/cover;
+            z-index: 50;
         }
+        .netrange-card {
+            width: 450px; padding: 50px; 
+            background: rgba(0, 0, 0, 0.9); border: 1px solid #333; 
+            border-radius: 8px; text-align: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        .nr-title { color: var(--gold); font-weight: 800; font-size: 28px; margin-bottom: 40px; letter-spacing: 2px; }
+        
         .nr-input {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: #222; border: 1px solid #444; border-radius: 5px;
-            color: #fff; text-align: center; font-size: 16px;
+            width: 100%; padding: 15px; margin-bottom: 20px;
+            background: #111; border: 1px solid #444; border-radius: 4px;
+            color: #fff; text-align: center; font-size: 18px; font-weight: 600;
         }
         .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); }
-        .nr-btn {
-            width: 100%; padding: 12px; margin-top: 10px;
-            background: var(--gold); color: #000; font-weight: bold;
-            border: none; border-radius: 5px; cursor: pointer;
-        }
-        .nr-btn.focused { background: #fff; transform: scale(1.02); }
-
-        /* MENU (WAREZ STYLE) */
-        #dash-layer { background: url('https://img.freepik.com/free-vector/black-gold-hexagonal-pattern-background_1017-27387.jpg') no-repeat center center/cover; }
-        .warez-grid { display: flex; gap: 30px; }
-        .warez-card {
-            width: 200px; height: 200px; background: rgba(20, 20, 20, 0.9);
-            border: 2px solid #333; border-radius: 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .warez-card i { font-size: 50px; margin-bottom: 20px; color: #aaa; }
-        .warez-card.focused { border: 3px solid var(--gold); background: #000; transform: scale(1.1); }
-        .warez-card.focused i { color: #fff; }
-
-        /* CONTEÚDO (3 COLUNAS) */
-        #content-layer { display: flex; }
         
-        .col-cat { width: 25%; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .cat-item { padding: 12px 15px; color: #888; border-bottom: 1px solid #151515; font-size: 14px; white-space: nowrap; overflow: hidden; }
-        .cat-item.active { background: #1a1a1a; color: #fff; border-left: 4px solid #555; }
-        .cat-item.focused { background: var(--gold); color: #000; font-weight: bold; border-left: 4px solid #fff; }
+        .nr-btn {
+            width: 100%; padding: 15px; margin-top: 10px;
+            background: linear-gradient(45deg, #b8860b, var(--gold)); 
+            color: #000; font-weight: 800; font-size: 18px;
+            border: none; border-radius: 4px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .nr-btn.focused { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); }
 
-        .col-list { width: 35%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .search-box { padding: 8px; background: #000; border-bottom: 1px solid #222; }
-        .inp-search { width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 8px; text-align: center; border-radius: 4px; }
+        /* MENU PRINCIPAL (VISUAL PREMIUM) */
+        #dash-layer { 
+            background: url('https://img.freepik.com/free-vector/dark-low-poly-background_1048-7971.jpg') no-repeat center center/cover;
+        }
+        .account-bar {
+            position: absolute; top: 40px; right: 60px; text-align: right;
+            font-size: 14px; color: #aaa; background: rgba(0,0,0,0.6);
+            padding: 10px 20px; border-radius: 20px; border: 1px solid #333;
+        }
+        .account-bar span { color: var(--gold); font-weight: bold; font-size: 16px; display: block; margin-bottom: 5px; }
+
+        .warez-grid { display: flex; gap: 40px; margin-top: 50px; }
+        .warez-card {
+            width: 220px; height: 220px; 
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333; border-radius: 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .warez-card i { font-size: 60px; margin-bottom: 25px; color: #666; transition: 0.2s; }
+        .warez-card span { font-size: 16px; font-weight: 600; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+        
+        /* Foco Premium */
+        .warez-card.focused { 
+            border: 2px solid var(--gold); background: #000; 
+            transform: scale(1.15); 
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.3); 
+            z-index: 10;
+        }
+        .warez-card.focused i { color: var(--gold); }
+        .warez-card.focused span { color: #fff; }
+
+        /* CONTEÚDO (ESTILO WAREZ LIST) */
+        #content-layer { display: flex; background: #080808; }
+        
+        /* Coluna Categorias */
+        .col-cat { width: 280px; background: #050505; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .cat-head { padding: 20px; text-align: center; background: #000; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; font-size: 18px; letter-spacing: 1px; }
+        .cat-list { flex: 1; overflow-y: auto; }
+        
+        .cat-item { padding: 15px 20px; color: #777; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 500; }
+        .cat-item.active { background: #111; color: #fff; border-left: 4px solid #444; }
+        .cat-item.focused { background: var(--gold); color: #000; font-weight: 800; border-left: 4px solid #fff; }
+
+        /* Coluna Lista */
+        .col-list { width: 450px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .search-box { padding: 10px; background: #000; border-bottom: 1px solid #222; }
+        .inp-search { width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 12px; text-align: center; border-radius: 4px; font-weight: bold; }
         .inp-search:focus { background: #fff; color: #000; }
         
-        .item-list { flex: 1; overflow-y: auto; }
-        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; white-space: nowrap; overflow: hidden; font-size: 14px; }
-        .item.focused { background: var(--gold); color: #000; font-weight: bold; }
+        .item-list { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+        .item { padding: 15px 20px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 15px; }
+        .item.focused { background: #eee; color: #000; font-weight: bold; transform: scale(1.02); margin: 5px 0; border-radius: 4px; }
 
+        /* Coluna Player */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-frame { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
-        .vid-frame.focused { border: 4px solid var(--gold); }
+        .vid-frame.focused { border: 3px solid var(--gold); box-shadow: 0 0 20px rgba(212,175,55,0.2); }
         video { width: 100%; height: 100%; object-fit: contain; }
         
-        .meta { padding: 20px; flex: 1; overflow-y: auto; }
-        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
+        .meta { padding: 30px; flex: 1; overflow-y: auto; background: linear-gradient(to top, #000, #0a0a0a); }
+        .meta-title { font-size: 26px; color: var(--gold); font-weight: 800; margin-bottom: 10px; line-height: 1.2; }
+        .meta-desc { font-size: 14px; color: #888; margin-bottom: 20px; }
         
-        .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; margin-top: auto; }
+        .color-keys { display: flex; gap: 20px; font-size: 12px; font-weight: bold; margin-top: auto; }
+        .ck-btn { display: flex; align-items: center; gap: 5px; }
         
         .fs-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 9999; border: none !important; background: #000; }
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: bold; font-size: 24px; }
+        
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: 900; font-size: 24px; letter-spacing: 2px; }
 
     </style>
 </head>
 <body onload="App.start()">
 
-    <div id="loader">CARREGANDO...</div>
+    <div id="loader">CONECTANDO...</div>
 
     <div id="login-layer" class="layer flex-center">
         <div class="netrange-card">
@@ -97,30 +136,34 @@
             <input type="text" id="url" class="nr-input" placeholder="http://servidor.com">
             <input type="text" id="user" class="nr-input" placeholder="Usuário">
             <input type="password" id="pass" class="nr-input" placeholder="Senha">
-            <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:15px; color:#555; font-size:12px;">Use SETAS e OK</div>
+            <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR SISTEMA</button>
+            <div style="margin-top:20px; color:#666; font-size:12px;">Use SETAS para mover e OK para digitar</div>
         </div>
     </div>
 
     <div id="dash-layer" class="layer flex-center hide">
-        <div class="nr-title" style="font-size:40px; margin-bottom:50px;">R&C GOLD</div>
+        <div class="account-bar">
+            <span id="acc-name">Usuário</span>
+            Vencimento: <b id="acc-exp" style="color:#fff">...</b>
+        </div>
+
+        <div class="nr-title" style="font-size:50px; margin-bottom:20px;">R&C <span style="color:#fff">GOLD</span></div>
         <div class="warez-grid">
             <div class="warez-card" id="m0"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
             <div class="warez-card" id="m1"><i class="fas fa-film"></i><span>FILMES</span></div>
             <div class="warez-card" id="m2"><i class="fas fa-video"></i><span>SÉRIES</span></div>
-            <div class="warez-card" id="m3"><i class="fas fa-cog"></i><span>AJUSTES</span></div>
+            <div class="warez-card" id="m3"><i class="fas fa-sync-alt"></i><span>TROCAR PLAYLIST</span></div>
         </div>
-        <div style="margin-top:40px; font-size:14px; color:#888;">Vencimento: <span id="venc" style="color:#fff">...</span></div>
     </div>
 
     <div id="content-layer" class="layer hide">
         <div class="col-cat">
-            <div style="padding:15px; text-align:center; background:#000; font-weight:bold; color:var(--gold);">CATEGORIAS</div>
+            <div class="cat-head">CATEGORIAS</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search" class="inp-search" placeholder="BUSCA GLOBAL..." onchange="App.globalSearch()">
+                <input type="text" id="search" class="inp-search" placeholder="BUSCAR CONTEÚDO..." onchange="App.localSearch()">
             </div>
             <div id="item-list" class="item-list"></div>
         </div>
@@ -129,16 +172,23 @@
                 <video id="player"></video>
             </div>
             <div class="meta">
-                <div id="meta-title" class="meta-title">R&C GOLD</div>
-                <div id="meta-desc" style="color:#888; font-size:13px;">Selecione um canal.</div>
-                <div style="margin-top:20px; color:#fff; font-size:12px;">
-                    OK 1x: Fullscreen | OK 2x: Sair Fullscreen
+                <div id="meta-title" class="meta-title">R&C PLAYER</div>
+                <div id="meta-desc" class="meta-desc">Selecione na lista para iniciar.</div>
+                
+                <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px;">
+                    <div style="color:#fff; font-size:12px; margin-bottom:5px;">CONTROLES:</div>
+                    <div style="color:#888; font-size:12px;">
+                        <b>OK 1x:</b> TELA CHEIA<br>
+                        <b>OK 2x:</b> SAIR TELA CHEIA<br>
+                        <b>SETAS:</b> AVANÇAR / VOLTAR
+                    </div>
                 </div>
-                <div class="color-keys" style="margin-top:20px;">
-                    <span style="color:#f44">■ TELA CHEIA</span>
-                    <span style="color:#4f4">■ RECARREGAR</span>
-                    <span style="color:#ffbb33">■ BUSCAR</span>
-                    <span style="color:#4bf">■ VOLTAR</span>
+
+                <div class="color-keys">
+                    <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> FULLSCREEN</span>
+                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
+                    <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
+                    <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
                 </div>
             </div>
         </div>
@@ -169,9 +219,9 @@
                 var x = new XMLHttpRequest();
                 var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q;
                 x.open("GET", url, true);
-                x.timeout = 15000;
+                x.timeout = 20000; // Aumentado para 20s para evitar timeout em listas grandes
                 x.onload = function(){ document.getElementById('loader').style.display='none'; if(x.status===200) try{cb(JSON.parse(x.responseText))}catch(e){cb(null)} else cb(null); };
-                x.onerror = function(){ document.getElementById('loader').style.display='none'; alert("Erro Rede"); };
+                x.onerror = function(){ document.getElementById('loader').style.display='none'; alert("Erro de Rede"); };
                 x.send();
             },
 
@@ -180,26 +230,33 @@
                 var h = document.getElementById('url').value.trim();
                 var u = document.getElementById('user').value.trim();
                 var p = document.getElementById('pass').value.trim();
+                if(h.endsWith('/')) h = h.slice(0, -1);
                 if(h.indexOf('http')===-1) h='http://'+h;
+                
                 this.creds = {h:h, u:u, p:p};
                 var me = this;
                 this.req("", function(d){
                     if(d && d.user_info && d.user_info.auth===1) {
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
-                        document.getElementById('venc').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
+                        
+                        document.getElementById('acc-name').innerText = u;
+                        document.getElementById('acc-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
+                        
                         me.setScreen(1);
-                    } else alert("Erro Login");
+                    } else alert("Dados Incorretos");
                 });
             },
 
             setScreen: function(n) {
-                this.stop(); // Limpa video antigo ao trocar de tela
+                this.stop(); 
                 document.getElementById('login-layer').classList.add('hide');
                 document.getElementById('dash-layer').classList.add('hide');
                 document.getElementById('content-layer').classList.add('hide');
+                
                 if(n===0) document.getElementById('login-layer').classList.remove('hide');
                 if(n===1) document.getElementById('dash-layer').classList.remove('hide');
                 if(n===2) document.getElementById('content-layer').classList.remove('hide');
+                
                 this.screen = n; this.idx = 0; this.zone = 0; this.refreshFocus();
             },
 
@@ -225,7 +282,7 @@
 
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
-                this.stop(); // Limpa video ao trocar categoria
+                this.stop(); 
                 
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
@@ -233,7 +290,7 @@
 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 var me = this;
-                document.getElementById('item-list').innerHTML = '<div style="padding:10px; color:#555">Carregando...</div>';
+                document.getElementById('item-list').innerHTML = '<div style="padding:15px; color:#555">Carregando lista...</div>';
                 
                 this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
                     me.items = d||[];
@@ -243,8 +300,10 @@
 
             renderList: function() {
                 var h = '';
-                var max = this.items.length > 50 ? 50 : this.items.length;
-                if(this.isSeries) h += '<div class="item" id="i-1" style="color:gold">.. VOLTAR</div>';
+                // Limite aumentado para 100 com o novo estilo leve
+                var max = this.items.length > 100 ? 100 : this.items.length;
+                if(this.isSeries) h += '<div class="item" id="i-1" style="color:var(--gold)">.. VOLTAR PARA CATEGORIAS</div>';
+                
                 for(var i=0; i<max; i++) {
                     var n = this.items[i].name || this.items[i].title;
                     h += '<div class="item" id="i'+i+'">'+n+'</div>';
@@ -252,57 +311,54 @@
                 document.getElementById('item-list').innerHTML = h;
             },
 
-            // --- BUSCA GLOBAL ---
-            globalSearch: function() {
+            // --- BUSCA CORRIGIDA (SEM TRAVAMENTO) ---
+            localSearch: function() {
                 var term = document.getElementById('search').value.toLowerCase().trim();
-                if(term.length < 3) return;
+                if(term.length < 2) return;
                 
-                this.stop(); // Limpa video para busca
-                document.getElementById('item-list').innerHTML = '<div style="padding:10px; color:gold">Buscando globalmente...</div>';
+                document.getElementById('search').blur(); // FECHA O TECLADO
+                document.getElementById('item-list').innerHTML = '<div style="padding:15px; color:gold">Filtrando...</div>';
                 
-                var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                var me = this;
+                // Filtra apenas a lista carregada (evita travar TV)
+                var res = [];
+                for(var i=0; i<this.items.length; i++) {
+                    var n = (this.items[i].name||this.items[i].title||"").toLowerCase();
+                    if(n.indexOf(term)>-1) res.push(this.items[i]);
+                }
                 
-                // Fetch sem ID de categoria = Busca em tudo
-                this.req("action="+act, function(d){
-                    var all = d || [];
-                    var res = [];
-                    // Filtra na memória para não travar
-                    for(var i=0; i<all.length; i++) {
-                        var n = (all[i].name || all[i].title || "").toLowerCase();
-                        if(n.indexOf(term) > -1) {
-                            res.push(all[i]);
-                            if(res.length >= 50) break; // Limite de segurança
-                        }
-                    }
-                    me.items = res;
-                    me.renderList();
-                    // Pula para lista se achar algo
-                    if(res.length > 0) {
-                        me.zone = 2; me.idx = 0; me.refreshFocus();
-                    } else {
-                        document.getElementById('item-list').innerHTML = '<div style="padding:10px">Nada encontrado.</div>';
-                    }
-                });
+                // Se não achou na categoria, avisa
+                if(res.length === 0) {
+                    alert("Nada encontrado nesta categoria. Tente outra.");
+                    this.renderList(); // Restaura lista original
+                } else {
+                    this.items = res;
+                    this.renderList();
+                    this.zone = 2; this.idx = 0; this.refreshFocus();
+                }
             },
 
-            // --- PLAYER ---
+            // --- PLAYER E LOGICA DE SÉRIES ---
             clickItem: function(i) {
                 if(this.isSeries && i===-1) { this.loadCat(this.memCat); return; }
+                
                 var item = this.items[i];
                 
+                // *** CORREÇÃO SÉRIES: ABRE EPISÓDIOS, NÃO PLAY ***
                 if(this.mode==='series' && !this.isSeries) {
+                    // Se o item tem series_id, é uma série, precisa abrir eps
+                    var sid = item.series_id;
                     var me = this;
-                    this.req("action=get_series_info&series_id="+item.series_id, function(d){
+                    this.req("action=get_series_info&series_id="+sid, function(d){
                         var eps = [];
                         if(d && d.episodes) {
                             for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
                         }
                         me.items = eps; me.isSeries=true; me.renderList(); me.idx=0; me.refreshFocus();
                     });
-                    return;
+                    return; 
                 }
 
+                // Play
                 var ext = (this.mode==='live')?'ts':'mp4';
                 if(this.mode!=='live' && item.container_extension) ext = item.container_extension;
                 var url = this.creds.h + "/" + (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
@@ -312,7 +368,8 @@
                 v.src = url; 
                 v.play();
                 
-                this.zone = 3; this.refreshFocus(); // Foco no player
+                // Foco vai para o player
+                this.zone = 3; this.refreshFocus();
             },
 
             next: function() {
@@ -325,31 +382,42 @@
                 document.getElementById('vid-frame').classList.toggle('fs-mode');
             },
 
-            // --- FOCO ---
+            // --- FOCO E NAVEGAÇÃO ---
             refreshFocus: function() {
                 var els = document.querySelectorAll('.focused');
                 for(var i=0; i<els.length; i++) els[i].classList.remove('focused');
-                if(document.activeElement.tagName!=='INPUT') document.activeElement.blur();
+                
+                // Garante que o teclado feche se não estiver na busca
+                if(document.activeElement.id !== 'search' && document.activeElement.tagName !== 'INPUT') {
+                    document.activeElement.blur();
+                }
 
                 var id = null;
-                if(this.screen===0) { // Login
+                // LOGIN
+                if(this.screen===0) { 
                     id = ['url','user','pass','btn-login'][this.idx];
                     var el = document.getElementById(id);
                     if(this.idx < 3) el.focus(); else { document.activeElement.blur(); el.classList.add('focused'); }
                     return;
                 }
+                
+                // MENU
                 if(this.screen===1) id='m'+this.idx;
+                
+                // CONTENT
                 if(this.screen===2) {
                     if(this.zone===0) id='c'+this.idx;
                     if(this.zone===1) id='search';
                     if(this.zone===2) id=(this.isSeries && this.idx===-1)?'i-1':'i'+this.idx;
                     if(this.zone===3) id='vid-frame';
                 }
+                
                 if(id) {
                     var el = document.getElementById(id);
                     if(el) {
                         el.classList.add('focused');
-                        if(el.tagName==='INPUT') el.focus(); else el.scrollIntoView({block:'nearest'});
+                        if(el.tagName==='INPUT') el.focus();
+                        else el.scrollIntoView({block:'center', behavior:'smooth'}); // SCROLL CORRIGIDO
                     }
                 }
             },
@@ -363,7 +431,7 @@
                     this.refreshFocus();
                     return;
                 }
-                // DASH
+                // MENU
                 if(this.screen===1) {
                     if(k===39 && this.idx<3) this.idx++;
                     if(k===37 && this.idx>0) this.idx--;
@@ -372,16 +440,20 @@
                 }
                 // CONTENT
                 if(this.screen===2) {
-                    if(this.zone===0) { // Cat
+                    // CAT
+                    if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
                         if(k===39 || k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
                     }
-                    else if(this.zone===1) { // Search
+                    // SEARCH
+                    else if(this.zone===1) {
                         if(k===40) { this.zone=2; this.idx=0; }
+                        // Enter na busca é tratado pelo onchange
                     }
-                    else if(this.zone===2) { // List
-                        var max = (this.items.length>50?50:this.items.length)-1;
+                    // LIST
+                    else if(this.zone===2) {
+                        var max = (this.items.length>100?100:this.items.length)-1;
                         var min = this.isSeries?-1:0;
                         if(k===40 && this.idx<max) this.idx++;
                         if(k===38) { if(this.idx>min) this.idx--; else this.zone=1; }
@@ -389,49 +461,40 @@
                         if(k===39) { this.zone=3; }
                         if(k===13) this.clickItem(this.idx);
                     }
-                    else if(this.zone===3) { // Player
+                    // PLAYER
+                    else if(this.zone===3) {
                         var v = document.getElementById('player');
                         if(k===37) { 
                             if(document.getElementById('vid-frame').classList.contains('fs-mode')) v.currentTime-=15;
-                            else this.zone=2; // Volta pra lista
+                            else this.zone=2; 
                         }
                         if(k===39) v.currentTime+=15;
-                        if(k===13) this.toggleFull(); // Lógica de 1x/2x OK
+                        if(k===38) this.zone=2;
+                        if(k===13) this.toggleFull();
                     }
                     this.refreshFocus();
                 }
             }
         };
 
-        // --- TECLAS GERAIS ---
+        // --- TECLAS ---
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
             
             // Atalhos
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
-            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
+            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); var s=v.src; v.src=''; v.src=s; v.play(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
             
             // VOLTAR HIERÁRQUICO
             if(k===8||k===461||k===27) {
                 e.preventDefault();
                 if(App.screen===2) {
-                    // 1. Sai do Fullscreen
-                    if(document.getElementById('vid-frame').classList.contains('fs-mode')) {
-                        App.toggleFull(); return;
-                    }
-                    // 2. Sai do Player para Lista
-                    if(App.zone===3) {
-                        App.zone=2; App.refreshFocus(); return;
-                    }
-                    // 3. Sai da Lista para Categoria
-                    if(App.zone===2) {
-                        App.zone=0; App.refreshFocus(); return;
-                    }
-                    // 4. Sai da Categoria para Menu
-                    if(App.zone===0) {
-                        App.setScreen(1); return;
-                    }
+                    if(document.getElementById('vid-frame').classList.contains('fs-mode')) { App.toggleFull(); return; }
+                    if(App.zone===3) { App.zone=2; App.refreshFocus(); return; }
+                    if(App.zone===2 && App.isSeries) { App.clickItem(-1); return; } // Volta da série pra lista
+                    if(App.zone===2) { App.zone=0; App.refreshFocus(); return; }
+                    if(App.zone===0) { App.setScreen(1); return; }
                 }
                 return;
             }
@@ -439,9 +502,8 @@
             // NAV
             if([13,37,38,39,40].indexOf(k)>-1) {
                 if(document.activeElement.tagName==='INPUT') {
-                    // Permite Enter para busca e Setas Cima/Baixo para sair do input
-                    if(k===13) return; 
-                    if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
+                    if(k===13) return; // Enter fecha teclado
+                    if(k===38 || k===40) { e.preventDefault(); App.move(k); return; } // Seta tira foco
                     return; 
                 }
                 e.preventDefault();
