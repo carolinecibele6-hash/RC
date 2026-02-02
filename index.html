@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - VOD EDITION</title>
+    <title>SKY GOLD - ANTI-FREEZE FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -24,110 +24,53 @@
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; 
         }
 
-        /* --- TELA LOGIN --- */
-        #loginScreen {
-            position: absolute; width: 100%; height: 100%;
-            background: #000; z-index: 5000;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .login-box {
-            background: #0a0a0a;
-            border-top: 4px solid var(--gold);
-            width: 450px; padding: 40px; text-align: center;
-        }
+        /* LOGIN */
+        #loginScreen { position: absolute; width: 100%; height: 100%; background: #000; z-index: 5000; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: #0a0a0a; border-top: 4px solid var(--gold); width: 450px; padding: 40px; text-align: center; }
         .lg-title { color: var(--gold); font-size: 24px; font-weight: bold; margin-bottom: 30px; }
-        .lg-inp {
-            width: 100%; height: 50px; margin-bottom: 15px;
-            background: #1a1a1a; border: 1px solid #333; color: #fff;
-            text-align: center; font-size: 18px; padding: 0;
-        }
+        .lg-inp { width: 100%; height: 50px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; text-align: center; font-size: 18px; padding: 0; }
         .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); }
-        .lg-btn {
-            width: 100%; height: 55px; background: var(--gold); color: #000;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer; margin-top: 10px;
-        }
+        .lg-btn { width: 100%; height: 55px; background: var(--gold); color: #000; font-weight: bold; font-size: 18px; border: none; cursor: pointer; margin-top: 10px; }
         .lg-btn:focus, .lg-btn:hover { background: #d4b000; box-shadow: 0 0 10px var(--gold); }
 
-        /* --- INTERFACE PRINCIPAL --- */
+        /* APP */
         #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
 
-        .top-bar {
-            height: 40px; background: var(--bg-header); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
-            font-size: 13px; color: #888;
-        }
+        .top-bar { height: 40px; background: var(--bg-header); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 13px; color: #888; }
         .acc-info { display: flex; gap: 15px; }
         .acc-info span { color: #ccc; }
         .acc-info b { color: var(--highlight); }
 
-        /* MENU TOPO */
-        .main-nav {
-            height: 60px; background: linear-gradient(to bottom, #2a2e33, #1a1d21);
-            display: flex; align-items: center; padding: 0 20px; gap: 10px;
-            border-bottom: 2px solid var(--highlight);
-        }
-        .nav-item {
-            padding: 10px 25px; font-size: 16px; font-weight: bold; color: #aaa; text-transform: uppercase;
-            border-radius: 4px; border: 1px solid transparent; display: flex; align-items: center; gap: 10px;
-        }
+        .main-nav { height: 60px; background: linear-gradient(to bottom, #2a2e33, #1a1d21); display: flex; align-items: center; padding: 0 20px; gap: 10px; border-bottom: 2px solid var(--highlight); }
+        .nav-item { padding: 10px 25px; font-size: 16px; font-weight: bold; color: #aaa; text-transform: uppercase; border-radius: 4px; border: 1px solid transparent; display: flex; align-items: center; gap: 10px; }
         .nav-item.active-mode { background: rgba(255,255,255,0.05); color: #fff; border-bottom: 2px solid var(--highlight); }
         .nav-item.focused { background: var(--highlight); color: #000; border-color: #fff; box-shadow: 0 0 10px rgba(230,184,0,0.4); }
 
         .workspace { flex: 1; display: flex; overflow: hidden; background: #15171a; }
-
-        /* Coluna Esquerda: Categorias */
         .col-cats { width: 25%; background: #1a1d21; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .col-header { padding: 10px; background: #000; color: #fff; text-align: center; font-weight: bold; border-bottom: 1px solid #333; text-transform: uppercase; font-size: 13px; }
         .list-container { flex: 1; overflow-y: auto; }
-        
-        .list-item { 
-            padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; 
-            display: flex; justify-content: space-between; align-items: center; border: 2px solid transparent; 
-        }
+        .list-item { padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; display: flex; justify-content: space-between; align-items: center; border: 2px solid transparent; }
         .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa; }
-        .list-item.focused { 
-            background: rgba(230, 184, 0, 0.1); color: #fff; font-weight: bold; 
-            border: 2px solid var(--highlight) !important; transform: scale(1.01); z-index: 10;
-        }
+        .list-item.focused { background: rgba(230, 184, 0, 0.1); color: #fff; font-weight: bold; border: 2px solid var(--highlight) !important; transform: scale(1.01); z-index: 10; }
 
-        /* Coluna Meio: Lista */
         .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        
         .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333; }
-        .search-inp { 
-            width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; 
-            font-size: 14px; text-transform: uppercase; font-weight: bold;
-        }
+        .search-inp { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; font-size: 14px; text-transform: uppercase; font-weight: bold; }
         .search-inp::placeholder { color: #555; text-transform: none; font-weight: normal; }
         .search-inp.focused { background: #fff; color: #000; border-color: var(--highlight); }
 
-        /* Coluna Direita: PREVIEW */
         .col-preview { flex: 1; background: #101214; display: flex; flex-direction: column; padding: 20px; }
-        
-        .preview-window {
-            width: 100%; aspect-ratio: 16/9; background: #000; 
-            border: 2px solid #333; margin-bottom: 20px; position: relative; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        .preview-window { width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .preview-window.active { border-color: var(--highlight); }
-
-        /* VOD CONTROLS (INTERFACE DE FILMES) */
-        .vod-osd {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(0,0,0,0.8); display: none; align-items: center; padding: 0 15px; gap: 15px;
-            z-index: 100;
-        }
+        
+        .vod-osd { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); display: none; align-items: center; padding: 0 15px; gap: 15px; z-index: 100; }
         .vod-btn { font-size: 18px; color: #fff; width: 30px; text-align: center; }
         .progress-container { flex: 1; height: 6px; background: #333; border-radius: 3px; position: relative; }
         .progress-bar { height: 100%; background: var(--highlight); width: 0%; border-radius: 3px; }
         .time-display { font-size: 12px; color: #fff; font-family: monospace; }
 
-        /* FULLSCREEN */
-        .fs { 
-            position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; 
-            z-index:9999; border: none !important; box-shadow: none !important; background: #000; margin: 0 !important;
-        }
-        
+        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; border: none !important; box-shadow: none !important; background: #000; margin: 0 !important; }
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         video::-webkit-media-controls { display: none !important; }
 
@@ -135,11 +78,9 @@
         .info-title { font-size: 22px; color: var(--highlight); margin-bottom: 10px; font-weight: bold; }
         .info-desc { font-size: 14px; color: #ddd; line-height: 1.4; }
 
-        .bottom-bar {
-            height: 50px; background: #0d0f12; border-top: 1px solid var(--border);
-            display: flex; justify-content: center; align-items: center; gap: 30px;
-        }
-        .color-btn { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; color: #ccc; }
+        .bottom-bar { height: 50px; background: #0d0f12; border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; gap: 30px; }
+        .color-btn { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; color: #ccc; cursor: pointer; padding: 5px 10px; border-radius: 4px; }
+        .color-btn:active { background: #333; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
         .dot.red { background: #ff4444; } .dot.green { background: #00c851; }
         .dot.yellow { background: #ffbb33; } .dot.blue { background: #33b5e5; }
@@ -162,13 +103,8 @@
 
     <div id="appInterface">
         <div class="top-bar">
-            <div class="acc-info" id="acc-info">
-                <span>Conectando...</span>
-            </div>
-            <div>
-                <i class="far fa-clock"></i>
-                <span id="clock" style="color:#fff; font-weight:bold; margin-left:5px">00:00</span>
-            </div>
+            <div class="acc-info" id="acc-info"><span>Conectando...</span></div>
+            <div><i class="far fa-clock"></i><span id="clock" style="color:#fff; font-weight:bold; margin-left:5px">00:00</span></div>
         </div>
 
         <div class="main-nav">
@@ -183,7 +119,6 @@
                 <div class="col-header">Categorias</div>
                 <div class="list-container" id="list-cats"></div>
             </div>
-
             <div class="col-content">
                 <div class="col-header">Canais / Conteúdo</div>
                 <div class="search-bar">
@@ -193,52 +128,59 @@
                     <div style="padding:20px; text-align:center; color:#555">Selecione uma categoria</div>
                 </div>
             </div>
-
             <div class="col-preview">
                 <div class="preview-window" id="v-box">
                     <video id="player" playsinline></video>
-                    
                     <div id="vod-osd" class="vod-osd">
                         <div class="vod-btn" id="vod-play-icon"><i class="fas fa-play"></i></div>
                         <div class="time-display" id="vod-curr">00:00</div>
-                        <div class="progress-container">
-                            <div class="progress-bar" id="vod-prog"></div>
-                        </div>
+                        <div class="progress-container"><div class="progress-bar" id="vod-prog"></div></div>
                         <div class="time-display" id="vod-total">00:00</div>
                     </div>
                 </div>
-                
                 <div class="info-panel">
                     <div class="info-title" id="lbl-title">Bem Vindo</div>
                     <div class="info-desc" id="lbl-desc">
-                        1. Selecione a categoria.<br>
-                        2. <b>OK (1x)</b>: Preview<br>
-                        3. <b>OK (2x)</b>: Tela Cheia
+                        1. OK: Preview. 2. OK: Fullscreen.<br>
+                        Use as Teclas Coloridas ou clique abaixo.
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="bottom-bar">
-            <div class="color-btn"><div class="dot red"></div> Fullscreen</div>
-            <div class="color-btn"><div class="dot green"></div> Atualizar</div>
-            <div class="color-btn"><div class="dot yellow"></div> Buscar</div>
-            <div class="color-btn"><div class="dot blue"></div> Sair</div>
+            <div class="color-btn" onclick="App.toggleFS()"><div class="dot red"></div> Fullscreen</div>
+            <div class="color-btn" onclick="App.refreshPlayer()"><div class="dot green"></div> Atualizar</div>
+            <div class="color-btn" onclick="App.focusSearch()"><div class="dot yellow"></div> Buscar</div>
+            <div class="color-btn" onclick="App.logout()"><div class="dot blue"></div> Sair</div>
         </div>
     </div>
 
     <script>
         let hls = null;
+        
+        // --- CONFIGURAÇÃO ANTI-TRAVAMENTO (HLS) ---
         const HlsConfig = {
-            autoStartLoad: true, startPosition: -1, capLevelToPlayerSize: true,
-            maxBufferLength: 30, maxMaxBufferLength: 60, enableWorker: true,
+            autoStartLoad: true,
+            startPosition: -1,
+            // Buffers aumentados para estabilidade máxima
+            maxBufferLength: 60, 
+            maxMaxBufferLength: 120,
+            backBufferLength: 90,
+            // Configurações para evitar travamentos em Live
+            liveSyncDurationCount: 3,
+            liveMaxLatencyDurationCount: 10,
+            enableWorker: true,
+            lowLatencyMode: false, // DESATIVADO para estabilidade
+            manifestLoadingTimeOut: 20000,
+            levelLoadingTimeOut: 20000,
+            fragLoadingTimeOut: 20000,
         };
 
         const App = {
             screen: 'login', mode: 'live', zone: 0, focusIdx: 0,
             cats: [], list: [], viewList: [], creds: {},
-            isSeriesLevel: false, currentStreamId: null,
-            isVodPlaying: false, // Controle de estado VOD
+            isSeriesLevel: false, currentStreamId: null, isVodPlaying: false,
             
             init: function() {
                 if(localStorage.getItem('sk_h')) {
@@ -248,17 +190,16 @@
                 }
                 document.getElementById('h').focus();
                 
-                // Relógio +1 Hora
                 setInterval(() => {
                     let now = new Date();
-                    now.setHours(now.getHours() + 1); // ADICIONA 1 HORA
+                    now.setHours(now.getHours() + 1); 
                     document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
                 }, 1000);
 
-                // Listener para VOD OSD
                 const vid = document.getElementById('player');
                 vid.addEventListener('timeupdate', App.updateVodUI);
-                vid.addEventListener('ended', () => { App.isVodPlaying = false; App.exitFullscreen(); });
+                // REMOVIDO: vid.addEventListener('ended') que fechava fullscreen
+                vid.addEventListener('error', () => { console.log("Erro nativo de vídeo, tentando recuperar..."); App.refreshPlayer(); });
             },
 
             login: async function() {
@@ -271,16 +212,13 @@
                 document.getElementById('btnEnter').innerText = "CONECTANDO...";
                 
                 try {
-                    // Pega autenticação para infos da conta
                     let authRes = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                     let authData = await authRes.json();
 
                     if(authData.user_info && authData.user_info.status === 'Active') {
-                        // Salva
                         localStorage.setItem('sk_h', h); localStorage.setItem('sk_u', u); localStorage.setItem('sk_p', p);
                         this.creds = {h,u,p};
 
-                        // Preenche Topo (Conta)
                         let info = authData.user_info;
                         let createD = new Date(parseInt(info.created_at)*1000).toLocaleDateString('pt-BR');
                         let expD = new Date(parseInt(info.exp_date)*1000).toLocaleDateString('pt-BR');
@@ -297,7 +235,6 @@
                         document.getElementById('appInterface').style.display = 'flex';
                         this.screen = 'app';
                         this.switchMode('live');
-
                     } else {
                         alert("Dados incorretos ou Expirado!");
                         document.getElementById('btnEnter').innerText = "ENTRAR";
@@ -366,11 +303,7 @@
                     this.list = await res.json();
                     this.viewList = [...this.list];
                     this.renderList();
-                    
-                    // Vai para Busca ao carregar
-                    this.zone = 2; 
-                    document.getElementById('search-input').focus();
-                    
+                    this.focusSearch();
                 } catch(e) {
                     document.getElementById('list-cnt').innerHTML = 'Erro ao carregar lista.';
                 }
@@ -423,7 +356,6 @@
                         html += `<div class="list-item${activeClass}" id="cnt-${i}"><span>${name}</span></div>`;
                     });
                 }
-                
                 if(this.viewList.length === 0) html = '<div style="padding:20px;text-align:center">Nenhum resultado</div>';
                 document.getElementById('list-cnt').innerHTML = html;
             },
@@ -478,7 +410,8 @@
             playStream: function(item) {
                 let vid = document.getElementById('player');
                 let box = document.getElementById('v-box');
-                box.classList.remove('fs');
+                // NÃO REMOVE FS AQUI PARA MANTER ESTADO SE ATUALIZAR
+                // box.classList.remove('fs'); 
 
                 let streamId = item.stream_id || item.id;
                 this.currentStreamId = streamId; 
@@ -495,25 +428,41 @@
                 this.renderList();
                 box.classList.add('active');
 
-                // VOD LOGIC
                 this.isVodPlaying = (this.mode !== 'live');
-                document.getElementById('vod-osd').style.display = 'none'; // Esconde até interagir
+                document.getElementById('vod-osd').style.display = 'none';
 
                 if(hls) { hls.destroy(); hls = null; }
 
-                if (vid.canPlayType('application/vnd.apple.mpegurl') || this.mode === 'live') {
-                    vid.src = url;
-                    vid.play().catch(e=>console.log(e));
-                } 
-                else if (Hls.isSupported()) {
+                if (Hls.isSupported()) {
                     hls = new Hls(HlsConfig);
                     hls.loadSource(url);
                     hls.attachMedia(vid);
                     hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
+                    
+                    // ANTI-FREEZE RECOVERY
+                    hls.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            switch (data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    console.log("Erro de rede, recuperando...");
+                                    hls.startLoad();
+                                    break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    console.log("Erro de mídia, recuperando...");
+                                    hls.recoverMediaError();
+                                    break;
+                                default:
+                                    hls.destroy();
+                                    break;
+                            }
+                        }
+                    });
+                } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+                    vid.src = url;
+                    vid.play();
                 }
             },
 
-            // --- VOD CONTROLS ---
             updateVodUI: function() {
                 if(!App.isVodPlaying) return;
                 let vid = document.getElementById('player');
@@ -541,13 +490,18 @@
             controlVod: function(action) {
                 let vid = document.getElementById('player');
                 this.showVodOSD();
-                if(action === 'toggle') {
-                    if(vid.paused) vid.play(); else vid.pause();
-                }
+                if(action === 'toggle') { if(vid.paused) vid.play(); else vid.pause(); }
                 if(action === 'fwd') vid.currentTime += 10;
                 if(action === 'rew') vid.currentTime -= 10;
             },
 
+            // --- FUNÇÕES DOS BOTÕES COLORIDOS ---
+            toggleFS: function() {
+                let box = document.getElementById('v-box');
+                if(box.classList.contains('fs')) this.exitFullscreen();
+                else this.enterFullscreen();
+            },
+            
             enterFullscreen: function() {
                 let box = document.getElementById('v-box');
                 box.classList.add('fs');
@@ -560,6 +514,22 @@
                 box.classList.remove('fs');
                 if(document.exitFullscreen) document.exitFullscreen();
                 else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+            },
+
+            refreshPlayer: function() {
+                // Se estiver tocando algo, recarrega o vídeo mantendo o estado
+                if(this.currentStreamId) {
+                    let item = this.viewList.find(i => (i.stream_id || i.id) === this.currentStreamId);
+                    if(item) this.playStream(item);
+                } else {
+                    // Se não, recarrega a lista
+                    this.loadContent();
+                }
+            },
+
+            focusSearch: function() {
+                this.zone = 2;
+                document.getElementById('search-input').focus();
             },
 
             renderFocus: function() {
@@ -610,13 +580,9 @@
                         else { this.zone = 0; this.focusIdx = 0; }
                     }
                     if(k===40 && this.focusIdx < this.cats.length-1) this.focusIdx++;
-                    
-                    // CORREÇÃO: SETA DIREITA VAI SEMPRE PARA A BUSCA
-                    if(k===39) {
-                         this.zone = 2; 
-                         document.getElementById('search-input').focus();
-                    }
-                    // CORREÇÃO: ENTER CARREGA
+                    // Seta Direita -> Vai para Busca
+                    if(k===39) { this.zone = 2; document.getElementById('search-input').focus(); }
+                    // Enter -> Carrega
                     if(k===13) { this.loadContent(); }
                 }
                 // ZONE 2: BUSCA
@@ -665,22 +631,23 @@
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             
-            // CONTROLE DE VOD EM FULLSCREEN
+            // BOTÕES COLORIDOS
+            if(k === 403 || k === 82) { App.toggleFS(); return; } // Vermelho
+            if(k === 404 || k === 71) { App.refreshPlayer(); return; } // Verde
+            if(k === 405 || k === 89) { App.focusSearch(); return; } // Amarelo
+            if(k === 406 || k === 66) { App.logout(); return; } // Azul
+
+            // VOD CONTROLS EM FULLSCREEN
             if(isFullscreen() && App.isVodPlaying) {
                 App.showVodOSD();
                 if(k === 39) App.controlVod('fwd');
                 if(k === 37) App.controlVod('rew');
                 if(k === 13) App.controlVod('toggle');
-                
-                // Sair fullscreen
-                if(k === 8 || k === 461 || k === 27 || k === 10009) {
-                    App.exitFullscreen();
-                    e.preventDefault();
-                }
+                if(k === 8 || k === 461 || k === 27 || k === 10009) { App.exitFullscreen(); e.preventDefault(); }
                 return;
             }
 
-            // VOLTAR COMUM
+            // VOLTAR
             if(k === 8 || k === 461 || k === 27 || k === 10009) {
                 e.preventDefault();
                 if(isFullscreen()) { App.exitFullscreen(); }
@@ -694,7 +661,6 @@
                 if(k===13 && document.activeElement.id === 'btnEnter') App.login();
                 else if(k===40) { let arr=['h','u','p','btnEnter']; let i=arr.indexOf(document.activeElement.id); if(i<3) document.getElementById(arr[i+1]).focus(); }
                 else if(k===38) { let arr=['h','u','p','btnEnter']; let i=arr.indexOf(document.activeElement.id); if(i>0) document.getElementById(arr[i-1]).focus(); }
-                else if(k===13) document.activeElement.click();
                 return;
             }
 
