@@ -102,9 +102,6 @@
         .info-box { color: #555; }
         .info-title { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px; }
         .info-desc { font-size: 13px; }
-
-        /* Fullscreen fix */
-        video::-webkit-media-controls { display:none !important; } /* Opcional: esconde controles nativos se quiser */
     </style>
 </head>
 <body onload="App.init()">
@@ -316,11 +313,10 @@
 
                 let url = `${this.creds.h}/${typeUrl}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
-                // --- LÓGICA DE 2 CLIQUES ---
+                // --- LÓGICA DE 2 CLIQUES (ORIGINAL) ---
                 if(this.currId === streamId && !vid.paused) {
                     // 2º CLIQUE: FULLSCREEN
                     if(box.requestFullscreen) box.requestFullscreen();
-                    else if(box.webkitRequestFullscreen) box.webkitRequestFullscreen();
                     else if(vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
                 } else {
                     // 1º CLIQUE: PREVIEW
@@ -417,7 +413,7 @@
             }
         };
 
-        // --- FUNÇÕES AUXILIARES DE FULLSCREEN (Compatibilidade TV) ---
+        // --- FUNÇÕES AUXILIARES DE FULLSCREEN ---
         function isFullscreen() {
             return document.fullscreenElement || 
                    document.webkitFullscreenElement || 
@@ -428,29 +424,29 @@
 
         function exitFullscreen() {
             if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); // Chrome, Safari, WebOS, Tizen
-            else if (document.mozCancelFullScreen) document.mozCancelFullScreen(); // Firefox
-            else if (document.msExitFullscreen) document.msExitFullscreen(); // IE/Edge antigo
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
         }
 
         // --- GLOBAL KEY LISTENER ---
-        function doLogin() { App.login(); } // Wrapper
+        function doLogin() { App.login(); }
         
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             
-            // LOGIN INPUTS (Navegação básica)
+            // LOGIN INPUTS
             if(App.screen === 'login') {
                 if(k===13) {
                     if(document.activeElement.id === 'btnEnter') doLogin();
                     else document.activeElement.click();
                 }
-                if(k===40) { // Descer input
+                if(k===40) { // Descer
                     let map = ['h','u','p','btnEnter'];
                     let curr = map.indexOf(document.activeElement.id);
                     if(curr < 3) document.getElementById(map[curr+1]).focus();
                 }
-                if(k===38) { // Subir input
+                if(k===38) { // Subir
                     let map = ['h','u','p','btnEnter'];
                     let curr = map.indexOf(document.activeElement.id);
                     if(curr > 0) document.getElementById(map[curr-1]).focus();
@@ -458,32 +454,26 @@
                 return;
             }
 
-            // PREVINE SCROLL PADRÃO DO NAVEGADOR COM AS SETAS
+            // PREVINE SCROLL DO NAVEGADOR
             if([37,38,39,40].includes(k)) e.preventDefault();
 
             // --- LÓGICA DO BOTÃO VOLTAR / SAIR (CORRIGIDA) ---
-            // 8: Backspace (PC), 461: Back (LG), 10009: Back (Samsung), 27: Esc
             if(k === 8 || k === 461 || k === 27 || k === 10009) {
-                e.preventDefault(); // Previne que a TV feche o app inteiro
+                e.preventDefault(); 
 
                 if(isFullscreen()) {
-                    // SE ESTIVER EM TELA CHEIA, APENAS SAI DA TELA CHEIA
                     exitFullscreen();
-                    
-                    // Garante que o foco volte para o player ou lista
                     setTimeout(() => {
                         let box = document.getElementById('v-box');
-                        box.classList.remove('active'); // Remove brilho extra se quiser
-                        App.renderFocus(); // Garante o foco visual de volta
+                        box.classList.remove('active');
+                        App.renderFocus();
                     }, 200);
                 } 
                 else if(App.zone === 2) { 
-                    // SE NÃO ESTÁ EM TELA CHEIA E ESTÁ NA LISTA -> VAI PARA CATEGORIAS
                     App.zone = 1; 
                     App.renderFocus(); 
                 }
                 else if(App.zone === 1) {
-                    // SE ESTÁ NAS CATEGORIAS -> SOBE PRO MENU
                     App.zone = 0;
                     App.renderFocus();
                 }
