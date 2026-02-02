@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAREZ TV - GREEN EDITION</title>
+    <title>R&C IPTV GOLD</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
 
     <style>
         :root {
-            --bg-body: #050505;
-            --bg-card: #151515;
-            --warez-green: #2ecc71; 
-            --focus-glow: 0 0 20px rgba(46, 204, 113, 0.6);
-            --text-main: #eee;
+            --bg-body: #000000;
+            --bg-panel: #111111;
+            --bg-focus: #FFD700; /* GOLD */
+            --text-focus: #000000;
+            --text-main: #FFFFFF;
+            --text-dim: #888888;
         }
 
+        /* RESET OTIMIZADO PARA TV */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
+        /* Remove efeitos pesados */
+        * { box-shadow: none !important; text-shadow: none !important; transition: none !important; }
+
         body { 
-            background: radial-gradient(circle at center, #111 0%, #000 100%); 
-            color: var(--text-main); font-family: 'Roboto', sans-serif; 
-            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            font-family: 'Roboto', sans-serif; 
+            height: 100vh; overflow: hidden; 
+            display: flex; flex-direction: column;
         }
 
         /* --- LOADER --- */
@@ -31,8 +38,8 @@
             z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;
         }
         .spinner {
-            width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--warez-green);
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+            width: 60px; height: 60px; border: 8px solid #222; border-top: 8px solid var(--bg-focus);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -42,153 +49,140 @@
             display: flex; justify-content: center; align-items: center; background: #000;
         }
         .login-box {
-            width: 400px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 10px;
-            text-align: center; border-top: 4px solid var(--warez-green);
+            width: 450px; padding: 50px; background: var(--bg-panel); border: 2px solid #333; 
+            text-align: center;
         }
         .lg-inp {
             width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
-            text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 5px;
+            text-align: center; margin-bottom: 20px; font-size: 18px;
         }
-        .lg-inp:focus { background: #fff; color: #000; border-color: var(--warez-green); font-weight: bold; }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--bg-focus); }
         .lg-btn {
-            width: 100%; height: 50px; background: var(--warez-green); border: none; font-weight: bold;
-            font-size: 18px; cursor: pointer; border-radius: 5px; color: #000;
+            width: 100%; height: 50px; background: var(--bg-focus); border: none; font-weight: 900;
+            font-size: 20px; cursor: pointer; color: #000; text-transform: uppercase;
         }
-        .lg-btn:focus { box-shadow: var(--focus-glow); transform: scale(1.05); }
 
         /* --- MENU PRINCIPAL --- */
         #mainMenu {
             display: none; width: 100%; height: 100%; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 100; position: relative;
+            align-items: center; justify-content: center; z-index: 100;
         }
-        .logo-area { margin-bottom: 40px; text-align: center; }
-        .logo-txt { font-size: 50px; font-weight: 900; color: #fff; letter-spacing: -2px; }
-        .logo-txt span { color: var(--warez-green); }
+        .logo-txt { font-size: 60px; font-weight: 900; color: #fff; letter-spacing: -2px; margin-bottom: 50px; }
+        .logo-txt span { color: var(--bg-focus); }
         
-        .cards-container { display: flex; gap: 30px; }
+        .cards-container { display: flex; gap: 40px; }
         .nav-card {
-            width: 220px; height: 220px; background: var(--bg-card); border-radius: 15px;
+            width: 200px; height: 200px; background: var(--bg-panel); border: 2px solid #333;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 3px solid transparent; transition: transform 0.2s, box-shadow 0.2s; color: #888;
+            color: var(--text-dim);
         }
         .nav-card i { font-size: 60px; margin-bottom: 20px; }
-        .nav-card span { font-size: 20px; font-weight: bold; }
+        .nav-card span { font-size: 22px; font-weight: bold; }
         
+        /* FOCO DE ALTO CONTRASTE (SEM SOMBRA) */
         .nav-card.focused {
-            border-color: var(--warez-green); color: #fff; background: #1a1a1a;
-            box-shadow: var(--focus-glow); transform: scale(1.1);
+            background: var(--bg-focus); color: #000; border-color: #fff; transform: scale(1.05);
         }
 
-        /* INFOS DA CONTA NO MENU */
+        /* --- BARRA DE CONTA (NOVA ORDEM) --- */
         .account-bar {
-            position: absolute; bottom: 30px; width: 90%; 
-            display: flex; justify-content: space-around;
-            background: rgba(20,20,20,0.9); border: 1px solid #333;
-            padding: 15px; border-radius: 10px; color: #aaa; font-size: 14px;
+            position: absolute; bottom: 40px; width: 80%; 
+            display: flex; justify-content: space-between;
+            background: #111; border-top: 2px solid var(--bg-focus);
+            padding: 20px; font-size: 16px; color: #ccc;
         }
-        .acc-item strong { color: var(--warez-green); margin-right: 5px; }
+        .acc-item strong { color: var(--bg-focus); text-transform: uppercase; margin-right: 5px; }
 
         /* --- INTERFACE DE CONTEÚDO --- */
         #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
         
         /* Coluna 1: Categorias */
-        .col-cats { width: 300px; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .panel-head { padding: 15px; font-weight: bold; color: var(--warez-green); text-transform: uppercase; font-size: 14px; border-bottom: 1px solid #222; }
-        .list-wrap { flex: 1; overflow-y: auto; padding: 10px; scroll-behavior: auto; }
+        .col-cats { width: 320px; background: #080808; border-right: 2px solid #222; display: flex; flex-direction: column; }
+        .panel-head { 
+            padding: 20px; font-weight: 900; color: var(--bg-focus); text-align: center;
+            text-transform: uppercase; font-size: 18px; background: #111; border-bottom: 1px solid #333;
+        }
+        .list-wrap { flex: 1; overflow-y: auto; padding: 0; }
+        
         .c-item { 
-            padding: 12px; margin-bottom: 5px; color: #aaa; border-radius: 5px; font-size: 15px;
-            border-left: 4px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 15px 20px; color: #888; font-size: 16px; font-weight: bold;
+            border-bottom: 1px solid #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .c-item.active { background: #151515; color: #fff; border-left-color: #555; }
-        .c-item.focused { background: var(--warez-green); color: #000; font-weight: bold; border-left-color: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .c-item.active { color: #fff; background: #1a1a1a; }
+        .c-item.focused { background: var(--bg-focus); color: #000; }
 
-        /* Coluna 2: Conteúdo + Busca */
-        .col-list { width: 400px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .search-box { padding: 15px; background: #080808; border-bottom: 1px solid #222; }
+        /* Coluna 2: Lista */
+        .col-list { width: 420px; background: #111; border-right: 2px solid #222; display: flex; flex-direction: column; }
+        .search-box { padding: 10px; background: #000; }
         .s-inp { 
-            width: 100%; padding: 12px; background: #222; border: 1px solid #333; color: #fff; 
-            text-transform: uppercase; border-radius: 5px; text-align: center;
+            width: 100%; padding: 10px; background: #222; border: 2px solid #444; color: #fff; 
+            text-transform: uppercase; text-align: center; font-weight: bold;
         }
-        .s-inp.focused { background: #fff; color: #000; border-color: var(--warez-green); }
+        .s-inp.focused { background: #fff; color: #000; border-color: var(--bg-focus); }
 
         .l-item {
-            padding: 14px; margin-bottom: 5px; background: #181818; border-radius: 5px; font-size: 14px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 2px solid transparent;
+            padding: 15px; background: #1a1a1a; border-bottom: 1px solid #000; color: #ddd;
+            font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .l-item.focused { background: #fff; color: #000; font-weight: bold; border-color: var(--warez-green); transform: scale(1.02); z-index: 10; }
+        .l-item.focused { background: var(--bg-focus); color: #000; font-weight: bold; }
 
-        /* Coluna 3: Preview e Info */
-        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 30px; align-items: center; }
+        /* Coluna 3: Player */
+        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 40px; }
+        
         .frame { 
-            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; border-radius: 10px;
-            margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            width: 100%; height: 100%; background: #000; border: 2px solid #333; 
+            position: relative; display: flex; align-items: center; justify-content: center;
         }
-        .frame.focused { border-color: var(--warez-green); }
-        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
+        .frame.focused { border-color: var(--bg-focus); border-width: 4px; }
+        
+        video { width: 100%; height: 100%; max-height: 100%; background: #000; outline: none; }
 
-        /* Infos */
-        .info-title { font-size: 28px; color: var(--warez-green); font-weight: bold; margin-bottom: 10px; width: 100%; }
-        .info-desc { font-size: 14px; color: #888; line-height: 1.5; width: 100%; }
-        .color-help { margin-top: auto; display: flex; gap: 20px; width: 100%; font-size: 12px; color: #666; font-weight: bold; }
-        .btn-hint i { margin-right: 5px; }
+        .info-area { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
+        .info-title { font-size: 32px; color: var(--bg-focus); font-weight: 900; margin-bottom: 10px; }
+        .info-desc { font-size: 16px; color: #aaa; }
 
         /* FULLSCREEN */
-        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9000; border:none !important; margin:0 !important; background:#000; border-radius: 0 !important; }
+        .fs { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index:9000; border:none !important; margin:0 !important; padding:0 !important; }
         
-        /* OSD BARRA VOD */
+        /* OSD */
         .vod-osd {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 80px;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            display: none; align-items: flex-end; padding: 20px;
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px;
+            background: rgba(0,0,0,0.8); display: none; flex-direction: column;
         }
-        .prog-bg { width: 100%; height: 5px; background: #555; }
-        .prog-fill { height: 100%; width: 0%; background: var(--warez-green); }
+        .prog-bg { width: 100%; height: 10px; background: #333; margin-top: 5px; }
+        .prog-fill { height: 100%; width: 0%; background: var(--bg-focus); }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar { width: 0px; } /* Oculta scrollbar para performance visual */
     </style>
 </head>
 <body onload="App.init()">
 
-    <div id="loader"><div class="spinner"></div><span>CARREGANDO...</span></div>
+    <div id="loader"><div class="spinner"></div><span style="color:#FFD700; font-weight:bold;">CARREGANDO...</span></div>
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:var(--warez-green); margin-bottom:20px">WAREZ LOGIN</h2>
-            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)">
-            <input type="text" id="u" class="lg-inp" placeholder="Usuário">
-            <input type="password" id="p" class="lg-inp" placeholder="Senha">
+            <h2 style="color:var(--bg-focus); margin-bottom:30px; font-size:30px;">R&C IPTV GOLD</h2>
+            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" autocomplete="off">
+            <input type="text" id="u" class="lg-inp" placeholder="USUÁRIO" autocomplete="off">
+            <input type="password" id="p" class="lg-inp" placeholder="SENHA">
             <button id="btnEnter" class="lg-btn">ENTRAR</button>
         </div>
     </div>
 
     <div id="mainMenu">
-        <div class="logo-area">
-            <div class="logo-txt"><i class="fas fa-play-circle"></i> warez<span>tv</span></div>
-        </div>
+        <div class="logo-txt">R&C <span>GOLD</span></div>
+        
         <div class="cards-container">
-            <div class="nav-card focused" id="card-live">
-                <i class="fas fa-tv"></i>
-                <span>TV ao vivo</span>
-            </div>
-            <div class="nav-card" id="card-mov">
-                <i class="fas fa-film"></i>
-                <span>Filmes</span>
-            </div>
-            <div class="nav-card" id="card-ser">
-                <i class="fas fa-video"></i>
-                <span>Séries</span>
-            </div>
-            <div class="nav-card" id="card-cfg">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair</span>
-            </div>
+            <div class="nav-card focused" id="card-live"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
+            <div class="nav-card" id="card-mov"><i class="fas fa-film"></i><span>FILMES</span></div>
+            <div class="nav-card" id="card-ser"><i class="fas fa-video"></i><span>SÉRIES</span></div>
+            <div class="nav-card" id="card-cfg"><i class="fas fa-sign-out-alt"></i><span>SAIR</span></div>
         </div>
         
         <div class="account-bar" id="accInfoBar">
-            <div class="acc-item" id="acc-exp"><strong>Vence:</strong> -</div>
-            <div class="acc-item" id="acc-lim"><strong>Telas:</strong> -</div>
-            <div class="acc-item" id="acc-cre"><strong>Criado:</strong> -</div>
+            <div class="acc-item" id="acc-cre"><strong>Criado:</strong> ...</div>
+            <div class="acc-item" id="acc-exp"><strong>Vence:</strong> ...</div>
+            <div class="acc-item" id="acc-lim"><strong>Telas:</strong> ...</div>
         </div>
     </div>
 
@@ -199,71 +193,54 @@
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR (ENTER)" onkeydown="App.handleSearch(event)">
+                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR..." onkeydown="App.handleSearch(event)">
             </div>
             <div class="list-wrap" id="list-cnt"></div>
         </div>
         <div class="col-view">
             <div class="frame" id="v-box">
-                <video id="player" playsinline crossorigin="anonymous"></video>
+                <video id="player" playsinline webkit-playsinline></video>
                 <div class="vod-osd" id="osd">
-                    <div style="color:#fff; margin-bottom:5px; font-weight:bold" id="osd-stat">PAUSADO</div>
+                    <div style="color:#fff; font-weight:bold" id="osd-stat">PAUSADO</div>
                     <div class="prog-bg"><div class="prog-fill" id="prog-bar"></div></div>
                 </div>
             </div>
-            <div class="info-title" id="lbl-title">Bem Vindo</div>
-            <div class="info-desc" id="lbl-desc">Selecione um conteúdo.</div>
-            
-            <div class="color-help">
-                <span class="btn-hint" style="color:#ff4444"><i class="fas fa-circle"></i> Tela Cheia</span>
-                <span class="btn-hint" style="color:#00C851"><i class="fas fa-circle"></i> Atualizar</span>
-                <span class="btn-hint" style="color:#ffbb33"><i class="fas fa-circle"></i> Buscar</span>
-                <span class="btn-hint" style="color:#33b5e5"><i class="fas fa-circle"></i> Menu</span>
+            <div class="info-area">
+                <div class="info-title" id="lbl-title">R&C GOLD</div>
+                <div class="info-desc" id="lbl-desc">Selecione um canal para assistir.</div>
             </div>
         </div>
     </div>
 
     <script>
         let hls = null;
-        // Configuração aprimorada do HLS
-        const HlsConfig = { 
-            autoStartLoad: true, 
-            capLevelToPlayerSize: true, 
-            maxBufferLength: 30,
-            maxMaxBufferLength: 60,
-            fatalErrorRecovery: true 
-        };
-
+        
         const App = {
-            scr: 'login', 
-            zone: 0, 
-            fIdx: 0,
-            catIdx: 0, // MEMÓRIA DA CATEGORIA
+            scr: 'login', zone: 0, fIdx: 0, catIdx: 0,
             creds: {}, mode: 'live',
             cats: [], items: [], viewItems: [],
             isSeries: false, currId: null,
-            isPlaying: false,
-            userInfo: null, 
-            lastFocused: null,
+            userInfo: null, lastFocused: null,
 
             init: function() {
-                if(localStorage.getItem('w_h')) {
-                    document.getElementById('h').value = localStorage.getItem('w_h');
-                    document.getElementById('u').value = localStorage.getItem('w_h_u');
-                    document.getElementById('p').value = localStorage.getItem('w_h_p');
+                // Recuperar Login
+                if(localStorage.getItem('rc_h')) {
+                    document.getElementById('h').value = localStorage.getItem('rc_h');
+                    document.getElementById('u').value = localStorage.getItem('rc_u');
+                    document.getElementById('p').value = localStorage.getItem('rc_p');
                     document.getElementById('btnEnter').focus();
                 } else document.getElementById('h').focus();
 
                 document.addEventListener('keydown', this.onKey.bind(this));
                 
+                // Eventos Player Simples
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
                 v.addEventListener('ended', ()=> this.exitFS());
-                v.addEventListener('play', ()=> { App.isPlaying=true; App.hideOSD(); });
-                v.addEventListener('pause', ()=> { App.isPlaying=false; App.showOSD('PAUSADO'); });
-                
-                v.addEventListener('error', function(e) {
-                   console.log("Erro player nativo:", e);
+                v.addEventListener('error', (e) => {
+                    console.log("Erro Player:", e);
+                    // Tenta recuperar se for erro de rede
+                    if(App.currId) setTimeout(() => App.play(App.fIdx), 2000);
                 });
             },
 
@@ -277,26 +254,25 @@
 
                 this.load(true);
                 try {
+                    // API Call
                     let r = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
                     let d = await r.json();
                     
                     if(d.user_info && (d.user_info.status === 'Active' || d.user_info.status === 'Trial')) {
                         this.creds = {h,u,p};
-                        this.userInfo = d.user_info; 
-                        
-                        localStorage.setItem('w_h',h); localStorage.setItem('w_h_u',u); localStorage.setItem('w_h_p',p);
+                        this.userInfo = d.user_info;
+                        localStorage.setItem('rc_h',h); localStorage.setItem('rc_u',u); localStorage.setItem('rc_p',p);
                         
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
-                    } else alert('Conta Inválida ou Expirada');
+                    } else alert('Dados Inválidos');
                 } catch(e) { alert('Erro de Conexão. Verifique a URL.'); }
                 this.load(false);
             },
 
             formatDate: function(ts) {
-                if(!ts) return '-';
-                let date = new Date(ts * 1000);
-                return date.toLocaleDateString('pt-BR');
+                if(!ts) return 'Invalido';
+                return new Date(ts * 1000).toLocaleDateString('pt-BR');
             },
 
             goMenu: function() {
@@ -306,16 +282,15 @@
                 document.getElementById('contentInterface').style.display='none';
                 
                 if(this.userInfo) {
-                    let exp = this.userInfo.exp_date ? this.formatDate(this.userInfo.exp_date) : "Ilimitado";
-                    let created = this.userInfo.created_at ? this.formatDate(this.userInfo.created_at) : "-";
-                    let active = this.userInfo.active_cons || 0;
-                    let max = this.userInfo.max_connections || 1;
+                    let c = this.userInfo.created_at ? this.formatDate(this.userInfo.created_at) : "-";
+                    let e = this.userInfo.exp_date ? this.formatDate(this.userInfo.exp_date) : "Ilimitado";
+                    let l = `${this.userInfo.active_cons || 0} / ${this.userInfo.max_connections || 1}`;
                     
-                    document.getElementById('acc-exp').innerHTML = `<strong>Vence:</strong> ${exp}`;
-                    document.getElementById('acc-cre').innerHTML = `<strong>Criado:</strong> ${created}`;
-                    document.getElementById('acc-lim').innerHTML = `<strong>Telas:</strong> ${active} / ${max}`;
+                    // Ordem: Criado -> Vence -> Telas
+                    document.getElementById('acc-cre').innerHTML = `<strong>CRIADO:</strong> ${c}`;
+                    document.getElementById('acc-exp').innerHTML = `<strong>VENCE:</strong> ${e}`;
+                    document.getElementById('acc-lim').innerHTML = `<strong>TELAS:</strong> ${l}`;
                 }
-
                 this.renderCards();
             },
 
@@ -327,16 +302,14 @@
 
             goContent: async function(m) {
                 if(m === 'cfg') { localStorage.clear(); location.reload(); return; }
-                
-                this.mode = m; 
-                this.scr = 'content'; 
-                this.zone = 1; this.fIdx = 0; this.catIdx = 0; 
+                this.mode = m; this.scr = 'content'; 
+                this.zone = 1; this.fIdx = 0; this.catIdx = 0;
                 this.items = []; this.viewItems = []; this.isSeries = false;
-                this.lastFocused = null; 
+                this.lastFocused = null;
 
                 document.getElementById('mainMenu').style.display='none';
                 document.getElementById('contentInterface').style.display='flex';
-                document.getElementById('cat-head').innerText = m==='live'?'CANAIS TV':(m==='vod'?'FILMES':'SÉRIES');
+                document.getElementById('cat-head').innerText = m==='live'?'TV AO VIVO':(m==='vod'?'FILMES':'SÉRIES');
                 document.getElementById('list-cnt').innerHTML = '';
                 
                 this.load(true);
@@ -354,8 +327,7 @@
             },
 
             loadCat: async function() {
-                let c = this.cats[this.catIdx]; // Usa a memória
-                
+                let c = this.cats[this.catIdx];
                 document.querySelectorAll('.c-item').forEach(e=>e.classList.remove('active'));
                 let el = document.getElementById('c-'+this.catIdx);
                 if(el) el.classList.add('active');
@@ -369,9 +341,7 @@
                     this.viewItems = [...this.items];
                     this.renderList();
                     
-                    this.zone = 2; 
-                    this.fIdx = 0;
-                    this.lastFocused = null; 
+                    this.zone = 2; this.fIdx = 0; this.lastFocused = null;
                     document.getElementById('search-inp').focus();
                     this.renderFocus();
                 } catch(e){}
@@ -380,66 +350,65 @@
 
             renderList: function() {
                 let h = '';
-                let limit = this.viewItems.slice(0, 200); 
+                let limit = this.viewItems.slice(0, 100); // Limite menor para performance na TV NetRange
                 
                 if(this.isSeries) {
-                    h += `<div class="l-item" id="l-back" style="color:#aaa">VOLTAR</div>`;
-                    limit.forEach((e,i) => {
-                        h += `<div class="l-item" id="l-${i}">S${e.season} E${e.episode_num} - ${e.title}</div>`;
-                    });
+                    h += `<div class="l-item" id="l-back" style="color:#FFD700">VOLTAR</div>`;
+                    limit.forEach((e,i) => h += `<div class="l-item" id="l-${i}">S${e.season} E${e.episode_num} - ${e.title}</div>`);
                 } else {
-                    limit.forEach((it,i) => {
-                        h += `<div class="l-item" id="l-${i}">${it.name||it.title}</div>`;
-                    });
+                    limit.forEach((it,i) => h += `<div class="l-item" id="l-${i}">${it.name||it.title}</div>`);
                 }
-                document.getElementById('list-cnt').innerHTML = h || '<div style="padding:10px">Vazio</div>';
+                document.getElementById('list-cnt').innerHTML = h || '<div style="padding:20px">Vazio</div>';
             },
 
+            // --- PLAYER SYSTEM REFEITO PARA NETRANGE ---
             play: function(idx) {
                 let it = this.viewItems[idx];
                 if(this.mode==='ser' && !this.isSeries) { this.openSeries(it.series_id); return; }
 
                 let vid = document.getElementById('player');
                 let sid = it.stream_id || it.id;
-                
-                if(this.currId === sid && vid.src && !vid.paused) {
-                    this.enterFS();
-                    return;
-                }
+
+                // Fullscreen se já estiver tocando
+                if(this.currId === sid && !vid.paused) { this.enterFS(); return; }
                 
                 this.currId = sid;
-                let ext = it.container_extension;
-                if(!ext) ext = this.mode === 'live' ? 'ts' : 'mp4';
-                
+                let ext = it.container_extension || (this.mode==='live'?'ts':'mp4');
                 let type = this.mode==='live'?'live':(this.mode==='ser'?'series':'movie');
+                
+                // URL Limpa
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${sid}.${ext}`;
 
                 document.getElementById('lbl-title').innerText = it.name||it.title;
-                document.getElementById('lbl-desc').innerText = "Carregando reprodução...";
+                document.getElementById('lbl-desc').innerText = "Conectando...";
 
                 if(hls) { hls.destroy(); hls=null; }
-                vid.pause(); 
-                vid.removeAttribute('src'); 
-                vid.load();
+                vid.pause(); vid.removeAttribute('src'); vid.load();
 
-                document.activeElement.blur(); 
-
-                if(this.mode === 'live' && Hls.isSupported()) {
-                    hls = new Hls(HlsConfig);
+                // ESTRATÉGIA HÍBRIDA (NATIVO PRIMEIRO)
+                // Muitas Smart TVs suportam m3u8 nativamente no 'src'
+                
+                if (vid.canPlayType('application/vnd.apple.mpegurl')) {
+                    // 1. Tenta NATIVO (Samsung, LG, NetRange)
+                    console.log("Usando Player Nativo");
+                    vid.src = url;
+                    vid.play().catch(e=>console.log(e));
+                } 
+                else if (Hls.isSupported()) {
+                    // 2. Tenta HLS.js (PC, Android Chrome)
+                    console.log("Usando HLS.js");
+                    hls = new Hls({capLevelToPlayerSize:true, maxBufferLength:30});
                     hls.loadSource(url);
                     hls.attachMedia(vid);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        vid.play().catch(e => console.log("Auto-play blocked", e));
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
+                    hls.on(Hls.Events.ERROR, (e,d) => {
+                        if(d.fatal) { hls.destroy(); hls=null; vid.src = url; vid.play(); } // Fallback final
                     });
-                    hls.on(Hls.Events.ERROR, function (event, data) {
-                        if (data.fatal) {
-                            if(data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-                            else hls.destroy();
-                        }
-                    });
-                } else {
+                }
+                else {
+                    // 3. Fallback desesperado
                     vid.src = url;
-                    vid.play().catch(e => console.log("Erro play nativo", e));
+                    vid.play();
                 }
             },
             
@@ -450,7 +419,8 @@
                     let d = await r.json();
                     let e = [];
                     if(d.episodes) for(let s in d.episodes) d.episodes[s].forEach(x=>{x.season=s;e.push(x)});
-                    e.sort((a,b)=> (a.season-b.season)||(a.episode_num-b.episode_num));
+                    // Ordenação Simples
+                    e.sort((a,b)=> (parseInt(a.season)-parseInt(b.season))||(parseInt(a.episode_num)-parseInt(b.episode_num)));
                     this.items=e; this.viewItems=e; this.isSeries=true;
                     this.renderList(); this.zone=3; this.fIdx=0; this.renderFocus();
                 } catch(e){}
@@ -464,36 +434,19 @@
                 this.currId = null;
             },
 
-            refreshPlayer: function() {
-                if(!this.currId) return;
-                if(this.zone===3) this.play(this.fIdx); 
-            },
+            refreshPlayer: function() { if(this.currId && this.zone===3) this.play(this.fIdx); },
 
+            // Fullscreen Simplificado
             isFS: function() { return document.getElementById('v-box').classList.contains('fs'); },
-            enterFS: function() {
-                document.getElementById('v-box').classList.add('fs');
-                document.activeElement.blur();
-            },
-            exitFS: function() {
-                document.getElementById('v-box').classList.remove('fs');
-            },
+            enterFS: function() { document.getElementById('v-box').classList.add('fs'); },
+            exitFS: function() { document.getElementById('v-box').classList.remove('fs'); },
 
             updOSD: function() {
                 if(!App.isFS() || App.mode === 'live') return;
                 let v = document.getElementById('player');
-                if(v.duration) {
-                    let p = (v.currentTime/v.duration)*100;
-                    document.getElementById('prog-bar').style.width = p+'%';
-                }
+                if(v.duration) document.getElementById('prog-bar').style.width = ((v.currentTime/v.duration)*100)+'%';
             },
             
-            showOSD: function(txt) {
-                if(this.mode==='live') return;
-                document.getElementById('osd-stat').innerText = txt;
-                document.getElementById('osd').style.display='flex';
-            },
-            hideOSD: function() { document.getElementById('osd').style.display='none'; },
-
             handleSearch: function(e) { if(e.keyCode===13) this.doSearch(); },
             doSearch: async function() {
                 let t = document.getElementById('search-inp').value.toLowerCase();
@@ -505,40 +458,34 @@
                 this.load(false);
             },
 
+            // Render Focus Otimizado (Sem loop pesado)
             renderFocus: function() {
-                if(this.lastFocused) {
-                    this.lastFocused.classList.remove('focused');
-                } else {
-                    document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
-                }
-
+                if(this.lastFocused) this.lastFocused.classList.remove('focused');
+                
+                let el = null;
                 if(this.scr==='menu') {
-                    let ids=['card-live','card-mov','card-ser','card-cfg'];
-                    let el = document.getElementById(ids[this.fIdx]);
-                    if(el) { el.classList.add('focused'); this.lastFocused = el; }
+                    el = document.getElementById(['card-live','card-mov','card-ser','card-cfg'][this.fIdx]);
                 } else {
-                    let el = null;
-                    if(this.zone===1) {
-                        el = document.getElementById('c-'+this.fIdx);
-                    } else if(this.zone===2) {
-                        el = document.getElementById('search-inp');
-                    } else if(this.zone===3) {
+                    if(this.zone===1) el = document.getElementById('c-'+this.catIdx); // Usa catIdx visualmente se estiver na zona 1
+                    else if(this.zone===2) el = document.getElementById('search-inp');
+                    else if(this.zone===3) {
                         let id = (this.isSeries && this.fIdx===-1) ? 'l-back' : 'l-'+this.fIdx;
                         if(this.isSeries && this.fIdx===0) id = 'l-0';
                         el = document.getElementById(id);
                     }
-
-                    if(el) {
-                        el.classList.add('focused');
-                        this.lastFocused = el;
-                        if(this.zone !== 2) el.scrollIntoView({block:'nearest', behavior:'auto'});
-                    }
+                }
+                
+                if(el) {
+                    el.classList.add('focused');
+                    this.lastFocused = el;
+                    if(this.zone!==2) el.scrollIntoView({block:'nearest'});
                 }
             },
 
             onKey: function(e) {
                 let k = e.keyCode;
 
+                // Login
                 if(this.scr==='login') {
                     let m=['h','u','p','btnEnter']; let i=m.indexOf(document.activeElement.id);
                     if(k===13) { i<3?document.getElementById(m[i+1]).focus():this.login(); }
@@ -547,35 +494,25 @@
                     return;
                 }
 
-                if(k===403 || k===82) { this.isFS() ? this.exitFS() : this.enterFS(); return; }
-                if(k===404 || k===71) { this.refreshPlayer(); return; }
-                if(k===405 || k===89) { if(this.scr==='content') { this.zone=2; document.getElementById('search-inp').focus(); this.renderFocus(); } return; }
-                if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; }
-
+                // Player Controls (Sem preventDefault excessivo)
                 if(this.isFS()) {
-                    e.preventDefault();
                     let v = document.getElementById('player');
-                    if(k===13 || k===32) v.paused ? v.play() : v.pause();
-                    if(k===8 || k===27 || k===461) this.exitFS();
-                    if(this.mode !== 'live') {
-                         if(k===39) v.currentTime+=15;
-                         if(k===37) v.currentTime-=15;
-                    }
+                    if(k===13 || k===32) { v.paused ? v.play() : v.pause(); e.preventDefault(); }
+                    if(k===8 || k===27 || k===461) { this.exitFS(); e.preventDefault(); }
                     return;
                 }
 
+                // Atalhos Coloridos
+                if(k===403 || k===82) { this.isFS() ? this.exitFS() : this.enterFS(); return; }
+                if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; }
+
                 if([37,38,39,40].includes(k)) e.preventDefault();
-                
-                // BACK / VOLTAR
-                if([8,27,461,10009].includes(k)) {
+
+                // Navegação Geral
+                if([8,27,461,10009].includes(k)) { // Back
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) this.loadCat();
-                    else if(this.zone>1) { 
-                        // VOLTA PARA A CATEGORIA SALVA
-                        this.zone=1; 
-                        this.fIdx = this.catIdx; 
-                        this.renderFocus(); 
-                    }
+                    else if(this.zone>1) { this.zone=1; this.fIdx=this.catIdx; this.renderFocus(); }
                     else this.goMenu();
                     return;
                 }
@@ -585,41 +522,25 @@
                     if(k===37 && this.fIdx>0) this.fIdx--;
                     if(k===13) this.goContent(['live','vod','ser','cfg'][this.fIdx]);
                 }
-                else { 
-                    if(this.zone===2 && ((k>=48 && k<=90)||k===32)) return;
-                    
-                    if(this.zone===1) { // CATEGORIAS
-                        if(k===40 && this.fIdx<this.cats.length-1) this.fIdx++;
-                        if(k===38 && this.fIdx>0) this.fIdx--;
-                        if(k===39) { 
-                            this.catIdx = this.fIdx; // Salva
-                            this.zone=2; document.getElementById('search-inp').focus(); 
-                        }
-                        if(k===13) { 
-                            this.catIdx = this.fIdx; // Salva
-                            this.loadCat(); 
-                        }
+                else {
+                    if(this.zone===1) { // Cat
+                        if(k===40 && this.catIdx<this.cats.length-1) { this.catIdx++; }
+                        if(k===38 && this.catIdx>0) { this.catIdx--; }
+                        if(k===39) { this.zone=2; document.getElementById('search-inp').focus(); }
+                        if(k===13) { this.loadCat(); }
                     }
-                    else if(this.zone===2) { // BUSCA
+                    else if(this.zone===2) { // Search
                         if(k===40 && this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); }
-                        if(k===37) { 
-                            this.zone=1; 
-                            this.fIdx = this.catIdx; // Restaura
-                            document.getElementById('search-inp').blur(); 
-                        }
+                        if(k===37) { this.zone=1; this.fIdx=this.catIdx; document.getElementById('search-inp').blur(); }
                         if(k===13) this.doSearch();
                     }
-                    else if(this.zone===3) { // LISTA
+                    else if(this.zone===3) { // List
                         if(k===38) {
                             if(this.fIdx>0) this.fIdx--;
-                            else if(this.isSeries && this.fIdx===0) this.fIdx=-1;
                             else { this.zone=2; document.getElementById('search-inp').focus(); }
                         }
-                        if(k===40 && this.fIdx < Math.min(this.viewItems.length-1, 199)) this.fIdx++;
-                        if(k===37) { 
-                            this.zone=1; 
-                            this.fIdx = this.catIdx; // Restaura
-                        }
+                        if(k===40 && this.fIdx < Math.min(this.viewItems.length-1, 99)) this.fIdx++;
+                        if(k===37) { this.zone=1; this.fIdx=this.catIdx; }
                         if(k===13) {
                             if(this.isSeries && this.fIdx===-1) this.loadCat();
                             else this.play(this.fIdx);
