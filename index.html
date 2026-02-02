@@ -1,18 +1,427 @@
-// --- GLOBAL KEY LISTENER ---
-        function doLogin() { App.login(); } // Wrapper
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SKY GOLD V-LITE</title>
+    <style>
+        /* --- OTIMIZAÇÃO CRÍTICA (CSS ZERO BLOQUEIO) --- */
+        :root {
+            --gold: #FFD700;
+            --bg-main: #000;
+            --bg-dark: #050505;
+            --bg-light: #111;
+            --focus-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-main); color: #fff; font-family: system-ui, -apple-system, sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        /* Ícones SVG Otimizados */
+        .icon { width: 16px; height: 16px; fill: currentColor; display: inline-block; vertical-align: middle; }
+        
+        /* --- TELA DE LOGIN --- */
+        #loginScreen {
+            position: absolute; inset: 0; z-index: 9999;
+            background: #000; display: flex; justify-content: center; align-items: center;
+        }
+        .login-box {
+            background: var(--bg-dark); border-top: 3px solid var(--gold);
+            width: 90%; max-width: 400px; padding: 30px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .lg-title { color: var(--gold); font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px; }
+        .lg-inp {
+            width: 100%; height: 45px; margin-bottom: 12px;
+            background: #151515; border: 1px solid #333; color: #fff;
+            text-align: center; font-size: 16px; border-radius: 4px;
+        }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); }
+        .lg-btn {
+            width: 100%; height: 50px; background: var(--gold); color: #000;
+            font-weight: 800; font-size: 16px; border: none; cursor: pointer; margin-top: 10px;
+            border-radius: 4px; transition: transform 0.1s;
+        }
+        .lg-btn:active, .lg-btn:focus { transform: scale(0.98); box-shadow: var(--focus-shadow); }
+
+        /* --- INTERFACE PRINCIPAL --- */
+        #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
+
+        /* TOPO */
+        .top-bar {
+            height: 55px; background: var(--bg-light); border-bottom: 1px solid #222;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+        }
+        .logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+        .logo span { color: var(--gold); }
+
+        .tabs-area { display: flex; height: 100%; gap: 10px; }
+        .tab-btn {
+            padding: 0 15px; height: 100%; display: flex; align-items: center; gap: 6px;
+            color: #666; font-weight: 700; font-size: 13px; border-bottom: 3px solid transparent;
+            cursor: pointer; transition: color 0.2s;
+        }
+        .tab-btn.active-mode { color: #fff; border-bottom-color: var(--gold); }
+        .tab-btn.focused { background: #333; color: #fff; }
+
+        .top-right { display: flex; align-items: center; gap: 15px; }
+        .btn-exit { font-size: 12px; color: #888; padding: 6px 12px; border: 1px solid #333; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
+        .btn-exit.focused { background: #d00; color: white; border-color: #f00; }
+        
+        #clock { font-size: 18px; font-weight: 700; color: #ddd; font-variant-numeric: tabular-nums; }
+
+        /* CORPO */
+        .main-body { flex: 1; display: flex; overflow: hidden; }
+
+        /* Colunas */
+        .col-cat { width: 260px; background: #080808; display: flex; flex-direction: column; border-right: 1px solid #1a1a1a; }
+        .col-list { width: 320px; background: #0c0c0c; display: flex; flex-direction: column; border-right: 1px solid #1a1a1a; }
+        .col-player { flex: 1; background: #000; padding: 0; display: flex; flex-direction: column; justify-content: center; position: relative; }
+
+        .list-head { padding: 10px; background: #000; color: var(--gold); font-size: 11px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .list-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; will-change: scroll-position; }
+        
+        /* Scrollbar Invisível mas funcional */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; }
+
+        /* Itens */
+        .item-cat, .item-cnt {
+            padding: 10px 12px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            cursor: pointer; border-left: 3px solid transparent; color: #777; font-weight: 500;
+        }
+        
+        /* Estados dos Itens */
+        .item-cat.active { background: #111; color: #eee; border-left-color: #444; }
+        .item-cat.focused { background: var(--gold); color: #000; border-left-color: #fff; font-weight: 800; }
+        
+        .item-cnt { border-bottom: 1px solid #141414; display: flex; align-items: center; gap: 8px; }
+        .item-cnt.playing { color: var(--gold); }
+        .item-cnt.focused { 
+            background: #222; color: #fff; font-weight: 700; border-left-color: var(--gold);
+            transform: translateX(4px); transition: transform 0.1s;
+        }
+
+        /* Player */
+        .vid-container { width: 100%; height: 100%; position: relative; }
+        video { width: 100%; height: 100%; background: #000; }
+        
+        .overlay-info {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 40px 30px 30px 30px; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+        }
+        .col-player:hover .overlay-info, .vid-container.show-info .overlay-info { opacity: 1; }
+        
+        .info-title { color: #fff; font-size: 24px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .info-desc { color: var(--gold); font-size: 14px; margin-top: 5px; font-weight: 600; }
+
+    </style>
+</head>
+<body onload="App.init()">
+
+    <div id="loginScreen">
+        <div class="login-box">
+            <div class="lg-title">SKY GOLD</div>
+            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" autocomplete="off">
+            <input type="text" id="u" class="lg-inp" placeholder="Usuário" autocomplete="off">
+            <input type="password" id="p" class="lg-inp" placeholder="Senha">
+            <button id="btnEnter" class="lg-btn" onclick="doLogin()">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="appInterface">
+        <div class="top-bar">
+            <div class="logo">SKY <span>GOLD</span></div>
+            <div class="tabs-area">
+                <div class="tab-btn active-mode" id="tab-live">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg> TV
+                </div>
+                <div class="tab-btn" id="tab-vod">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg> FILMES
+                </div>
+                <div class="tab-btn" id="tab-ser">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg> SÉRIES
+                </div>
+            </div>
+            <div class="top-right">
+                <div class="btn-exit" id="btn-logout">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> SAIR
+                </div>
+                <div id="clock">00:00</div>
+            </div>
+        </div>
+
+        <div class="main-body">
+            <div class="col-cat">
+                <div class="list-head">CATEGORIAS</div>
+                <div class="list-scroll" id="list-cats"></div>
+            </div>
+            <div class="col-list">
+                <div class="list-head">CONTEÚDO</div>
+                <div class="list-scroll" id="list-cnt">
+                    <div style="padding:20px; text-align:center; color:#444; font-size:12px">Selecione uma categoria</div>
+                </div>
+            </div>
+            <div class="col-player">
+                <div class="vid-container" id="v-box">
+                    <video id="player" playsinline webkit-playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
+                    <div class="overlay-info">
+                        <div class="info-title" id="lbl-title">Bem Vindo</div>
+                        <div class="info-desc" id="lbl-desc">Selecione um conteúdo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ESTADO OTIMIZADO ---
+        const App = {
+            screen: 'login', mode: 'live', zone: 0, focusIdx: 0,
+            cats: [], list: [], creds: {}, currId: null,
+            
+            // Elementos em cache para evitar document.getElementById repetitivo
+            el: {
+                h: null, u: null, p: null, btn: null, clock: null,
+                cats: null, cnt: null, vid: null, box: null,
+                lblT: null, lblD: null
+            },
+
+            init: function() {
+                // Cache Elements
+                this.el.h = document.getElementById('h');
+                this.el.u = document.getElementById('u');
+                this.el.p = document.getElementById('p');
+                this.el.btn = document.getElementById('btnEnter');
+                this.el.clock = document.getElementById('clock');
+                this.el.cats = document.getElementById('list-cats');
+                this.el.cnt = document.getElementById('list-cnt');
+                this.el.vid = document.getElementById('player');
+                this.el.box = document.getElementById('v-box');
+                this.el.lblT = document.getElementById('lbl-title');
+                this.el.lblD = document.getElementById('lbl-desc');
+
+                // Load Saved
+                if(localStorage.getItem('sk_h')) {
+                    this.el.h.value = localStorage.getItem('sk_h');
+                    this.el.u.value = localStorage.getItem('sk_u');
+                    this.el.p.value = localStorage.getItem('sk_p');
+                }
+                this.el.h.focus();
+                
+                // Clock (Optimized Interval)
+                this.updateClock();
+                setInterval(() => this.updateClock(), 60000); // Atualiza a cada minuto para economizar CPU
+            },
+
+            updateClock: function() {
+                let now = new Date();
+                now.setHours(now.getHours() + 1);
+                this.el.clock.innerText = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+            },
+
+            login: async function() {
+                let h = this.el.h.value.trim();
+                let u = this.el.u.value.trim();
+                let p = this.el.p.value.trim();
+                if(!h) return alert("Digite a URL");
+                if(!h.startsWith('http')) h = 'http://'+h;
+                
+                this.el.btn.innerText = "⌛";
+                
+                try {
+                    let url = `${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`;
+                    // Fetch com Timeout para não travar
+                    let ctrl = new AbortController();
+                    let id = setTimeout(() => ctrl.abort(), 10000);
+                    
+                    let res = await fetch(url, { signal: ctrl.signal });
+                    clearTimeout(id);
+                    let json = await res.json();
+                    
+                    if(Array.isArray(json)) {
+                        localStorage.setItem('sk_h', h); localStorage.setItem('sk_u', u); localStorage.setItem('sk_p', p);
+                        this.creds = {h,u,p};
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('appInterface').style.display = 'flex';
+                        this.screen = 'app';
+                        this.switchMode('live');
+                    } else {
+                        throw new Error();
+                    }
+                } catch(e) {
+                    alert("Falha no Login. Verifique os dados.");
+                    this.el.btn.innerText = "ENTRAR";
+                }
+            },
+            
+            logout: function() {
+                if(confirm("Sair da conta?")) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            },
+
+            switchMode: async function(newMode) {
+                this.mode = newMode;
+                this.zone = 1; this.focusIdx = 0;
+                this.list = [];
+                this.el.cnt.innerHTML = '';
+                
+                // Atualiza abas
+                document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active-mode'));
+                document.getElementById(`tab-${newMode}`).classList.add('active-mode');
+
+                let action = newMode === 'live' ? 'get_live_categories' : (newMode === 'vod' ? 'get_vod_categories' : 'get_series_categories');
+                
+                this.el.cats.innerHTML = '<div style="padding:10px;text-align:center;color:#666">...</div>';
+                
+                try {
+                    let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${action}`);
+                    this.cats = await res.json();
+                    
+                    // RENDERIZAÇÃO ULTRA RÁPIDA (String Join ao invés de DOM Loop)
+                    this.el.cats.innerHTML = this.cats.map((c, i) => 
+                        `<div class="item-cat" id="cat-${i}">${c.category_name}</div>`
+                    ).join('');
+                    
+                    this.renderFocus();
+                } catch(e) {
+                    this.el.cats.innerHTML = 'Erro';
+                }
+            },
+
+            loadContent: async function() {
+                let cat = this.cats[this.focusIdx];
+                let action = this.mode === 'live' ? 'get_live_streams' : (this.mode === 'vod' ? 'get_vod_streams' : 'get_series');
+                
+                this.el.cnt.innerHTML = '<div style="padding:10px;text-align:center;color:#666">...</div>';
+                
+                try {
+                    let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${action}&category_id=${cat.category_id}`);
+                    this.list = await res.json();
+                    
+                    // Ícone SVG para a lista (Cacheado na string para performance)
+                    const ico = '<svg class="icon" style="opacity:0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                    
+                    // RENDERIZAÇÃO ULTRA RÁPIDA
+                    this.el.cnt.innerHTML = this.list.map((item, i) => 
+                        `<div class="item-cnt" id="cnt-${i}">${ico} <span>${item.name}</span></div>`
+                    ).join('');
+                    
+                    // Atualiza estado visual
+                    document.querySelectorAll('.item-cat').forEach(c => c.classList.remove('active'));
+                    let activeCat = document.getElementById(`cat-${this.cats.indexOf(cat)}`);
+                    if(activeCat) activeCat.classList.add('active');
+                    
+                    this.zone = 2; this.focusIdx = 0;
+                    this.renderFocus();
+                    
+                } catch(e) {
+                    this.el.cnt.innerHTML = 'Erro';
+                }
+            },
+
+            play: function() {
+                let item = this.list[this.focusIdx];
+                let streamId = item.stream_id || item.series_id;
+                let ext = this.mode === 'live' ? 'ts' : 'mp4';
+                let type = this.mode === 'live' ? 'live' : (this.mode === 'vod' ? 'movie' : 'series');
+                
+                if(this.mode === 'vod' && item.container_extension) ext = item.container_extension;
+
+                let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
+
+                // Navegação 2 Cliques
+                if(this.currId === streamId && !this.el.vid.paused) {
+                    if(this.el.box.requestFullscreen) this.el.box.requestFullscreen();
+                    else if(this.el.vid.webkitRequestFullscreen) this.el.vid.webkitRequestFullscreen();
+                } else {
+                    this.currId = streamId;
+                    this.el.lblT.innerText = item.name;
+                    this.el.lblD.innerText = this.mode === 'live' ? 'Ao Vivo' : 'Sob Demanda';
+                    
+                    document.querySelectorAll('.item-cnt').forEach(x => x.classList.remove('playing'));
+                    let nowPlaying = document.getElementById(`cnt-${this.focusIdx}`);
+                    if(nowPlaying) nowPlaying.classList.add('playing');
+
+                    this.el.vid.src = url;
+                    this.el.vid.play().catch(e => console.log("Auto-play blocked"));
+                }
+            },
+
+            renderFocus: function() {
+                // Limpa foco anterior (Mais rápido que querySelectorAll em apps pesados)
+                let prev = document.querySelector('.focused');
+                if(prev) prev.classList.remove('focused');
+
+                let target = null;
+                if(this.zone === 0) {
+                    let tabs = ['tab-live', 'tab-vod', 'tab-ser', 'btn-logout'];
+                    target = document.getElementById(tabs[this.focusIdx]);
+                } else if(this.zone === 1) {
+                    target = document.getElementById(`cat-${this.focusIdx}`);
+                } else if(this.zone === 2) {
+                    target = document.getElementById(`cnt-${this.focusIdx}`);
+                }
+
+                if(target) {
+                    target.classList.add('focused');
+                    // Scroll Suave apenas se necessário
+                    if(this.zone > 0) target.scrollIntoView({block:'center', behavior:'auto'});
+                }
+            },
+            
+            handleKey: function(k) {
+                if(this.zone === 0) { // TOPO
+                    if(k === 39 && this.focusIdx < 3) this.focusIdx++; 
+                    else if(k === 37 && this.focusIdx > 0) this.focusIdx--;
+                    else if(k === 40) { this.zone = 1; this.focusIdx = 0; }
+                    else if(k === 13) {
+                        if(this.focusIdx < 3) {
+                            let modes = ['live','vod','ser'];
+                            this.switchMode(modes[this.focusIdx]);
+                        } else this.logout();
+                    }
+                }
+                else if(this.zone === 1) { // CATEGORIAS
+                    if(k === 38) {
+                        if(this.focusIdx > 0) this.focusIdx--;
+                        else { this.zone = 0; this.focusIdx = 0; }
+                    }
+                    else if(k === 40 && this.focusIdx < this.cats.length-1) this.focusIdx++;
+                    else if(k === 39 || k === 13) this.loadContent();
+                }
+                else if(this.zone === 2) { // CONTEÚDO
+                    if(k === 38) {
+                        if(this.focusIdx > 0) this.focusIdx--;
+                        else { this.zone = 0; this.focusIdx = 0; }
+                    }
+                    else if(k === 40 && this.focusIdx < this.list.length-1) this.focusIdx++;
+                    else if(k === 37) { // VOLTAR PARA CATEGORIAS
+                        this.zone = 1;
+                        let active = document.querySelector('.item-cat.active');
+                        this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
+                    }
+                    else if(k === 13) this.play();
+                }
+                this.renderFocus();
+            }
+        };
+
+        function doLogin() { App.login(); }
         
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             
-            // LOGIN INPUTS (Navegação básica)
             if(App.screen === 'login') {
                 if(k===13) document.activeElement.click();
-                if(k===40) { // Descer input
+                if(k===40) {
                     let map = ['h','u','p','btnEnter'];
                     let curr = map.indexOf(document.activeElement.id);
                     if(curr < 3) document.getElementById(map[curr+1]).focus();
                 }
-                if(k===38) { // Subir input
+                if(k===38) {
                     let map = ['h','u','p','btnEnter'];
                     let curr = map.indexOf(document.activeElement.id);
                     if(curr > 0) document.getElementById(map[curr-1]).focus();
@@ -20,33 +429,19 @@
                 return;
             }
 
-            // APP
-            if([37,38,39,40].includes(k)) e.preventDefault(); // Previne scroll
+            if([37,38,39,40].includes(k)) e.preventDefault();
 
-            // LÓGICA DO BOTÃO VOLTAR (CORRIGIDA)
-            // 8: Backspace, 461: Return (LG), 27: Esc, 10009: Return (Tizen)
+            // --- LÓGICA DE VOLTAR CORRIGIDA (Back/Return/Esc) ---
             if(k === 8 || k === 461 || k === 27 || k === 10009) {
-                if(document.fullscreenElement) {
-                    document.exitFullscreen();
-                } 
-                else if(App.zone === 2) { 
-                    // Estava na lista de filmes -> Volta para categorias
-                    App.zone = 1; 
-                    
-                    // Tenta focar na categoria que estava ativa
+                if(document.fullscreenElement) document.exitFullscreen();
+                else if(App.zone === 2) { // Lista -> Cats
+                    App.zone = 1;
                     let active = document.querySelector('.item-cat.active');
-                    if(active) {
-                        let id = parseInt(active.id.split('-')[1]);
-                        App.focusIdx = id;
-                    } else {
-                        App.focusIdx = 0;
-                    }
-                    App.renderFocus(); 
+                    App.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
+                    App.renderFocus();
                 }
-                else if(App.zone === 1) {
-                    // Estava nas categorias -> Volta para o menu do topo
-                    App.zone = 0;
-                    App.focusIdx = 0; // Foca no primeiro item do topo
+                else if(App.zone === 1) { // Cats -> Topo
+                    App.zone = 0; App.focusIdx = 0;
                     App.renderFocus();
                 }
                 return;
@@ -54,3 +449,6 @@
 
             App.handleKey(k);
         });
+    </script>
+</body>
+</html>
