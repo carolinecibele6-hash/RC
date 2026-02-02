@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V16</title>
+    <title>R&C GOLD V19</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA PREMIUM V16 --- */
+        /* --- TEMA PREMIUM V19 --- */
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
-            --gold-dim: #b8860b;
+            --gold-dark: #b8860b;
             --text: #ffffff; 
-            --panel: #111;
+            --panel: rgba(15,15,15,0.98);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -30,15 +30,15 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* --- 1. LOGIN --- */
+        /* --- LOGIN --- */
         #login-layer { background: #080808; z-index: 50; }
         .netrange-box {
             width: 450px; padding: 50px; 
-            background: #111; border: 1px solid #333; border-radius: 10px;
-            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            background: #111; border: 1px solid #333; border-radius: 12px;
+            text-align: center; box-shadow: 0 0 60px rgba(0,0,0,0.9);
         }
         .nr-header {
-            color: var(--gold); font-weight: 900; font-size: 24px; 
+            color: var(--gold); font-weight: 900; font-size: 26px; 
             margin-bottom: 30px; letter-spacing: 2px;
         }
         
@@ -47,18 +47,17 @@
             background: #222; border: 1px solid #444; border-radius: 4px;
             color: #fff; text-align: center; font-size: 16px; font-weight: 600;
         }
-        /* Foco controlado manualmente */
         .nr-input.focused { background: #fff; color: #000; border-color: var(--gold); transform: scale(1.02); }
         
         .nr-btn {
             width: 100%; padding: 12px; margin-top: 15px;
-            background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
             color: #000; font-weight: 800; font-size: 16px;
             border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
         }
         .nr-btn.focused { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); border: 2px solid #fff; }
 
-        /* --- 2. MENU PRINCIPAL --- */
+        /* --- DASHBOARD --- */
         #dash-layer { 
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             flex-direction: column;
@@ -87,14 +86,14 @@
 
         .dash-footer {
             width: 90%; display: flex; justify-content: space-between;
-            border-top: 1px solid #333; padding: 20px 0; margin-bottom: 30px;
+            border-top: 1px solid #333; padding: 25px 0; margin-bottom: 30px;
             color: #888; font-size: 14px;
         }
         .foot-item b { color: #fff; display: block; margin-top: 5px; font-size: 16px; }
         .foot-item.center { text-align: center; }
         .foot-item.right { text-align: right; }
 
-        /* --- 3. CONTEÚDO --- */
+        /* --- CONTEÚDO --- */
         #content-layer { display: flex; background: #000; }
         
         .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
@@ -110,7 +109,7 @@
             width: 100%; background: #222; border: 1px solid #333; color: #fff; 
             padding: 12px; text-align: center; border-radius: 4px; font-weight: bold;
         }
-        .inp-search:focus { background: #fff; color: #000; border-color: var(--gold); }
+        .inp-search.focused { background: #fff; color: #000; border-color: var(--gold); }
         .inp-search[readonly] { background: #151515; color: #666; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
@@ -145,7 +144,7 @@
             <input type="text" id="inp1" class="nr-input" placeholder="USUÁRIO" autocomplete="off">
             <input type="password" id="inp2" class="nr-input" placeholder="SENHA" autocomplete="off">
             <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS e OK</div>
+            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS para mover e OK</div>
         </div>
     </div>
 
@@ -197,7 +196,7 @@
 
                 <div class="color-keys">
                     <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
-                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
+                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> CATEGORIAS</span>
                     <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
                     <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
                 </div>
@@ -210,6 +209,7 @@
             screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
+            loadedCatId: -1,
             
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -246,12 +246,11 @@
                     if(d && d.user_info && d.user_info.auth===1) {
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
                         
-                        // INFO: DATA DE CRIAÇÃO
-                        var created = d.user_info.created_at ? new Date(d.user_info.created_at*1000).toLocaleDateString() : "---";
+                        var created = d.user_info.created_at ? new Date(d.user_info.created_at*1000).toLocaleDateString('pt-BR') : "--/--/----";
                         document.getElementById('d-created').innerText = created;
                         
                         document.getElementById('d-conn').innerText = (d.user_info.active_cons||0) + "/" + (d.user_info.max_connections||0);
-                        document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
+                        document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString('pt-BR') : "Ilimitado";
 
                         me.setScreen(1);
                     } else alert("Dados Incorretos");
@@ -272,7 +271,9 @@
             openMode: function(m) {
                 if(m==='exit') { localStorage.clear(); location.reload(); return; }
                 this.mode = m; this.isSeries = false;
+                this.loadedCatId = -1;
                 this.setScreen(2);
+                
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
                 document.getElementById('search').value = '';
@@ -290,9 +291,16 @@
                 });
             },
 
-            loadCat: function(i) {
+            loadCat: function(i, focusList) {
+                if(this.loadedCatId === i) {
+                    if(focusList) { this.zone=2; this.idx=0; this.refreshFocus(); }
+                    return;
+                }
+
                 this.memCat = i; this.isSeries = false;
+                this.loadedCatId = i;
                 this.stop(); this.clearInfo();
+                
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
                 var el = document.getElementById('c'+i); if(el) el.classList.add('active');
@@ -304,6 +312,9 @@
                 this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
                     me.items = d||[];
                     me.renderList();
+                    if(focusList) {
+                        me.zone = 2; me.idx = 0; me.refreshFocus();
+                    }
                 });
             },
 
@@ -329,6 +340,7 @@
                 if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
                 this.stop(); this.clearInfo();
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
+                this.loadedCatId = -1; // Invalida categoria
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 var me = this;
@@ -351,7 +363,7 @@
             },
 
             clickItem: function(i) {
-                if(this.isSeries && i===-1) { this.loadCat(this.memCat); return; }
+                if(this.isSeries && i===-1) { this.loadCat(this.memCat, true); return; }
                 var item = this.items[i];
                 if(this.mode==='series' && !this.isSeries) {
                     var me = this;
@@ -383,12 +395,9 @@
             toggleFull: function() {
                 var v = document.getElementById('player');
                 var box = document.getElementById('vid-box');
-                
                 if(box.classList.contains('fs-mode')) {
-                    // SAIR
                     box.classList.remove('fs-mode');
                 } else {
-                    // ENTRAR
                     box.classList.add('fs-mode');
                     if(v.paused) v.play();
                 }
@@ -405,11 +414,11 @@
                 }
 
                 var id = null;
-                // LOGIN (MANUAL V7)
                 if(this.screen===0) { 
                     id = 'inp'+this.idx;
                     var el = document.getElementById(id);
-                    if(this.idx < 3) el.focus(); else { document.activeElement.blur(); el.classList.add('focused'); }
+                    if(this.idx < 3) { el.focus(); el.classList.add('focused'); } 
+                    else { document.activeElement.blur(); el.classList.add('focused'); }
                     return;
                 }
                 
@@ -431,7 +440,6 @@
             },
 
             move: function(k) {
-                // LOGIN (V7)
                 if(this.screen===0) {
                     if(k===40 && this.idx<3) this.idx++;
                     if(k===38 && this.idx>0) this.idx--;
@@ -446,13 +454,14 @@
                     this.refreshFocus();
                 }
                 if(this.screen===2) {
-                    // CAT
+                    // CATEGORIA
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
-                        // OK: Carrega. DIREITA: Só vai pra lista (se tiver)
-                        if(k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
-                        if(k===39) { this.zone=2; this.idx=0; }
+                        // OK: Carrega lista
+                        if(k===13) { this.loadCat(this.idx, true); }
+                        // DIREITA: PULA PRA LISTA (Index 0)
+                        if(k===39) { this.loadCat(this.idx, true); }
                     }
                     // BUSCA
                     else if(this.zone===1) {
@@ -463,8 +472,15 @@
                         var max = (this.items.length>100?100:this.items.length)-1;
                         var min = this.isSeries?-1:0;
                         if(k===40 && this.idx<max) this.idx++;
-                        if(k===38) { if(this.idx>min) this.idx--; else this.zone=1; }
+                        
+                        if(k===38) { // Cima
+                            if(this.idx>min) this.idx--; 
+                            else { this.zone=1; } // Vai pra busca
+                        }
+                        
+                        // ESQUERDA: VOLTA PRA CATEGORIA (Mantendo memória)
                         if(k===37) { this.zone=0; this.idx=this.memCat; }
+                        
                         if(k===39) { this.zone=3; }
                         if(k===13) this.clickItem(this.idx);
                     }
@@ -479,14 +495,13 @@
                         if(k===38) this.zone=2;
                         
                         if(k===13) { 
-                            // SE FULLSCREEN:
                             if(isFull) { 
-                                // SE FOR LIVE, NÃO PAUSA (Só sai do full se quiser ou nada)
-                                if(this.mode === 'live') { /* Não faz nada ou recarrega */ }
-                                else { if(v.paused) v.play(); else v.pause(); } // VOD: Pausa
-                            } 
-                            // SE PEQUENO:
-                            else { this.toggleFull(); } 
+                                // SE TV AO VIVO: NAO PAUSA
+                                if(this.mode === 'live') { /* nada */ }
+                                else { if(v.paused) v.play(); else v.pause(); } 
+                            } else { 
+                                this.toggleFull(); 
+                            }
                         }
                     }
                     this.refreshFocus();
@@ -497,18 +512,24 @@
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
             
+            // AZUL (406): Voltar ao MENU
+            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; }
+            
+            // VERDE (404): Voltar para CATEGORIAS
+            if(k===404||k===71) { 
+                e.preventDefault(); 
+                if(App.screen===2) { App.zone=0; App.refreshFocus(); }
+                return; 
+            }
+
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
-            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
             
-            // VOLTAR / BACKSPACE
+            // VOLTAR
             if(k===8||k===461||k===27) {
-                // Se estiver no INPUT DE BUSCA, Back sai para a Categoria
                 if(document.activeElement.id === 'search') {
-                    e.preventDefault();
-                    document.getElementById('search').blur();
-                    App.zone = 0; App.refreshFocus();
-                    return;
+                    e.preventDefault(); document.getElementById('search').blur();
+                    App.zone=0; App.refreshFocus(); return;
                 }
 
                 e.preventDefault();
@@ -516,8 +537,9 @@
                     if(document.getElementById('vid-box').classList.contains('fs-mode')) { App.toggleFull(); return; }
                     if(App.zone===3) { App.zone=2; App.refreshFocus(); return; }
                     if(App.zone===2 && App.isSeries) { App.clickItem(-1); return; } 
-                    if(App.zone===2) { App.zone=0; App.refreshFocus(); return; }
-                    if(App.zone===0) { App.setScreen(1); return; }
+                    
+                    // VOLTAR DA LISTA/CAT -> MENU
+                    if(App.zone===2 || App.zone===0) { App.setScreen(1); return; }
                 }
                 return;
             }
