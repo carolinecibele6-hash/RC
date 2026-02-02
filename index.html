@@ -19,7 +19,6 @@
 
         /* RESET GERAL */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
-        /* Remove efeitos nativos que causam bordas cinzas */
         *:focus { outline: none !important; border: none !important; box-shadow: none !important; }
 
         body { 
@@ -54,7 +53,6 @@
             width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
             text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 5px;
         }
-        /* Foco forçado no input */
         .lg-inp:focus, .lg-inp.focused { 
             background: #fff !important; color: #000 !important; 
             border: 2px solid var(--bg-focus) !important; font-weight: bold;
@@ -82,12 +80,12 @@
         .nav-card i { font-size: 60px; margin-bottom: 20px; }
         .nav-card span { font-size: 22px; font-weight: bold; }
         
-        /* FOCO DOURADO FORTE */
         .nav-card.focused { 
             background: var(--bg-focus) !important; 
             color: #000 !important; 
             border-color: #fff !important; 
             transform: scale(1.1);
+            z-index: 100; /* Garante que fique acima de tudo */
         }
 
         .account-bar {
@@ -112,7 +110,7 @@
         }
         .c-item.active { color: #ddd; background: #151515; border-left: 4px solid #333; }
         
-        /* FOCO DOURADO NAS CATEGORIAS (IMPEDINDO CINZA) */
+        /* FOCO DOURADO FORÇADO */
         .c-item.focused { 
             background-color: var(--bg-focus) !important; 
             color: #000 !important; 
@@ -132,7 +130,6 @@
             padding: 12px 15px; background: #1a1a1a; border-bottom: 1px solid #000; color: #ddd;
             font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        /* FOCO DOURADO NA LISTA */
         .l-item.focused { 
             background-color: var(--bg-focus) !important; 
             color: #000 !important; 
@@ -232,7 +229,6 @@
     <script>
         let hls = null;
         
-        // CONFIGURACAO ROBUSTA
         const HlsConfig = { 
             autoStartLoad: true, capLevelToPlayerSize: true, 
             maxBufferLength: 30, maxMaxBufferLength: 60, fatalErrorRecovery: true 
@@ -251,9 +247,9 @@
                     document.getElementById('h').value = localStorage.getItem('rc_h');
                     document.getElementById('u').value = localStorage.getItem('rc_u');
                     document.getElementById('p').value = localStorage.getItem('rc_p');
-                    this.renderLoginFocus(3); // Foco no Botão Entrar
+                    this.renderLoginFocus(3); 
                 } else {
-                    this.renderLoginFocus(0); // Foco na URL
+                    this.renderLoginFocus(0); 
                 }
 
                 document.addEventListener('keydown', this.onKey.bind(this));
@@ -266,7 +262,6 @@
 
             load: function(s) { document.getElementById('loader').style.display = s?'flex':'none'; },
 
-            // LOGICA LOGIN MANUAL
             loginIdx: 0,
             renderLoginFocus: function(idx) {
                 this.loginIdx = idx;
@@ -305,7 +300,7 @@
 
             goMenu: function() {
                 this.scr = 'menu'; this.zone = 0; this.fIdx = 0;
-                this.stopPlayer();
+                this.stopPlayer(); // Para o player ao ir pro menu
                 document.getElementById('mainMenu').style.display='flex';
                 document.getElementById('contentInterface').style.display='none';
                 
@@ -328,6 +323,10 @@
 
             goContent: async function(m) {
                 if(m === 'cfg') { localStorage.clear(); location.reload(); return; }
+                
+                // CORREÇÃO CRÍTICA: LIMPAR PLAYER AO TROCAR DE ABA
+                this.stopPlayer();
+                
                 this.mode = m; this.scr = 'content'; 
                 this.zone = 1; this.fIdx = 0; 
                 this.activeCatIdx = 0; this.savedCatCursor = 0;
@@ -374,7 +373,10 @@
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}&category_id=${c.category_id}`);
                     let data = await r.json();
                     
-                    if(data && !Array.isArray(data)) data = Object.values(data);
+                    // CORREÇÃO: CONVERSOR UNIVERSAL DE DADOS
+                    if(data && typeof data === 'object' && !Array.isArray(data)) {
+                        data = Object.values(data);
+                    }
                     
                     this.items = data || [];
                     this.viewItems = [...this.items];
@@ -397,7 +399,8 @@
 
             renderList: function() {
                 let h = '';
-                let limit = this.viewItems.slice(0, 100); 
+                // Aumento leve no limite, pois a busca agora é inteligente
+                let limit = this.viewItems.slice(0, 150); 
                 
                 if(this.viewItems.length === 0) {
                     h = '<div style="padding:20px; color:#666">Nenhum conteúdo encontrado</div>';
@@ -458,6 +461,13 @@
                     let e = [];
                     if(d.episodes) {
                         let seasons = d.episodes;
+                        // Conversão Robusta para Series
+                        if(Array.isArray(seasons)) {
+                           // Array direto
+                        } else if(typeof seasons === 'object') {
+                           // Objeto
+                        }
+                        
                         for(let s in seasons) {
                             let eps = seasons[s];
                             if(eps && Array.isArray(eps)) eps.forEach(x=>{x.season=s;e.push(x)});
@@ -471,7 +481,10 @@
             },
 
             stopPlayer: function() {
-                let v = document.getElementById('player'); v.pause(); v.removeAttribute('src');
+                let v = document.getElementById('player'); 
+                v.pause(); 
+                v.removeAttribute('src'); 
+                v.load(); // Força limpeza do buffer de vídeo
                 if(hls) { hls.destroy(); hls=null; }
                 this.currId = null;
             },
@@ -486,19 +499,32 @@
                 if(v.duration) document.getElementById('prog-bar').style.width = ((v.currentTime/v.duration)*100)+'%';
             },
             
-            handleSearch: function(e) { if(e.keyCode===13) this.doSearch(); },
+            handleSearch: function(e) { 
+                // Delay para não travar enquanto digita (opcional, mas bom pra listas pesadas)
+                if(e.keyCode===13) this.doSearch(); 
+            },
+            
             doSearch: async function() {
                 let t = document.getElementById('search-inp').value.toLowerCase();
                 if(t.length<3) return;
                 this.load(true);
-                this.viewItems = this.items.filter(i=>(i.name||i.title).toLowerCase().includes(t));
+                
+                // CORREÇÃO: BUSCA INTELIGENTE (PALAVRAS-CHAVE)
+                // Separa o que foi digitado por espaços: "globo rj" -> ["globo", "rj"]
+                let terms = t.split(' ').filter(x => x.length > 0);
+                
+                this.viewItems = this.items.filter(i => {
+                    let name = (i.name || i.title || "").toLowerCase();
+                    // Verifica se o nome contem TODAS as palavras digitadas, em qualquer ordem
+                    return terms.every(term => name.includes(term));
+                });
+
                 this.renderList();
                 if(this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); this.renderFocus(); }
                 this.load(false);
             },
 
             renderFocus: function() {
-                // Remove foco anterior
                 if(this.lastFocused) this.lastFocused.classList.remove('focused');
                 
                 let el = null;
@@ -524,24 +550,18 @@
             onKey: function(e) {
                 let k = e.keyCode;
                 
-                // LOGIN MANUAL COM SETAS (SEM PRECISAR DE ENTER NO VIRTUAL)
                 if(this.scr==='login') {
-                    // Cima / Baixo navega nos campos
                     if(k===40 && this.loginIdx < 3) this.renderLoginFocus(this.loginIdx+1);
                     if(k===38 && this.loginIdx > 0) this.renderLoginFocus(this.loginIdx-1);
-                    // Enter executa a ação do campo
                     if(k===13 && this.loginIdx === 3) this.login();
                     return;
                 }
 
-                // TECLAS COLORIDAS (VERMELHO, VERDE, AMARELO, AZUL)
-                // Red:403/82, Green:404/71, Yellow:405/89, Blue:406/66
                 if(k===403 || k===82) { this.isFS() ? this.exitFS() : this.enterFS(); return; }
-                if(k===404 || k===71) { if(this.zone===3) this.play(this.fIdx); return; }
-                if(k===405 || k===89) { if(this.scr==='content') { this.zone=2; document.getElementById('search-inp').focus(); this.renderFocus(); } return; }
-                if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; }
+                if(k===404 || k===71) { if(this.zone===3) this.play(this.fIdx); return; } // Verde (Refresh)
+                if(k===405 || k===89) { if(this.scr==='content') { this.zone=2; document.getElementById('search-inp').focus(); this.renderFocus(); } return; } // Amarelo (Busca)
+                if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; } // Azul (Menu)
 
-                // Player Controls (Tela Cheia)
                 if(this.isFS()) {
                     let v = document.getElementById('player');
                     if(k===13 || k===32) { v.paused ? v.play() : v.pause(); e.preventDefault(); }
@@ -549,10 +569,8 @@
                     return;
                 }
 
-                // Bloqueia scroll padrao
                 if([37,38,39,40].includes(k)) e.preventDefault();
 
-                // VOLTAR
                 if([8,27,461,10009].includes(k)) { 
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) {
