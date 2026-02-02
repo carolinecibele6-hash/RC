@@ -17,7 +17,7 @@
             --text-dim: #888888;
         }
 
-        /* RESET OTIMIZADO */
+        /* RESET */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         * { box-shadow: none !important; text-shadow: none !important; transition: none !important; }
 
@@ -29,7 +29,7 @@
             display: flex; flex-direction: column;
         }
 
-        /* --- LOADER --- */
+        /* LOADER */
         #loader {
             position: fixed; top:0; left:0; width:100%; height:100%; background: #000;
             z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;
@@ -40,44 +40,27 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- TELA LOGIN (LAYOUT ORIGINAL RESTAURADO) --- */
+        /* TELA LOGIN (Layout Original) */
         #loginScreen {
             position: absolute; width: 100%; height: 100%; z-index: 5000;
             display: flex; justify-content: center; align-items: center; background: #000;
         }
         .login-box {
-            width: 400px; /* Largura original */
-            padding: 40px; /* Padding original */
-            background: #111; 
-            border: 1px solid #333; 
-            border-radius: 10px; /* Bordas arredondadas originais */
-            text-align: center; 
-            border-top: 4px solid var(--bg-focus); /* Dourado */
+            width: 400px; padding: 40px; background: #111; border: 1px solid #333; 
+            border-radius: 10px; text-align: center; border-top: 4px solid var(--bg-focus);
         }
         .lg-inp {
-            width: 100%; height: 50px; 
-            background: #222; 
-            border: 1px solid #444; 
-            color: #fff;
-            text-align: center; 
-            margin-bottom: 15px; /* Espaçamento original */
-            font-size: 16px; 
-            border-radius: 5px; /* Arredondado */
+            width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
+            text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 5px;
         }
         .lg-inp:focus { background: #fff; color: #000; border-color: var(--bg-focus); font-weight: bold; }
         .lg-btn {
-            width: 100%; height: 50px; 
-            background: var(--bg-focus); 
-            border: none; 
-            font-weight: bold;
-            font-size: 18px; 
-            cursor: pointer; 
-            border-radius: 5px; /* Arredondado */
-            color: #000;
+            width: 100%; height: 50px; background: var(--bg-focus); border: none; font-weight: bold;
+            font-size: 18px; cursor: pointer; border-radius: 5px; color: #000;
         }
         .lg-btn:focus { transform: scale(1.05); }
 
-        /* --- MENU PRINCIPAL --- */
+        /* MENU PRINCIPAL */
         #mainMenu {
             display: none; width: 100%; height: 100%; flex-direction: column; 
             align-items: center; justify-content: center; z-index: 100;
@@ -103,7 +86,7 @@
         }
         .acc-item strong { color: var(--bg-focus); text-transform: uppercase; margin-right: 5px; }
 
-        /* --- INTERFACE DE CONTEÚDO --- */
+        /* INTERFACE DE CONTEÚDO */
         #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
         
         /* Coluna 1: Categorias */
@@ -149,7 +132,6 @@
         }
         .frame.focused { border: 2px solid var(--bg-focus); }
         
-        /* Adicionado crossorigin para melhor suporte */
         video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; }
 
         /* Info */
@@ -236,8 +218,7 @@
     <script>
         let hls = null;
         
-        // CONFIGURAÇÕES DE ANTES (RESTAURADAS)
-        // Buffer otimizado e recuperação de erros
+        // Configuração Robusta
         const HlsConfig = { 
             autoStartLoad: true, 
             capLevelToPlayerSize: true, 
@@ -255,13 +236,18 @@
             userInfo: null, lastFocused: null,
 
             init: function() {
+                // Recuperar Login
                 if(localStorage.getItem('rc_h')) {
                     document.getElementById('h').value = localStorage.getItem('rc_h');
                     document.getElementById('u').value = localStorage.getItem('rc_u');
                     document.getElementById('p').value = localStorage.getItem('rc_p');
-                    document.getElementById('btnEnter').focus();
-                } else document.getElementById('h').focus();
+                    // Focar no botão entrar se já tiver dados
+                    setTimeout(()=>document.getElementById('btnEnter').focus(), 500);
+                } else {
+                    setTimeout(()=>document.getElementById('h').focus(), 500);
+                }
 
+                // Escuta global de teclas
                 document.addEventListener('keydown', this.onKey.bind(this));
                 
                 const v = document.getElementById('player');
@@ -409,7 +395,6 @@
                 document.getElementById('list-cnt').innerHTML = h;
             },
 
-            // CONFIGURAÇÕES DE PLAYER RESTAURADAS (HLS ROBUSTO)
             play: function(idx, isRetry = false) {
                 if(!this.viewItems[idx]) return;
                 let it = this.viewItems[idx];
@@ -434,34 +419,26 @@
                 if(hls) { hls.destroy(); hls=null; }
                 if(!isRetry) vid.removeAttribute('src'); 
                 
-                // 1. Tenta Nativo (Melhor para TV)
                 if (vid.canPlayType('application/vnd.apple.mpegurl')) {
                     vid.src = url;
                     vid.play().catch(e=>{});
-                } 
-                // 2. Tenta HLS.js com Configuração Robusta
-                else if (Hls.isSupported()) {
-                    hls = new Hls(HlsConfig); // Usa a config restaurada
+                } else if (Hls.isSupported()) {
+                    hls = new Hls(HlsConfig); 
                     hls.loadSource(url);
                     hls.attachMedia(vid);
                     hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
-                    
-                    // Tratamento de Erro Robusto (Restaurado)
                     hls.on(Hls.Events.ERROR, function (event, data) {
                         if (data.fatal) {
                             switch (data.type) {
                                 case Hls.ErrorTypes.NETWORK_ERROR:
-                                    console.log("Network error, trying to recover...");
                                     hls.startLoad();
                                     break;
                                 case Hls.ErrorTypes.MEDIA_ERROR:
-                                    console.log("Media error, trying to recover...");
                                     hls.recoverMediaError();
                                     break;
                                 default:
                                     hls.destroy();
-                                    vid.src = url; // Fallback final
-                                    vid.play();
+                                    vid.src = url; vid.play();
                                     break;
                             }
                         }
@@ -541,10 +518,23 @@
                 }
             },
 
+            // CONTROLE DE TECLAS CLASSICO E ROBUSTO
             onKey: function(e) {
                 let k = e.keyCode;
-                if(this.scr==='login') { if(k===13) this.login(); return; }
+                
+                // Login Screen - Comportamento Nativo + Enter
+                if(this.scr==='login') {
+                    if(k===13) { 
+                        let a = document.activeElement;
+                        if(a.id === 'btnEnter') this.login();
+                        else if(a.id === 'h') document.getElementById('u').focus();
+                        else if(a.id === 'u') document.getElementById('p').focus();
+                        else if(a.id === 'p') document.getElementById('btnEnter').focus();
+                    }
+                    return; 
+                }
 
+                // Player Controls
                 if(this.isFS()) {
                     let v = document.getElementById('player');
                     if(k===13 || k===32) { v.paused ? v.play() : v.pause(); e.preventDefault(); }
@@ -552,8 +542,10 @@
                     return;
                 }
 
+                // Bloqueia scroll padrão apenas nas setas
                 if([37,38,39,40].includes(k)) e.preventDefault();
 
+                // Navegação
                 if([8,27,461,10009].includes(k)) { 
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) {
@@ -573,18 +565,18 @@
                     if(k===13) this.goContent(['live','vod','ser','cfg'][this.fIdx]);
                 }
                 else {
-                    if(this.zone===1) { 
+                    if(this.zone===1) { // Cat
                         if(k===40 && this.fIdx < this.cats.length-1) this.fIdx++;
                         if(k===38 && this.fIdx > 0) this.fIdx--;
                         if(k===39) { this.savedCatCursor = this.fIdx; this.zone=2; document.getElementById('search-inp').focus(); }
                         if(k===13) { this.selectCategory(); }
                     }
-                    else if(this.zone===2) { 
+                    else if(this.zone===2) { // Search
                         if(k===40 && this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===37) { this.zone=1; this.fIdx = this.savedCatCursor; document.getElementById('search-inp').blur(); }
                         if(k===13) this.doSearch();
                     }
-                    else if(this.zone===3) { 
+                    else if(this.zone===3) { // List
                         if(k===38) {
                             if(this.fIdx>0) this.fIdx--;
                             else { this.zone=2; document.getElementById('search-inp').focus(); }
