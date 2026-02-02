@@ -1,100 +1,208 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD TV</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+// =================================================================
+// CONFIGURAÇÃO DE TECLAS (PADRÃO NETRANGE / PHILCO)
+// =================================================================
+const KEYS = {
+    UP: 38,
+    DOWN: 40,
+    LEFT: 37,
+    RIGHT: 39,
+    ENTER: 13,
+    BACK: 461, // Às vezes 8 ou 10009 dependendo do modelo exato
+    RED: 403,
+    GREEN: 404,
+    YELLOW: 405,
+    BLUE: 406
+};
 
-    <div id="login-screen" class="screen active-screen">
-        <div class="login-box">
-             <h2 class="app-title"><span style="color: var(--gold);">R&C</span> GOLD PLAYER</h2>
-            
-            <input type="text" id="host-url" class="focusable input-field" placeholder="http://url-do-servidor.com" value="http://">
-            <input type="text" id="username" class="focusable input-field" placeholder="Usuário (Username)">
-            <input type="password" id="password" class="focusable input-field" placeholder="Senha (Password)">
-            
-            <button id="btn-connect" class="focusable btn-gold">CONECTAR</button>
-            
-            <p id="login-error" class="error-msg">Erro de conexão. Verifique os dados.</p>
-        </div>
-    </div>
+// Estado Global
+let currentZone = 'login'; // login, dashboard, sidebar, content
+let focusedIndex = 0;
 
-    <div id="dashboard-screen" class="screen">
-        <div class="header">
-            <img src="seu-logo-warez.png" alt="R&C Logo" class="top-logo">
-        </div>
-        <div class="menu-grid">
-            <div class="menu-card focusable" onclick="navigateTo('live')">
-                <i class="icon-tv">📺</i>
-                <span>TV ao vivo</span>
-            </div>
-            <div class="menu-card focusable" onclick="navigateTo('movies')">
-                <i class="icon-movie">🎬</i>
-                <span>Filmes</span>
-            </div>
-            <div class="menu-card focusable" onclick="navigateTo('series')">
-                <i class="icon-series">🍿</i>
-                <span>Séries</span>
-            </div>
-             <div class="menu-card focusable">
-                <i class="icon-settings">⚙️</i>
-                <span>Configurações</span>
-            </div>
-        </div>
-    </div>
+// =================================================================
+// GERENCIADOR DE NAVEGAÇÃO
+// =================================================================
 
-    <div id="content-screen" class="screen">
-        <div class="top-bar">
-             <div class="top-left">R&C GOLD <span id="section-title"> > TV AO VIVO</span></div>
-             <div class="clock" id="clock">20:00</div>
-        </div>
+document.addEventListener('keydown', function(e) {
+    // IMPORTANTE: Impede o mouse virtual de aparecer/mover
+    e.preventDefault();
 
-        <div class="main-layout">
-            <div class="sidebar-left" id="category-list">
-                <h4 class="sidebar-header">CATEGORIAS</h4>
-                <ul class="scrollable-list" id="cat-ul">
-                    <li class="focusable cat-item active-cat">FAVORITOS</li>
-                    <li class="focusable cat-item">GLOBO SP</li>
-                    <li class="focusable cat-item">ESPORTES</li>
-                    <li class="focusable cat-item">FILMES & SÉRIES</li>
-                </ul>
-            </div>
+    const key = e.keyCode;
 
-            <div class="content-middle" id="channel-list">
-                 <div class="channel-item focusable" data-stream-url="...">
-                    <span class="ch-num">001</span> ESPN 1 FHD
-                </div>
-                <div class="channel-item focusable">
-                    <span class="ch-num">002</span> ESPN 2 FHD
-                </div>
-                </div>
-            
-            <div class="sidebar-right" id="epg-info">
-                <div class="mini-player-placeholder">
-                    <span>▶ Preview</span>
-                </div>
-                
-                <div class="epg-list">
-                    <div class="epg-item current-program">
-                        <span class="time gold-text">19:30 - 21:00</span>
-                        <span class="prog-title">Linha de Passe: Mesa-Redonda</span>
-                    </div>
-                     <div class="epg-item">
-                        <span class="time">21:00 - 22:00</span>
-                        <span class="prog-title">Bola da Vez</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    // 1. Mapeamento de Botões Coloridos (Ações Globais)
+    if (key === KEYS.RED) handleColorButton('RED');
+    if (key === KEYS.GREEN) handleColorButton('GREEN');
+    if (key === KEYS.YELLOW) handleColorButton('YELLOW');
+    if (key === KEYS.BLUE) handleColorButton('BLUE');
+    if (key === KEYS.BACK) handleBack();
 
-    <div id="player-screen" class="screen">
-        <video id="main-video" controls autoplay style="width: 100%; height: 100%;"></video>
-    </div>
+    // 2. Navegação Direcional
+    if ([KEYS.UP, KEYS.DOWN, KEYS.LEFT, KEYS.RIGHT, KEYS.ENTER].includes(key)) {
+        handleNavigation(key);
+    }
+});
 
-    <script src="app.js"></script>
-</body>
-</html>
+function handleNavigation(key) {
+    // Busca todos os itens focáveis NA TELA ATUAL visível
+    const activeScreen = document.querySelector('.screen.active-screen');
+    if (!activeScreen) return;
+
+    // Seletor inteligente baseada na zona (Melhora a performance)
+    let elements = Array.from(activeScreen.querySelectorAll('.focusable'));
+    
+    // Se não houver elementos (ex: carregando), ignora
+    if (elements.length === 0) return;
+
+    // Garante que o índice esteja dentro dos limites
+    if (focusedIndex >= elements.length) focusedIndex = elements.length - 1;
+    if (focusedIndex < 0) focusedIndex = 0;
+
+    const currentEl = elements[focusedIndex];
+
+    // --- LÓGICA DE MOVIMENTO ---
+    if (key === KEYS.ENTER) {
+        currentEl.click(); // Simula o clique
+        return;
+    }
+
+    // Remove foco visual atual
+    currentEl.classList.remove('focused');
+
+    // NAVEGAÇÃO ESPACIAL SIMPLIFICADA
+    // Define quantas colunas tem o layout atual para saber se sobe/desce ou vai p/ lado
+    let columns = 1; 
+    if (activeScreen.id === 'dashboard-screen') columns = 3; // Exemplo: Menu principal tem 3 cards lado a lado
+    
+    // Lógica Específica para a Tela de Conteúdo (Sidebar -> Lista -> EPG)
+    if (activeScreen.id === 'content-screen') {
+        handleContentScreenNav(key, currentEl);
+        return; // Sai da função padrão pois a tela de conteúdo tem lógica própria
+    }
+
+    // Lógica Padrão (Login e Dashboard)
+    if (key === KEYS.DOWN) {
+        focusedIndex = Math.min(focusedIndex + columns, elements.length - 1);
+    } else if (key === KEYS.UP) {
+        focusedIndex = Math.max(focusedIndex - columns, 0);
+    } else if (key === KEYS.RIGHT) {
+        if ((focusedIndex + 1) % columns !== 0) focusedIndex++; // Não deixa pular linha se for grid
+        else focusedIndex = Math.min(focusedIndex + 1, elements.length - 1);
+    } else if (key === KEYS.LEFT) {
+        if (focusedIndex % columns !== 0) focusedIndex--; // Não deixa voltar linha se for grid
+        else focusedIndex = Math.max(focusedIndex - 1, 0);
+    }
+
+    // Aplica novo foco
+    applyFocus(elements[focusedIndex]);
+}
+
+// Lógica Especial para a Tela Principal (Listas)
+function handleContentScreenNav(key, currentEl) {
+    // Zonas: 'sidebar-left' (Categorias) | 'content-middle' (Canais)
+    const parentId = currentEl.parentElement.id || currentEl.parentElement.parentElement.id;
+
+    if (key === KEYS.UP) {
+        moveVertical(currentEl, -1);
+    } else if (key === KEYS.DOWN) {
+        moveVertical(currentEl, 1);
+    } else if (key === KEYS.RIGHT) {
+        // Se estiver na Categoria -> Vai para Canais
+        if (parentId.includes('category-list') || currentEl.classList.contains('cat-item')) {
+            focusFirstItem('channel-list');
+        }
+    } else if (key === KEYS.LEFT) {
+        // Se estiver nos Canais -> Volta para Categoria
+        if (parentId.includes('channel-list') || currentEl.classList.contains('channel-item')) {
+            focusFirstItem('category-list');
+        }
+    }
+}
+
+// Auxiliar: Move para cima/baixo dentro da mesma lista
+function moveVertical(element, direction) {
+    const container = element.parentElement;
+    const siblings = Array.from(container.querySelectorAll('.focusable'));
+    let idx = siblings.indexOf(element);
+    
+    let newIdx = idx + direction;
+    if (newIdx >= 0 && newIdx < siblings.length) {
+        // Remove foco antigo e seta novo
+        element.classList.remove('focused');
+        applyFocus(siblings[newIdx]);
+    }
+}
+
+// Auxiliar: Pula para a primeira opção de outra coluna
+function focusFirstItem(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const target = container.querySelector('.focusable');
+    if (target) {
+        document.querySelector('.focused')?.classList.remove('focused');
+        applyFocus(target);
+    }
+}
+
+function applyFocus(element) {
+    element.classList.add('focused');
+    element.focus();
+    element.scrollIntoView({ behavior: 'auto', block: 'center' });
+    
+    // Atualiza o índice global se estivermos na lógica padrão
+    const allFocusables = Array.from(document.querySelector('.active-screen').querySelectorAll('.focusable'));
+    focusedIndex = allFocusables.indexOf(element);
+}
+
+// =================================================================
+// FUNÇÕES DOS BOTÕES COLORIDOS
+// =================================================================
+function handleColorButton(color) {
+    const screen = document.querySelector('.active-screen').id;
+    console.log(`Botão ${color} pressionado na tela ${screen}`);
+
+    // Exemplo de ações personalizadas
+    if (color === 'RED') {
+        // Ação: SAIR ou LOGOUT
+        if (screen !== 'login-screen') {
+            if(confirm("Deseja desconectar?")) changeScreen('login-screen');
+        }
+    }
+    else if (color === 'GREEN') {
+        // Ação: PESQUISAR ou RECARREGAR
+        alert("Função Pesquisar (A implementar)");
+    }
+    else if (color === 'YELLOW') {
+        // Ação: ADICIONAR FAVORITOS
+        const focused = document.querySelector('.focused');
+        if (focused && focused.classList.contains('channel-item')) {
+            focused.classList.toggle('favorite'); // Exemplo visual
+            alert("Canal adicionado aos favoritos!");
+        }
+    }
+    else if (color === 'BLUE') {
+        // Ação: CONFIGURAÇÕES ou MUDAR FORMATO DE TELA
+        alert("Ajustes de Tela / Áudio");
+    }
+}
+
+// =================================================================
+// INICIALIZAÇÃO E UTILITÁRIOS (IGUAL AO ANTERIOR)
+// =================================================================
+window.onload = function() {
+    changeScreen('login-screen');
+};
+
+function changeScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
+    const newScreen = document.getElementById(screenId);
+    newScreen.classList.add('active-screen');
+    
+    // Foca automaticamente no primeiro item da nova tela
+    focusedIndex = 0;
+    const firstItem = newScreen.querySelector('.focusable');
+    if (firstItem) applyFocus(firstItem);
+}
+
+// ... (Mantenha as funções de Login e Relógio do código anterior aqui) ...
+// Função Login Simples para Teste
+document.getElementById('btn-connect').addEventListener('click', () => changeScreen('dashboard-screen'));
