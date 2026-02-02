@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD V2 - ULTIMATE</title>
+    <title>SKY GOLD V3 - FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -29,6 +29,7 @@
         #loader {
             position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
+            transition: opacity 0.5s;
         }
         .spinner {
             width: 50px; height: 50px; border: 4px solid #333; border-top: 4px solid var(--sky-gold);
@@ -147,8 +148,8 @@
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:var(--sky-gold); margin-bottom:20px">SKY GOLD LOGIN</h2>
-            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)">
+            <h2 style="color:var(--sky-gold); margin-bottom:20px">SKY GOLD</h2>
+            <input type="text" id="h" class="lg-inp" placeholder="URL DNS (http://...)">
             <input type="text" id="u" class="lg-inp" placeholder="Usuário">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
             <button id="btnEnter" class="lg-btn">ENTRAR</button>
@@ -199,18 +200,32 @@
             scr: 'login', zone: 0, fIdx: 0,
             creds: {}, mode: 'live',
             cats: [], items: [], viewItems: [], 
-            renderedCount: 0, // Para paginação local (Anti-Lag)
+            renderedCount: 0,
             isSeries: false, currId: null,
 
             init: function() {
-                if(localStorage.getItem('sg_h')) {
-                    this.creds = { h: localStorage.getItem('sg_h'), u: localStorage.getItem('sg_u'), p: localStorage.getItem('sg_p') };
-                    document.getElementById('h').value = this.creds.h;
-                    document.getElementById('u').value = this.creds.u;
-                    document.getElementById('p').value = this.creds.p;
-                    this.login(true);
-                } else {
+                try {
+                    // CORREÇÃO DO BUG DE LOGIN AUTOMÁTICO
+                    // Tenta recuperar as chaves
+                    let h = localStorage.getItem('sg_h');
+                    let u = localStorage.getItem('sg_u');
+                    let p = localStorage.getItem('sg_p');
+
+                    if(h && u && p) {
+                        // Se TIVER dados completos, carrega e tenta logar
+                        this.creds = { h: h, u: u, p: p };
+                        document.getElementById('h').value = h;
+                        document.getElementById('u').value = u;
+                        document.getElementById('p').value = p;
+                        this.login(true);
+                    } else {
+                        // Se NÃO TIVER dados, força erro para cair no catch e liberar a tela
+                        throw new Error("No Creds");
+                    }
+                } catch(e) {
+                    // Estado Inicial Limpo: Esconde Loader, Mostra Login
                     document.getElementById('loader').style.display = 'none';
+                    document.getElementById('loginScreen').style.display = 'flex';
                     document.getElementById('h').focus();
                 }
 
@@ -219,7 +234,7 @@
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
                 v.addEventListener('play', () => this.hideOSD());
-                v.addEventListener('pause', () => this.showOSD('PAUSADO', false)); // Pause mantem OSD
+                v.addEventListener('pause', () => this.showOSD('PAUSADO', false));
                 v.addEventListener('ended', () => {
                     if(this.isSeries && this.fIdx < this.viewItems.length-1) {
                         this.fIdx++; this.play(this.fIdx); this.renderFocus();
@@ -244,8 +259,11 @@
                         localStorage.setItem('sg_h',h); localStorage.setItem('sg_u',u); localStorage.setItem('sg_p',p);
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
-                    } else if(!auto) alert('Login Inválido');
-                } catch(e) { if(!auto) alert('Erro Conexão'); }
+                    } else {
+                        if(auto) { localStorage.clear(); location.reload(); } // Se falhar auto-login, reseta
+                        else alert('Login Inválido');
+                    }
+                } catch(e) { if(!auto) alert('Erro Conexão'); else { localStorage.clear(); location.reload(); } }
                 if(!auto) this.load(false);
             },
 
@@ -284,10 +302,8 @@
                 this.load(false);
             },
 
-            // --- ANTI-LAG: Renderização de Categorias ---
             renderCats: function() {
                 let h='';
-                // Renderiza todas as categorias (texto puro é leve)
                 this.cats.forEach((c,i)=> h+=`<div class="c-item" id="c-${i}">${c.category_name}</div>`);
                 document.getElementById('list-cat').innerHTML = h;
                 this.renderFocus();
@@ -306,10 +322,9 @@
                     this.items = await r.json();
                     this.viewItems = [...this.items];
                     
-                    // Reset da Paginação
                     this.renderedCount = 0;
-                    document.getElementById('list-cnt').innerHTML = ''; // Limpa lista
-                    this.appendItems(50); // Renderiza apenas os primeiros 50
+                    document.getElementById('list-cnt').innerHTML = '';
+                    this.appendItems(50);
                     
                     this.zone=2; document.getElementById('search-inp').focus();
                     this.renderFocus();
@@ -317,13 +332,12 @@
                 this.load(false);
             },
 
-            // --- ANTI-LAG: Renderização Dinâmica (Infinite Scroll) ---
             appendItems: function(batchSize) {
                 let container = document.getElementById('list-cnt');
                 let start = this.renderedCount;
                 let end = Math.min(start + batchSize, this.viewItems.length);
                 
-                if(start >= end) return; // Nada mais a renderizar
+                if(start >= end) return;
 
                 let fragment = document.createDocumentFragment();
                 for(let i=start; i<end; i++) {
@@ -338,7 +352,6 @@
                     fragment.appendChild(div);
                 }
                 
-                // Se for a primeira renderização de série, adiciona botão voltar
                 if(this.isSeries && start===0) {
                     let backBtn = document.createElement('div');
                     backBtn.className = 'l-item';
@@ -362,16 +375,15 @@
                 if(this.currId === sid && !vid.paused) { this.enterFS(); return; }
                 
                 this.currId = sid;
-                // CORREÇÃO CRÍTICA PARA TV AO VIVO: Forçar .m3u8
                 let ext = it.container_extension;
-                if(this.mode === 'live') ext = 'm3u8'; 
+                if(this.mode === 'live') ext = 'm3u8'; // FORÇAR M3U8 PARA TV
                 else if(!ext) ext = 'mp4';
 
                 let type = this.mode==='live'?'live':(this.mode==='ser'?'series':'movie');
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${sid}.${ext}`;
 
                 document.getElementById('lbl-title').innerText = it.name||it.title;
-                document.getElementById('lbl-desc').innerText = "Carregando...";
+                document.getElementById('lbl-desc').innerText = "Carregando sinal...";
                 
                 this.stopPlayer();
                 
@@ -380,11 +392,7 @@
                     hls.loadSource(url); hls.attachMedia(vid);
                     hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
                     hls.on(Hls.Events.ERROR, (e, data) => {
-                        if(data.fatal) {
-                            hls.destroy(); 
-                            // Tenta fallback direto se HLS falhar
-                            vid.src = url; vid.play(); 
-                        }
+                        if(data.fatal) { hls.destroy(); vid.src = url; vid.play(); }
                     });
                 } else {
                     vid.src = url; vid.play();
@@ -418,7 +426,6 @@
                 this.currId = null;
             },
 
-            // --- FULLSCREEN & OSD ---
             isFS: function() { return document.getElementById('v-box').classList.contains('fs'); },
             enterFS: function() { document.getElementById('v-box').classList.add('fs'); document.activeElement.blur(); },
             exitFS: function() { document.getElementById('v-box').classList.remove('fs'); if(this.zone===3) this.renderFocus(); },
@@ -428,24 +435,20 @@
                 if(!v.duration) return;
                 v.currentTime += val;
                 
-                // Mostra notificação visual (+15s)
                 let t = document.getElementById('seek-osd');
                 t.innerText = val>0 ? `+${val}s` : `${val}s`;
                 t.style.display='block';
                 setTimeout(()=>t.style.display='none', 800);
 
-                this.showOSD('BUSCANDO...', true); // true = auto-hide
+                this.showOSD('BUSCANDO...', true);
             },
 
             showOSD: function(txt, autoHide) {
                 if(this.mode==='live') return;
                 document.getElementById('st-tit').innerText = txt;
                 document.getElementById('osd').style.display = 'flex';
-                
                 clearTimeout(osdTimer);
-                if(autoHide) {
-                    osdTimer = setTimeout(() => this.hideOSD(), 2500); // Some em 2.5s
-                }
+                if(autoHide) { osdTimer = setTimeout(() => this.hideOSD(), 2500); }
             },
             hideOSD: function() { document.getElementById('osd').style.display='none'; },
 
@@ -453,7 +456,6 @@
                 if(!App.isFS() || App.mode === 'live') return;
                 let v = document.getElementById('player');
                 if(isNaN(v.duration)) return;
-                
                 let p = (v.currentTime/v.duration)*100;
                 document.getElementById('prog-bar').style.width = p+'%';
                 
@@ -462,27 +464,19 @@
                 document.getElementById('st-time').innerText = `${cur} / ${tot}`;
             },
 
-            // --- BUSCA ---
-            handleSearch: function(e) {
-                if(e.keyCode === 13) { clearTimeout(searchTimer); this.doSearch(); }
-            },
+            handleSearch: function(e) { if(e.keyCode === 13) { clearTimeout(searchTimer); this.doSearch(); } },
             doSearch: function() {
                 let term = document.getElementById('search-inp').value.toLowerCase();
                 if(term.length < 3) return;
-
                 this.viewItems = this.items.filter(i => (i.name||i.title).toLowerCase().includes(term));
-                
                 this.renderedCount = 0;
                 document.getElementById('list-cnt').innerHTML = '';
                 this.appendItems(50);
-                
                 if(this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); this.renderFocus(); }
             },
 
-            // --- CONTROLES ---
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
-                
                 if(this.scr==='menu') {
                     ['card-live','card-mov','card-ser','card-cfg'].forEach((id,i)=>{
                         if(i===this.fIdx) document.getElementById(id).classList.add('focused');
@@ -503,29 +497,20 @@
 
             onKey: function(e) {
                 let k = e.keyCode;
-                
-                // LOGIN
                 if(this.scr==='login') {
                     if(k===13) {
-                        if(document.activeElement.id==='p') this.login();
-                        else if(document.activeElement.id==='btnEnter') this.login();
-                        else { 
-                            let n = document.activeElement.nextElementSibling;
-                            if(n) n.focus(); 
-                        }
+                        if(document.activeElement.id==='p'||document.activeElement.id==='btnEnter') this.login();
+                        else document.activeElement.nextElementSibling?.focus();
                     }
                     else if(k===40) document.activeElement.nextElementSibling?.focus();
                     else if(k===38) document.activeElement.previousElementSibling?.focus();
                     return;
                 }
 
-                // PLAYER FULLSCREEN
                 if(this.isFS()) {
                     e.preventDefault();
                     if(k===8||k===27||k===461||k===10009) this.exitFS();
-                    if(k===13||k===32) {
-                        let v=document.getElementById('player'); v.paused?v.play():v.pause();
-                    }
+                    if(k===13||k===32) { let v=document.getElementById('player'); v.paused?v.play():v.pause(); }
                     if(this.mode!=='live') {
                         if(k===39) this.seek(15);
                         if(k===37) this.seek(-15);
@@ -533,10 +518,8 @@
                     return;
                 }
 
-                // PREVINE SCROLL PADRÃO
                 if([37,38,39,40].includes(k)) e.preventDefault();
 
-                // VOLTAR
                 if([8,27,461,10009].includes(k)) {
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) this.loadCat();
@@ -551,20 +534,19 @@
                     if(k===13) this.goContent(['live','vod','ser','cfg'][this.fIdx]);
                 }
                 else {
-                    if(this.zone===2 && k>=48 && k<=90) return; // Digitando
-
-                    if(this.zone===1) { // Cat
+                    if(this.zone===2 && k>=48 && k<=90) return;
+                    if(this.zone===1) {
                         if(k===40 && this.fIdx<this.cats.length-1) this.fIdx++;
                         if(k===38 && this.fIdx>0) this.fIdx--;
                         if(k===39) { this.zone=2; document.getElementById('search-inp').focus(); }
                         if(k===13) this.loadCat();
                     }
-                    else if(this.zone===2) { // Search
+                    else if(this.zone===2) {
                         if(k===40 && this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===37) { this.zone=1; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===13) this.doSearch();
                     }
-                    else if(this.zone===3) { // List
+                    else if(this.zone===3) {
                         if(k===38) {
                             if(this.fIdx>0) this.fIdx--;
                             else if(this.isSeries && this.fIdx===0) this.fIdx=-1; 
@@ -573,7 +555,6 @@
                         if(k===40) {
                             if(this.fIdx < this.viewItems.length-1) {
                                 this.fIdx++;
-                                // ANTI-LAG: Renderiza mais se chegar perto do fim
                                 if(this.fIdx >= this.renderedCount - 10) this.appendItems(30);
                             }
                         }
@@ -584,8 +565,7 @@
                         }
                     }
                 }
-
-                // COLORS
+                
                 if(k===403||k===82) this.isFS()?this.exitFS():this.enterFS();
                 if(k===406||k===66) { this.exitFS(); this.goMenu(); }
                 
