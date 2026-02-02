@@ -3,144 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - V5.1 HYBRID</title>
+    <title>SKY GOLD - V6.0 RESTORE</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
 
     <style>
-        /* --- ESTILOS VISUAIS (MISTURA V5 BONITA COM V4 FUNCIONAL) --- */
-        :root {
-            --bg-body: #101214;
-            --bg-header: #16181c; /* Cor V5 */
-            --highlight: #ffcc00; /* Amarelo V5 */
+        /* --- ESTILOS VISUAIS (V5) + ESTRUTURA (V3) --- */
+        :root { 
+            --bg-body: #101214; 
+            --bg-header: #16181c; 
+            --highlight: #ffcc00; /* Dourado Novo */
             --focus-bg: rgba(255, 204, 0, 0.15);
-            --border: #2a2e33;
-            --gold: #FFD700;
+            --border: #2a2e33; 
+            --gold: #FFD700; 
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none !important; user-select: none; }
+        
+        /* MATAR BORDA AMARELA DA TV (GLOBAL) */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none !important; border: none !important; user-select: none; }
+        *:focus { outline: 0 !important; box-shadow: none !important; }
+
         body { 
             background: var(--bg-body); color: #e0e0e0; 
             font-family: 'Roboto Condensed', sans-serif; 
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; 
         }
 
-        /* --- LOGIN (ESTILO V5 - BONITO) --- */
+        /* --- LOGIN (BONITO DA V5) --- */
         #loginScreen {
             position: absolute; width: 100%; height: 100%; z-index: 5000;
             background: radial-gradient(circle at center, #1a1d21 0%, #000 100%);
             display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            width: 400px; padding: 40px; background: rgba(0,0,0,0.8);
-            border-top: 3px solid var(--highlight); text-align: center;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            width: 420px; padding: 40px; background: rgba(0,0,0,0.85);
+            border-top: 4px solid var(--highlight); text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.7);
         }
         .lg-title { color: var(--highlight); font-size: 28px; font-weight: bold; margin-bottom: 30px; letter-spacing: 2px; }
         .lg-inp {
             width: 100%; height: 50px; margin-bottom: 15px;
-            background: #222; border: 1px solid #444; color: #fff;
+            background: #222; border: 1px solid #444 !important; color: #fff;
             text-align: center; font-size: 18px; padding: 0;
         }
-        .lg-inp:focus { background: #fff; color: #000; border-color: var(--highlight); }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--highlight) !important; }
         .lg-btn {
             width: 100%; height: 55px; background: var(--highlight); color: #000;
-            font-weight: bold; font-size: 18px; border: none; cursor: pointer; margin-top: 10px;
+            font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 10px;
             text-transform: uppercase;
         }
         .lg-btn:hover { background: #ffdb4d; box-shadow: 0 0 15px var(--highlight); }
 
-        /* --- INTERFACE PRINCIPAL --- */
+        /* --- INTERFACE (ESTRUTURA DA V3.2) --- */
         #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
 
-        /* TOPO (ESTILO V5) */
         .top-bar {
-            height: 50px; background: var(--bg-header); border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center; padding: 0 25px;
-            font-size: 14px; color: #aaa;
+            height: 45px; background: var(--bg-header); border-bottom: 1px solid var(--border) !important;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+            font-size: 14px; color: #888;
         }
         .acc-info b { color: var(--highlight); margin-left: 5px; }
 
-        /* MENU (ESTILO V4 - FUNCIONAL) */
         .main-nav {
             height: 60px; background: linear-gradient(to bottom, #2a2e33, #1a1d21);
             display: flex; align-items: center; padding: 0 20px; gap: 10px;
-            border-bottom: 2px solid var(--highlight);
+            border-bottom: 2px solid var(--highlight) !important;
         }
         .nav-item {
             padding: 10px 25px; font-size: 16px; font-weight: bold; color: #aaa; text-transform: uppercase;
-            border-radius: 4px; border: 1px solid transparent; display: flex; align-items: center; gap: 10px;
+            border-radius: 4px; display: flex; align-items: center; gap: 10px;
         }
-        .nav-item.active-mode { background: rgba(255,255,255,0.05); color: #fff; border-bottom: 2px solid var(--highlight); }
-        .nav-item.focused { background: var(--highlight); color: #000; border-color: #fff; box-shadow: 0 0 10px rgba(255,204,0,0.4); }
+        .nav-item.active-mode { background: rgba(255,255,255,0.05); color: #fff; border-bottom: 2px solid var(--highlight) !important; }
+        .nav-item.focused { background: var(--highlight); color: #000; border-color: #fff; box-shadow: 0 0 10px rgba(230,184,0,0.4); }
 
         .workspace { flex: 1; display: flex; overflow: hidden; background: #15171a; }
 
-        /* COLUNAS (ESTRUTURA V4 - QUE FUNCIONAVA OS GRUPOS) */
-        .col-cats { width: 25%; background: #1a1d21; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .col-header { padding: 12px; background: #000; color: #fff; text-align: center; font-weight: bold; border-bottom: 1px solid #333; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+        /* COLUNAS ORIGINAIS (V3.2) */
+        .col-cats { width: 25%; background: #1a1d21; border-right: 1px solid var(--border) !important; display: flex; flex-direction: column; }
+        .col-header { padding: 10px; background: #000; color: #fff; text-align: center; font-weight: bold; border-bottom: 1px solid #333 !important; text-transform: uppercase; font-size: 13px; }
         .list-container { flex: 1; overflow-y: auto; }
         
         .list-item { 
-            padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; 
+            padding: 12px 15px; border-bottom: 1px solid #25282d !important; font-size: 14px; color: #ccc; 
             display: flex; justify-content: space-between; align-items: center;
-            border: 2px solid transparent; cursor: pointer;
         }
-        .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa; }
+        .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa !important; }
         .list-item.focused { 
             background: var(--focus-bg); color: #fff; font-weight: bold; 
-            border: 2px solid var(--highlight) !important; 
+            border: 2px solid var(--highlight) !important; /* UNICA BORDA PERMITIDA */
             transform: scale(1.01); z-index: 10;
         }
 
-        .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border) !important; display: flex; flex-direction: column; }
         
-        .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333; }
+        .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333 !important; }
         .search-inp { 
-            width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; 
+            width: 100%; background: #111; border: 1px solid #444 !important; color: #fff; padding: 10px; 
             font-size: 14px; text-transform: uppercase; font-weight: bold;
         }
-        .search-inp.focused { background: #fff; color: #000; border-color: var(--highlight); }
+        .search-inp.focused { background: #fff; color: #000; border-color: var(--highlight) !important; }
 
         .col-preview { flex: 1; background: #101214; display: flex; flex-direction: column; padding: 20px; }
         
         .preview-window {
             width: 100%; aspect-ratio: 16/9; background: #000; 
-            border: 2px solid #333; margin-bottom: 20px; position: relative; overflow: hidden;
+            border: 2px solid #333 !important; 
+            margin-bottom: 20px; position: relative; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .preview-window.active { border-color: var(--highlight); }
+        .preview-window.active { border-color: var(--highlight) !important; }
 
-        /* OSD */
-        .vod-osd {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: rgba(0,0,0,0.8); display: none; align-items: center; padding: 0 15px; gap: 15px;
-            z-index: 100;
+        /* FULLSCREEN CORRIGIDO (CSS NUCLEAR) */
+        .fs { 
+            position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; 
+            z-index:99999 !important; border: none !important; margin: 0 !important; padding: 0 !important; background: #000 !important;
         }
+        
+        .vod-osd { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); display: none; align-items: center; padding: 0 15px; gap: 15px; z-index: 100; }
         .vod-btn { font-size: 18px; color: #fff; width: 30px; text-align: center; }
         .progress-container { flex: 1; height: 6px; background: #333; border-radius: 3px; position: relative; }
         .progress-bar { height: 100%; background: var(--highlight); width: 0%; border-radius: 3px; }
         .time-display { font-size: 12px; color: #fff; font-family: monospace; }
 
-        /* FULLSCREEN LIMPO */
-        .fs { 
-            position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; 
-            z-index:99999 !important; border:none !important; margin:0 !important; background:#000; 
-        }
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none !important; border: none !important; }
         video::-webkit-media-controls { display: none !important; }
 
-        .info-panel { flex: 1; border: 1px solid #2a2e33; background: #1a1d21; padding: 15px; border-radius: 4px; overflow: hidden; }
+        .info-panel { flex: 1; border: 1px solid #2a2e33 !important; background: #1a1d21; padding: 15px; border-radius: 4px; overflow: hidden; }
         .info-title { font-size: 22px; color: var(--highlight); margin-bottom: 10px; font-weight: bold; }
         .info-desc { font-size: 14px; color: #ddd; line-height: 1.4; }
 
-        /* BOTÕES COLORIDOS (RESTITUIDOS DA V4) */
         .bottom-bar {
-            height: 50px; background: #0d0f12; border-top: 1px solid var(--border);
+            height: 50px; background: #0d0f12; border-top: 1px solid var(--border) !important;
             display: flex; justify-content: center; align-items: center; gap: 30px;
         }
-        .color-btn { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; color: #ccc; cursor: pointer; padding: 5px 10px; border-radius: 4px; }
-        .color-btn:active { background: #333; }
+        .color-btn { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: bold; color: #ccc; cursor: pointer; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
         .dot.red { background: #ff4444; } .dot.green { background: #00c851; }
         .dot.yellow { background: #ffbb33; } .dot.blue { background: #33b5e5; }
@@ -203,7 +199,7 @@
                     <div class="info-desc" id="lbl-desc">
                         1. OK (1x): Preview.<br>
                         2. OK (2x): Tela Cheia.<br>
-                        Séries tocam automaticamente.
+                        3. Séries tocam automaticamente.
                     </div>
                 </div>
             </div>
@@ -219,6 +215,7 @@
 
     <script>
         let hls = null;
+        // BACKUP HLS APENAS
         const HlsConfig = { autoStartLoad: true, startPosition: -1, capLevelToPlayerSize: true, maxBufferLength: 20, maxMaxBufferLength: 40, backBufferLength: 10, enableWorker: true, debug: false };
 
         const App = {
@@ -242,6 +239,7 @@
                 const vid = document.getElementById('player');
                 vid.addEventListener('timeupdate', App.updateVodUI);
                 
+                // EVENTO FIM DE VÍDEO / QUEDA
                 vid.addEventListener('ended', () => {
                     if(App.mode === 'live') {
                         App.refreshPlayer(); 
@@ -275,7 +273,6 @@
                         localStorage.setItem('sk_h', h); localStorage.setItem('sk_u', u); localStorage.setItem('sk_p', p);
                         this.creds = {h,u,p};
                         
-                        // INFO BONITA DA V5.0
                         let info = authData.user_info;
                         let cd = new Date(parseInt(info.created_at)*1000).toLocaleDateString('pt-BR');
                         let ed = new Date(parseInt(info.exp_date)*1000).toLocaleDateString('pt-BR');
@@ -309,7 +306,6 @@
                     this.cats = await res.json();
                     this.cats.unshift({category_id: 'all', category_name: '★ TODOS / PESQUISA GLOBAL'});
                     let html = '';
-                    // ESTRUTURA CLÁSSICA DA V4 (FUNCIONA MELHOR PARA GRUPOS)
                     this.cats.forEach((c, i) => { html += `<div class="list-item" id="cat-${i}" onclick="App.clickCat(${i})"><span>${c.category_name}</span></div>`; });
                     document.getElementById('list-cats').innerHTML = html;
                     this.renderFocus();
@@ -373,8 +369,7 @@
             renderList: function() {
                 let html = '';
                 if(this.isSeriesLevel) {
-                    // BOTÃO VOLTAR ESPECIAL
-                    html += `<div class="list-item" id="cnt-back" onclick="App.closeSeries()" style="color:#aaa"><i class="fas fa-arrow-left"></i> <span>VOLTAR</span></div>`;
+                    html += `<div class="list-item" id="cnt-back" onclick="App.closeSeries()" style="color:#aaa"><i class="fas fa-arrow-left"></i> <span>VOLTAR PARA SÉRIES</span></div>`;
                     this.viewList.forEach((ep, i) => {
                         let s = ep.season ? `S${ep.season}` : '';
                         let e = ep.episode_num ? `E${ep.episode_num}` : '';
@@ -418,10 +413,11 @@
             },
 
             selectItem: function() {
+                // VERIFICA SE É BOTÃO VOLTAR
+                if(this.isSeriesLevel && this.focusIdx === -1) { this.closeSeries(); return; }
+
                 let item = this.viewList[this.focusIdx];
                 if (!item) return;
-
-                if(this.isSeriesLevel && this.focusIdx === -1) { this.closeSeries(); return; }
 
                 if(this.mode === 'ser' && !this.isSeriesLevel) { 
                     this.openSeries(item.series_id); 
@@ -450,8 +446,7 @@
                 let ext = item.container_extension || 'mp4';
                 if(this.mode === 'live') ext = 'ts'; 
                 
-                // --- TRUQUE SERIES COMO FILMES ---
-                // Para evitar erros de link, forçamos 'movie' para series também, se não for Live
+                // URL FIX: SERIES USA /movie/ (IGUAL FILME)
                 let type = (this.mode === 'live') ? 'live' : 'movie';
                 
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
@@ -477,7 +472,7 @@
                 } else {
                     // VOD/SERIES: DIRECT PLAY (SEM HLS)
                     vid.src = url;
-                    vid.play().catch(e => console.log("Erro Play VOD", e));
+                    vid.play().catch(e => console.log("Erro VOD", e));
                 }
             },
 
