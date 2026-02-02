@@ -14,56 +14,60 @@
         
         body { 
             background: var(--bg); color: var(--text); 
-            font-family: system-ui, -apple-system, sans-serif; /* Fonte do Sistema é +Rápida */
+            font-family: system-ui, -apple-system, sans-serif; /* Fonte do Sistema = Zero carregamento */
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
-            text-rendering: optimizeSpeed; /* Prioriza velocidade sobre beleza */
+            text-rendering: optimizeSpeed;
         }
 
-        /* ÍCONES SVG LEVES */
+        /* ÍCONES SVG LEVES (Sem carregar FontAwesome) */
         .ico { width: 16px; height: 16px; fill: currentColor; display: inline-block; vertical-align: middle; }
 
-        /* TELA LOGIN */
+        /* TELA LOGIN OTIMIZADA PARA CONTROLE */
         #loginScreen { position: absolute; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .login-box { width: 400px; padding: 30px; border: 1px solid #333; background: #111; }
-        .lg-inp { width: 100%; padding: 12px; margin-bottom: 10px; background: #222; border: 1px solid #333; color: #fff; text-align: center; font-size: 16px; }
-        .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); }
-        .lg-btn { width: 100%; padding: 15px; background: var(--gold); font-weight: bold; border: none; cursor: pointer; font-size: 16px; color: #000; }
+        .login-box { width: 400px; padding: 30px; border: 1px solid #333; background: #111; border-top: 4px solid var(--gold); }
+        .lg-inp { width: 100%; padding: 12px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: #fff; text-align: center; font-size: 18px; }
         
-        /* INTERFACE */
+        /* Foco visual forte para saber onde está no controle */
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); box-shadow: 0 0 15px var(--gold); transform: scale(1.05); }
+        
+        .lg-btn { width: 100%; padding: 15px; background: var(--gold); font-weight: bold; border: none; cursor: pointer; font-size: 18px; color: #000; margin-top: 10px; }
+        .lg-btn:focus { background: #fff; box-shadow: 0 0 20px var(--gold); transform: scale(1.05); }
+        
+        /* INTERFACE PRINCIPAL */
         #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
         
         .top-bar { height: 35px; background: #080808; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 12px; color: #666; border-bottom: 1px solid #222; }
         
         .main-nav { height: 50px; background: #111; display: flex; align-items: center; padding: 0 10px; border-bottom: 2px solid #333; }
-        .nav-item { padding: 8px 20px; font-weight: bold; color: #888; text-transform: uppercase; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+        .nav-item { padding: 8px 20px; font-weight: bold; color: #888; text-transform: uppercase; font-size: 14px; display: flex; gap: 8px; align-items: center; border-radius: 4px; }
         .nav-item.active-mode { color: #fff; border-bottom: 2px solid var(--gold); background: rgba(255,255,255,0.03); }
-        .nav-item.focused { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); transform: scale(1.02); }
+        .nav-item.focused { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); transform: scale(1.05); z-index: 10; }
 
         .workspace { flex: 1; display: flex; overflow: hidden; background: #0e0e0e; }
 
-        /* OTIMIZAÇÃO DE LISTAS: 'content-visibility' ajuda o browser a não renderizar o que não vê */
-        .col-cats { width: 22%; background: #111; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .col-content { width: 30%; background: #161616; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        /* OTIMIZAÇÃO DE LISTAS */
+        .col-cats { width: 25%; background: #111; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .col-content { width: 35%; background: #161616; display: flex; flex-direction: column; border-right: 1px solid #222; }
         
         .list-container { flex: 1; overflow-y: auto; contain: content; /* PERFORMANCE BOOST */ }
         
         .list-item { 
-            padding: 10px 12px; font-size: 13px; color: #bbb; border-bottom: 1px solid #1f1f1f;
+            padding: 12px 15px; font-size: 14px; color: #bbb; border-bottom: 1px solid #1f1f1f;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
             will-change: transform, background; /* Dica para GPU */
         }
-        .list-item.active { background: #222; color: #fff; border-left: 3px solid #777; }
-        .list-item.focused { background: var(--gold); color: #000; font-weight: bold; transform: translateX(5px); }
+        .list-item.active { background: #222; color: #fff; border-left: 4px solid #777; }
+        .list-item.focused { background: var(--gold); color: #000; font-weight: bold; transform: translateX(5px) scale(1.02); z-index: 5; border: none; }
 
-        .search-bar { padding: 8px; background: #000; }
-        .search-inp { width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 8px; font-size: 13px; text-transform: uppercase; }
+        .search-bar { padding: 10px; background: #000; }
+        .search-inp { width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 10px; font-size: 14px; text-transform: uppercase; text-align: center; }
         .search-inp.focused { background: #fff; color: #000; border-color: var(--gold); }
 
         /* PREVIEW AREA */
         .col-preview { flex: 1; padding: 20px; display: flex; flex-direction: column; background: #050505; }
         .preview-window { 
             width: 100%; aspect-ratio: 16/9; background: #000; position: relative; 
-            border: 2px solid #222; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            border: 2px solid #222; box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
         .preview-window.active { border-color: var(--gold); }
         
@@ -71,19 +75,19 @@
 
         /* VOD OSD */
         .vod-osd { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: rgba(0,0,0,0.8); display: none; align-items: center; gap: 10px; z-index: 100; }
-        .prog-bg { flex: 1; height: 5px; background: #333; }
-        .prog-fill { height: 100%; background: var(--gold); width: 0%; }
-        .osd-txt { font-family: monospace; font-size: 12px; color: #fff; }
+        .prog-bg { flex: 1; height: 5px; background: #333; border-radius: 2px; }
+        .prog-fill { height: 100%; background: var(--gold); width: 0%; border-radius: 2px; }
+        .osd-txt { font-family: monospace; font-size: 12px; color: #fff; font-weight: bold; }
 
         /* FULLSCREEN */
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index: 99999; border:none !important; margin:0 !important; background: #000; }
 
-        .info-panel { margin-top: 20px; color: #888; font-size: 14px; }
+        .info-panel { margin-top: 20px; color: #888; font-size: 14px; background: #111; padding: 15px; border-radius: 5px; border: 1px solid #222; }
         .info-title { color: var(--gold); font-size: 20px; font-weight: bold; margin-bottom: 10px; }
 
         /* UTILS */
         .hidden { display: none !important; }
-        ::-webkit-scrollbar { width: 0px; } /* Esconde scrollbar para ganhar performance de render */
+        ::-webkit-scrollbar { width: 0px; } /* Esconde scrollbar para ganhar performance */
     </style>
 </head>
 <body onload="App.init()">
@@ -96,11 +100,12 @@
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:var(--gold); text-align:center; margin-bottom:20px;">SKY FAST</h2>
+            <h2 style="color:var(--gold); text-align:center; margin-bottom:20px; letter-spacing: 2px;">SKY GOLD</h2>
             <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" autocomplete="off">
             <input type="text" id="u" class="lg-inp" placeholder="Usuário" autocomplete="off">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
             <button id="btnEnter" class="lg-btn" onclick="App.login()">ENTRAR</button>
+            <div style="margin-top:15px; color:#555; font-size:12px;">Use as SETAS do controle para navegar.</div>
         </div>
     </div>
 
@@ -112,7 +117,7 @@
 
         <div class="main-nav">
             <div class="nav-item active-mode" id="tab-live">
-                <svg class="ico"><use xlink:href="#icon-tv"></use></svg> AO VIVO
+                <svg class="ico"><use xlink:href="#icon-tv"></use></svg> TV AO VIVO
             </div>
             <div class="nav-item" id="tab-vod">
                 <svg class="ico"><use xlink:href="#icon-film"></use></svg> FILMES
@@ -130,7 +135,7 @@
 
             <div class="col-content">
                 <div class="search-bar">
-                    <input type="text" id="search-input" class="search-inp" placeholder="BUSCAR..." onkeyup="App.debouncedSearch(event)">
+                    <input type="text" id="search-input" class="search-inp" placeholder="PESQUISAR CANAL/FILME..." onkeyup="App.debouncedSearch(event)">
                 </div>
                 <div class="list-container" id="list-cnt">
                     <div style="padding:20px; text-align:center; color:#555">Selecione uma categoria</div>
@@ -149,11 +154,12 @@
                 </div>
                 <div class="info-panel">
                     <div class="info-title" id="lbl-title">Bem Vindo</div>
-                    <div id="lbl-desc">Modo de Alta Performance ativado.</div>
+                    <div id="lbl-desc">Modo de Alta Velocidade Ativado.</div>
                     <br>
                     <div style="font-size:12px; color:#555">
-                        [ OK 1x ] Preview &nbsp;&nbsp; [ OK 2x ] Tela Cheia<br>
-                        Dica: Use a BUSCA para encontrar canais rapidamente.
+                        <b style="color:#fff">OK (1x)</b>: Preview &nbsp;&nbsp; <b style="color:#fff">OK (2x)</b>: Tela Cheia<br>
+                        Para evitar travamentos, a lista exibe apenas os primeiros 100 itens.
+                        <br>Use a <b>BUSCA</b> para encontrar outros conteúdos.
                     </div>
                 </div>
             </div>
@@ -162,12 +168,12 @@
 
     <script>
         let hls = null;
-        // CONFIG HLS OTIMIZADA PARA VELOCIDADE
+        // CONFIG HLS OTIMIZADA PARA VELOCIDADE E TV BOX
         const HlsConfig = {
             autoStartLoad: true, startPosition: -1,
-            maxBufferLength: 10, // Buffer menor = menos RAM
+            maxBufferLength: 10, // Buffer pequeno para economizar RAM
             enableWorker: true,
-            startFragPrefetch: true, // Inicia mais rápido
+            startFragPrefetch: true, 
             manifestLoadingTimeOut: 10000
         };
 
@@ -175,7 +181,7 @@
             screen: 'login', mode: 'live', zone: 0, focusIdx: 0,
             cats: [], list: [], viewList: [], creds: {},
             currentStreamId: null, isVodPlaying: false,
-            searchTimer: null, maxRender: 100, // LIMITADOR DE RENDERIZAÇÃO (SEGREDO DA VELOCIDADE)
+            searchTimer: null, maxRender: 100, // LIMITE DE RENDERIZAÇÃO (SEGREDO DA VELOCIDADE)
 
             init: function() {
                 if(localStorage.getItem('sf_h')) {
@@ -186,10 +192,12 @@
                 } else {
                     document.getElementById('h').focus();
                 }
+                
+                // Relógio +1 Hora
                 setInterval(() => {
                     let d = new Date(); d.setHours(d.getHours()+1);
                     document.getElementById('clock').innerText = d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-                }, 60000);
+                }, 1000);
                 
                 // VOD Listeners
                 const vid = document.getElementById('player');
@@ -204,7 +212,7 @@
                 if(!h.startsWith('http')) h = 'http://'+h;
                 if(h.endsWith('/')) h = h.slice(0, -1);
                 
-                document.getElementById('btnEnter').innerText = "...";
+                document.getElementById('btnEnter').innerText = "CONECTANDO...";
                 
                 try {
                     let r = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
@@ -215,14 +223,14 @@
                         
                         let info = d.user_info;
                         let exp = new Date(parseInt(info.exp_date)*1000).toLocaleDateString('pt-BR');
-                        document.getElementById('acc-info').innerHTML = `Exp: ${exp} | Telas: ${info.active_cons}/${info.max_connections}`;
+                        document.getElementById('acc-info').innerHTML = `VENCE: <b>${exp}</b> | TELAS: <b>${info.active_cons}/${info.max_connections}</b>`;
                         
                         document.getElementById('loginScreen').style.display = 'none';
                         document.getElementById('appInterface').style.display = 'flex';
                         this.screen = 'app';
                         this.switchMode('live');
-                    } else { alert('Erro Login'); document.getElementById('btnEnter').innerText = "ENTRAR"; }
-                } catch(e) { alert('Erro Conexão'); document.getElementById('btnEnter').innerText = "ENTRAR"; }
+                    } else { alert('Erro: Dados incorretos!'); document.getElementById('btnEnter').innerText = "ENTRAR"; }
+                } catch(e) { alert('Erro: Falha na Conexão!'); document.getElementById('btnEnter').innerText = "ENTRAR"; }
             },
 
             switchMode: async function(m) {
@@ -237,7 +245,7 @@
 
                 let act = (m==='live')?'get_live_categories':(m==='vod'?'get_vod_categories':'get_series_categories');
                 
-                document.getElementById('list-cats').innerHTML = '<div style="padding:10px">Carregando...</div>';
+                document.getElementById('list-cats').innerHTML = '<div style="padding:10px;text-align:center">Carregando...</div>';
                 try {
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`);
                     this.cats = await r.json();
@@ -262,7 +270,7 @@
                 let cat = this.cats[this.focusIdx];
                 let cid = cat.category_id;
                 
-                document.getElementById('list-cnt').innerHTML = '<div style="padding:20px">Carregando...</div>';
+                document.getElementById('list-cnt').innerHTML = '<div style="padding:20px;text-align:center">Carregando...</div>';
                 
                 let act = '';
                 if(this.mode === 'live') act = 'get_live_streams';
@@ -278,8 +286,9 @@
                     this.viewList = [...this.list];
                     
                     this.renderContentList();
+                    // Auto-foco na busca
                     this.zone = 2; document.getElementById('search-input').focus(); 
-                } catch(e) { document.getElementById('list-cnt').innerHTML = 'Erro'; }
+                } catch(e) { document.getElementById('list-cnt').innerHTML = 'Erro ao carregar.'; }
             },
 
             debouncedSearch: function(e) {
@@ -292,7 +301,7 @@
                         this.viewList = this.list.filter(i => (i.name || i.title || '').toLowerCase().includes(term));
                     }
                     this.renderContentList();
-                }, 300); // Espera 300ms antes de filtrar (Evita travar digitando)
+                }, 300); // 300ms de atraso
                 
                 if(e.keyCode === 13) { this.zone = 3; this.focusIdx = 0; document.getElementById('search-input').blur(); this.renderFocus(); }
             },
@@ -315,12 +324,12 @@
                 if(this.viewList.length > this.maxRender) {
                     let more = document.createElement('div');
                     more.style.padding = "10px"; more.style.color = "#888"; more.style.textAlign="center";
-                    more.innerText = `...e mais ${this.viewList.length - this.maxRender} itens. Use a BUSCA.`;
+                    more.innerHTML = `...e mais ${this.viewList.length - this.maxRender} itens.<br>Use a <b>BUSCA</b> acima.`;
                     frag.appendChild(more);
                 }
                 
                 if(limit === 0) {
-                    let d = document.createElement('div'); d.innerText = "Nada encontrado."; d.style.padding="20px"; frag.appendChild(d);
+                    let d = document.createElement('div'); d.innerText = "Nenhum resultado."; d.style.padding="20px"; frag.appendChild(d);
                 }
 
                 let c = document.getElementById('list-cnt');
@@ -372,8 +381,8 @@
                     vid.src = url;
                     vid.play();
                 }
-                this.renderContentList(); // Atualiza highlight active
-                this.renderFocus(); // Mantem foco
+                this.renderContentList();
+                this.renderFocus();
             },
 
             stopPlayer: function() {
@@ -459,10 +468,36 @@
             }
         };
 
+        // --- SISTEMA DE CONTROLE (KEY LISTENER) ---
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
+            
+            // LÓGICA DE LOGIN COM CONTROLE (SEM MOUSE)
+            if(App.screen === 'login') {
+                const fields = ['h', 'u', 'p', 'btnEnter'];
+                let currentId = document.activeElement.id;
+                let idx = fields.indexOf(currentId);
+
+                // Se perdeu o foco, volta pro primeiro
+                if(idx === -1) { document.getElementById('h').focus(); return; }
+
+                if(k === 40) { // BAIXO
+                    e.preventDefault();
+                    if(idx < fields.length - 1) document.getElementById(fields[idx + 1]).focus();
+                }
+                else if(k === 38) { // CIMA
+                    e.preventDefault();
+                    if(idx > 0) document.getElementById(fields[idx - 1]).focus();
+                }
+                else if(k === 13 && currentId === 'btnEnter') { // ENTER no BOTÃO
+                    App.login();
+                }
+                return;
+            }
+
             let isFs = document.getElementById('v-box').classList.contains('fs');
 
+            // CONTROLE VOD EM TELA CHEIA
             if(isFs) {
                 let v = document.getElementById('player');
                 document.getElementById('vod-osd').style.display='flex';
@@ -477,13 +512,14 @@
                 return;
             }
 
+            // VOLTAR
             if(k==8 || k==27 || k==461 || k==10009) { 
                 if(App.zone==3 || App.zone==2) App.zone=1; else if(App.zone==1) App.zone=0; 
                 App.renderFocus(); return; 
             }
 
-            if(App.screen === 'login') return; // Login padrão browser
-            if(App.zone === 2 && ((k>=48 && k<=90)||k==8||k==32)) return; // Digitação
+            // Evitar conflitos na digitação da busca
+            if(App.zone === 2 && ((k>=48 && k<=90)||k==8||k==32)) return;
             if([37,38,39,40,13].includes(k)) e.preventDefault();
             
             App.handleKey(k);
