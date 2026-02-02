@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - NETRANGE FINAL</title>
+    <title>SKY GOLD - CLICK EDITION</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
 
     <style>
-        /* --- ESTILOS GERAIS (BASEADO NO SEU SMART UP) --- */
+        /* --- ESTILOS GERAIS --- */
         :root {
             --bg-body: #101214;
             --bg-header: #0d0f12;
-            --highlight: #e6b800; /* Dourado */
+            --highlight: #e6b800; /* AMARELO DOURADO */
             --border: #2a2e33;
             --gold: #FFD700;
         }
@@ -81,14 +81,24 @@
         .list-item { 
             padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; 
             display: flex; justify-content: space-between; align-items: center;
+            border: 2px solid transparent; /* Espaço para borda */
         }
+        /* Item Ativo (Categoria selecionada ou Canal tocando) */
         .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa; }
-        .list-item.focused { background: var(--highlight); color: #000; font-weight: bold; border-left: 4px solid #fff; }
+        
+        /* FOCO (SELEÇÃO COM CONTORNO AMARELO) */
+        .list-item.focused { 
+            background: rgba(230, 184, 0, 0.1); 
+            color: #fff; 
+            font-weight: bold; 
+            border: 2px solid var(--highlight) !important; /* CONTORNO AMARELO AQUI */
+            transform: scale(1.01);
+            z-index: 10;
+        }
 
         /* Coluna Meio: Lista */
         .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         
-        /* BARRA DE PESQUISA (DESTAQUE) */
         .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333; }
         .search-inp { 
             width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; 
@@ -99,12 +109,23 @@
 
         /* Coluna Direita: PREVIEW */
         .col-preview { flex: 1; background: #101214; display: flex; flex-direction: column; padding: 20px; }
+        
         .preview-window {
-            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; 
+            width: 100%; aspect-ratio: 16/9; background: #000; 
+            border: 2px solid #333; /* Borda normal do preview */
             margin-bottom: 20px; position: relative; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+        
+        /* Quando está tocando, mas NÃO em fullscreen */
         .preview-window.active { border-color: var(--highlight); }
+
+        /* CLASSE FULLSCREEN (SEM BORDA) */
+        .fs { 
+            position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; 
+            z-index:9999; border: none !important; box-shadow: none !important; background: #000;
+            margin: 0 !important;
+        }
         
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         video::-webkit-media-controls { display: none !important; }
@@ -168,7 +189,7 @@
                 </div>
                 
                 <div class="list-container" id="list-cnt">
-                    <div style="padding:20px; text-align:center; color:#555">Selecione uma categoria</div>
+                    <div style="padding:20px; text-align:center; color:#555">Selecione e clique OK</div>
                 </div>
             </div>
 
@@ -179,9 +200,9 @@
                 <div class="info-panel">
                     <div class="info-title" id="lbl-title">Bem Vindo</div>
                     <div class="info-desc" id="lbl-desc">
-                        1. Selecione a categoria.<br>
-                        2. <b>OK (1x)</b>: Preview<br>
-                        3. <b>OK (2x)</b>: Tela Cheia
+                        1. Selecione a categoria e aperte <b>OK</b> para carregar.<br>
+                        2. Seta Direita navega sem carregar.<br>
+                        3. <b>OK (1x)</b>: Preview | <b>OK (2x)</b>: Tela Cheia
                     </div>
                 </div>
             </div>
@@ -196,13 +217,12 @@
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO HLS (NetRange Safe) ---
         let hls = null;
         const HlsConfig = {
             autoStartLoad: true,
             startPosition: -1,
             capLevelToPlayerSize: true,
-            maxBufferLength: 30, // Anti-buffer
+            maxBufferLength: 30, 
             maxMaxBufferLength: 60,
             enableWorker: true,
         };
@@ -219,7 +239,7 @@
             creds: {},
             
             isSeriesLevel: false,
-            currentStreamId: null, // Para controle do Duplo OK
+            currentStreamId: null, 
             
             init: function() {
                 if(localStorage.getItem('sk_h')) {
@@ -229,7 +249,6 @@
                 }
                 document.getElementById('h').focus();
                 
-                // Relógio Real
                 setInterval(() => {
                     document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
                 }, 1000);
@@ -328,7 +347,7 @@
 
                     this.renderList();
                     
-                    // --- SEGURANÇA: MANDA FOCO PARA BUSCA ---
+                    // SEGURANÇA: MANDA FOCO PARA BUSCA AUTOMATICAMENTE
                     this.zone = 2; 
                     document.getElementById('search-input').focus();
                     
@@ -369,13 +388,11 @@
             },
 
             handleSearchKey: function(e) {
-                // Filtro local ao digitar
                 if(this.list.length > 0) {
                     let term = document.getElementById('search-input').value.toLowerCase();
                     this.viewList = this.list.filter(i => (i.name || i.title || '').toLowerCase().includes(term));
                     this.renderList();
                 }
-                // Enter para busca Global
                 if(e.keyCode === 13) this.performGlobalSearch();
             },
 
@@ -390,9 +407,8 @@
                 } else {
                     this.viewList.forEach((item, i) => {
                         let name = item.name || item.title;
-                        // Marca se está tocando
-                        let activeClass = (this.currentStreamId === (item.stream_id || item.id)) ? 'style="color:var(--highlight);font-weight:bold"' : '';
-                        html += `<div class="list-item" id="cnt-${i}" ${activeClass}><span>${name}</span></div>`;
+                        let activeClass = (this.currentStreamId === (item.stream_id || item.id)) ? ' active' : '';
+                        html += `<div class="list-item${activeClass}" id="cnt-${i}"><span>${name}</span></div>`;
                     });
                 }
                 
@@ -431,18 +447,18 @@
                 if(this.mode === 'ser' && !this.isSeriesLevel) {
                     this.openSeries(item.series_id);
                 } else {
-                    // --- LÓGICA DO DUPLO OK ---
                     let clickedId = item.stream_id || item.id;
                     
                     if(this.currentStreamId === clickedId) {
-                        // JÁ TOCA O MESMO -> VAI PARA FULLSCREEN
+                        // 2º OK: FULLSCREEN SEM BORDA
                         let box = document.getElementById('v-box');
-                        let vid = document.getElementById('player');
+                        // Adiciona classe CSS para garantir remoção de borda
+                        box.classList.add('fs');
+                        
                         if(box.requestFullscreen) box.requestFullscreen();
                         else if(box.webkitRequestFullscreen) box.webkitRequestFullscreen();
-                        else if(vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
                     } else {
-                        // É OUTRO -> TOCA PREVIEW
+                        // 1º OK: PREVIEW
                         this.playStream(item);
                     }
                 }
@@ -452,19 +468,21 @@
                 let vid = document.getElementById('player');
                 let box = document.getElementById('v-box');
                 
+                // Remove fullscreen anterior se houver
+                box.classList.remove('fs');
+
                 let streamId = item.stream_id || item.id;
-                this.currentStreamId = streamId; // Atualiza ID atual
+                this.currentStreamId = streamId; 
                 
                 let ext = item.container_extension || 'mp4';
-                if(this.mode === 'live') ext = 'ts'; // Força TS
+                if(this.mode === 'live') ext = 'ts'; 
 
                 let type = (this.mode === 'live') ? 'live' : (this.mode === 'ser' ? 'series' : 'movie');
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
                 document.getElementById('lbl-title').innerText = item.name || item.title;
-                document.getElementById('lbl-desc').innerText = "OK para Tela Cheia";
+                document.getElementById('lbl-desc').innerText = "OK novamente para Tela Cheia";
                 
-                // Re-renderiza lista para atualizar a cor do ativo
                 this.renderList();
                 box.classList.add('active');
 
@@ -485,23 +503,19 @@
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
 
-                // NAV
                 if(this.zone === 0) {
                     let map = ['tab-live','tab-vod','tab-ser','btn-logout'];
                     let el = document.getElementById(map[this.focusIdx]);
                     if(el) el.classList.add('focused');
                 }
-                // CATS
                 else if(this.zone === 1) {
                     let el = document.getElementById(`cat-${this.focusIdx}`);
                     if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); }
                 }
-                // BUSCA
                 else if(this.zone === 2) {
                     let el = document.getElementById('search-input');
                     el.classList.add('focused'); el.focus();
                 }
-                // LISTA
                 else if(this.zone === 3) {
                     if(this.isSeriesLevel && this.focusIdx === -1) {
                         let el = document.getElementById('cnt-back');
@@ -534,30 +548,33 @@
                         else { this.zone = 0; this.focusIdx = 0; }
                     }
                     if(k===40 && this.focusIdx < this.cats.length-1) this.focusIdx++;
-                    if(k===39 || k===13) { this.loadContent(); return; }
+                    
+                    // CORREÇÃO: Direita NÃO carrega. Apenas move se já tiver lista.
+                    if(k===39) {
+                        if(this.viewList.length > 0) {
+                            this.zone = 2; // Vai pra busca
+                            document.getElementById('search-input').focus();
+                        }
+                    }
+                    // CORREÇÃO: Apenas ENTER carrega.
+                    if(k===13) { this.loadContent(); }
                 }
                 // ZONE 2: BUSCA
                 else if(this.zone === 2) {
                     if(k===40) {
-                        // Se tem conteúdo, vai pra lista
                         if(this.viewList.length > 0) {
                             this.zone = 3; 
                             this.focusIdx = this.isSeriesLevel ? -1 : 0;
                             document.getElementById('search-input').blur();
-                        } else {
-                            // Se não, volta pro menu? Não, fica aqui.
                         }
                     }
                     if(k===37) {
                         this.zone = 1; 
                         document.getElementById('search-input').blur();
-                        // Tenta recuperar foco da cat
                         let active = document.querySelector('.list-item.active');
                         this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
                     }
-                    if(k===13) {
-                        this.performGlobalSearch();
-                    }
+                    if(k===13) this.performGlobalSearch();
                 }
                 // ZONE 3: LISTA
                 else if(this.zone === 3) {
@@ -566,7 +583,7 @@
                         else if(this.focusIdx > 0) this.focusIdx--;
                         else if(this.focusIdx === 0) {
                             if(this.isSeriesLevel) this.focusIdx = -1;
-                            else this.zone = 2; // Sobe pra busca
+                            else this.zone = 2; 
                         }
                     }
                     if(k===40 && this.focusIdx < this.viewList.length-1) this.focusIdx++;
@@ -581,11 +598,12 @@
             }
         };
 
-        // --- GLOBAL KEY LISTENERS ---
         function isFullscreen() {
             return document.fullscreenElement || document.webkitFullscreenElement || null;
         }
         function exitFullscreen() {
+            let box = document.getElementById('v-box');
+            box.classList.remove('fs'); // Remove classe sem borda
             if(document.exitFullscreen) document.exitFullscreen();
             else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
@@ -623,7 +641,6 @@
                 return;
             }
 
-            // Permite digitação na busca
             if(App.zone === 2 && ((k >= 48 && k <= 90) || k === 8 || k === 32)) return;
 
             if([37,38,39,40].includes(k)) e.preventDefault();
