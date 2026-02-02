@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V13 FINAL</title>
+    <title>R&C GOLD V14</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA FINAL V13 --- */
+        /* --- TEMA V14 GOLD --- */
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
-            --gold-dark: #b8860b;
+            --gold-dim: #b8860b;
             --text: #ffffff; 
-            --panel: #111;
+            --panel: rgba(18,18,18,0.98);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -30,115 +30,116 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* --- 1. LOGIN (AMARELO) --- */
+        /* --- LOGIN (NetRange Style - Navegação Livre) --- */
         #login-layer { background: #080808; z-index: 50; }
         .netrange-box {
-            width: 450px; padding: 50px; 
-            background: #111; border: 1px solid #333; border-radius: 10px;
-            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            width: 480px; padding: 50px; 
+            background: #111; border: 1px solid #333; border-radius: 12px;
+            text-align: center; box-shadow: 0 0 60px rgba(0,0,0,0.9);
         }
         .nr-header {
-            color: var(--gold); font-weight: 900; font-size: 24px; 
-            margin-bottom: 30px; letter-spacing: 2px;
+            color: var(--gold); font-weight: 900; font-size: 26px; 
+            margin-bottom: 40px; letter-spacing: 2px;
         }
         
         .nr-input {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: #222; border: 1px solid #444; border-radius: 4px;
-            color: #fff; text-align: center; font-size: 16px; font-weight: 600;
+            width: 100%; padding: 14px; margin-bottom: 20px;
+            background: #222; border: 1px solid #444; border-radius: 6px;
+            color: #fff; text-align: center; font-size: 18px; font-weight: 600;
+            transition: 0.2s;
         }
-        .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); }
+        /* Foco Amarelo */
+        .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); transform: scale(1.02); }
         
-        /* Botão Amarelo/Dourado */
         .nr-btn {
-            width: 100%; padding: 12px; margin-top: 15px;
-            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-            color: #000; font-weight: 800; font-size: 16px;
-            border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+            width: 100%; padding: 15px; margin-top: 20px;
+            background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+            color: #000; font-weight: 800; font-size: 18px;
+            border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase;
         }
-        .nr-btn.focused { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); border: 2px solid #fff; }
+        .nr-btn:focus { transform: scale(1.05); box-shadow: 0 0 25px var(--gold); border: 2px solid #fff; }
 
-        /* --- 2. MENU PRINCIPAL (LAYOUT SOLICITADO) --- */
+        /* --- MENU PRINCIPAL (R&C GOLD) --- */
         #dash-layer { 
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            flex-direction: column; /* Organiza Topo - Meio - Baixo */
+            background: radial-gradient(circle at center, #151515 0%, #000 100%);
+            flex-direction: column;
         }
         
-        /* Topo: Logo */
-        .dash-header { margin-bottom: auto; margin-top: 60px; }
-        .dash-logo { font-size: 50px; font-weight: 900; letter-spacing: -2px; }
+        /* Topo */
+        .dash-header { margin-top: 50px; margin-bottom: auto; text-align: center; }
+        .dash-logo { font-size: 55px; font-weight: 900; letter-spacing: -2px; }
         .dash-logo span { color: var(--gold); }
 
-        /* Meio: Botões */
+        /* Centro */
         .cards-container { display: flex; gap: 40px; margin-bottom: auto; }
         
         .dash-card {
-            width: 200px; height: 200px;
-            background: #151515; border: 2px solid #333; border-radius: 15px;
+            width: 220px; height: 220px;
+            background: #151515; border: 2px solid #333; border-radius: 20px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: all 0.2s;
         }
-        .dash-card i { font-size: 60px; margin-bottom: 20px; color: #666; }
-        .dash-card span { font-size: 14px; font-weight: 700; color: #888; text-transform: uppercase; }
+        .dash-card i { font-size: 65px; margin-bottom: 25px; color: #666; }
+        .dash-card span { font-size: 16px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; }
         
         .dash-card.focused {
             background: #000; border: 3px solid var(--gold);
-            transform: scale(1.15); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+            transform: scale(1.15); box-shadow: 0 0 50px rgba(255, 215, 0, 0.25);
             z-index: 10;
         }
         .dash-card.focused i { color: var(--gold); }
         .dash-card.focused span { color: #fff; }
 
-        /* Rodapé: Informações */
+        /* Rodapé Informativo */
         .dash-footer {
             width: 90%; display: flex; justify-content: space-between;
-            border-top: 1px solid #333; padding: 20px 0; margin-bottom: 30px;
-            color: #888; font-size: 14px;
+            background: rgba(255,255,255,0.05); border: 1px solid #333;
+            padding: 20px 40px; border-radius: 50px; margin-bottom: 40px;
+            color: #aaa; font-size: 13px;
         }
-        .foot-left { text-align: left; }
-        .foot-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 16px; }
-        .foot-right { text-align: right; }
-        .dash-footer b { color: #fff; display: block; margin-top: 5px; font-size: 16px; }
+        .foot-item b { color: #fff; display: block; margin-top: 5px; font-size: 15px; }
+        .foot-item.center { text-align: center; }
+        .foot-item.right { text-align: right; }
+        .foot-item span { color: var(--gold); font-weight: bold; }
 
-        /* --- 3. CONTEÚDO --- */
+        /* --- CONTEÚDO --- */
         #content-layer { display: flex; background: #000; }
         
         .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .cat-head { padding: 15px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; }
+        .cat-head { padding: 20px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; font-size: 18px; }
         .cat-list { flex: 1; overflow-y: auto; }
         
-        .cat-item { padding: 12px 15px; color: #777; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 600; }
+        .cat-item { padding: 14px 20px; color: #888; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 600; }
         .cat-item.active { background: #111; color: #fff; border-left: 4px solid #333; }
         .cat-item.focused { background: var(--gold); color: #000; border-left: 4px solid #fff; font-weight: 800; }
 
         .col-list { width: 35%; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .search-box { padding: 10px; background: #000; border-bottom: 1px solid #222; }
+        .search-box { padding: 15px; background: #000; border-bottom: 1px solid #222; }
         
         .inp-search { 
             width: 100%; background: #222; border: 1px solid #333; color: #fff; 
-            padding: 12px; text-align: center; border-radius: 4px; font-weight: bold;
+            padding: 12px; text-align: center; border-radius: 6px; font-weight: bold; font-size: 16px;
         }
         .inp-search:focus { background: #fff; color: #000; border-color: var(--gold); }
-        /* readonly visual */
         .inp-search[readonly] { background: #151515; color: #666; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
-        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
+        .item { padding: 14px 20px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
         .item.focused { background: #eee; color: #000; font-weight: 800; transform: scale(1.02); margin: 2px 0; border-radius: 2px; }
 
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
         .vid-box.focused { border: 3px solid var(--gold); }
         
-        .video-off { opacity: 0 !important; } /* Esconde conteúdo antigo */
+        .video-off { opacity: 0 !important; } 
         
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
-        .meta { padding: 20px; flex: 1; overflow-y: auto; background: #050505; }
-        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
-        .meta-desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+        .meta { padding: 30px; flex: 1; overflow-y: auto; background: #050505; }
+        .meta-title { font-size: 24px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
+        .meta-desc { font-size: 14px; color: #888; margin-bottom: 25px; }
         
-        .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; margin-top: auto; }
+        .color-keys { display: flex; gap: 20px; font-size: 12px; font-weight: bold; margin-top: auto; }
         .ck-btn { display: flex; align-items: center; gap: 5px; }
         
         .fs-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 9999; border: none !important; background: #000; }
@@ -153,12 +154,11 @@
 
     <div id="login-layer" class="layer flex-center">
         <div class="netrange-box">
-            <div class="nr-header">R&C GOLD</div>
-            <input type="text" id="url" class="nr-input" placeholder="http://..." autocomplete="off">
-            <input type="text" id="user" class="nr-input" placeholder="Usuário" autocomplete="off">
-            <input type="password" id="pass" class="nr-input" placeholder="Senha" autocomplete="off">
+            <div class="nr-header">R&C GOLD PLAYER</div>
+            <input type="text" id="url" class="nr-input" placeholder="URL (http://...)" autocomplete="off">
+            <input type="text" id="user" class="nr-input" placeholder="USUÁRIO" autocomplete="off">
+            <input type="password" id="pass" class="nr-input" placeholder="SENHA" autocomplete="off">
             <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS e OK</div>
         </div>
     </div>
 
@@ -175,9 +175,9 @@
         </div>
 
         <div class="dash-footer">
-            <div class="foot-left">USUÁRIO<b id="d-user">...</b></div>
-            <div class="foot-center">TELAS<b id="d-conn">...</b></div>
-            <div class="foot-right">VENCIMENTO<b id="d-exp">...</b></div>
+            <div class="foot-item"><span>SERVIDOR</span><b id="d-host">...</b></div>
+            <div class="foot-item center"><span>CONEXÕES</span><b id="d-conn">...</b></div>
+            <div class="foot-item right"><span>VENCIMENTO</span><b id="d-exp">...</b></div>
         </div>
     </div>
 
@@ -198,7 +198,7 @@
             </div>
             <div class="meta">
                 <div id="meta-title" class="meta-title">R&C PLAYER</div>
-                <div id="meta-desc" class="meta-desc">Aguardando...</div>
+                <div id="meta-desc" class="meta-desc">Aguardando seleção...</div>
                 
                 <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px; border:1px solid #333;">
                     <div style="color:#fff; font-size:11px; margin-bottom:5px;">COMANDOS:</div>
@@ -209,7 +209,7 @@
                 </div>
 
                 <div class="color-keys">
-                    <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> FULLSCREEN</span>
+                    <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
                     <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
                     <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
                     <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
@@ -230,7 +230,9 @@
                     document.getElementById('user').value = localStorage.getItem('rc_u');
                     document.getElementById('pass').value = localStorage.getItem('rc_p');
                 }
-                this.idx = 0; this.refreshFocus();
+                // Foco inicial no primeiro input
+                document.getElementById('url').focus();
+                
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
@@ -251,15 +253,22 @@
                 var h = document.getElementById('url').value.trim();
                 var u = document.getElementById('user').value.trim();
                 var p = document.getElementById('pass').value.trim();
+                
+                // Correção de URL
                 if(h.endsWith('/')) h = h.slice(0, -1);
                 if(h.indexOf('http')===-1) h='http://'+h;
+                
                 this.creds = {h:h, u:u, p:p};
                 var me = this;
                 this.req("", function(d){
                     if(d && d.user_info && d.user_info.auth===1) {
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
                         
-                        document.getElementById('d-user').innerText = u;
+                        // Infos do Menu
+                        var host = h.replace('http://','').replace('https://','');
+                        if(host.length > 20) host = host.substring(0, 20) + '...';
+                        
+                        document.getElementById('d-host').innerText = host;
                         document.getElementById('d-conn').innerText = (d.user_info.active_cons||0) + "/" + (d.user_info.max_connections||0);
                         document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
 
@@ -284,10 +293,9 @@
                 this.mode = m; this.isSeries = false;
                 this.setScreen(2);
                 
-                // Limpeza Total ao entrar
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
-                document.getElementById('search').value = ''; // Limpa input
+                document.getElementById('search').value = ''; // Limpa busca
                 this.clearInfo();
                 
                 var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
@@ -305,7 +313,7 @@
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
                 this.stop(); 
-                this.clearInfo(); // Limpa info ao trocar categoria
+                this.clearInfo();
                 
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
@@ -410,7 +418,6 @@
             },
             
             clearInfo: function() {
-                // Função para limpar nome e descrição
                 document.getElementById('meta-title').innerText = "R&C PLAYER";
                 document.getElementById('meta-desc').innerText = "Aguardando seleção...";
             },
@@ -438,12 +445,9 @@
                 }
 
                 var id = null;
-                if(this.screen===0) { 
-                    id = ['url','user','pass','btn-login'][this.idx];
-                    var el = document.getElementById(id);
-                    if(this.idx < 3) el.focus(); else { document.activeElement.blur(); el.classList.add('focused'); }
-                    return;
-                }
+                // LOGIN: Navegação nativa, sem foco manual
+                if(this.screen===0) return;
+
                 if(this.screen===1) id='m'+this.idx;
                 if(this.screen===2) {
                     if(this.zone===0) id='c'+this.idx;
@@ -463,12 +467,9 @@
             },
 
             move: function(k) {
-                if(this.screen===0) {
-                    if(k===40 && this.idx<3) this.idx++;
-                    if(k===38 && this.idx>0) this.idx--;
-                    if(k===13 && this.idx===3) this.login();
-                    this.refreshFocus(); return;
-                }
+                // LOGIN: Deixa o navegador cuidar
+                if(this.screen===0) return;
+
                 if(this.screen===1) {
                     if(k===39 && this.idx<3) this.idx++;
                     if(k===37 && this.idx>0) this.idx--;
@@ -476,28 +477,27 @@
                     this.refreshFocus();
                 }
                 if(this.screen===2) {
+                    // CATEGORIA
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
-                        if(k===39 || k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
+                        if(k===13 || k===39) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
                     }
+                    // BUSCA
                     else if(this.zone===1) {
                         if(k===40) { this.zone=2; this.idx=0; }
                     }
+                    // LISTA
                     else if(this.zone===2) { 
                         var max = (this.items.length>100?100:this.items.length)-1;
                         var min = this.isSeries?-1:0;
                         if(k===40 && this.idx<max) this.idx++;
-                        
-                        if(k===38) { // Cima
-                            if(this.idx>min) this.idx--; 
-                            else { this.zone=1; } 
-                        }
-                        
+                        if(k===38) { if(this.idx>min) this.idx--; else this.zone=1; }
                         if(k===37) { this.zone=0; this.idx=this.memCat; }
                         if(k===39) { this.zone=3; }
                         if(k===13) this.clickItem(this.idx);
                     }
+                    // PLAYER
                     else if(this.zone===3) { 
                         var v = document.getElementById('player');
                         var box = document.getElementById('vid-box');
@@ -524,6 +524,7 @@
             if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
             
+            // VOLTAR
             if(k===8||k===461||k===27) {
                 e.preventDefault();
                 if(App.screen===2) {
@@ -537,11 +538,12 @@
             }
 
             if([13,37,38,39,40].indexOf(k)>-1) {
-                // LÓGICA DAS SETAS NO INPUT (Restaura navegação antiga)
                 if(document.activeElement.tagName==='INPUT') {
                     if(k===13) { App.triggerSearch(); return; }
-                    // Se apertar Baixo (40), previne padrão e chama move() para sair do input
-                    if(k===40) { e.preventDefault(); App.move(k); return; }
+                    // NO LOGIN: Deixa setas funcionarem nativamente
+                    if(App.screen === 0) return; 
+                    
+                    if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
                     return; 
                 }
                 e.preventDefault();
