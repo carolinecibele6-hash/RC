@@ -9,10 +9,15 @@
         /* --- ESTILO GERAL (DARK/GOLD) --- */
         :root {
             --bg-color: #050505;
+            --sidebar-bg: #111;
             --card-bg: #1a1a1a;
             --gold: #D4AF37;
             --gold-dim: #8a7020;
             --text-color: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box; /* Corrige calculos de tamanho */
         }
 
         body {
@@ -20,7 +25,7 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: sans-serif;
+            font-family: Arial, sans-serif; /* Fonte segura para TV antiga */
             overflow: hidden;
         }
 
@@ -34,139 +39,170 @@
             align-items: center;
             background: #000;
             z-index: 9999;
-            transition: opacity 0.5s ease;
         }
 
         .login-box {
             background: #111;
-            padding: 40px;
+            padding: 30px;
             border: 2px solid var(--gold-dim);
-            width: 70%;
-            max-width: 450px;
+            width: 60%;
+            max-width: 500px;
             text-align: center;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-label { color: var(--gold); display: block; margin-bottom: 5px; font-size: 14px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-label { color: var(--gold); display: block; margin-bottom: 5px; font-size: 16px; }
         .input-field {
-            width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: #fff; font-size: 18px; box-sizing: border-box;
+            width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: #fff; font-size: 18px;
         }
 
         .btn-gold {
-            background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dim) 100%);
-            color: #000; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            background: var(--gold);
+            color: #000; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px;
         }
 
         /* --- DASHBOARD PRINCIPAL --- */
         #main-dashboard {
-            display: none; /* Só aparece depois do login */
+            display: none;
             height: 100vh;
             width: 100vw;
             flex-direction: column;
             background-color: var(--bg-color);
         }
 
-        /* HEADER GLOBAL (Sem busca) */
+        /* HEADER COM INFORMAÇÕES DA CONTA */
         .header {
-            height: 80px;
+            height: 90px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 40px;
+            padding: 0 30px;
             border-bottom: 2px solid var(--gold-dim);
             background: #0f0f0f;
             flex-shrink: 0;
         }
 
-        .account-info {
-            text-align: right;
+        .logo-area { font-size: 26px; font-weight: bold; color: var(--gold); width: 20%; }
+        
+        .account-info-bar {
+            display: flex;
+            gap: 20px;
             font-size: 14px;
-            color: #aaa;
+            color: #ccc;
+            background: #1a1a1a;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #333;
         }
-        .account-info span { color: var(--gold); font-weight: bold; }
+        
+        .info-item span { color: var(--gold); font-weight: bold; margin-left: 5px; }
 
-        /* --- HOME MENU (Ícones Grandes) --- */
+        /* --- HOME VIEW (Ícones Grandes) --- */
         #home-view {
             display: flex;
             width: 100%;
             height: 100%;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 30px;
         }
 
         .big-card {
-            width: 200px; height: 200px;
+            width: 220px; height: 220px;
             background: #151515;
             border: 2px solid #333;
-            border-radius: 15px;
+            border-radius: 10px;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            transition: transform 0.2s;
         }
 
-        /* --- LIST VIEW (Onde fica a busca e canais) --- */
+        /* --- LIST VIEW (Layout Corrigido) --- */
         #list-view {
-            display: none; /* Escondido na Home */
+            display: none;
             flex-direction: column;
             width: 100%;
             height: 100%;
         }
 
-        /* Barra de ferramentas dentro da lista */
-        .list-toolbar {
+        /* Barra de Busca (Fica no topo da lista) */
+        .search-container {
             height: 60px;
             background: #111;
             display: flex;
             align-items: center;
-            padding: 0 30px;
+            padding: 0 20px;
             border-bottom: 1px solid #333;
         }
-
+        
         .search-input {
-            background: #222; border: 1px solid #444; color: #fff;
-            padding: 8px 15px; width: 400px; border-radius: 5px;
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #555;
+            color: #fff;
+            font-size: 18px;
         }
 
-        .list-content {
-            flex: 1;
+        /* Área Flexível: Menu Lateral + Grade */
+        .content-body {
+            flex: 1; /* Ocupa o resto da altura */
             display: flex;
-            overflow: hidden;
+            overflow: hidden; /* Importante para o scroll funcionar dentro */
         }
 
         .sidebar {
-            width: 250px; background: #0a0a0a; border-right: 1px solid #333; overflow-y: auto;
+            width: 240px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            flex-shrink: 0; /* Não deixa diminuir */
         }
 
-        .menu-item { padding: 15px 20px; border-bottom: 1px solid #222; color: #888; display: block; }
-        .menu-item.active { color: var(--gold); background: #1a1a1a; border-left: 4px solid var(--gold); }
+        .menu-item {
+            padding: 15px;
+            border-bottom: 1px solid #222;
+            color: #888;
+            font-size: 16px;
+        }
+        .menu-item.active { background: #222; color: var(--gold); border-left: 5px solid var(--gold); }
 
         .grid-container {
-            flex: 1; padding: 20px; display: flex; flex-wrap: wrap; align-content: flex-start; overflow-y: auto; gap: 15px;
+            flex: 1; /* Ocupa a largura restante */
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Permite quebra de linha */
+            align-content: flex-start; /* Alinha itens no topo */
+            overflow-y: auto;
+            gap: 15px;
         }
 
         .card {
-            width: 160px; height: 120px; background: #202020;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 2px solid transparent; border-radius: 5px;
+            width: 150px;
+            height: 110px;
+            background: #202020;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
+        
+        .card-name { font-size: 12px; margin-top: 5px; overflow: hidden; height: 30px; width: 90%; }
 
-        /* FOCO / SELEÇÃO */
+        /* FOCO */
         .focusable:focus, .focusable.focused {
             border-color: var(--gold) !important;
             background: #333 !important;
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
             outline: none;
             color: #fff !important;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
             z-index: 10;
         }
-        
-        /* Ajuste para input focado */
-        input.focusable:focus, input.focusable.focused {
-            background: #fff !important; color: #000 !important; transform: none;
-        }
+        input.focusable:focus, input.focusable.focused { transform: none; background: #fff !important; color: #000 !important; }
 
         /* PLAYER */
         #player-overlay {
@@ -179,73 +215,74 @@
 <body>
 
     <section id="login-screen">
-        <h1 style="color: var(--gold); margin-bottom: 30px; font-size: 3rem;">R&C GOLD</h1>
+        <h1 style="color: var(--gold); font-size: 40px;">R&C GOLD</h1>
         <div class="login-box">
             <div class="input-group">
-                <span class="input-label">Servidor</span>
-                <input type="text" id="server" class="input-field focusable" placeholder="http://url.com">
+                <span class="input-label">Endereço do Servidor</span>
+                <input type="text" id="server" class="input-field focusable" placeholder="http://...">
             </div>
             <div class="input-group">
                 <span class="input-label">Usuário</span>
-                <input type="text" id="user" class="input-field focusable" placeholder="Digite usuário">
+                <input type="text" id="user" class="input-field focusable" placeholder="Usuário">
             </div>
             <div class="input-group">
                 <span class="input-label">Senha</span>
-                <input type="password" id="pass" class="input-field focusable" placeholder="Digite senha">
+                <input type="password" id="pass" class="input-field focusable" placeholder="Senha">
             </div>
-            <button class="btn-gold focusable" onclick="doLogin()">ACESSAR</button>
+            <button class="btn-gold focusable" onclick="doLogin()">ENTRAR</button>
         </div>
     </section>
 
     <section id="main-dashboard">
-        
         <div class="header">
-            <div style="font-size: 24px; font-weight: bold; color: var(--gold);">R&C IPTV</div>
+            <div class="logo-area">R&C IPTV</div>
             
-            <div class="account-info">
-                Usuário: <span id="display-user">...</span><br>
-                Vencimento: <span id="display-exp">ILIMITADO</span>
+            <div class="account-info-bar">
+                <div class="info-item">Criado: <span id="info-created">--/--/--</span></div>
+                <div style="border-right: 1px solid #444;"></div>
+                <div class="info-item">Vencimento: <span id="info-expire">--/--/--</span></div>
+                <div style="border-right: 1px solid #444;"></div>
+                <div class="info-item">Telas: <span id="info-limit">0/0</span></div>
             </div>
 
-            <div id="clock" style="font-size: 22px;">00:00</div>
+            <div id="clock" style="font-size: 20px; font-weight: bold;">00:00</div>
         </div>
 
         <div id="home-view">
             <div class="big-card focusable" onclick="loadCategory('live')">
                 <div style="font-size: 50px;">📺</div>
-                <h3 style="color:#ddd;">TV AO VIVO</h3>
+                <h3 style="color:#ccc;">TV AO VIVO</h3>
             </div>
             <div class="big-card focusable" onclick="loadCategory('movies')">
                 <div style="font-size: 50px;">🎬</div>
-                <h3 style="color:#ddd;">FILMES</h3>
+                <h3 style="color:#ccc;">FILMES</h3>
             </div>
             <div class="big-card focusable" onclick="loadCategory('series')">
                 <div style="font-size: 50px;">🎞️</div>
-                <h3 style="color:#ddd;">SÉRIES</h3>
+                <h3 style="color:#ccc;">SÉRIES</h3>
             </div>
         </div>
 
         <div id="list-view">
-            
-            <div class="list-toolbar">
-                <input type="text" id="internal-search" class="search-input focusable" placeholder="Pesquisar neste grupo..." onkeyup="filterContent()">
-                <div style="margin-left: auto; color: #666;">Pressione VOLTAR para sair</div>
+            <div class="search-container">
+                <span style="margin-right: 10px; color: var(--gold);">🔍</span>
+                <input type="text" id="internal-search" class="search-input focusable" placeholder="Digite o nome do canal ou filme..." onkeyup="filterContent()">
+                <div style="margin-left: auto; font-size: 12px; color: #666;">[VOLTAR] para Sair</div>
             </div>
 
-            <div class="list-content">
+            <div class="content-body">
                 <div class="sidebar">
                     <div class="menu-item focusable" onclick="filterCat('all')">Todos</div>
                     <div class="menu-item focusable" onclick="filterCat('sports')">Esportes</div>
+                    <div class="menu-item focusable" onclick="filterCat('movies')">Cinema</div>
                     <div class="menu-item focusable" onclick="filterCat('kids')">Infantil</div>
-                    <div class="menu-item focusable" onclick="filterCat('adult')">Adulto</div>
                     <div class="menu-item focusable" onclick="backToHome()" style="color: var(--gold); margin-top: 20px;">⬅ MENU INICIAL</div>
                 </div>
-                
+
                 <div class="grid-container" id="content-grid">
                     </div>
             </div>
         </div>
-
     </section>
 
     <div id="player-overlay">
@@ -253,7 +290,7 @@
     </div>
 
     <script>
-        // --- VARIÁVEIS ---
+        // --- VARIÁVEIS GLOBAIS ---
         var currentScreen = 'login'; 
         var focusElements = [];
         var focusIndex = 0;
@@ -263,57 +300,59 @@
             if(focusElements.length > 0) highlight(0);
         };
 
-        // --- LOGIN E DADOS DA CONTA ---
+        // --- 1. LOGIN E DADOS DA CONTA ---
         function doLogin() {
             var user = document.getElementById('user').value;
+            var pass = document.getElementById('pass').value;
             var server = document.getElementById('server').value;
-            
-            if(user && server) {
-                // Salva dados visualmente
-                document.getElementById('display-user').innerText = user;
-                
-                // Troca de tela
+
+            if(user && pass && server) {
+                // Simulação de resposta da API (Aqui você colocaria os dados reais)
+                // PREENCHENDO AS INFORMAÇÕES QUE VOCÊ PEDIU:
+                document.getElementById('info-created').innerText = "01/01/2024"; // Data criação
+                document.getElementById('info-expire').innerText = "01/01/2025";  // Data vencimento
+                document.getElementById('info-limit').innerText = "1/3";          // Limite de telas
+
+                // Transição
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-dashboard').style.display = 'flex';
                 
                 currentScreen = 'home';
                 updateFocus();
-                focusIndex = 0; 
+                focusIndex = 0;
                 highlight(0);
             } else {
-                alert("Preencha Servidor e Usuário!");
+                alert("Preencha todos os campos!");
             }
         }
 
-        // --- NAVEGAÇÃO DE MENU (CORRIGIDA) ---
+        // --- 2. NAVEGAÇÃO DE CATEGORIAS ---
         function loadCategory(type) {
-            console.log("Entrando na categoria: " + type);
-            
-            // 1. Esconde Home
             document.getElementById('home-view').style.display = 'none';
-            
-            // 2. Mostra Lista (Flex)
             document.getElementById('list-view').style.display = 'flex';
-            
-            // 3. Muda Estado
             currentScreen = 'list';
 
-            // 4. Popula Grid (Simulação)
+            // Gerar canais falsos para teste (Limpeza e Organização)
             var grid = document.getElementById('content-grid');
             grid.innerHTML = '';
             
-            for(var i=1; i<=30; i++) {
+            var channelNames = ["Globo SP", "SBT", "Record", "Band", "ESPN", "SportTV", "Telecine", "HBO", "Discovery", "Cartoon Network", "CNN Brasil", "Globo News", "Viva", "Multishow", "GNT"];
+            
+            // Cria 30 canais repetindo os nomes para testar scroll e busca
+            for(var i=0; i<30; i++) {
+                var name = channelNames[i % channelNames.length] + " " + (Math.floor(i/channelNames.length)+1);
                 var div = document.createElement('div');
                 div.className = 'card focusable';
-                div.innerHTML = '<div style="font-size:24px;">📺</div><div style="font-size:12px; margin-top:5px;">Canal '+i+'</div>';
+                div.innerHTML = '<div style="font-size:30px;">📺</div><div class="card-name">'+name+'</div>';
+                div.setAttribute('data-name', name.toLowerCase()); // Para busca rápida
                 div.onclick = function() { openPlayer(); };
                 grid.appendChild(div);
             }
 
-            // 5. Ajusta Foco para a Barra de Busca
+            // Foca na busca primeiro
             setTimeout(function() {
                 updateFocus();
-                focusIndex = 0; // O primeiro elemento da lista agora é a Busca
+                focusIndex = 0; // Index 0 agora é a busca
                 highlight(0);
             }, 100);
         }
@@ -322,35 +361,50 @@
             document.getElementById('list-view').style.display = 'none';
             document.getElementById('home-view').style.display = 'flex';
             currentScreen = 'home';
-            
-            setTimeout(function() {
-                updateFocus();
-                focusIndex = 0;
-                highlight(0);
-            }, 100);
+            setTimeout(function() { updateFocus(); highlight(0); }, 100);
         }
 
-        // --- SISTEMA DE CONTROLE ---
+        // --- 3. BUSCA OTIMIZADA ---
+        function filterContent() {
+            var term = document.getElementById('internal-search').value.toLowerCase().trim();
+            var cards = document.querySelectorAll('#content-grid .card');
+            
+            for(var i=0; i<cards.length; i++) {
+                var cardName = cards[i].getAttribute('data-name');
+                if(cardName.indexOf(term) > -1) {
+                    cards[i].style.display = 'flex';
+                } else {
+                    cards[i].style.display = 'none';
+                }
+            }
+            // Não atualizamos o foco aqui para não atrapalhar a digitação
+        }
+
+        // --- 4. SISTEMA DE CONTROLE (Setas) ---
         function updateFocus() {
-            // Limpa focos anteriores
             var all = document.querySelectorAll('.focused');
             for(var i=0; i<all.length; i++) all[i].classList.remove('focused');
 
             if (currentScreen === 'login') {
                 focusElements = document.querySelectorAll('#login-screen .focusable');
-            } 
-            else if (currentScreen === 'home') {
+            } else if (currentScreen === 'home') {
                 focusElements = document.querySelectorAll('#home-view .focusable');
-            } 
-            else if (currentScreen === 'list') {
-                // Ordem: Busca -> Sidebar -> Grid
-                focusElements = document.querySelectorAll('#list-view .focusable');
+            } else if (currentScreen === 'list') {
+                // Ordem importante: Busca -> Sidebar -> Cards visíveis
+                // Seleciona apenas cards que NÃO estão escondidos (display: none)
+                var visibleCards = [];
+                var cards = document.querySelectorAll('#content-grid .card');
+                for(var i=0; i<cards.length; i++) {
+                    if(cards[i].style.display !== 'none') visibleCards.push(cards[i]);
+                }
+                
+                var others = document.querySelectorAll('.search-container .focusable, .sidebar .focusable');
+                focusElements = Array.prototype.slice.call(others).concat(Array.prototype.slice.call(visibleCards));
             }
         }
 
         function highlight(index) {
             if(!focusElements.length) return;
-            
             if(focusElements[focusIndex]) focusElements[focusIndex].classList.remove('focused');
 
             if(index >= focusElements.length) index = 0;
@@ -360,11 +414,15 @@
             focusElements[focusIndex].classList.add('focused');
             focusElements[focusIndex].focus();
             
+            // Previne scroll da página inteira, faz scroll só do elemento se necessário
             focusElements[focusIndex].scrollIntoView({block: "center", behavior: "smooth"});
         }
 
         document.addEventListener('keydown', function(e) {
-            updateFocus();
+            // Se estiver na busca e apertar Enter ou Baixo, atualiza lista de focáveis
+            if(currentScreen === 'list' && e.key === 'ArrowDown') {
+                 updateFocus(); // Atualiza para pegar os itens filtrados
+            }
 
             switch(e.key) {
                 case 'ArrowDown': highlight(focusIndex + 1); break;
@@ -382,19 +440,20 @@
             }
         });
 
-        // --- PLAYER ---
+        // --- 5. PLAYER ---
         function openPlayer() {
             document.getElementById('player-overlay').style.display = 'block';
             currentScreen = 'player';
             var video = document.getElementById('video-player');
-            // Teste
+            var url = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; // URL Teste
+
             if(Hls.isSupported()) {
                 var hls = new Hls();
-                hls.loadSource('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+                hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED,function() { video.play(); });
             } else {
-                video.src = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+                video.src = url;
                 video.play();
             }
         }
@@ -407,20 +466,6 @@
             updateFocus();
         }
 
-        // Pesquisa
-        function filterContent() {
-            var term = document.getElementById('internal-search').value.toLowerCase();
-            var cards = document.querySelectorAll('#content-grid .card');
-            cards.forEach(function(card) {
-                if(card.innerText.toLowerCase().includes(term)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Relógio
         setInterval(function() {
             var d = new Date();
             var h = d.getHours(); var m = d.getMinutes();
