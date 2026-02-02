@@ -2,128 +2,120 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKY GOLD V-LITE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKY GOLD V-FINAL</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- OTIMIZAÇÃO CRÍTICA (CSS ZERO BLOQUEIO) --- */
+        /* --- RESET & VARS --- */
         :root {
             --gold: #FFD700;
             --bg-main: #000;
-            --bg-dark: #050505;
-            --bg-light: #111;
-            --focus-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            --bg-panel: #0a0a0a;
+            --sel-bg: #FFD700;
+            --sel-txt: #000;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-main); color: #fff; font-family: system-ui, -apple-system, sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        
-        /* Ícones SVG Otimizados */
-        .icon { width: 16px; height: 16px; fill: currentColor; display: inline-block; vertical-align: middle; }
-        
-        /* --- TELA DE LOGIN --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        body { background: var(--bg-main); color: #fff; font-family: 'Segoe UI', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* --- TELA DE LOGIN (SEU LAYOUT ORIGINAL) --- */
         #loginScreen {
-            position: absolute; inset: 0; z-index: 9999;
-            background: #000; display: flex; justify-content: center; align-items: center;
+            position: absolute; width: 100%; height: 100%;
+            background: #000; z-index: 5000;
+            display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            background: var(--bg-dark); border-top: 3px solid var(--gold);
-            width: 90%; max-width: 400px; padding: 30px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            background: #0a0a0a;
+            border-top: 4px solid var(--gold);
+            width: 450px; padding: 40px; text-align: center;
         }
-        .lg-title { color: var(--gold); font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px; }
+        .lg-title { color: var(--gold); font-size: 24px; font-weight: bold; margin-bottom: 30px; }
+        
         .lg-inp {
-            width: 100%; height: 45px; margin-bottom: 12px;
-            background: #151515; border: 1px solid #333; color: #fff;
-            text-align: center; font-size: 16px; border-radius: 4px;
+            width: 100%; height: 50px; margin-bottom: 15px;
+            background: #1a1a1a; border: 1px solid #333; color: #fff;
+            text-align: center; font-size: 18px;
         }
         .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); }
+        
         .lg-btn {
-            width: 100%; height: 50px; background: var(--gold); color: #000;
-            font-weight: 800; font-size: 16px; border: none; cursor: pointer; margin-top: 10px;
-            border-radius: 4px; transition: transform 0.1s;
+            width: 100%; height: 55px; background: var(--gold); color: #000;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer; margin-top: 10px;
         }
-        .lg-btn:active, .lg-btn:focus { transform: scale(0.98); box-shadow: var(--focus-shadow); }
+        .lg-btn:focus { box-shadow: 0 0 15px var(--gold); transform: scale(1.02); }
 
         /* --- INTERFACE PRINCIPAL --- */
         #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
 
-        /* TOPO */
+        /* TOPO (Navegação de Abas) */
         .top-bar {
-            height: 55px; background: var(--bg-light); border-bottom: 1px solid #222;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+            height: 60px; background: #111; border-bottom: 2px solid #333;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 25px;
         }
-        .logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+        .logo { font-size: 20px; font-weight: 900; }
         .logo span { color: var(--gold); }
 
-        .tabs-area { display: flex; height: 100%; gap: 10px; }
+        .tabs-area { display: flex; height: 100%; }
         .tab-btn {
-            padding: 0 15px; height: 100%; display: flex; align-items: center; gap: 6px;
-            color: #666; font-weight: 700; font-size: 13px; border-bottom: 3px solid transparent;
-            cursor: pointer; transition: color 0.2s;
+            padding: 0 20px; height: 100%; display: flex; align-items: center; gap: 8px;
+            color: #777; font-weight: bold; font-size: 14px; border-bottom: 4px solid transparent;
+            cursor: pointer;
         }
-        .tab-btn.active-mode { color: #fff; border-bottom-color: var(--gold); }
-        .tab-btn.focused { background: #333; color: #fff; }
+        /* Aba Ativa (Modo Atual) */
+        .tab-btn.active-mode { color: #fff; border-color: var(--gold); background: #1a1a1a; }
+        /* Aba Focada (Navegação) */
+        .tab-btn.focused { background: var(--gold); color: #000; border-color: #fff; }
 
-        .top-right { display: flex; align-items: center; gap: 15px; }
-        .btn-exit { font-size: 12px; color: #888; padding: 6px 12px; border: 1px solid #333; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
-        .btn-exit.focused { background: #d00; color: white; border-color: #f00; }
+        .top-right { display: flex; align-items: center; gap: 20px; }
+        .btn-exit { font-size: 14px; color: #aaa; padding: 5px 10px; border: 1px solid #333; border-radius: 4px; }
+        .btn-exit.focused { background: red; color: white; border-color: white; }
         
-        #clock { font-size: 18px; font-weight: 700; color: #ddd; font-variant-numeric: tabular-nums; }
+        #clock { font-size: 20px; font-weight: bold; color: #fff; }
 
-        /* CORPO */
+        /* CORPO (3 Colunas) */
         .main-body { flex: 1; display: flex; overflow: hidden; }
 
-        /* Colunas */
-        .col-cat { width: 260px; background: #080808; display: flex; flex-direction: column; border-right: 1px solid #1a1a1a; }
-        .col-list { width: 320px; background: #0c0c0c; display: flex; flex-direction: column; border-right: 1px solid #1a1a1a; }
-        .col-player { flex: 1; background: #000; padding: 0; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        /* Coluna 1: Categorias */
+        .col-cat { width: 280px; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .list-head { padding: 12px; background: #000; color: var(--gold); font-size: 12px; font-weight: bold; text-align: center; }
+        .list-scroll { flex: 1; overflow-y: auto; }
+        
+        .item-cat { padding: 12px 15px; color: #888; font-size: 14px; border-left: 4px solid transparent; font-weight: 600; }
+        .item-cat.active { background: #151515; color: #fff; border-left-color: #444; } /* Selecionado */
+        .item-cat.focused { background: var(--gold); color: #000; border-left-color: #fff; font-weight: 900; } /* Cursor */
 
-        .list-head { padding: 10px; background: #000; color: var(--gold); font-size: 11px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
-        .list-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; will-change: scroll-position; }
+        /* Coluna 2: Conteúdo */
+        .col-list { width: 350px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .item-cnt { padding: 10px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; font-size: 13px; display:flex; align-items:center; gap:10px; }
+        .item-cnt i { font-size: 10px; }
+        .item-cnt span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* Scrollbar Invisível mas funcional */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #333; }
-
-        /* Itens */
-        .item-cat, .item-cnt {
-            padding: 10px 12px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            cursor: pointer; border-left: 3px solid transparent; color: #777; font-weight: 500;
-        }
-        
-        /* Estados dos Itens */
-        .item-cat.active { background: #111; color: #eee; border-left-color: #444; }
-        .item-cat.focused { background: var(--gold); color: #000; border-left-color: #fff; font-weight: 800; }
-        
-        .item-cnt { border-bottom: 1px solid #141414; display: flex; align-items: center; gap: 8px; }
         .item-cnt.playing { color: var(--gold); }
-        .item-cnt.focused { 
-            background: #222; color: #fff; font-weight: 700; border-left-color: var(--gold);
-            transform: translateX(4px); transition: transform 0.1s;
-        }
+        .item-cnt.focused { background: rgba(255, 215, 0, 0.15); border: 1px solid var(--gold); color: #fff; font-weight: bold; transform: scale(1.02); }
 
-        /* Player */
-        .vid-container { width: 100%; height: 100%; position: relative; }
-        video { width: 100%; height: 100%; background: #000; }
-        
-        .overlay-info {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            padding: 40px 30px 30px 30px; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+        /* Coluna 3: Player */
+        .col-player { flex: 1; background: #050505; padding: 20px; display: flex; flex-direction: column; }
+        .vid-box { 
+            width: 100%; aspect-ratio: 16/9; background: #000; border: 1px solid #333; 
+            position: relative; margin-bottom: 15px; display:flex; justify-content:center; align-items:center;
         }
-        .col-player:hover .overlay-info, .vid-container.show-info .overlay-info { opacity: 1; }
+        .vid-box.active { border-color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+        video { width: 100%; height: 100%; object-fit: contain; }
         
-        .info-title { color: #fff; font-size: 24px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .info-desc { color: var(--gold); font-size: 14px; margin-top: 5px; font-weight: 600; }
+        .info-box { color: #555; }
+        .info-title { color: #fff; font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .info-desc { font-size: 13px; }
+
+        .fullscreen { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index:9999; border:none; background:#000; }
 
     </style>
 </head>
-<body onload="App.init()">
+<body onload="init()">
 
     <div id="loginScreen">
         <div class="login-box">
             <div class="lg-title">SKY GOLD</div>
-            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" autocomplete="off">
-            <input type="text" id="u" class="lg-inp" placeholder="Usuário" autocomplete="off">
+            <input type="text" id="h" class="lg-inp" placeholder="http://url-do-servidor">
+            <input type="text" id="u" class="lg-inp" placeholder="Usuário">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
             <button id="btnEnter" class="lg-btn" onclick="doLogin()">ENTRAR</button>
         </div>
@@ -133,130 +125,108 @@
         <div class="top-bar">
             <div class="logo">SKY <span>GOLD</span></div>
             <div class="tabs-area">
-                <div class="tab-btn active-mode" id="tab-live">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg> TV
-                </div>
-                <div class="tab-btn" id="tab-vod">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg> FILMES
-                </div>
-                <div class="tab-btn" id="tab-ser">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg> SÉRIES
-                </div>
+                <div class="tab-btn active-mode" id="tab-live"><i class="fas fa-tv"></i> TV</div>
+                <div class="tab-btn" id="tab-vod"><i class="fas fa-film"></i> FILMES</div>
+                <div class="tab-btn" id="tab-ser"><i class="fas fa-video"></i> SÉRIES</div>
             </div>
             <div class="top-right">
-                <div class="btn-exit" id="btn-logout">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg> SAIR
-                </div>
+                <div class="btn-exit" id="btn-logout"><i class="fas fa-sign-out-alt"></i> SAIR</div>
                 <div id="clock">00:00</div>
             </div>
         </div>
 
         <div class="main-body">
             <div class="col-cat">
-                <div class="list-head">CATEGORIAS</div>
+                <div class="list-head" id="cat-head">CATEGORIAS</div>
                 <div class="list-scroll" id="list-cats"></div>
             </div>
             <div class="col-list">
-                <div class="list-head">CONTEÚDO</div>
+                <div class="list-head" id="cnt-head">CONTEÚDO</div>
                 <div class="list-scroll" id="list-cnt">
-                    <div style="padding:20px; text-align:center; color:#444; font-size:12px">Selecione uma categoria</div>
+                    <div style="padding:20px; text-align:center; color:#444">Selecione uma categoria</div>
                 </div>
             </div>
             <div class="col-player">
-                <div class="vid-container" id="v-box">
-                    <video id="player" playsinline webkit-playsinline poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"></video>
-                    <div class="overlay-info">
-                        <div class="info-title" id="lbl-title">Bem Vindo</div>
-                        <div class="info-desc" id="lbl-desc">Selecione um conteúdo</div>
-                    </div>
+                <div class="vid-box" id="v-box">
+                    <video id="player" playsinline webkit-playsinline></video>
+                </div>
+                <div class="info-box">
+                    <div class="info-title" id="lbl-title">Bem Vindo</div>
+                    <div class="info-desc" id="lbl-desc">Selecione um canal ou filme para iniciar.</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- ESTADO OTIMIZADO ---
+        // --- ESTADO DO SISTEMA ---
         const App = {
-            screen: 'login', mode: 'live', zone: 0, focusIdx: 0,
-            cats: [], list: [], creds: {}, currId: null,
+            screen: 'login', // 'login' ou 'app'
+            mode: 'live',    // 'live', 'vod', 'ser'
+            zone: 0,         // 0: Topo, 1: Cats, 2: Lista
+            focusIdx: 0,     // Índice genérico do foco na zona
             
-            // Elementos em cache para evitar document.getElementById repetitivo
-            el: {
-                h: null, u: null, p: null, btn: null, clock: null,
-                cats: null, cnt: null, vid: null, box: null,
-                lblT: null, lblD: null
-            },
-
+            // Dados
+            cats: [],
+            list: [],
+            creds: {},
+            
+            // Player
+            currId: null,
+            
             init: function() {
-                // Cache Elements
-                this.el.h = document.getElementById('h');
-                this.el.u = document.getElementById('u');
-                this.el.p = document.getElementById('p');
-                this.el.btn = document.getElementById('btnEnter');
-                this.el.clock = document.getElementById('clock');
-                this.el.cats = document.getElementById('list-cats');
-                this.el.cnt = document.getElementById('list-cnt');
-                this.el.vid = document.getElementById('player');
-                this.el.box = document.getElementById('v-box');
-                this.el.lblT = document.getElementById('lbl-title');
-                this.el.lblD = document.getElementById('lbl-desc');
-
-                // Load Saved
                 if(localStorage.getItem('sk_h')) {
-                    this.el.h.value = localStorage.getItem('sk_h');
-                    this.el.u.value = localStorage.getItem('sk_u');
-                    this.el.p.value = localStorage.getItem('sk_p');
+                    document.getElementById('h').value = localStorage.getItem('sk_h');
+                    document.getElementById('u').value = localStorage.getItem('sk_u');
+                    document.getElementById('p').value = localStorage.getItem('sk_p');
                 }
-                this.el.h.focus();
+                document.getElementById('h').focus();
                 
-                // Clock (Optimized Interval)
-                this.updateClock();
-                setInterval(() => this.updateClock(), 60000); // Atualiza a cada minuto para economizar CPU
-            },
-
-            updateClock: function() {
-                let now = new Date();
-                now.setHours(now.getHours() + 1);
-                this.el.clock.innerText = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                // Relógio +1 Hora
+                setInterval(() => {
+                    let now = new Date();
+                    now.setHours(now.getHours() + 1); // Adiciona 1 hora
+                    let str = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                    document.getElementById('clock').innerText = str;
+                }, 1000);
             },
 
             login: async function() {
-                let h = this.el.h.value.trim();
-                let u = this.el.u.value.trim();
-                let p = this.el.p.value.trim();
-                if(!h) return alert("Digite a URL");
+                let h = document.getElementById('h').value.trim();
+                let u = document.getElementById('u').value.trim();
+                let p = document.getElementById('p').value.trim();
                 if(!h.startsWith('http')) h = 'http://'+h;
                 
-                this.el.btn.innerText = "⌛";
+                document.getElementById('btnEnter').innerText = "ENTRANDO...";
                 
                 try {
+                    // Teste de conexão (Live Categories)
                     let url = `${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`;
-                    // Fetch com Timeout para não travar
-                    let ctrl = new AbortController();
-                    let id = setTimeout(() => ctrl.abort(), 10000);
-                    
-                    let res = await fetch(url, { signal: ctrl.signal });
-                    clearTimeout(id);
+                    let res = await fetch(url);
                     let json = await res.json();
                     
                     if(Array.isArray(json)) {
                         localStorage.setItem('sk_h', h); localStorage.setItem('sk_u', u); localStorage.setItem('sk_p', p);
                         this.creds = {h,u,p};
+                        
                         document.getElementById('loginScreen').style.display = 'none';
                         document.getElementById('appInterface').style.display = 'flex';
                         this.screen = 'app';
+                        
+                        // Inicia no modo TV
                         this.switchMode('live');
                     } else {
-                        throw new Error();
+                        alert("Login Falhou");
+                        document.getElementById('btnEnter').innerText = "ENTRAR";
                     }
                 } catch(e) {
-                    alert("Falha no Login. Verifique os dados.");
-                    this.el.btn.innerText = "ENTRAR";
+                    alert("Erro de Conexão");
+                    document.getElementById('btnEnter').innerText = "ENTRAR";
                 }
             },
             
             logout: function() {
-                if(confirm("Sair da conta?")) {
+                if(confirm("Deseja trocar de playlist?")) {
                     localStorage.clear();
                     location.reload();
                 }
@@ -264,164 +234,205 @@
 
             switchMode: async function(newMode) {
                 this.mode = newMode;
-                this.zone = 1; this.focusIdx = 0;
-                this.list = [];
-                this.el.cnt.innerHTML = '';
+                this.zone = 1; // Foco nas categorias
+                this.focusIdx = 0;
+                this.list = []; // Limpa lista de conteúdo
+                document.getElementById('list-cnt').innerHTML = '';
                 
-                // Atualiza abas
+                // Atualiza abas visuais
                 document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active-mode'));
-                document.getElementById(`tab-${newMode}`).classList.add('active-mode');
+                if(newMode === 'live') document.getElementById('tab-live').classList.add('active-mode');
+                if(newMode === 'vod') document.getElementById('tab-vod').classList.add('active-mode');
+                if(newMode === 'ser') document.getElementById('tab-ser').classList.add('active-mode');
 
-                let action = newMode === 'live' ? 'get_live_categories' : (newMode === 'vod' ? 'get_vod_categories' : 'get_series_categories');
+                // Carrega Categorias
+                let action = 'get_live_categories';
+                if(newMode === 'vod') action = 'get_vod_categories';
+                if(newMode === 'ser') action = 'get_series_categories';
                 
-                this.el.cats.innerHTML = '<div style="padding:10px;text-align:center;color:#666">...</div>';
+                document.getElementById('list-cats').innerHTML = '<div style="padding:10px;text-align:center">Carregando...</div>';
                 
                 try {
                     let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${action}`);
                     this.cats = await res.json();
                     
-                    // RENDERIZAÇÃO ULTRA RÁPIDA (String Join ao invés de DOM Loop)
-                    this.el.cats.innerHTML = this.cats.map((c, i) => 
-                        `<div class="item-cat" id="cat-${i}">${c.category_name}</div>`
-                    ).join('');
+                    let html = '';
+                    this.cats.forEach((c, i) => {
+                        html += `<div class="item-cat" id="cat-${i}">${c.category_name}</div>`;
+                    });
+                    document.getElementById('list-cats').innerHTML = html;
                     
                     this.renderFocus();
                 } catch(e) {
-                    this.el.cats.innerHTML = 'Erro';
+                    document.getElementById('list-cats').innerHTML = 'Erro API';
                 }
             },
 
             loadContent: async function() {
-                let cat = this.cats[this.focusIdx];
-                let action = this.mode === 'live' ? 'get_live_streams' : (this.mode === 'vod' ? 'get_vod_streams' : 'get_series');
+                let cat = this.cats[this.focusIdx]; // Categoria focada na Zona 1
+                let cid = cat.category_id;
                 
-                this.el.cnt.innerHTML = '<div style="padding:10px;text-align:center;color:#666">...</div>';
+                document.getElementById('list-cnt').innerHTML = '<div style="padding:10px;text-align:center">Carregando...</div>';
+                
+                let action = 'get_live_streams';
+                if(this.mode === 'vod') action = 'get_vod_streams';
+                if(this.mode === 'ser') action = 'get_series'; // Séries simples
                 
                 try {
-                    let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${action}&category_id=${cat.category_id}`);
+                    let res = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${action}&category_id=${cid}`);
                     this.list = await res.json();
                     
-                    // Ícone SVG para a lista (Cacheado na string para performance)
-                    const ico = '<svg class="icon" style="opacity:0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                    let html = '';
+                    this.list.forEach((item, i) => {
+                        let name = item.name;
+                        html += `<div class="item-cnt" id="cnt-${i}"><i class="fas fa-play"></i> <span>${name}</span></div>`;
+                    });
+                    document.getElementById('list-cnt').innerHTML = html;
                     
-                    // RENDERIZAÇÃO ULTRA RÁPIDA
-                    this.el.cnt.innerHTML = this.list.map((item, i) => 
-                        `<div class="item-cnt" id="cnt-${i}">${ico} <span>${item.name}</span></div>`
-                    ).join('');
-                    
-                    // Atualiza estado visual
-                    document.querySelectorAll('.item-cat').forEach(c => c.classList.remove('active'));
-                    let activeCat = document.getElementById(`cat-${this.cats.indexOf(cat)}`);
-                    if(activeCat) activeCat.classList.add('active');
-                    
-                    this.zone = 2; this.focusIdx = 0;
+                    // Muda foco para a lista
+                    this.zone = 2;
+                    this.focusIdx = 0;
                     this.renderFocus();
                     
+                    // Marca categoria ativa visualmente
+                    document.querySelectorAll('.item-cat').forEach(c => c.classList.remove('active'));
+                    document.getElementById(`cat-${this.cats.indexOf(cat)}`).classList.add('active');
+                    
                 } catch(e) {
-                    this.el.cnt.innerHTML = 'Erro';
+                    document.getElementById('list-cnt').innerHTML = 'Erro ao carregar';
                 }
             },
 
             play: function() {
                 let item = this.list[this.focusIdx];
-                let streamId = item.stream_id || item.series_id;
-                let ext = this.mode === 'live' ? 'ts' : 'mp4';
-                let type = this.mode === 'live' ? 'live' : (this.mode === 'vod' ? 'movie' : 'series');
+                let vid = document.getElementById('player');
+                let box = document.getElementById('v-box');
                 
-                if(this.mode === 'vod' && item.container_extension) ext = item.container_extension;
+                // Determina ID e Extensão
+                let streamId = item.stream_id || item.series_id;
+                let ext = 'ts'; // Padrão Live
+                let typeUrl = 'live';
+                
+                if(this.mode === 'vod') { ext = item.container_extension || 'mp4'; typeUrl = 'movie'; }
+                if(this.mode === 'ser') { ext = 'mp4'; typeUrl = 'series'; } // Simplificado para séries
 
-                let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
+                let url = `${this.creds.h}/${typeUrl}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
-                // Navegação 2 Cliques
-                if(this.currId === streamId && !this.el.vid.paused) {
-                    if(this.el.box.requestFullscreen) this.el.box.requestFullscreen();
-                    else if(this.el.vid.webkitRequestFullscreen) this.el.vid.webkitRequestFullscreen();
+                // --- LÓGICA DE 2 CLIQUES ---
+                if(this.currId === streamId && !vid.paused) {
+                    // 2º CLIQUE: FULLSCREEN
+                    if(box.requestFullscreen) box.requestFullscreen();
+                    else if(vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
                 } else {
+                    // 1º CLIQUE: PREVIEW
                     this.currId = streamId;
-                    this.el.lblT.innerText = item.name;
-                    this.el.lblD.innerText = this.mode === 'live' ? 'Ao Vivo' : 'Sob Demanda';
                     
+                    // Atualiza Info
+                    document.getElementById('lbl-title').innerText = item.name;
+                    document.getElementById('lbl-desc').innerText = this.mode === 'live' ? 'Reproduzindo ao vivo' : 'Reproduzindo VOD';
+                    
+                    // Atualiza visual "Playing"
                     document.querySelectorAll('.item-cnt').forEach(x => x.classList.remove('playing'));
-                    let nowPlaying = document.getElementById(`cnt-${this.focusIdx}`);
-                    if(nowPlaying) nowPlaying.classList.add('playing');
+                    document.getElementById(`cnt-${this.focusIdx}`).classList.add('playing');
+                    box.classList.add('active');
 
-                    this.el.vid.src = url;
-                    this.el.vid.play().catch(e => console.log("Auto-play blocked"));
+                    vid.src = url;
+                    vid.play();
                 }
             },
 
             renderFocus: function() {
-                // Limpa foco anterior (Mais rápido que querySelectorAll em apps pesados)
-                let prev = document.querySelector('.focused');
-                if(prev) prev.classList.remove('focused');
+                // Remove todos os focos
+                document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
 
-                let target = null;
-                if(this.zone === 0) {
+                if(this.zone === 0) { // TOPO
                     let tabs = ['tab-live', 'tab-vod', 'tab-ser', 'btn-logout'];
-                    target = document.getElementById(tabs[this.focusIdx]);
-                } else if(this.zone === 1) {
-                    target = document.getElementById(`cat-${this.focusIdx}`);
-                } else if(this.zone === 2) {
-                    target = document.getElementById(`cnt-${this.focusIdx}`);
+                    let el = document.getElementById(tabs[this.focusIdx]);
+                    if(el) el.classList.add('focused');
                 }
-
-                if(target) {
-                    target.classList.add('focused');
-                    // Scroll Suave apenas se necessário
-                    if(this.zone > 0) target.scrollIntoView({block:'center', behavior:'auto'});
+                else if(this.zone === 1) { // CATEGORIAS
+                    let el = document.getElementById(`cat-${this.focusIdx}`);
+                    if(el) {
+                        el.classList.add('focused');
+                        el.scrollIntoView({block:'center'});
+                    }
+                }
+                else if(this.zone === 2) { // LISTA
+                    let el = document.getElementById(`cnt-${this.focusIdx}`);
+                    if(el) {
+                        el.classList.add('focused');
+                        el.scrollIntoView({block:'center'});
+                    }
                 }
             },
             
             handleKey: function(k) {
-                if(this.zone === 0) { // TOPO
-                    if(k === 39 && this.focusIdx < 3) this.focusIdx++; 
-                    else if(k === 37 && this.focusIdx > 0) this.focusIdx--;
-                    else if(k === 40) { this.zone = 1; this.focusIdx = 0; }
-                    else if(k === 13) {
-                        if(this.focusIdx < 3) {
-                            let modes = ['live','vod','ser'];
-                            this.switchMode(modes[this.focusIdx]);
-                        } else this.logout();
+                // ZONE 0: TOPO (0:TV, 1:MOV, 2:SER, 3:SAIR)
+                if(this.zone === 0) {
+                    if(k === 39 && this.focusIdx < 3) this.focusIdx++; // Dir
+                    if(k === 37 && this.focusIdx > 0) this.focusIdx--; // Esq
+                    if(k === 40) { // Baixo -> Vai para Categorias
+                        this.zone = 1; 
+                        this.focusIdx = 0; 
+                    }
+                    if(k === 13) { // Enter
+                        if(this.focusIdx === 0) this.switchMode('live');
+                        if(this.focusIdx === 1) this.switchMode('vod');
+                        if(this.focusIdx === 2) this.switchMode('ser');
+                        if(this.focusIdx === 3) this.logout();
                     }
                 }
-                else if(this.zone === 1) { // CATEGORIAS
-                    if(k === 38) {
+                // ZONE 1: CATEGORIAS
+                else if(this.zone === 1) {
+                    if(k === 38) { // Cima
                         if(this.focusIdx > 0) this.focusIdx--;
-                        else { this.zone = 0; this.focusIdx = 0; }
+                        else { this.zone = 0; this.focusIdx = 0; } // Vai pro topo
                     }
-                    else if(k === 40 && this.focusIdx < this.cats.length-1) this.focusIdx++;
-                    else if(k === 39 || k === 13) this.loadContent();
+                    if(k === 40 && this.focusIdx < this.cats.length-1) this.focusIdx++; // Baixo
+                    if(k === 39 || k === 13) { // Dir ou Enter -> Carrega
+                        this.loadContent();
+                        return; // LoadContent já muda a zona
+                    }
                 }
-                else if(this.zone === 2) { // CONTEÚDO
-                    if(k === 38) {
+                // ZONE 2: LISTA DE CONTEÚDO
+                else if(this.zone === 2) {
+                    if(k === 38) { // Cima
                         if(this.focusIdx > 0) this.focusIdx--;
-                        else { this.zone = 0; this.focusIdx = 0; }
+                        else { this.zone = 0; this.focusIdx = 0; } // Vai pro topo
                     }
-                    else if(k === 40 && this.focusIdx < this.list.length-1) this.focusIdx++;
-                    else if(k === 37) { // VOLTAR PARA CATEGORIAS
+                    if(k === 40 && this.focusIdx < this.list.length-1) this.focusIdx++; // Baixo
+                    if(k === 37) { // Esquerda -> Volta para Cats
                         this.zone = 1;
+                        // Tenta recuperar indice da categoria ativa
                         let active = document.querySelector('.item-cat.active');
-                        this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
+                        if(active) {
+                            let id = parseInt(active.id.split('-')[1]);
+                            this.focusIdx = id;
+                        } else { this.focusIdx = 0; }
                     }
-                    else if(k === 13) this.play();
+                    if(k === 13) { // Enter -> Play
+                        this.play();
+                    }
                 }
                 this.renderFocus();
             }
         };
 
-        function doLogin() { App.login(); }
+        // --- GLOBAL KEY LISTENER ---
+        function doLogin() { App.login(); } // Wrapper
         
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             
+            // LOGIN INPUTS (Navegação básica)
             if(App.screen === 'login') {
                 if(k===13) document.activeElement.click();
-                if(k===40) {
+                if(k===40) { // Descer input
                     let map = ['h','u','p','btnEnter'];
                     let curr = map.indexOf(document.activeElement.id);
                     if(curr < 3) document.getElementById(map[curr+1]).focus();
                 }
-                if(k===38) {
+                if(k===38) { // Subir input
                     let map = ['h','u','p','btnEnter'];
                     let curr = map.indexOf(document.activeElement.id);
                     if(curr > 0) document.getElementById(map[curr-1]).focus();
@@ -429,21 +440,13 @@
                 return;
             }
 
-            if([37,38,39,40].includes(k)) e.preventDefault();
+            // APP
+            if([37,38,39,40].includes(k)) e.preventDefault(); // Previne scroll
 
-            // --- LÓGICA DE VOLTAR CORRIGIDA (Back/Return/Esc) ---
+            // Voltar/Sair Fullscreen
             if(k === 8 || k === 461 || k === 27 || k === 10009) {
                 if(document.fullscreenElement) document.exitFullscreen();
-                else if(App.zone === 2) { // Lista -> Cats
-                    App.zone = 1;
-                    let active = document.querySelector('.item-cat.active');
-                    App.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
-                    App.renderFocus();
-                }
-                else if(App.zone === 1) { // Cats -> Topo
-                    App.zone = 0; App.focusIdx = 0;
-                    App.renderFocus();
-                }
+                else if(App.zone === 2) { App.zone = 1; App.renderFocus(); }
                 return;
             }
 
