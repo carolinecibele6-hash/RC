@@ -3,511 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C LITE SAFE</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
+    <title>R&C WAREZ</title>
     <style>
-        /* --- ESTILOS "SAFE MODE" (Leves para não travar) --- */
+        /* --- ESTILO WAREZ (EXTREMAMENTE LEVE) --- */
         body {
             background-color: #000000;
-            color: #ffffff;
-            font-family: Arial, sans-serif; /* Fonte padrão é mais leve que Google Fonts */
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Impede a tela de "andar" */
-            width: 100vw;
-            height: 100vh;
+            color: #b0b0b0; /* Cinza claro para texto normal */
+            font-family: Arial, sans-serif; /* Fonte nativa é mais rápida */
+            margin: 0; padding: 0; overflow: hidden;
+            width: 100vw; height: 100vh;
         }
 
-        /* Utilitários */
-        .hide { display: none !important; }
-        .show { display: block !important; }
-        .flex { display: flex; }
+        /* UTILITÁRIOS */
+        .hide { display: none; }
+        .show { display: block; }
         
-        /* TELA DE LOGIN */
-        #page-login {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 100;
+        /* LAYOUT GERAL */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 10;
+        }
+
+        /* --- LOGIN (CORRIGIDO) --- */
+        #login-screen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 50;
+        }
+        .login-title { color: #FFD700; font-size: 30px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
+        
+        /* Inputs estilo terminal */
+        .inp {
+            width: 80%; max-width: 400px; padding: 10px; margin: 5px 0;
+            background: #000; border: 1px solid #333; color: #fff;
+            font-size: 20px; text-align: left;
+        }
+        /* Quando focado, fica Dourado Sólido (Estilo Warez) */
+        .inp:focus, .inp.focused {
+            background: #FFD700; color: #000; border: 1px solid #FFD700; outline: none; font-weight: bold;
         }
         
-        .login-box {
-            width: 90%; max-width: 400px;
-            padding: 20px; border: 2px solid #FFD700; background: #111;
-            text-align: center;
-        }
-
-        /* Inputs Grandes para facilitar o clique */
-        input {
-            width: 100%; padding: 15px; margin-bottom: 15px;
-            background: #222; border: 1px solid #555; color: #fff;
-            font-size: 18px; text-align: center;
-            box-sizing: border-box; /* Garante tamanho correto */
-        }
-        /* Cor quando selecionado */
-        input:focus { background: #fff; color: #000; border-color: #FFD700; outline: none; }
-
         .btn {
-            width: 100%; padding: 15px; background: #FFD700; color: #000;
-            font-size: 18px; font-weight: bold; border: none; cursor: pointer;
+            width: 80%; max-width: 400px; padding: 12px; margin-top: 15px;
+            background: #222; color: #fff; border: 1px solid #333; font-size: 18px;
         }
-        .btn:focus { background: #fff; border: 4px solid #FFD700; }
+        .btn.focused { background: #FFD700; color: #000; font-weight: bold; }
 
-        /* MENU PRINCIPAL */
-        #page-dash {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #050505; z-index: 50;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
+        /* --- MENU DASHBOARD (LISTA VERTICAL) --- */
+        #dash-screen { display: none; padding-top: 50px; align-items: center; flex-direction: column; }
+        
+        .menu-row {
+            width: 60%; padding: 15px 20px; margin: 5px 0;
+            background: #111; border-left: 5px solid #000;
+            color: #aaa; font-size: 22px; text-align: left;
+        }
+        .menu-row.focused {
+            background: #FFD700; color: #000; border-left: 5px solid #fff; font-weight: bold;
+        }
+
+        /* --- CONTEÚDO (LAYOUT STB - 3 COLUNAS) --- */
+        #content-screen { display: none; }
+        
+        /* Coluna 1: Categorias (Estreita) */
+        .col-cat {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 25%;
+            background: #050505; border-right: 2px solid #222; overflow: hidden;
+        }
+        .cat-item {
+            padding: 10px 15px; font-size: 16px; color: #888;
+            border-bottom: 1px solid #111; white-space: nowrap; overflow: hidden;
+        }
+        .cat-item.active { background: #222; color: #fff; }
+        .cat-item.focused { background: #FFD700; color: #000; font-weight: bold; }
+
+        /* Coluna 2: Lista (Meio) */
+        .col-list {
+            position: absolute; left: 25%; top: 0; bottom: 0; width: 35%;
+            background: #0a0a0a; border-right: 2px solid #222; overflow: hidden;
+        }
+        .list-item {
+            padding: 12px 15px; font-size: 16px; color: #aaa;
+            border-bottom: 1px solid #1a1a1a; white-space: nowrap; overflow: hidden;
+        }
+        .list-item.focused { background: #FFD700; color: #000; font-weight: bold; }
+
+        /* Coluna 3: Info/Video (Direita) */
+        .col-info {
+            position: absolute; left: 60%; top: 0; bottom: 0; width: 40%;
+            background: #000; display: flex; flex-direction: column;
         }
         
-        .menu-grid { display: flex; gap: 20px; }
-        .menu-item {
-            width: 150px; height: 120px; background: #1a1a1a; border: 2px solid #333;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        .video-box {
+            width: 100%; height: 50%; background: #000; border-bottom: 2px solid #333;
         }
-        .menu-item i { font-size: 40px; margin-bottom: 10px; color: #666; }
-        .menu-item.selected { background: #FFD700; border-color: #fff; transform: scale(1.1); }
-        .menu-item.selected i, .menu-item.selected span { color: #000; font-weight: bold; }
-
-        /* CONTEÚDO (DIVIDIDO EM 3) */
-        #page-content {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 40; display: none;
-        }
+        .video-box.focused { border: 4px solid #FFD700; }
         
-        .col-1 { width: 25%; height: 100%; border-right: 1px solid #222; overflow-y: auto; background: #080808; float: left; }
-        .col-2 { width: 35%; height: 100%; border-right: 1px solid #222; overflow-y: auto; background: #111; float: left; }
-        .col-3 { width: 40%; height: 100%; background: #000; float: left; position: relative; }
-
-        .list-item { padding: 15px; border-bottom: 1px solid #222; color: #888; white-space: nowrap; overflow: hidden; font-size: 14px; }
-        .list-item.active { color: #fff; background: #222; border-left: 4px solid #555; }
-        .list-item.selected { background: #FFD700; color: #000; border-left: 4px solid #fff; font-weight: bold; }
-
-        /* PLAYER */
-        #video-area { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #333; }
-        #video-area.selected { border: 4px solid #FFD700; }
         video { width: 100%; height: 100%; background: #000; }
-
-        /* MENSAGENS E LOADER */
-        #status-msg { margin-top: 10px; color: #ff4444; font-size: 14px; }
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9000; display: none;
-            align-items: center; justify-content: center; color: #FFD700; font-size: 24px; font-weight: bold;
-        }
         
-        /* Fullscreen REAL */
-        .fs { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index: 9999; border:none !important; }
+        .info-text { padding: 20px; font-size: 14px; color: #ccc; }
+        .info-title { font-size: 24px; color: #FFD700; margin-bottom: 10px; font-weight: bold; }
+        
+        .fs-mode { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index: 9999; border:none; }
+
+        /* Barra de Busca STB */
+        .search-stb {
+            padding: 5px; background: #000; border-bottom: 1px solid #333;
+        }
+        .inp-search { width: 95%; background: #222; border: none; color: #fff; padding: 5px; }
+        .inp-search:focus { background: #fff; color: #000; }
+
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9000; display:none; align-items:center; justify-content:center; color:#FFD700; font-weight:bold;}
 
     </style>
 </head>
 <body onload="App.init()">
 
-    <div id="loader">CARREGANDO...</div>
+    <div id="loader">CONECTANDO...</div>
 
-    <div id="page-login">
-        <div class="login-box">
-            <h2 style="color:#FFD700; margin-bottom:20px;">R&C LITE</h2>
-            
-            <input type="text" id="url" placeholder="URL (ex: servidor.com)">
-            <input type="text" id="user" placeholder="USUÁRIO">
-            <input type="text" id="pass" placeholder="SENHA"> <button id="btn-login" class="btn" onclick="App.tryLogin()">ENTRAR</button>
-            <div id="status-msg"></div>
-            <div style="margin-top:15px; color:#666; font-size:12px;">Use OK para digitar.</div>
-        </div>
+    <div id="login-screen" class="screen">
+        <div class="login-title">R&C WAREZ</div>
+        <input type="text" id="inp0" class="inp" placeholder="http://servidor.com">
+        <input type="text" id="inp1" class="inp" placeholder="Usuário">
+        <input type="text" id="inp2" class="inp" placeholder="Senha">
+        <button id="inp3" class="btn" onclick="App.login()">ENTRAR NO SISTEMA</button>
+        <div style="margin-top:20px; font-size:12px; color:#555;">SISTEMA OTIMIZADO V4.0</div>
     </div>
 
-    <div id="page-dash">
-        <h1 style="color:#fff; margin-bottom:30px;">MENU PRINCIPAL</h1>
-        <div class="menu-grid">
-            <div class="menu-item" id="m0"><i class="fas fa-tv"></i><span>TV</span></div>
-            <div class="menu-item" id="m1"><i class="fas fa-film"></i><span>FILMES</span></div>
-            <div class="menu-item" id="m2"><i class="fas fa-video"></i><span>SÉRIES</span></div>
-            <div class="menu-item" id="m3"><i class="fas fa-sign-out-alt"></i><span>SAIR</span></div>
-        </div>
-        <div style="margin-top:20px; color:#888;">Validade: <span id="venc" style="color:#fff">...</span></div>
+    <div id="dash-screen" class="screen">
+        <div class="login-title" style="font-size:24px; margin-bottom:40px;">MENU PRINCIPAL</div>
+        <div class="menu-row" id="m0">TV AO VIVO</div>
+        <div class="menu-row" id="m1">FILMES ON-DEMAND</div>
+        <div class="menu-row" id="m2">SÉRIES</div>
+        <div class="menu-row" id="m3">TROCAR CONTA</div>
+        <div style="margin-top:20px; color:#444; font-size:14px;">Vencimento: <span id="venc">...</span></div>
     </div>
 
-    <div id="page-content">
-        <div class="col-1" id="list-cats">
-            <div style="padding:10px; color:#FFD700; text-align:center;">CATEGORIAS</div>
-            </div>
-        <div class="col-2">
-            <div style="padding:5px; background:#000;">
-                <input type="text" id="search" placeholder="BUSCAR..." style="font-size:14px; padding:8px; margin:0;" onchange="App.doSearch()">
-            </div>
-            <div id="list-items"></div>
+    <div id="content-screen" class="screen">
+        <div class="col-cat">
+            <div style="background:#FFD700; color:#000; padding:10px; font-weight:bold;">CATEGORIAS</div>
+            <div id="list-cat"></div>
         </div>
-        <div class="col-3">
-            <div id="video-area">
+        
+        <div class="col-list">
+            <div class="search-stb">
+                <input type="text" id="search" class="inp-search" placeholder="BUSCAR..." onchange="App.search()">
+            </div>
+            <div id="list-items" style="height:100%; overflow:hidden;"></div>
+        </div>
+        
+        <div class="col-info">
+            <div id="vid-wrap" class="video-box">
                 <video id="player"></video>
             </div>
-            <div style="padding:20px; color:#fff;">
-                <div id="meta-title" style="font-size:20px; color:#FFD700; font-weight:bold;">PLAYER</div>
-                <div style="font-size:12px; color:#888; margin-top:5px;">OK: Play/Pause | Setas: +/- 15s</div>
-                <div style="margin-top:15px; font-size:12px; font-weight:bold;">
-                    <span style="color:#f44">■ TELA CHEIA (Vermelho)</span><br>
-                    <span style="color:#4f4">■ RECARREGAR (Verde)</span><br>
-                    <span style="color:#4bf">■ MENU (Azul)</span>
+            <div class="info-text">
+                <div id="meta-title" class="info-title">R&C PLAYER</div>
+                <div id="meta-desc">Selecione na lista para iniciar.</div>
+                <div style="margin-top:20px; font-weight:bold; font-size:12px; line-height:20px;">
+                    [OK] Play/Pause<br>
+                    [VERMELHO] Tela Cheia<br>
+                    [VERDE] Recarregar<br>
+                    [AZUL] Menu Principal<br>
+                    [AMARELO] Buscar
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // MOTOR ULTRA LEVE (ES5 COMPATÍVEL)
+        // MOTOR OTIMIZADO WAREZ
         var App = {
-            screen: 0, // 0:Login, 1:Dash, 2:Content
-            zone: 0, idx: 0,
-            creds: {h:'', u:'', p:''},
-            dataCats: [], dataItems: [],
-            mode: 'live', memCat: 0, isSeries: false,
-
+            scr: 0, // 0:Login, 1:Dash, 2:Content
+            zone: 0, idx: 0, // Zone: 0:Cat, 1:Search, 2:List, 3:Player
+            creds: {}, cats:[], items:[], mode:'live', memCat:0, isSeries:false,
+            
             init: function() {
-                // Tenta recuperar dados
-                var sh = localStorage.getItem('s_h');
-                if(sh) {
-                    document.getElementById('url').value = sh;
-                    document.getElementById('user').value = localStorage.getItem('s_u');
-                    document.getElementById('pass').value = localStorage.getItem('s_p');
-                    document.getElementById('status-msg').innerText = "Dados salvos carregados.";
+                if(localStorage.getItem('w_h')) {
+                    document.getElementById('inp0').value = localStorage.getItem('w_h');
+                    document.getElementById('inp1').value = localStorage.getItem('w_u');
+                    document.getElementById('inp2').value = localStorage.getItem('w_p');
                 }
-                this.focusLogin();
+                // Foca no primeiro campo do login
+                this.idx = 0;
+                document.getElementById('inp0').focus();
                 
-                // Auto-next séries
                 var v = document.getElementById('player');
                 var me = this;
-                v.addEventListener('ended', function(){ if(me.isSeries) me.nextItem(); });
+                v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
             },
 
-            // --- REDE SEGURA ---
-            ajax: function(params, cb) {
+            // REDE
+            req: function(q, cb) {
                 document.getElementById('loader').style.display = 'flex';
-                var xhr = new XMLHttpRequest();
-                // Corrige URL se usuário não digitou http
-                var h = this.creds.h;
-                if(h.indexOf('http') === -1) h = 'http://' + h;
-                
-                var url = h + "/player_api.php?username=" + this.creds.u + "&password=" + this.creds.p + "&" + params;
-                
-                xhr.open("GET", url, true);
-                xhr.timeout = 10000; // 10 segundos para não travar
-                
-                xhr.onload = function() {
-                    document.getElementById('loader').style.display = 'none';
-                    if(xhr.status === 200) {
-                        try { cb(JSON.parse(xhr.responseText)); } 
-                        catch(e) { alert("Erro ao ler dados."); }
-                    } else {
-                        alert("Erro no Servidor: " + xhr.status);
-                    }
-                };
-                
-                xhr.onerror = function() {
-                    document.getElementById('loader').style.display = 'none';
-                    alert("Falha na Conexão. Verifique a URL.");
-                };
-                
-                xhr.ontimeout = function() {
-                    document.getElementById('loader').style.display = 'none';
-                    alert("Tempo limite excedido.");
-                };
-                
-                xhr.send();
+                var x = new XMLHttpRequest();
+                var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q;
+                x.open("GET", url, true);
+                x.timeout = 15000;
+                x.onload = function(){ document.getElementById('loader').style.display='none'; if(x.status===200) try{cb(JSON.parse(x.responseText))}catch(e){cb(null)} else cb(null); };
+                x.onerror = function(){ document.getElementById('loader').style.display='none'; alert("Erro Conexão"); };
+                x.send();
             },
 
-            // --- LOGIN ---
-            tryLogin: function() {
-                var h = document.getElementById('url').value.trim();
-                var u = document.getElementById('user').value.trim();
-                var p = document.getElementById('pass').value.trim();
+            // LOGIN MANUAL (Setas corrigidas)
+            login: function() {
+                var h = document.getElementById('inp0').value.trim();
+                var u = document.getElementById('inp1').value.trim();
+                var p = document.getElementById('inp2').value.trim();
                 
-                if(!h || !u || !p) { alert("Preencha todos os campos!"); return; }
-                
-                // Limpeza de URL
-                if(h.slice(-1) === '/') h = h.slice(0, -1);
-                
+                if(h.indexOf('http')===-1) h='http://'+h;
                 this.creds = {h:h, u:u, p:p};
+                
                 var me = this;
-
-                this.ajax("", function(data){
-                    if(data && data.user_info && data.user_info.auth === 1) {
-                        // Salva
-                        localStorage.setItem('s_h', h);
-                        localStorage.setItem('s_u', u);
-                        localStorage.setItem('s_p', p);
-                        
-                        var exp = data.user_info.exp_date;
-                        document.getElementById('venc').innerText = exp ? new Date(exp*1000).toLocaleDateString() : "ILIMITADO";
-                        me.goDash();
-                    } else {
-                        document.getElementById('status-msg').innerText = "Login Inválido.";
-                    }
+                this.req("", function(d){
+                    if(d && d.user_info && d.user_info.auth===1) {
+                        localStorage.setItem('w_h', h);
+                        localStorage.setItem('w_u', u);
+                        localStorage.setItem('w_p', p);
+                        var exp = d.user_info.exp_date;
+                        document.getElementById('venc').innerText = exp?new Date(exp*1000).toLocaleDateString():"ILIMITADO";
+                        me.setScr(1);
+                    } else alert("Dados Inválidos");
                 });
             },
 
-            goDash: function() {
-                this.stopVideo();
-                this.changeScreen(1);
+            setScr: function(n) {
+                this.stop();
+                document.getElementById('login-screen').style.display = n===0?'flex':'none';
+                document.getElementById('dash-screen').style.display = n===1?'flex':'none';
+                document.getElementById('content-screen').style.display = n===2?'block':'none';
+                this.scr = n; this.idx = 0; this.zone = 0;
+                this.focus();
             },
 
-            logout: function() {
-                localStorage.clear();
-                document.getElementById('url').value='';
-                document.getElementById('user').value='';
-                document.getElementById('pass').value='';
-                this.changeScreen(0);
-            },
-
-            changeScreen: function(n) {
-                this.screen = n;
-                document.getElementById('page-login').style.display = (n===0)?'flex':'none';
-                document.getElementById('page-dash').style.display = (n===1)?'flex':'none';
-                document.getElementById('page-content').style.display = (n===2)?'block':'none';
-                
-                this.idx = 0; this.zone = 0;
-                this.refreshFocus();
-            },
-
-            // --- CARREGAMENTO ---
-            openMode: function(m) {
+            // CARREGAMENTO LISTA (Estilo Texto)
+            load: function(m) {
                 this.mode = m; this.isSeries = false;
-                this.changeScreen(2);
-                
-                // Limpa
-                document.getElementById('list-cats').innerHTML = '<div style="padding:10px;">Carregando...</div>';
+                this.setScr(2);
+                document.getElementById('list-cat').innerHTML = 'Carregando...';
                 document.getElementById('list-items').innerHTML = '';
                 
                 var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                 var me = this;
-                
-                this.ajax("action="+act, function(d){
-                    me.dataCats = d || [];
-                    var h = '<div style="padding:10px; color:#FFD700; text-align:center;">CATEGORIAS</div>';
-                    for(var i=0; i<me.dataCats.length; i++) {
-                        h += '<div class="list-item" id="c'+i+'">' + me.dataCats[i].category_name + '</div>';
-                    }
-                    document.getElementById('list-cats').innerHTML = h;
-                    if(me.dataCats.length>0) me.loadCat(0);
-                    me.zone = 0; me.idx = 0; me.refreshFocus();
+                this.req("action="+act, function(d){
+                    me.cats = d||[];
+                    var h = '';
+                    for(var i=0; i<me.cats.length; i++) h += '<div class="cat-item" id="c'+i+'">'+me.cats[i].category_name+'</div>';
+                    document.getElementById('list-cat').innerHTML = h;
+                    if(me.cats.length>0) me.loadCat(0);
+                    me.idx=0; me.zone=0; me.focus();
                 });
             },
 
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
-                // Visual ativo
-                var all = document.querySelectorAll('.list-item');
-                for(var j=0; j<all.length; j++) all[j].classList.remove('active');
-                var el = document.getElementById('c'+i); if(el) el.classList.add('active');
+                var els = document.querySelectorAll('.cat-item');
+                for(var j=0; j<els.length; j++) els[j].className='cat-item';
+                var el = document.getElementById('c'+i); if(el) el.className='cat-item active';
 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 var me = this;
-                document.getElementById('list-items').innerHTML = '<div style="padding:10px;">Carregando...</div>';
+                document.getElementById('list-items').innerHTML = 'Carregando...';
                 
-                this.ajax("action="+act+"&category_id="+this.dataCats[i].category_id, function(d){
-                    me.dataItems = d || [];
-                    me.renderItems();
+                this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
+                    me.items = d||[];
+                    me.renderList();
                 });
             },
 
-            renderItems: function() {
+            renderList: function() {
                 var h = '';
-                // LIMITADOR DE MEMÓRIA (Max 50 itens)
-                var max = this.dataItems.length > 50 ? 50 : this.dataItems.length;
-                
+                var max = this.items.length > 50 ? 50 : this.items.length; // Limite Warez
                 if(this.isSeries) h += '<div class="list-item" id="i-1" style="color:#FFD700">.. VOLTAR</div>';
-                
                 for(var i=0; i<max; i++) {
-                    var name = this.dataItems[i].name || this.dataItems[i].title;
-                    h += '<div class="list-item" id="i'+i+'">' + name + '</div>';
+                    var n = this.items[i].name || this.items[i].title;
+                    h += '<div class="list-item" id="i'+i+'">'+n+'</div>';
                 }
                 document.getElementById('list-items').innerHTML = h;
             },
 
-            // --- PLAYER ---
+            // PLAYER
             play: function(i) {
                 if(this.isSeries && i===-1) { this.loadCat(this.memCat); return; }
+                var item = this.items[i];
                 
-                var item = this.dataItems[i];
-                
-                // Se for série, carrega eps
-                if(this.mode === 'series' && !this.isSeries) {
+                if(this.mode==='series' && !this.isSeries) {
                     var me = this;
-                    this.ajax("action=get_series_info&series_id="+item.series_id, function(d){
+                    this.req("action=get_series_info&series_id="+item.series_id, function(d){
                         var eps = [];
                         if(d && d.episodes) {
-                            for(var k in d.episodes) {
-                                for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
-                            }
+                            for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
                         }
-                        me.dataItems = eps; me.isSeries = true;
-                        me.renderItems(); me.idx=0; me.refreshFocus();
+                        me.items = eps; me.isSeries=true; me.renderList(); me.idx=0; me.focus();
                     });
                     return;
                 }
 
                 var ext = (this.mode==='live')?'ts':'mp4';
                 if(this.mode!=='live' && item.container_extension) ext = item.container_extension;
-                var id = item.stream_id || item.id;
-                var type = (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series'));
+                var url = this.creds.h + "/" + (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
                 
-                // URL Simples (Nativa)
-                var url = this.creds.h + "/" + type + "/" + this.creds.u + "/" + this.creds.p + "/" + id + "." + ext;
-                
-                document.getElementById('meta-title').innerText = item.name || item.title;
+                document.getElementById('meta-title').innerText = item.name||item.title;
                 var v = document.getElementById('player');
-                v.src = url; 
-                v.play();
-                // Cursor fica na lista, usuário aperta DIREITA para controlar video
+                v.src = url; v.play();
             },
 
-            nextItem: function() {
-                if(this.isSeries && this.dataItems[this.idx+1]) {
-                    this.idx++; this.play(this.idx);
-                }
+            next: function() {
+                if(this.isSeries && this.items[this.idx+1]) { this.idx++; this.play(this.idx); }
             },
             
-            stopVideo: function() {
-                var v = document.getElementById('player'); v.pause(); v.src = "";
-            },
-
-            toggleFull: function() {
-                var area = document.getElementById('video-area');
-                if(area.className.indexOf('fs') > -1) area.className = '';
-                else area.className = 'fs';
-            },
-
-            // --- FOCO ---
-            refreshFocus: function() {
-                // Tira foco antigo
-                var sels = document.querySelectorAll('.selected');
-                for(var i=0; i<sels.length; i++) sels[i].classList.remove('selected');
-                
-                if(document.activeElement.tagName !== 'INPUT') document.activeElement.blur();
-
-                var el = null;
-                
-                // LOGIN (Manual, não via classe)
-                if(this.screen === 0) return;
-
-                // DASH
-                if(this.screen === 1) el = document.getElementById('m'+this.idx);
-
-                // CONTENT
-                if(this.screen === 2) {
-                    if(this.zone===0) el = document.getElementById('c'+this.idx);
-                    if(this.zone===1) el = document.getElementById('search');
-                    if(this.zone===2) el = document.getElementById((this.isSeries && this.idx===-1) ? 'i-1' : 'i'+this.idx);
-                    if(this.zone===3) el = document.getElementById('video-area');
-                }
-
-                if(el) {
-                    el.classList.add('selected');
-                    if(el.tagName === 'INPUT') el.focus();
-                    else el.scrollIntoView({block:'center', behavior:'auto'});
-                }
-            },
+            stop: function() { var v=document.getElementById('player'); v.pause(); v.src=''; },
             
-            focusLogin: function() {
-                 // Foca no primeiro input se não tiver valor
-                 if(!document.getElementById('url').value) document.getElementById('url').focus();
-                 else document.getElementById('btn-login').focus();
+            full: function() {
+                var b = document.getElementById('vid-wrap');
+                if(b.className.indexOf('fs')>-1) b.className='video-box'; else b.className='video-box fs-mode';
             },
 
-            doSearch: function() {
-                 var t = document.getElementById('search').value.toLowerCase();
-                 if(t.length < 3) return;
-                 // Busca simples em memória
-                 // NOTA: Para busca global real, precisaria baixar tudo, o que trava a TV.
-                 // Aqui filtra o que já está na categoria ou recarrega.
-                 // Vamos manter simples: Filtra a lista atual para não travar.
-                 alert("Use as categorias para encontrar conteúdo.");
+            search: function() {
+                // Simples busca local para não travar
+                var t = document.getElementById('search').value.toLowerCase();
+                var res = [];
+                for(var i=0; i<this.items.length; i++) {
+                    var n = (this.items[i].name||this.items[i].title||"").toLowerCase();
+                    if(n.indexOf(t)>-1) res.push(this.items[i]);
+                }
+                this.items = res; this.renderList();
+                this.zone=2; this.idx=0; this.focus();
             },
 
-            move: function(dir) {
-                // LOGIN: Navegação nativa do browser (TAB logic) via setas
-                if(this.screen === 0) {
-                     // Deixa o navegador controlar o foco nos inputs
-                     return; 
+            // FOCO & TECLAS
+            focus: function() {
+                var sels = document.querySelectorAll('.focused');
+                for(var i=0; i<sels.length; i++) sels[i].classList.remove('focused');
+                
+                var id = null;
+                // LOGIN (Mapeamento Manual para corrigir input)
+                if(this.scr===0) {
+                    id = 'inp'+this.idx;
+                    document.getElementById(id).focus(); // Força foco nativo no input
+                    return; // Browser cuida do resto visualmente
                 }
-
-                // DASH
-                if(this.screen === 1) {
-                    if(dir==='right' && this.idx<3) this.idx++;
-                    if(dir==='left' && this.idx>0) this.idx--;
-                    this.refreshFocus();
+                
+                if(this.scr===1) id = 'm'+this.idx;
+                if(this.scr===2) {
+                    if(this.zone===0) id='c'+this.idx;
+                    if(this.zone===1) id='search';
+                    if(this.zone===2) id=(this.isSeries&&this.idx===-1)?'i-1':'i'+this.idx;
+                    if(this.zone===3) id='vid-wrap';
                 }
-
-                // CONTENT
-                if(this.screen === 2) {
-                    // Categoria
-                    if(this.zone===0) {
-                        if(dir==='down' && this.idx < this.dataCats.length-1) this.idx++;
-                        if(dir==='up' && this.idx > 0) this.idx--;
-                        if(dir==='right' || dir==='enter') { this.loadCat(this.idx); this.zone=2; this.idx=0; }
-                    }
-                    // Busca
-                    else if(this.zone===1) {
-                        if(dir==='down') { this.zone=2; this.idx=0; }
-                    }
-                    // Lista
-                    else if(this.zone===2) {
-                        var max = (this.dataItems.length > 50 ? 50 : this.dataItems.length) - 1;
-                        var min = this.isSeries ? -1 : 0;
-                        
-                        if(dir==='down' && this.idx < max) this.idx++;
-                        if(dir==='up') {
-                            if(this.idx > min) this.idx--;
-                            else this.zone=1; 
+                
+                if(id) {
+                    var el = document.getElementById(id);
+                    if(el) {
+                        el.classList.add('focused');
+                        if(el.tagName==='INPUT') el.focus();
+                        else { 
+                            document.activeElement.blur(); // Tira foco do input anterior
+                            el.scrollIntoView({block:'center'}); 
                         }
-                        if(dir==='left') { this.zone=0; this.idx=this.memCat; }
-                        if(dir==='right') { this.zone=3; } // Vai pro player
-                        if(dir==='enter') this.play(this.idx);
                     }
-                    // Player
-                    else if(this.zone===3) {
+                }
+            },
+
+            key: function(k) {
+                // LOGIN (Correção Setas)
+                if(this.scr===0) {
+                    // Se apertar Seta Baixo, vai pro próximo input manualmente
+                    if(k===40) {
+                        if(this.idx < 3) { this.idx++; document.getElementById('inp'+this.idx).focus(); }
+                    }
+                    // Se apertar Seta Cima
+                    else if(k===38) {
+                        if(this.idx > 0) { this.idx--; document.getElementById('inp'+this.idx).focus(); }
+                    }
+                    // Enter no botão (idx 3)
+                    else if(k===13 && this.idx===3) this.login();
+                    // Enter nos inputs apenas confirma (default do browser)
+                    return;
+                }
+
+                if(this.scr===1) {
+                    if(k===40 && this.idx<3) this.idx++;
+                    if(k===38 && this.idx>0) this.idx--;
+                    if(k===13) {
+                        if(this.idx===3) { localStorage.clear(); location.reload(); }
+                        else this.load(['live','movie','series'][this.idx]);
+                    }
+                    this.focus();
+                }
+
+                if(this.scr===2) {
+                    if(this.zone===0) { // CAT
+                        if(k===40 && this.idx<this.cats.length-1) this.idx++;
+                        if(k===38 && this.idx>0) this.idx--;
+                        if(k===39 || k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
+                    }
+                    else if(this.zone===1) { // SEARCH
+                        if(k===40) { this.zone=2; this.idx=0; }
+                        if(k===13) document.getElementById('search').focus();
+                    }
+                    else if(this.zone===2) { // LIST
+                        var min = this.isSeries?-1:0;
+                        var max = (this.items.length>50?50:this.items.length)-1;
+                        if(k===40 && this.idx<max) this.idx++;
+                        if(k===38) {
+                            if(this.idx>min) this.idx--; else this.zone=1;
+                        }
+                        if(k===37) { this.zone=0; this.idx=this.memCat; }
+                        if(k===39) { this.zone=3; }
+                        if(k===13) this.play(this.idx);
+                    }
+                    else if(this.zone===3) { // PLAY
                         var v = document.getElementById('player');
-                        if(dir==='left') v.currentTime -= 15;
-                        if(dir==='right') v.currentTime += 15;
-                        if(dir==='enter') { if(v.paused) v.play(); else v.pause(); }
-                        if(dir==='up') { this.zone=2; } // Volta pra lista
+                        if(k===37) v.currentTime-=15;
+                        if(k===39) v.currentTime+=15;
+                        if(k===13) v.paused?v.play():v.pause();
+                        if(k===38) this.zone=2;
                     }
-                    this.refreshFocus();
+                    this.focus();
                 }
             }
         };
 
-        // CONTROLES
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
-            var tag = document.activeElement.tagName;
-
-            // Cores
-            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } // RED
-            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; } // GREEN
-            if(k===406||k===66) { e.preventDefault(); App.goDash(); return; } // BLUE
-
-            // Se estiver no INPUT, deixe o Enter e Setas funcionarem nativamente (exceto navegação de tela)
-            if(tag === 'INPUT') {
-                if(k===13) return; // Enter confirma
-                if(k===40 || k===38) { /* Deixa subir/descer */ }
-                return;
+            // Atalhos
+            if(k===403||k===82) { e.preventDefault(); App.full(); return; }
+            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
+            if(k===405||k===89) { e.preventDefault(); App.zone=1; App.focus(); return; }
+            if(k===406||k===66) { e.preventDefault(); App.setScr(1); return; }
+            if(k===8||k===461||k===27) {
+                e.preventDefault();
+                if(App.scr===2) {
+                    if(document.getElementById('vid-wrap').className.indexOf('fs')>-1) App.full();
+                    else App.setScr(1);
+                }
             }
 
-            // Mapeamento
-            if(k===13) { e.preventDefault(); App.move('enter'); }
-            if(k===37) { e.preventDefault(); App.move('left'); }
-            if(k===38) { e.preventDefault(); App.move('up'); }
-            if(k===39) { e.preventDefault(); App.move('right'); }
-            if(k===40) { e.preventDefault(); App.move('down'); }
-            
-            // Back
-            if(k===8 || k===461 || k===27) {
-                e.preventDefault();
-                if(App.screen===2) {
-                     if(document.getElementById('video-area').className.indexOf('fs')>-1) App.toggleFull();
-                     else App.goDash();
+            // Nav (Bloqueia scroll nativo, exceto em inputs)
+            if([13,37,38,39,40].indexOf(k)>-1) {
+                // Correção Login:
+                if(App.scr === 0) {
+                    // Não damos preventDefault no Login para permitir digitação,
+                    // MAS interceptamos CIMA/BAIXO manualmente no App.key
+                    if(k===38 || k===40) e.preventDefault(); 
+                    App.key(k);
+                    return;
                 }
+                
+                e.preventDefault();
+                App.key(k);
             }
         });
     </script>
