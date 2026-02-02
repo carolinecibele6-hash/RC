@@ -3,27 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD UNIVERSAL V22</title>
+    <title>R&C GOLD INDUSTRIAL V23</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0"></script>
 
     <style>
-        /* --- TEMA PREMIUM V22 --- */
+        /* --- TEMA INDUSTRIAL V23 (PC & TV HYBRID) --- */
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
             --gold-dim: #b8860b;
             --text: #ffffff; 
             --panel: rgba(18,18,18,0.98);
+            --card-hover: #1f1f1f;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
+        /* Scrollbar PC Style */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
         body {
             background-color: var(--bg); color: var(--text);
             font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         .hide { display: none !important; }
@@ -33,30 +41,33 @@
         /* --- LOGIN --- */
         #login-layer { background: #080808; z-index: 50; }
         .netrange-box {
-            width: 480px; padding: 40px; 
+            width: 480px; padding: 50px; 
             background: #111; border: 1px solid #333; border-radius: 12px;
-            text-align: center; box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            text-align: center; box-shadow: 0 0 80px rgba(0,0,0,0.9);
         }
         .nr-header {
-            color: var(--gold); font-weight: 900; font-size: 26px; 
-            margin-bottom: 20px; letter-spacing: 2px;
+            color: var(--gold); font-weight: 900; font-size: 28px; 
+            margin-bottom: 10px; letter-spacing: 2px;
         }
-        .nr-sub { color: #666; font-size: 11px; margin-bottom: 30px; }
+        .nr-sub { color: #666; font-size: 11px; margin-bottom: 30px; letter-spacing: 1px; }
         
         .nr-input {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            background: #222; border: 1px solid #444; border-radius: 4px;
+            width: 100%; padding: 14px; margin-bottom: 15px;
+            background: #1a1a1a; border: 1px solid #444; border-radius: 6px;
             color: #fff; text-align: center; font-size: 16px; font-weight: 600;
+            transition: 0.2s;
         }
         .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); transform: scale(1.02); }
+        .nr-input:hover { border-color: #666; } /* PC Hover */
         
         .nr-btn {
-            width: 100%; padding: 12px; margin-top: 15px;
+            width: 100%; padding: 15px; margin-top: 15px;
             background: linear-gradient(90deg, var(--gold-dim), var(--gold));
             color: #000; font-weight: 800; font-size: 16px;
-            border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+            border: none; border-radius: 6px; cursor: pointer; text-transform: uppercase;
+            transition: 0.2s;
         }
-        .nr-btn:focus { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); border: 2px solid #fff; }
+        .nr-btn.focused, .nr-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--gold); border: 2px solid #fff; }
 
         /* --- DASHBOARD --- */
         #dash-layer { 
@@ -64,33 +75,34 @@
             flex-direction: column;
         }
         .dash-header { margin-top: 60px; margin-bottom: auto; text-align: center; }
-        .dash-logo { font-size: 50px; font-weight: 900; letter-spacing: -2px; }
+        .dash-logo { font-size: 60px; font-weight: 900; letter-spacing: -3px; }
         .dash-logo span { color: var(--gold); }
 
         .cards-container { display: flex; gap: 40px; margin-bottom: auto; }
         .dash-card {
-            width: 200px; height: 200px;
-            background: #151515; border: 2px solid #333; border-radius: 15px;
+            width: 220px; height: 220px;
+            background: #151515; border: 2px solid #333; border-radius: 20px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.2s; cursor: pointer;
         }
-        .dash-card i { font-size: 60px; margin-bottom: 20px; color: #666; }
+        .dash-card i { font-size: 70px; margin-bottom: 25px; color: #666; transition: 0.2s; }
         .dash-card span { font-size: 14px; font-weight: 700; color: #888; text-transform: uppercase; }
         
-        .dash-card.focused {
+        /* Foco e Hover (PC) */
+        .dash-card.focused, .dash-card:hover {
             background: #000; border: 3px solid var(--gold);
-            transform: scale(1.15); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+            transform: scale(1.1); box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
             z-index: 10;
         }
-        .dash-card.focused i { color: var(--gold); }
-        .dash-card.focused span { color: #fff; }
+        .dash-card.focused i, .dash-card:hover i { color: var(--gold); }
+        .dash-card.focused span, .dash-card:hover span { color: #fff; }
 
         .dash-footer {
             width: 90%; display: flex; justify-content: space-between;
-            border-top: 1px solid #333; padding: 25px 0; margin-bottom: 30px;
-            color: #888; font-size: 14px;
+            border-top: 1px solid #333; padding: 30px 0; margin-bottom: 30px;
+            color: #888; font-size: 13px;
         }
-        .foot-item b { color: #fff; display: block; margin-top: 5px; font-size: 16px; }
+        .foot-item b { color: #fff; display: block; margin-top: 5px; font-size: 15px; }
         .foot-item.center { text-align: center; }
         .foot-item.right { text-align: right; }
 
@@ -98,55 +110,72 @@
         #content-layer { display: flex; background: #000; }
         
         .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .cat-head { padding: 15px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; }
+        .cat-head { padding: 20px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; letter-spacing: 1px; }
         .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { padding: 12px 15px; color: #777; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 600; }
-        .cat-item.active { background: #111; color: #fff; border-left: 4px solid #333; }
+        
+        .cat-item { 
+            padding: 14px 20px; color: #888; border-bottom: 1px solid #111; 
+            font-size: 13px; white-space: nowrap; overflow: hidden; font-weight: 600; cursor: pointer;
+        }
+        .cat-item:hover { background: #111; color: #ccc; }
+        .cat-item.active { background: #151515; color: #fff; border-left: 4px solid #444; }
         .cat-item.focused { background: var(--gold); color: #000; border-left: 4px solid #fff; font-weight: 800; }
 
         .col-list { width: 35%; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .search-box { padding: 10px; background: #000; border-bottom: 1px solid #222; }
+        .search-box { padding: 15px; background: #000; border-bottom: 1px solid #222; }
         .inp-search { 
             width: 100%; background: #222; border: 1px solid #333; color: #fff; 
             padding: 12px; text-align: center; border-radius: 4px; font-weight: bold;
         }
-        .inp-search.focused { background: #fff; color: #000; border-color: var(--gold); }
-        .inp-search[readonly] { background: #151515; color: #666; }
+        .inp-search.focused, .inp-search:focus { background: #fff; color: #000; border-color: var(--gold); }
+        .inp-search[readonly] { background: #151515; color: #666; cursor: default; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
-        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
+        .item { 
+            padding: 14px 20px; border-bottom: 1px solid #1a1a1a; color: #bbb; 
+            white-space: nowrap; overflow: hidden; font-size: 13px; cursor: pointer; 
+        }
+        .item:hover { background: #151515; color: #fff; }
         .item.focused { background: #eee; color: #000; font-weight: 800; transform: scale(1.02); margin: 2px 0; border-radius: 2px; }
 
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
         .vid-box.focused { border: 3px solid var(--gold); }
-        .video-off { opacity: 0 !important; }
+        .video-off { opacity: 0 !important; pointer-events: none; }
+        
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
-        .meta { padding: 20px; flex: 1; overflow-y: auto; background: #050505; }
-        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
-        .meta-desc { font-size: 13px; color: #888; margin-bottom: 20px; }
-        .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; margin-top: auto; }
-        .ck-btn { display: flex; align-items: center; gap: 5px; }
+        .meta { padding: 30px; flex: 1; overflow-y: auto; background: #050505; }
+        .meta-title { font-size: 24px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
+        .meta-desc { font-size: 13px; color: #888; margin-bottom: 25px; }
+        
+        .color-keys { display: flex; gap: 20px; font-size: 11px; font-weight: bold; margin-top: auto; }
+        .ck-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 5px 10px; border-radius: 4px; background: #111; }
+        .ck-btn:hover { background: #333; }
         
         .fs-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 9999; border: none !important; background: #000; }
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: 900; font-size: 24px; }
+        
+        #loader { 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(0,0,0,0.95); z-index: 9000; display: none; 
+            align-items: center; justify-content: center; color: var(--gold); 
+            font-weight: 900; font-size: 24px; 
+        }
 
     </style>
 </head>
 <body onload="App.start()">
 
-    <div id="loader">CARREGANDO...</div>
+    <div id="loader"><i class="fas fa-circle-notch fa-spin"></i> &nbsp; CARREGANDO...</div>
 
     <div id="login-layer" class="layer flex-center">
         <div class="netrange-box">
-            <div class="nr-header">R&C GOLD</div>
-            <div class="nr-sub">COMPATÍVEL COM M3U E XTREAM</div>
-            <input type="text" id="inp0" class="nr-input" placeholder="URL (Ou Link M3U)" autocomplete="off">
-            <input type="text" id="inp1" class="nr-input" placeholder="USUÁRIO (Opcional)" autocomplete="off">
-            <input type="password" id="inp2" class="nr-input" placeholder="SENHA (Opcional)" autocomplete="off">
-            <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS para mover e OK</div>
+            <div class="nr-header">R&C GOLD <span style="font-size:12px; color:#fff">V23</span></div>
+            <div class="nr-sub">MOTOR INDUSTRIAL HLS HÍBRIDO</div>
+            <input type="text" id="inp0" class="nr-input" placeholder="URL ou M3U" autocomplete="off">
+            <input type="text" id="inp1" class="nr-input" placeholder="USUÁRIO" autocomplete="off">
+            <input type="password" id="inp2" class="nr-input" placeholder="SENHA" autocomplete="off">
+            <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR SISTEMA</button>
         </div>
     </div>
 
@@ -156,10 +185,10 @@
         </div>
         
         <div class="cards-container">
-            <div class="dash-card" id="m0"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
-            <div class="dash-card" id="m1"><i class="fas fa-film"></i><span>FILMES</span></div>
-            <div class="dash-card" id="m2"><i class="fas fa-video"></i><span>SÉRIES</span></div>
-            <div class="dash-card" id="m3"><i class="fas fa-sync-alt"></i><span>TROCAR PLAYLIST</span></div>
+            <div class="dash-card" id="m0" onclick="App.openMode('live')"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
+            <div class="dash-card" id="m1" onclick="App.openMode('movie')"><i class="fas fa-film"></i><span>FILMES</span></div>
+            <div class="dash-card" id="m2" onclick="App.openMode('series')"><i class="fas fa-video"></i><span>SÉRIES</span></div>
+            <div class="dash-card" id="m3" onclick="App.logout()"><i class="fas fa-sync-alt"></i><span>TROCAR CONTA</span></div>
         </div>
 
         <div class="dash-footer">
@@ -186,21 +215,21 @@
             </div>
             <div class="meta">
                 <div id="meta-title" class="meta-title">R&C PLAYER</div>
-                <div id="meta-desc" class="meta-desc">Aguardando seleção...</div>
+                <div id="meta-desc" class="meta-desc">Selecione um canal ou filme.</div>
                 
                 <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px; border:1px solid #333;">
-                    <div style="color:#fff; font-size:11px; margin-bottom:5px;">COMANDOS:</div>
+                    <div style="color:#fff; font-size:11px; margin-bottom:5px;">CONTROLES:</div>
                     <div style="color:#888; font-size:11px;">
-                        OK: Tela Cheia / Pausa (VOD)<br>
-                        Voltar: Sair
+                        <b>OK:</b> Fullscreen | <b>Space:</b> Play/Pause (PC)<br>
+                        <b>Voltar:</b> Sair | <b>F:</b> Fullscreen (PC)
                     </div>
                 </div>
 
                 <div class="color-keys">
-                    <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
-                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> CATEGORIAS</span>
-                    <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
-                    <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
+                    <span class="ck-btn" onclick="App.toggleFull()" style="color:#ff4444"><i class="fas fa-square"></i> FULL</span>
+                    <span class="ck-btn" onclick="App.zone=0;App.refreshFocus()" style="color:#00C851"><i class="fas fa-square"></i> CATS</span>
+                    <span class="ck-btn" onclick="document.getElementById('search').focus()" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCA</span>
+                    <span class="ck-btn" onclick="App.setScreen(1)" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
                 </div>
             </div>
         </div>
@@ -210,11 +239,12 @@
         var App = {
             screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
-            modeType: 'xtream', // 'xtream' ou 'm3u'
-            dataM3U: [], // Armazena dados M3U
+            modeType: 'xtream', 
+            dataM3U: [],
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
             loadedCatId: -1, isSearchMode: false,
-            
+            activeReq: null, hls: null, retryCount: 0,
+
             start: function() {
                 if(localStorage.getItem('rc_h')) {
                     document.getElementById('inp0').value = localStorage.getItem('rc_h');
@@ -224,62 +254,50 @@
                 this.idx = 0; this.refreshFocus();
                 var v = document.getElementById('player');
                 var me = this;
+                
+                // Eventos de vídeo
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
-                // Fallback para player nativo se HLS falhar
-                if(Hls.isSupported()) {
-                    var hls = new Hls();
-                    hls.on(Hls.Events.ERROR, function (event, data) {
-                        if (data.fatal) {
-                            // Se HLS falhar, tenta nativo
-                            v.src = v.src; 
-                        }
-                    });
-                }
+                v.addEventListener('error', function(e) { me.handleVideoError(); });
+                
+                // Cleanup
+                window.onbeforeunload = function(){ if(me.hls) me.hls.destroy(); };
             },
 
-            // --- REQUISIÇÃO (Cache Buster para evitar travamento) ---
+            // --- REDE OTIMIZADA ---
             req: function(q, cb) {
+                if(this.activeReq) { this.activeReq.abort(); }
                 document.getElementById('loader').style.display = 'flex';
-                var x = new XMLHttpRequest();
-                // Cache Buster random
-                var cbStr = "&_=" + new Date().getTime();
+                this.activeReq = new XMLHttpRequest();
+                var cbStr = "&_=" + new Date().getTime(); // Anti-Cache
                 var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q + cbStr;
                 
+                var x = this.activeReq;
                 x.open("GET", url, true);
-                x.timeout = 25000;
+                x.timeout = 30000;
                 x.onload = function(){ 
                     document.getElementById('loader').style.display='none'; 
+                    App.activeReq = null;
                     if(x.status===200) try{cb(JSON.parse(x.responseText))}catch(e){cb(null)} else cb(null); 
                 };
-                x.onerror = function(){ 
-                    document.getElementById('loader').style.display='none'; 
-                    alert("Erro Conexão/CORS. Verifique se a lista suporta Web Player."); 
-                };
+                x.onerror = function(){ document.getElementById('loader').style.display='none'; App.activeReq = null; };
                 x.send();
             },
 
-            // --- LOGIN HÍBRIDO (M3U ou Xtream) ---
             login: function() {
                 var h = document.getElementById('inp0').value.trim();
                 var u = document.getElementById('inp1').value.trim();
                 var p = document.getElementById('inp2').value.trim();
-                
                 if(!h) return;
-
-                // Salva
+                
                 localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
 
-                // SE FOR LINK M3U (Usuário vazio ou URL termina em m3u/m3u8)
                 if(u === "" || h.toLowerCase().includes('.m3u')) {
-                    this.modeType = 'm3u';
-                    this.loadM3UData(h);
+                    this.modeType = 'm3u'; this.loadM3U(h);
                 } else {
-                    // MODO XTREAM (Padrão)
                     this.modeType = 'xtream';
                     if(h.endsWith('/')) h = h.slice(0, -1);
                     if(h.indexOf('http')===-1) h='http://'+h;
                     this.creds = {h:h, u:u, p:p};
-                    
                     var me = this;
                     this.req("", function(d){
                         if(d && d.user_info && d.user_info.auth===1) {
@@ -288,13 +306,12 @@
                             document.getElementById('d-conn').innerText = (d.user_info.active_cons||0) + "/" + (d.user_info.max_connections||0);
                             document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString('pt-BR') : "Ilimitado";
                             me.setScreen(1);
-                        } else alert("Dados Incorretos");
+                        } else alert("Erro de Login: Verifique URL/User/Senha");
                     });
                 }
             },
 
-            // --- PARSER M3U (Básico) ---
-            loadM3UData: function(url) {
+            loadM3U: function(url) {
                 document.getElementById('loader').style.display = 'flex';
                 var me = this;
                 var x = new XMLHttpRequest();
@@ -303,45 +320,36 @@
                     document.getElementById('loader').style.display='none';
                     if(x.status===200) {
                         me.parseM3U(x.responseText);
-                        // Info Fake para M3U
                         document.getElementById('d-created').innerText = "M3U LIST";
-                        document.getElementById('d-conn').innerText = "1/1";
-                        document.getElementById('d-exp').innerText = "Indefinido";
+                        document.getElementById('d-conn').innerText = "LOCAL";
+                        document.getElementById('d-exp').innerText = "INFINITO";
                         me.setScreen(1);
-                    } else alert("Erro ao baixar M3U");
+                    } else alert("Falha ao baixar M3U");
                 };
-                x.onerror = function() { document.getElementById('loader').style.display='none'; alert("Erro CORS ao baixar M3U."); };
+                x.onerror = function() { document.getElementById('loader').style.display='none'; alert("Erro CORS (M3U). Use uma lista compatível ou Proxy."); };
                 x.send();
             },
 
             parseM3U: function(data) {
-                // Parser Simplificado
-                var lines = data.split('\n');
-                this.dataM3U = [];
-                var currentGroup = "Geral";
-                
+                var lines = data.split('\n'); this.dataM3U = []; var grp = "Geral";
                 for(var i=0; i<lines.length; i++) {
                     var line = lines[i].trim();
                     if(line.startsWith('#EXTINF')) {
-                        var info = line;
-                        var url = (lines[i+1] || "").trim();
-                        // Extrai grupo
-                        var matchGrp = info.match(/group-title="([^"]+)"/);
-                        if(matchGrp) currentGroup = matchGrp[1];
-                        // Extrai nome
-                        var name = info.substring(info.lastIndexOf(',')+1).trim();
-                        
-                        this.dataM3U.push({
-                            name: name,
-                            group: currentGroup,
-                            url: url
-                        });
+                        var url = (lines[i+1]||"").trim();
+                        var m = line.match(/group-title="([^"]+)"/);
+                        if(m) grp = m[1];
+                        var name = line.substring(line.lastIndexOf(',')+1).trim();
+                        this.dataM3U.push({name:name, group:grp, url:url});
                     }
                 }
             },
 
+            logout: function() {
+                localStorage.clear(); location.reload();
+            },
+
             setScreen: function(n) {
-                this.stop(); 
+                this.stop();
                 document.getElementById('login-layer').classList.add('hide');
                 document.getElementById('dash-layer').classList.add('hide');
                 document.getElementById('content-layer').classList.add('hide');
@@ -352,48 +360,41 @@
             },
 
             openMode: function(m) {
-                if(m==='exit') { localStorage.clear(); location.reload(); return; }
-                this.mode = m; this.isSeries = false;
-                this.loadedCatId = -1;
-                this.isSearchMode = false;
+                this.mode = m; this.isSeries = false; this.loadedCatId = -1; this.isSearchMode = false;
                 this.setScreen(2);
-                
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
                 document.getElementById('search').value = '';
                 this.clearInfo();
-                
+
                 if(this.modeType === 'm3u') {
-                    // Lógica M3U: Agrupa por 'group'
                     var groups = {};
-                    this.dataM3U.forEach(function(item){
-                        // Filtro básico por tipo (ex: se o grupo tem "filme", "serie")
-                        var gName = item.group.toUpperCase();
+                    this.dataM3U.forEach(function(it){ 
+                        var g = it.group.toUpperCase();
                         var add = false;
-                        if(m==='live' && !gName.includes('FILME') && !gName.includes('SERIE')) add=true;
-                        if(m==='movie' && gName.includes('FILME')) add=true;
-                        if(m==='series' && gName.includes('SERIE')) add=true;
-                        
-                        if(add) groups[item.group] = true;
+                        if(m==='live' && !g.includes('FILME') && !g.includes('SERIE')) add=true;
+                        if(m==='movie' && g.includes('FILME')) add=true;
+                        if(m==='series' && g.includes('SERIE')) add=true;
+                        if(add) groups[it.group]=true;
                     });
-                    
-                    this.cats = Object.keys(groups).map(function(g, idx){ return {category_name: g, category_id: g}; });
+                    this.cats = Object.keys(groups).map(function(k){ return {category_name:k, category_id:k}; });
                     this.renderCats();
                 } else {
-                    // Lógica Xtream
                     var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                     var me = this;
-                    this.req("action="+act, function(d){
-                        me.cats = d||[];
-                        me.renderCats();
-                    });
+                    this.req("action="+act, function(d){ me.cats=d||[]; me.renderCats(); });
                 }
             },
 
             renderCats: function() {
-                var h = '';
-                for(var i=0; i<this.cats.length; i++) h += '<div class="cat-item" id="c'+i+'">'+this.cats[i].category_name+'</div>';
-                document.getElementById('cat-list').innerHTML = h;
+                var frag = document.createDocumentFragment();
+                for(var i=0; i<this.cats.length; i++) {
+                    var d = document.createElement('div');
+                    d.className = 'cat-item'; d.id = 'c'+i; d.innerText = this.cats[i].category_name;
+                    d.onclick = (function(idx){ return function(){ App.zone=0; App.idx=idx; App.loadCat(idx, true); } })(i);
+                    frag.appendChild(d);
+                }
+                document.getElementById('cat-list').appendChild(frag);
                 if(this.cats.length>0) this.loadCat(0);
                 this.zone=0; this.idx=0; this.refreshFocus();
             },
@@ -403,80 +404,69 @@
                     if(focusList) { this.zone=2; this.idx=0; this.refreshFocus(); }
                     return;
                 }
-
-                this.memCat = i; this.isSeries = false;
-                this.loadedCatId = i;
-                this.isSearchMode = false;
-                
+                this.memCat = i; this.isSeries = false; this.loadedCatId = i; this.isSearchMode = false;
                 this.stop(); this.clearInfo();
+                
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
                 var el = document.getElementById('c'+i); if(el) el.classList.add('active');
 
                 if(this.modeType === 'm3u') {
-                    // Filtra M3U localmente
                     var gid = this.cats[i].category_id;
-                    this.items = this.dataM3U.filter(function(it){ return it.group === gid; });
+                    this.items = this.dataM3U.filter(function(it){ return it.group===gid; });
                     this.renderList();
                     if(focusList) { this.zone=2; this.idx=0; this.refreshFocus(); }
                 } else {
-                    // Xtream Fetch
                     var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                     var me = this;
                     document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:#555">Carregando...</div>';
-                    
                     this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
-                        me.items = d||[];
-                        me.renderList();
-                        if(focusList) { me.zone = 2; me.idx = 0; me.refreshFocus(); }
+                        me.items = d||[]; me.renderList();
+                        if(focusList) { me.zone=2; me.idx=0; me.refreshFocus(); }
                     });
                 }
             },
 
             renderList: function() {
-                var h = '';
-                var max = this.items.length > 200 ? 200 : this.items.length; // Limite maior
-                if(this.isSeries) h += '<div class="item" id="i-1" style="color:var(--gold)" tabindex="-1">.. VOLTAR</div>';
+                var max = this.items.length > 200 ? 200 : this.items.length;
+                var html = [];
+                if(this.isSeries) html.push('<div class="item" id="i-1" style="color:var(--gold)" onclick="App.loadCat(App.memCat,true)">.. VOLTAR</div>');
+                
                 for(var i=0; i<max; i++) {
                     var n = this.items[i].name || this.items[i].title;
-                    h += '<div class="item" id="i'+i+'" tabindex="-1">'+n+'</div>';
+                    html.push('<div class="item" id="i'+i+'" onclick="App.clickItem('+i+')">'+n+'</div>');
                 }
-                document.getElementById('item-list').innerHTML = h;
+                document.getElementById('item-list').innerHTML = html.join('');
+            },
+
+            globalSearch: function() {
+                var term = document.getElementById('search').value.toLowerCase().trim();
+                if(term.length<2) { document.getElementById('search').removeAttribute('readonly'); return; }
+                this.stop(); this.clearInfo();
+                document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
+                this.loadedCatId = -1; this.isSearchMode = true;
+
+                if(this.modeType==='m3u') {
+                    this.items = this.dataM3U.filter(function(it){ return it.name.toLowerCase().includes(term); });
+                    this.renderList(); this.zone=2; this.idx=0; this.refreshFocus();
+                } else {
+                    var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                    var me = this;
+                    this.req("action="+act, function(d){
+                        var all = d||[]; var res = [];
+                        for(var i=0; i<all.length; i++) {
+                            var n = (all[i].name||all[i].title||"").toLowerCase();
+                            if(n.includes(term)) { res.push(all[i]); if(res.length>=100) break; }
+                        }
+                        if(res.length===0) { alert("Nada encontrado."); me.renderList(); document.getElementById('search').removeAttribute('readonly'); }
+                        else { me.items=res; me.renderList(); me.zone=2; me.idx=0; me.refreshFocus(); }
+                    });
+                }
             },
 
             triggerSearch: function() {
                 document.getElementById('search').blur();
                 setTimeout(function(){ App.globalSearch(); }, 200);
-            },
-
-            globalSearch: function() {
-                var term = document.getElementById('search').value.toLowerCase().trim();
-                if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
-                this.stop(); this.clearInfo();
-                document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
-                this.loadedCatId = -1; 
-                this.isSearchMode = true;
-
-                if(this.modeType === 'm3u') {
-                    // Busca local M3U
-                    this.items = this.dataM3U.filter(function(it){ return it.name.toLowerCase().includes(term); });
-                    this.renderList();
-                    this.zone=2; this.idx=0; this.refreshFocus();
-                } else {
-                    // Busca Xtream
-                    var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                    var me = this;
-                    this.req("action="+act, function(d){
-                        var all = d || [];
-                        var res = [];
-                        for(var i=0; i<all.length; i++) {
-                            var n = (all[i].name || all[i].title || "").toLowerCase();
-                            if(n.indexOf(term) > -1) { res.push(all[i]); if(res.length >= 100) break; }
-                        }
-                        if(res.length === 0) { alert("Nada encontrado."); me.renderList(); }
-                        else { me.items = res; me.renderList(); me.zone = 2; me.idx = 0; me.refreshFocus(); }
-                    });
-                }
             },
 
             clickItem: function(i) {
@@ -485,82 +475,104 @@
                     else { this.loadCat(this.memCat, true); }
                     return; 
                 }
-
                 var item = this.items[i];
-                var v = document.getElementById('player');
-                var url = "";
+                var url = ""; var title = "";
 
-                if(this.modeType === 'm3u') {
-                    // Play Direto M3U
-                    url = item.url;
-                    document.getElementById('meta-title').innerText = item.name;
+                if(this.modeType==='m3u') {
+                    url = item.url; title = item.name;
                 } else {
-                    // Xtream Logic
                     if(this.mode==='series' && !this.isSeries) {
                         var me = this;
                         this.req("action=get_series_info&series_id="+item.series_id, function(d){
-                            var eps = [];
-                            if(d && d.episodes) {
-                                for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
-                            }
-                            me.items = eps; me.isSeries=true; me.renderList(); me.idx=0; me.refreshFocus();
+                            var eps=[]; 
+                            if(d && d.episodes) for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
+                            me.items=eps; me.isSeries=true; me.renderList(); me.idx=0; me.refreshFocus();
                         });
                         return;
                     }
                     var ext = (this.mode==='live')?'ts':'mp4';
                     if(this.mode!=='live' && item.container_extension) ext = item.container_extension;
                     url = this.creds.h + "/" + (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
-                    document.getElementById('meta-title').innerText = item.name||item.title;
+                    title = item.name||item.title;
                 }
-                
-                document.getElementById('meta-desc').innerText = "Reproduzindo...";
+
+                document.getElementById('meta-title').innerText = title;
+                document.getElementById('meta-desc').innerText = "Carregando...";
                 document.getElementById('vid-box').classList.remove('video-off');
                 
-                // Configuração HLS Híbrida (Para rodar P2P/TS em M3U8 wrappers)
-                if(Hls.isSupported() && (url.includes('.m3u8') || this.mode === 'live')) {
-                    var hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(v);
-                    hls.on(Hls.Events.MANIFEST_PARSED,function() { v.play(); });
-                } else {
-                    v.src = url; 
-                    v.play();
-                }
-                
-                this.zone = 3; this.refreshFocus();
+                this.playVideo(url);
+                this.zone=3; this.refreshFocus();
             },
 
-            next: function() { if(this.isSeries && this.items[this.idx+1]) { this.idx++; this.clickItem(this.idx); } },
-            stop: function() { var v=document.getElementById('player'); v.pause(); v.src=""; document.getElementById('vid-box').classList.add('video-off'); },
-            clearInfo: function() { document.getElementById('meta-title').innerText = "R&C PLAYER"; document.getElementById('meta-desc').innerText = "Aguardando seleção..."; },
+            playVideo: function(url) {
+                var v = document.getElementById('player');
+                this.retryCount = 0;
+                
+                if(Hls.isSupported()) {
+                    if(this.hls) { this.hls.destroy(); }
+                    // CONFIG INDUSTRIAL (Buffer Otimizado)
+                    var config = {
+                        maxBufferLength: 30,
+                        maxMaxBufferLength: 60,
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 30
+                    };
+                    this.hls = new Hls(config);
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(v);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
+                    this.hls.on(Hls.Events.ERROR, function(e, data) {
+                        if(data.fatal) {
+                            switch(data.type) {
+                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                    App.hls.startLoad(); break;
+                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                    App.hls.recoverMediaError(); break;
+                                default:
+                                    App.hls.destroy(); v.src = url; v.play(); break;
+                            }
+                        }
+                    });
+                } else {
+                    v.src = url; v.play();
+                }
+            },
+
+            handleVideoError: function() {
+                var v = document.getElementById('player');
+                if(this.retryCount < 3) {
+                    this.retryCount++;
+                    console.log("Retry " + this.retryCount);
+                    setTimeout(function(){ v.load(); v.play(); }, 1000);
+                }
+            },
+
+            stop: function() { 
+                var v=document.getElementById('player'); v.pause(); v.src=""; 
+                if(this.hls) { this.hls.destroy(); this.hls=null; }
+                document.getElementById('vid-box').classList.add('video-off');
+            },
+            
+            clearInfo: function() { document.getElementById('meta-title').innerText="R&C PLAYER"; document.getElementById('meta-desc').innerText="Aguardando..."; },
             
             toggleFull: function() {
-                var v = document.getElementById('player');
                 var box = document.getElementById('vid-box');
-                if(box.classList.contains('fs-mode')) {
-                    box.classList.remove('fs-mode');
-                } else {
-                    box.classList.add('fs-mode');
-                    if(v.paused) v.play();
-                }
+                if(box.classList.contains('fs-mode')) box.classList.remove('fs-mode');
+                else box.classList.add('fs-mode');
             },
 
             refreshFocus: function() {
                 var els = document.querySelectorAll('.focused');
                 for(var i=0; i<els.length; i++) els[i].classList.remove('focused');
                 
-                if(this.zone !== 1) {
-                    document.getElementById('search').blur();
-                }
+                if(this.zone!==1) document.getElementById('search').blur();
 
-                var id = null;
-                // LOGIN MANUAL
+                var id=null;
                 if(this.screen===0) { 
-                    id = 'inp'+this.idx;
-                    var el = document.getElementById(id);
-                    if(this.idx < 3) { el.focus(); el.classList.add('focused'); } 
-                    else { document.activeElement.blur(); el.classList.add('focused'); }
-                    return;
+                    id='inp'+this.idx; var el=document.getElementById(id);
+                    if(this.idx<3) { el.focus(); el.classList.add('focused'); } else { document.activeElement.blur(); el.classList.add('focused'); }
+                    return; 
                 }
                 
                 if(this.screen===1) id='m'+this.idx;
@@ -571,7 +583,7 @@
                     if(this.zone===3) id='vid-box';
                 }
                 if(id) {
-                    var el = document.getElementById(id);
+                    var el=document.getElementById(id);
                     if(el) {
                         el.classList.add('focused');
                         if(el.tagName==='INPUT') el.focus();
@@ -587,7 +599,6 @@
                     if(k===13 && this.idx===3) this.login();
                     this.refreshFocus(); return;
                 }
-                
                 if(this.screen===1) {
                     if(k===39 && this.idx<3) this.idx++;
                     if(k===37 && this.idx>0) this.idx--;
@@ -595,46 +606,31 @@
                     this.refreshFocus();
                 }
                 if(this.screen===2) {
-                    // CATEGORIA
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
-                        // OK: Carrega. DIREITA: Vai pra lista
-                        if(k===13) { this.loadCat(this.idx, true); }
-                        if(k===39) { this.loadCat(this.idx, true); }
+                        if(k===13) this.loadCat(this.idx, true);
+                        if(k===39) this.loadCat(this.idx, true);
                     }
-                    // BUSCA
-                    else if(this.zone===1) {
-                        if(k===40) { this.zone=2; this.idx=0; }
-                    }
-                    // LISTA
+                    else if(this.zone===1) { if(k===40) { this.zone=2; this.idx=0; } }
                     else if(this.zone===2) { 
-                        var max = (this.items.length>200?200:this.items.length)-1;
+                        var max = (this.items.length>100?100:this.items.length)-1;
                         var min = this.isSeries?-1:0;
                         if(k===40 && this.idx<max) this.idx++;
                         if(k===38) { if(this.idx>min) this.idx--; else this.zone=1; }
-                        
-                        if(k===37) { this.zone=0; this.idx=this.memCat; }
-                        if(k===39) { this.zone=3; }
+                        if(k===37) { this.zone=0; this.idx=this.memCat; setTimeout(function(){var el=document.getElementById('c'+App.idx);if(el)el.scrollIntoView({block:'center'})},50); }
+                        if(k===39) this.zone=3; 
                         if(k===13) this.clickItem(this.idx);
                     }
-                    // PLAYER
                     else if(this.zone===3) { 
                         var v = document.getElementById('player');
-                        var box = document.getElementById('vid-box');
-                        var isFull = box.classList.contains('fs-mode');
-
+                        var isFull = document.getElementById('vid-box').classList.contains('fs-mode');
                         if(k===37) { if(isFull) v.currentTime-=15; else this.zone=2; }
                         if(k===39) v.currentTime+=15;
                         if(k===38) this.zone=2;
-                        
                         if(k===13) { 
-                            if(isFull) { 
-                                if(this.mode === 'live') { /* Nada */ }
-                                else { if(v.paused) v.play(); else v.pause(); } 
-                            } else { 
-                                this.toggleFull(); 
-                            }
+                            if(isFull) { if(this.mode!=='live') { if(v.paused) v.play(); else v.pause(); } } 
+                            else { this.toggleFull(); }
                         }
                     }
                     this.refreshFocus();
@@ -642,41 +638,39 @@
             }
         };
 
+        // --- CONTROLES GERAIS (TECLADO/MOUSE/TV) ---
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
+            // Atalhos PC/TV
+            if(k===403||k===82||k===70) { e.preventDefault(); App.toggleFull(); return; } // RED / F
+            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } // GREEN
+            if(k===405||k===89) { e.preventDefault(); if(App.screen===2){ App.zone=1; App.refreshFocus(); } return; } // YELLOW
+            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } // BLUE
             
-            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
-            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; }
-            if(k===405||k===89) { e.preventDefault(); if(App.screen===2){ App.zone=1; App.refreshFocus(); } return; }
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; }
-            
-            // VOLTAR
-            if(k===8||k===461||k===27) {
-                if(document.activeElement.id === 'search') {
-                    e.preventDefault(); document.getElementById('search').blur();
-                    App.zone=0; App.refreshFocus(); return;
-                }
+            // Espaço = Pause (PC)
+            if(k===32 && App.zone===3) { e.preventDefault(); var v=document.getElementById('player'); if(v.paused) v.play(); else v.pause(); return; }
 
+            if(k===8||k===461||k===27) {
+                if(document.activeElement.id === 'search') { e.preventDefault(); document.getElementById('search').blur(); App.zone=0; App.refreshFocus(); return; }
                 e.preventDefault();
                 if(App.screen===2) {
                     if(document.getElementById('vid-box').classList.contains('fs-mode')) { App.toggleFull(); return; }
                     if(App.zone===3) { App.zone=2; App.refreshFocus(); return; }
                     if(App.zone===2 && App.isSeries) { App.clickItem(-1); return; } 
-                    if(App.zone===2) { App.zone=0; App.refreshFocus(); return; } 
+                    if(App.zone===2) { App.zone=0; App.refreshFocus(); return; }
                     if(App.zone===0) { App.setScreen(1); return; }
                 }
                 return;
             }
 
             if([13,37,38,39,40].indexOf(k)>-1) {
-                if(App.screen === 0) { e.preventDefault(); App.move(k); return; }
+                if(App.screen===0) { e.preventDefault(); App.move(k); return; }
                 if(document.activeElement.tagName==='INPUT') {
                     if(k===13) { App.triggerSearch(); return; }
                     if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
                     return; 
                 }
-                e.preventDefault();
-                App.move(k);
+                e.preventDefault(); App.move(k);
             }
         });
     </script>
