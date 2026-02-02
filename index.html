@@ -13,9 +13,9 @@
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
-            --gold-dark: #b8860b;
+            --gold-dim: #b8860b;
             --text: #ffffff; 
-            --panel: rgba(15,15,15,0.98);
+            --panel: rgba(18,18,18,0.98);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -34,8 +34,8 @@
         #login-layer { background: #080808; z-index: 50; }
         .netrange-box {
             width: 450px; padding: 50px; 
-            background: #111; border: 1px solid #333; border-radius: 12px;
-            text-align: center; box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            background: #111; border: 1px solid #333; border-radius: 10px;
+            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
         .nr-header {
             color: var(--gold); font-weight: 900; font-size: 26px; 
@@ -51,7 +51,7 @@
         
         .nr-btn {
             width: 100%; padding: 12px; margin-top: 15px;
-            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+            background: linear-gradient(90deg, var(--gold-dim), var(--gold));
             color: #000; font-weight: 800; font-size: 16px;
             border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
         }
@@ -144,7 +144,7 @@
             <input type="text" id="inp1" class="nr-input" placeholder="USUÁRIO" autocomplete="off">
             <input type="password" id="inp2" class="nr-input" placeholder="SENHA" autocomplete="off">
             <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS para mover e OK</div>
+            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS e OK</div>
         </div>
     </div>
 
@@ -189,14 +189,14 @@
                 <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px; border:1px solid #333;">
                     <div style="color:#fff; font-size:11px; margin-bottom:5px;">COMANDOS:</div>
                     <div style="color:#888; font-size:11px;">
-                        OK: Tela Cheia<br>
+                        OK: Tela Cheia / Pausa (VOD)<br>
                         Voltar: Sair
                     </div>
                 </div>
 
                 <div class="color-keys">
                     <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
-                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> CATEGORIAS</span>
+                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
                     <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
                     <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
                 </div>
@@ -209,7 +209,9 @@
             screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
+            // Controle de Estados
             loadedCatId: -1,
+            isSearchMode: false,
             
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -272,6 +274,7 @@
                 if(m==='exit') { localStorage.clear(); location.reload(); return; }
                 this.mode = m; this.isSeries = false;
                 this.loadedCatId = -1;
+                this.isSearchMode = false;
                 this.setScreen(2);
                 
                 document.getElementById('cat-list').innerHTML = '';
@@ -292,13 +295,15 @@
             },
 
             loadCat: function(i, focusList) {
-                if(this.loadedCatId === i) {
+                if(this.loadedCatId === i && !this.isSearchMode) {
                     if(focusList) { this.zone=2; this.idx=0; this.refreshFocus(); }
                     return;
                 }
 
                 this.memCat = i; this.isSeries = false;
                 this.loadedCatId = i;
+                this.isSearchMode = false; // Não é busca
+                
                 this.stop(); this.clearInfo();
                 
                 var els = document.querySelectorAll('.cat-item');
@@ -338,8 +343,11 @@
             globalSearch: function() {
                 var term = document.getElementById('search').value.toLowerCase().trim();
                 if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
+                
                 this.stop(); this.clearInfo();
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
+                
+                this.isSearchMode = true; // Ativa modo busca
                 this.loadedCatId = -1; // Invalida categoria
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
@@ -363,7 +371,19 @@
             },
 
             clickItem: function(i) {
-                if(this.isSeries && i===-1) { this.loadCat(this.memCat, true); return; }
+                // LOGICA DE VOLTAR DA LISTA
+                if(this.isSeries && i===-1) {
+                    if(this.isSearchMode) {
+                        // Se veio da busca, refaz a busca (restaura lista)
+                        this.isSeries = false;
+                        this.globalSearch();
+                    } else {
+                        // Se veio da categoria, recarrega categoria
+                        this.loadCat(this.memCat, true);
+                    }
+                    return; 
+                }
+
                 var item = this.items[i];
                 if(this.mode==='series' && !this.isSeries) {
                     var me = this;
@@ -414,6 +434,7 @@
                 }
 
                 var id = null;
+                // LOGIN (Manual)
                 if(this.screen===0) { 
                     id = 'inp'+this.idx;
                     var el = document.getElementById(id);
@@ -460,7 +481,7 @@
                         if(k===38 && this.idx>0) this.idx--;
                         // OK: Carrega lista
                         if(k===13) { this.loadCat(this.idx, true); }
-                        // DIREITA: PULA PRA LISTA (Index 0)
+                        // DIREITA: PULA PRA LISTA (SE JA CARREGOU, SÓ VAI. SE NAO, CARREGA E VAI)
                         if(k===39) { this.loadCat(this.idx, true); }
                     }
                     // BUSCA
@@ -475,7 +496,7 @@
                         
                         if(k===38) { // Cima
                             if(this.idx>min) this.idx--; 
-                            else { this.zone=1; } // Vai pra busca
+                            else { this.zone=1; } 
                         }
                         
                         // ESQUERDA: VOLTA PRA CATEGORIA (Mantendo memória)
@@ -496,7 +517,7 @@
                         
                         if(k===13) { 
                             if(isFull) { 
-                                // SE TV AO VIVO: NAO PAUSA
+                                // SE TV AO VIVO: NAO PAUSA (SÓ SAI DO FULL SE QUISER)
                                 if(this.mode === 'live') { /* nada */ }
                                 else { if(v.paused) v.play(); else v.pause(); } 
                             } else { 
@@ -512,23 +533,15 @@
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
             
-            // AZUL (406): Voltar ao MENU
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; }
-            
-            // VERDE (404): Voltar para CATEGORIAS
-            if(k===404||k===71) { 
-                e.preventDefault(); 
-                if(App.screen===2) { App.zone=0; App.refreshFocus(); }
-                return; 
-            }
-
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
+            if(k===404||k===71) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
             
             // VOLTAR
             if(k===8||k===461||k===27) {
                 if(document.activeElement.id === 'search') {
                     e.preventDefault(); document.getElementById('search').blur();
+                    // VOLTAR DA BUSCA -> CATEGORIA
                     App.zone=0; App.refreshFocus(); return;
                 }
 
@@ -539,13 +552,14 @@
                     if(App.zone===2 && App.isSeries) { App.clickItem(-1); return; } 
                     
                     // VOLTAR DA LISTA/CAT -> MENU
-                    if(App.zone===2 || App.zone===0) { App.setScreen(1); return; }
+                    if(App.zone===2) { App.zone=0; App.refreshFocus(); return; }
+                    if(App.zone===0) { App.setScreen(1); return; }
                 }
                 return;
             }
 
             if([13,37,38,39,40].indexOf(k)>-1) {
-                // NO LOGIN: Previne padrão para usar navegação manual
+                // LOGIN (Manual)
                 if(App.screen === 0) { e.preventDefault(); App.move(k); return; }
 
                 if(document.activeElement.tagName==='INPUT') {
