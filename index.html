@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD - ULTIMATE V8</title>
+    <title>R&C GOLD - AUTO V2</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
 
     <style>
-        :root { --bg-dark: #050505; --bg-panel: #141414; --gold: #FFD700; --text-white: #ffffff; }
+        :root { --bg-dark: #000000; --bg-panel: #111111; --gold: #FFD700; --text-white: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         *:focus { outline: none !important; border: none !important; box-shadow: none !important; }
-        
         body { background-color: var(--bg-dark); color: var(--text-white); font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
         /* LOADER */
@@ -20,7 +19,7 @@
         .spinner { width: 50px; height: 50px; border: 5px solid #333; border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 20px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* LOGIN (Estilo Clássico Solicitado) */
+        /* LOGIN CLASSICO */
         #loginScreen { position: absolute; top:0; left:0; width:100%; height:100%; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; }
         .login-box { width: 400px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 10px; text-align: center; border-top: 4px solid var(--gold); }
         .lg-inp { width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff; text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 5px; }
@@ -28,7 +27,7 @@
         .lg-btn { width: 100%; height: 50px; background: var(--gold); color: #000; font-weight: bold; font-size: 18px; border: none; border-radius: 5px; cursor: pointer; }
         .lg-btn.focused { transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
 
-        /* DASHBOARD (Menu Principal Moderno) */
+        /* MENU */
         #dashboard { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); }
         .dash-logo { font-size: 60px; font-weight: 900; margin-bottom: 60px; } .dash-logo span { color: var(--gold); }
         .dash-grid { display: flex; gap: 40px; }
@@ -38,10 +37,8 @@
         .dash-item.focused i, .dash-item.focused span { color: #000; }
         .status-bar { position: absolute; bottom: 30px; width: 90%; display: flex; justify-content: space-between; color: #666; font-size: 14px; border-top: 1px solid #333; padding-top: 15px; } .status-bar b { color: var(--gold); }
 
-        /* INTERFACE CONTEÚDO (3 Colunas) */
+        /* CONTEÚDO */
         #contentArea { display: none; width: 100%; height: 100%; }
-        
-        /* Coluna 1: Categorias */
         .side-menu { width: 300px; background: #111; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .side-head { padding: 20px; background: #000; color: var(--gold); font-weight: 800; text-align: center; }
         .cat-list { flex: 1; overflow-y: auto; }
@@ -49,7 +46,6 @@
         .cat-item.active { background: #222; color: #fff; border-left: 4px solid #555; }
         .cat-item.focused { background: var(--gold) !important; color: #000 !important; border-left: 4px solid #fff !important; }
 
-        /* Coluna 2: Lista */
         .main-list { width: 450px; background: #0a0a0a; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .search-bar { padding: 10px; background: #000; border-bottom: 1px solid #222; }
         .s-input { width: 100%; background: #222; border: 1px solid #333; padding: 10px; color: #fff; text-align: center; border-radius: 5px; text-transform: uppercase; font-weight: bold; }
@@ -58,20 +54,16 @@
         .cont-item { padding: 15px; border-bottom: 1px solid #141414; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .cont-item.focused { background: var(--gold) !important; color: #000 !important; font-weight: bold; }
 
-        /* Coluna 3: Player */
         .preview-area { flex: 1; background: #000; display: flex; flex-direction: column; }
         .video-container { width: 100%; height: 60%; background: #000; position: relative; border-bottom: 2px solid #222; }
         .video-container.focused { border: 2px solid var(--gold); }
         video { width: 100%; height: 100%; }
-        
+        #toast-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 40px; font-weight: 900; text-shadow: 0 2px 10px #000; display: none; z-index: 99999; pointer-events: none; }
+
         .meta-info { padding: 30px; flex: 1; background: linear-gradient(to top, #000, #0a0a0a); overflow-y: auto; }
         .meta-title { font-size: 28px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
         .meta-desc { font-size: 16px; color: #aaa; line-height: 1.6; }
-        
-        /* Fullscreen & Toast */
         .fs-mode { position: fixed; top: 0; left: 0; width: 100% !important; height: 100% !important; z-index: 9999; border: none !important; }
-        #toast-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 40px; font-weight: 900; text-shadow: 0 2px 10px #000; display: none; z-index: 99999; pointer-events: none; }
-        
         .help-keys { margin-top: 20px; display: flex; gap: 20px; font-size: 12px; font-weight: bold; color: #555; }
         ::-webkit-scrollbar { width: 0px; }
     </style>
@@ -83,7 +75,7 @@
     <div id="loginScreen">
         <div class="login-box">
             <h2 style="color:var(--gold); margin-bottom:20px; font-size:24px;">R&C GOLD</h2>
-            <input type="text" id="h" class="lg-inp" placeholder="URL" autocomplete="off">
+            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" autocomplete="off">
             <input type="text" id="u" class="lg-inp" placeholder="USUÁRIO" autocomplete="off">
             <input type="password" id="p" class="lg-inp" placeholder="SENHA">
             <button id="btnEnter" class="lg-btn">ENTRAR</button>
@@ -98,20 +90,12 @@
             <div class="dash-item" id="menu-ser"><i class="fas fa-video"></i><span>SÉRIES</span></div>
             <div class="dash-item" id="menu-exit"><i class="fas fa-sign-out-alt"></i><span>SAIR</span></div>
         </div>
-        <div class="status-bar"><span id="st-exp">...</span><span>ULTIMATE V8</span></div>
+        <div class="status-bar"><span id="st-exp">...</span><span>AUTO V2</span></div>
     </div>
 
     <div id="contentArea">
-        <div class="side-menu">
-            <div class="side-head" id="lbl-mode">CATEGORIAS</div>
-            <div class="cat-list" id="cat-list"></div>
-        </div>
-        <div class="main-list">
-            <div class="search-bar">
-                <input type="text" id="search-inp" class="s-input" placeholder="BUSCAR NA LISTA...">
-            </div>
-            <div class="cont-list" id="cont-list"></div>
-        </div>
+        <div class="side-menu"><div class="side-head" id="lbl-mode">CATEGORIAS</div><div class="cat-list" id="cat-list"></div></div>
+        <div class="main-list"><div class="search-bar"><input type="text" id="search-inp" class="s-input" placeholder="BUSCAR..."></div><div class="cont-list" id="cont-list"></div></div>
         <div class="preview-area">
             <div class="video-container" id="player-box">
                 <video id="player" playsinline webkit-playsinline crossorigin="anonymous"></video>
@@ -120,9 +104,9 @@
             <div class="meta-info">
                 <div class="meta-title" id="meta-title">BEM VINDO</div>
                 <div class="meta-desc" id="meta-desc">
-                    1. <b>OK</b> abre Categoria/Canal.<br>
-                    2. Em Séries: Clique na capa para ver episódios.<br>
-                    3. <b>AMARELO</b> para Buscar.
+                    1. <b>OK</b> abre a Categoria ou Série.<br>
+                    2. <b>Séries</b> tocam o próximo automaticamente.<br>
+                    3. <b>Setas</b> avançam/voltam 15s no video.
                 </div>
                 <div class="help-keys">
                     <span style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
@@ -138,8 +122,8 @@
             state: 'login', focusZone: 0, focusIdx: 0,
             creds: {}, userInfo: {}, mode: 'live',
             categories: [], content: [], viewContent: [],
-            isSeries: false, memCatIdx: 0, 
-            loginF: 0, currentStreamId: null, hls: null,
+            isSeries: false, memCatIdx: 0, loginF: 0,
+            currentStreamId: null, hls: null,
 
             init: function() {
                 this.hlsConfig = { autoStartLoad: true, capLevelToPlayerSize: true, maxBufferLength: 30, fatalErrorRecovery: true };
@@ -153,13 +137,14 @@
 
                 document.addEventListener('keydown', (e) => this.onKey(e));
                 
+                // SISTEMA AUTO-PLAY
                 const v = document.getElementById('player');
                 v.addEventListener('ended', () => {
-                    // Auto-play próximo episódio
+                    // Se for série e não for o ultimo, toca o próximo
                     if(this.isSeries && this.focusIdx < this.viewContent.length - 1) { 
                         this.focusIdx++; this.updFocus(); this.play(this.focusIdx); 
                     } else { 
-                        this.play(this.focusIdx, true); // Loop
+                        this.play(this.focusIdx, true); // Loop se for canal/filme
                     }
                 });
                 v.addEventListener('error', () => { if(this.currentStreamId) setTimeout(() => this.play(this.focusIdx, true), 2000); });
@@ -195,7 +180,7 @@
             // DASHBOARD
             openDashboard: function() {
                 this.state = 'dashboard'; 
-                this.stopPlayer(); // MATAR PLAYER AO IR PRO MENU
+                this.stopPlayer();
                 document.getElementById('dashboard').style.display = 'flex'; document.getElementById('contentArea').style.display = 'none';
                 if(this.userInfo) document.getElementById('st-exp').innerHTML = `VENCE: <b>${new Date(this.userInfo.exp_date * 1000).toLocaleDateString('pt-BR')}</b>`;
                 this.focusIdx = 0; this.updDash();
@@ -210,8 +195,7 @@
             openContent: async function(mode) {
                 if(mode === 'exit') { localStorage.clear(); location.reload(); return; }
                 this.state = 'content'; this.mode = mode;
-                
-                this.stopPlayer(); // MATAR PLAYER AO ENTRAR
+                this.stopPlayer(); // Limpeza tela fantasma
                 
                 document.getElementById('dashboard').style.display = 'none'; document.getElementById('contentArea').style.display = 'flex';
                 document.getElementById('lbl-mode').innerText = mode==='live'?'CANAIS':(mode==='vod'?'FILMES':'SÉRIES');
@@ -230,11 +214,12 @@
             },
 
             loadCategoryContent: async function(idx) {
+                // Marca visual da categoria
                 document.querySelectorAll('.cat-item').forEach(e => e.classList.remove('active'));
                 let el = document.getElementById(`cat-${idx}`); if(el) el.classList.add('active');
                 
                 this.memCatIdx = idx; 
-                this.isSeries = false; // Reset series flag
+                this.isSeries = false; 
                 let catId = this.categories[idx].category_id;
                 
                 let action = this.mode==='live'?'get_live_streams':(this.mode==='vod'?'get_vod_streams':'get_series');
@@ -243,11 +228,10 @@
                 
                 this.content = data || []; this.viewContent = [...this.content];
                 this.renderList();
-                this.focusZone = 2; this.focusIdx = 0; document.getElementById('search-inp').blur(); this.updFocus();
             },
 
             renderList: function() {
-                let html = '', limit = this.viewContent.slice(0, 200);
+                let html = '', limit = this.viewContent.slice(0, 150);
                 if(this.viewContent.length === 0) html = '<div style="padding:20px; color:#555">VAZIO</div>';
                 else if (this.isSeries) {
                     html += `<div class="cont-item" id="item-back" style="color:var(--gold)">VOLTAR</div>`;
@@ -261,7 +245,7 @@
                 document.getElementById('cont-list').innerHTML = html;
             },
 
-            // BUSCA LOCAL
+            // BUSCA INTELIGENTE (PALAVRAS CHAVE)
             doSearch: function() {
                 let term = document.getElementById('search-inp').value.toLowerCase();
                 if(term.length < 1) { this.viewContent = [...this.content]; }
@@ -276,8 +260,9 @@
                 if(this.viewContent.length > 0) { this.focusZone = 2; this.focusIdx = 0; document.getElementById('search-inp').blur(); this.updFocus(); }
             },
 
-            // LOGICA SERIES
-            openSeries: async function(id) {
+            // ABRIR SÉRIES (AQUI ESTÁ A CORREÇÃO PRINCIPAL)
+            openSeriesEpisodes: async function(id) {
+                this.showToast("CARREGANDO...");
                 let data = await this.apiCall(`action=get_series_info&series_id=${id}`);
                 let episodes = [];
                 if(data && data.episodes) {
@@ -292,6 +277,7 @@
                 });
                 this.isSeries = true; this.content = episodes; this.viewContent = episodes;
                 this.renderList(); this.focusZone = 2; this.focusIdx = 0; this.updFocus();
+                this.showToast("");
             },
 
             // PLAYER
@@ -299,14 +285,13 @@
                 if(!this.viewContent[idx]) return;
                 let item = this.viewContent[idx];
 
-                // SE FOR SERIE E NAO ESTA NA LISTA DE EPISODIOS, ABRE EPISODIOS
+                // SE FOR SERIE E NÃO TIVER VENDO EPISODIOS, ABRE A LISTA (CORREÇÃO DE FLUXO)
                 if(this.mode === 'ser' && !this.isSeries) {
-                    this.openSeries(item.series_id);
+                    this.openSeriesEpisodes(item.series_id);
                     return;
                 }
 
                 let streamId = item.stream_id || item.id;
-                // Fullscreen se ja tiver tocando
                 if(this.currentStreamId === streamId && !isRetry) { this.toggleFullscreen(); return; }
                 
                 this.currentStreamId = streamId;
@@ -315,7 +300,7 @@
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
                 document.getElementById('meta-title').innerText = item.name || item.title;
-                document.getElementById('meta-desc').innerText = "Carregando...";
+                document.getElementById('meta-desc').innerText = "Reproduzindo...";
 
                 let v = document.getElementById('player');
                 if(this.hls) { this.hls.destroy(); this.hls=null; }
@@ -384,8 +369,7 @@
                     if(k===405 || k===89) { this.focusZone=1; document.getElementById('search-inp').focus(); this.updFocus(); return; } // Amarelo
                     if(k===403 || k===82) { this.toggleFullscreen(); return; } // Vermelho
                     
-                    // Voltar
-                    if([8,27,461,10009, 406].includes(k)) { 
+                    if([8,27,461,10009, 406].includes(k)) { // Back
                         if(this.isSeries) { this.isSeries = false; this.loadCategoryContent(this.memCatIdx); return; }
                         if(this.focusZone > 0) { this.focusZone = 0; this.focusIdx = this.memCatIdx; this.updFocus(); return; }
                         this.openDashboard(); return;
@@ -394,7 +378,8 @@
                     if(this.focusZone === 0) { // Cats
                         if(k===40 && this.focusIdx < this.categories.length-1) { this.focusIdx++; this.updFocus(); }
                         if(k===38 && this.focusIdx > 0) { this.focusIdx--; this.updFocus(); }
-                        if(k===13) { this.loadCategoryContent(this.focusIdx); } // SÓ CARREGA NO OK
+                        if(k===13) { this.loadCategoryContent(this.focusIdx); this.focusZone=1; this.updFocus(); } // SÓ CARREGA NO OK
+                        if(k===39) { this.focusZone=1; this.updFocus(); }
                     }
                     else if(this.focusZone === 1) { // Search
                         if(k===40 && this.viewContent.length > 0) { this.focusZone = 2; this.focusIdx = 0; document.getElementById('search-inp').blur(); this.updFocus(); }
