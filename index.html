@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - V4.4 SERIES FIX</title>
+    <title>SKY GOLD - V4.5 TS FIX</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -44,14 +44,17 @@
 
         .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333; }
-        
-        /* TRAVA TECLADO */
         .search-inp { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; font-size: 14px; text-transform: uppercase; font-weight: bold; }
         .search-inp::placeholder { color: #555; text-transform: none; font-weight: normal; }
         .search-inp.focused { background: #fff; color: #000; border-color: var(--highlight); }
 
         .col-preview { flex: 1; background: #101214; display: flex; flex-direction: column; padding: 20px; }
-        .preview-window { width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .preview-window { 
+            width: 100%; aspect-ratio: 16/9; background: #000; 
+            border: 2px solid #333; margin-bottom: 20px; position: relative; overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
         .preview-window.active { border-color: var(--highlight); }
         
         .vod-osd { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); display: none; align-items: center; padding: 0 15px; gap: 15px; z-index: 100; }
@@ -60,7 +63,23 @@
         .progress-bar { height: 100%; background: var(--highlight); width: 0%; border-radius: 3px; }
         .time-display { font-size: 12px; color: #fff; font-family: monospace; }
 
-        .fs { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index:9999; border: none !important; box-shadow: none !important; background: #000; margin: 0 !important; }
+        /* FULLSCREEN CORRIGIDO - SEM BORDA */
+        .fs { 
+            position: fixed !important; top: 0 !important; left: 0 !important; 
+            width: 100vw !important; height: 100vh !important; 
+            z-index: 99999 !important; 
+            border: none !important; 
+            outline: none !important;
+            box-shadow: none !important; 
+            background: #000 !important; 
+            margin: 0 !important; padding: 0 !important;
+        }
+        /* GARANTE QUE O VÍDEO DENTRO TAMBÉM FIQUE LIMPO */
+        .fs video {
+            width: 100% !important; height: 100% !important;
+            border: none !important; outline: none !important;
+        }
+
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         video::-webkit-media-controls { display: none !important; }
 
@@ -129,7 +148,7 @@
                     <div class="info-desc" id="lbl-desc">
                         1. OK (1x): Carrega Preview.<br>
                         2. OK (2x): Tela Cheia.<br>
-                        3. Séries tocam o próximo episódio automaticamente.
+                        Séries tocam o próximo automaticamente.
                     </div>
                 </div>
             </div>
@@ -146,7 +165,8 @@
     <script>
         let hls = null;
         
-        const HlsConfig = { autoStartLoad: true, startPosition: -1, capLevelToPlayerSize: true, maxBufferLength: 20, maxMaxBufferLength: 40, backBufferLength: 10, enableWorker: true, debug: false };
+        // HLS Config (Usado apenas se nativo falhar)
+        const HlsConfig = { autoStartLoad: true, startPosition: -1, capLevelToPlayerSize: true, maxBufferLength: 30, maxMaxBufferLength: 60, backBufferLength: 10, enableWorker: true, debug: false };
 
         const App = {
             screen: 'login', mode: 'live', zone: 0, focusIdx: 0,
@@ -171,19 +191,23 @@
                 
                 vid.addEventListener('ended', () => {
                     if(App.mode === 'live') {
+                        // LIVE: Não sai, reconecta
                         App.refreshPlayer(); 
                     } else if(App.mode === 'ser' && App.isSeriesLevel) {
+                        // SERIE: Próximo
                         if(App.focusIdx < App.viewList.length - 1) {
                             App.focusIdx++; App.renderFocus();
                             let nextItem = App.viewList[App.focusIdx];
                             App.playStream(nextItem);
                         } else App.exitFullscreen();
                     } else { 
+                        // FILME: Fim
                         App.isVodPlaying = false; App.exitFullscreen(); 
                     }
                 });
 
                 vid.addEventListener('error', (e) => {
+                    // Erro no Live? Tenta de novo
                     if(App.currentStreamId && App.mode === 'live') setTimeout(() => App.refreshPlayer(), 2000);
                 });
             },
@@ -321,10 +345,7 @@
                 this.selectItem();
             },
 
-            // FUNÇÃO ESPECÍFICA PARA FECHAR SÉRIE (EVITA ERRO DE VOLTAR)
-            closeSeries: function() {
-                this.loadContent();
-            },
+            closeSeries: function() { this.loadContent(); },
 
             openSeries: async function(seriesId) {
                 this.lockInput(true);
@@ -346,9 +367,7 @@
                 let item = this.viewList[this.focusIdx];
                 if (!item) return;
 
-                if(this.isSeriesLevel && this.focusIdx === -1) { 
-                    this.closeSeries(); return; 
-                }
+                if(this.isSeriesLevel && this.focusIdx === -1) { this.closeSeries(); return; }
 
                 if(this.mode === 'ser' && !this.isSeriesLevel) { 
                     this.openSeries(item.series_id); 
@@ -370,7 +389,7 @@
             playStream: function(item) {
                 let vid = document.getElementById('player');
                 let box = document.getElementById('v-box');
-                box.classList.remove('fs');
+                // Mantem classe FS se já estiver
 
                 let streamId = item.stream_id || item.id;
                 this.currentStreamId = streamId; 
@@ -387,20 +406,16 @@
 
                 if(hls) { hls.destroy(); hls = null; }
 
-                if (this.mode === 'live') {
-                    if (vid.canPlayType('application/vnd.apple.mpegurl')) { vid.src = url; vid.play(); } 
-                    else if (Hls.isSupported()) {
+                // --- PADRÃO TS NATIVO ---
+                vid.src = url;
+                vid.play().catch(e => {
+                    console.log("Erro Nativo, tentando HLS...");
+                    // Fallback para HLS apenas se nativo falhar
+                    if(Hls.isSupported()) {
                         hls = new Hls(HlsConfig); hls.loadSource(url); hls.attachMedia(vid);
                         hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
                     }
-                } else {
-                    vid.src = url;
-                    vid.play().catch(e => {
-                        if(ext === 'm3u8' && Hls.isSupported()) {
-                            hls = new Hls(); hls.loadSource(url); hls.attachMedia(vid); hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
-                        }
-                    });
-                }
+                });
             },
 
             updateVodUI: function() {
@@ -446,7 +461,6 @@
 
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
-                
                 if(this.zone !== 2) this.lockInput(true);
 
                 if(this.zone === 0) document.getElementById(['tab-live','tab-vod','tab-ser','btn-logout'][this.focusIdx]).classList.add('focused');
