@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - V4.1 FS LOCK</title>
+    <title>SKY GOLD - V4.3 TS NATIVE</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
-
+    
     <style>
         /* --- ESTILOS GERAIS --- */
         :root { --bg-body: #101214; --bg-header: #0d0f12; --highlight: #e6b800; --border: #2a2e33; --gold: #FFD700; }
@@ -44,7 +43,6 @@
 
         .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333; }
-        
         /* TRAVA TECLADO VISUAL */
         .search-inp { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; font-size: 14px; text-transform: uppercase; font-weight: bold; }
         .search-inp::placeholder { color: #555; text-transform: none; font-weight: normal; }
@@ -144,21 +142,6 @@
     </div>
 
     <script>
-        let hls = null;
-        
-        // --- HLS CONFIG OTIMIZADA PARA REDE INSTAVEL ---
-        const HlsConfig = { 
-            autoStartLoad: true, 
-            startPosition: -1, 
-            capLevelToPlayerSize: true, 
-            maxBufferLength: 30, // Aumentado para segurar travadas
-            maxMaxBufferLength: 60, 
-            backBufferLength: 30, 
-            enableWorker: true, 
-            manifestLoadingTimeOut: 20000, 
-            debug: false 
-        };
-
         const App = {
             screen: 'login', mode: 'live', zone: 0, focusIdx: 0,
             cats: [], list: [], viewList: [], creds: {},
@@ -180,17 +163,18 @@
                 const vid = document.getElementById('player');
                 vid.addEventListener('timeupdate', App.updateVodUI);
                 
-                // --- CORREÇÃO TELA CHEIA SAINDO ---
+                // EVENTO FIM DE VÍDEO
                 vid.addEventListener('ended', () => {
                     if(App.mode === 'live') {
-                        // SE FOR TV AO VIVO, NÃO SAI DA TELA CHEIA, TENTA RECONECTAR
-                        console.log("Live stream ended (drop), reconnecting...");
+                        // LIVE: SE ACABAR (QUEDA), RECONECTA
+                        console.log("TS stream dropped, restarting...");
                         App.refreshPlayer(); 
                     } else if(App.mode === 'ser' && App.isSeriesLevel) {
-                        // SÉRIES: TOCA PRÓXIMO
+                        // SÉRIES: AUTO PLAY PRÓXIMO
                         if(App.focusIdx < App.viewList.length - 1) {
                             App.focusIdx++; App.renderFocus();
-                            App.playStream(App.viewList[App.focusIdx]);
+                            let nextItem = App.viewList[App.focusIdx];
+                            App.playStream(nextItem);
                         } else App.exitFullscreen();
                     } else { 
                         // FILMES: SAI DA TELA CHEIA
@@ -200,7 +184,6 @@
 
                 vid.addEventListener('error', (e) => {
                     console.log("Video Error", e);
-                    // SE DER ERRO NO LIVE, RECONECTA SEM SAIR DO FS
                     if(App.currentStreamId && App.mode === 'live') {
                         setTimeout(() => App.refreshPlayer(), 2000);
                     }
@@ -238,7 +221,7 @@
                 this.list = []; this.viewList = []; this.isSeriesLevel = false; this.isVodPlaying = false; this.stopPlayer();
                 document.getElementById('list-cnt').innerHTML = '';
                 document.getElementById('search-input').value = '';
-                this.lockInput(true); // Bloqueia teclado
+                this.lockInput(true);
 
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-mode'));
                 if(newMode === 'live') document.getElementById('tab-live').classList.add('active-mode');
@@ -258,7 +241,6 @@
                 } catch(e) { }
             },
 
-            // --- TRAVA DE TECLADO ---
             lockInput: function(locked) {
                 let inp = document.getElementById('search-input');
                 if(locked) { inp.setAttribute('readonly', 'true'); inp.blur(); } 
@@ -268,8 +250,7 @@
             clickCat: function(i) { this.zone = 1; this.focusIdx = i; this.renderFocus(); this.loadContent(); },
 
             loadContent: async function() {
-                this.lockInput(true); // Trava teclado
-                
+                this.lockInput(true);
                 let cat = this.cats[this.focusIdx];
                 let cid = cat.category_id;
                 this.isSeriesLevel = false;
@@ -319,10 +300,10 @@
                 if(this.isSeriesLevel) {
                     html += `<div class="list-item" id="cnt-back" onclick="App.loadContent()" style="color:#aaa"><i class="fas fa-arrow-left"></i> <span>VOLTAR</span></div>`;
                     this.viewList.forEach((ep, i) => {
-                        let epNum = (ep.episode_num) ? ep.episode_num : '?';
-                        let seas = (ep.season) ? ep.season : '?';
+                        let s = ep.season ? `S${ep.season}` : '';
+                        let e = ep.episode_num ? `E${ep.episode_num}` : '';
                         let name = ep.title || ep.name || 'Episódio';
-                        let label = (ep.season && ep.episode_num) ? `S${seas} E${epNum} - ${name}` : name;
+                        let label = (s && e) ? `${s} ${e} - ${name}` : name;
                         html += `<div class="list-item" id="cnt-${i}" onclick="App.clickContent(${i})"><span>${label}</span></div>`;
                     });
                 } else {
@@ -372,19 +353,19 @@
             stopPlayer: function() {
                 let vid = document.getElementById('player');
                 vid.pause(); vid.src = "";
-                if(hls) { hls.destroy(); hls = null; }
                 this.isVodPlaying = false; document.getElementById('vod-osd').style.display = 'none';
             },
 
             playStream: function(item) {
                 let vid = document.getElementById('player');
                 let box = document.getElementById('v-box');
-                // Nao remove FS para manter em caso de reconnect
+                box.classList.remove('fs');
 
                 let streamId = item.stream_id || item.id;
                 this.currentStreamId = streamId; 
                 let ext = item.container_extension || 'mp4';
-                if(this.mode === 'live') ext = 'ts'; 
+                if(this.mode === 'live') ext = 'ts'; // FORÇA TS NO LIVE
+                
                 let type = (this.mode === 'live') ? 'live' : (this.mode === 'ser' ? 'series' : 'movie');
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
@@ -394,22 +375,11 @@
                 this.isVodPlaying = (this.mode !== 'live');
                 document.getElementById('vod-osd').style.display = 'none';
 
-                if(hls) { hls.destroy(); hls = null; }
-
-                if (this.mode === 'live') {
-                    if (vid.canPlayType('application/vnd.apple.mpegurl')) { vid.src = url; vid.play(); } 
-                    else if (Hls.isSupported()) {
-                        hls = new Hls(HlsConfig); hls.loadSource(url); hls.attachMedia(vid);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
-                    }
-                } else {
-                    vid.src = url;
-                    vid.play().catch(e => {
-                        if(ext === 'm3u8' && Hls.isSupported()) {
-                            hls = new Hls(); hls.loadSource(url); hls.attachMedia(vid); hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
-                        }
-                    });
-                }
+                // TENTATIVA NATIVA DIRETA (Melhor para TVs antigas)
+                vid.src = url;
+                vid.play().catch(e => {
+                    console.log("Erro Play Nativo:", e);
+                });
             },
 
             updateVodUI: function() {
@@ -450,14 +420,13 @@
             refreshPlayer: function() { if(this.currentStreamId) { let i = this.viewList.find(x => (x.stream_id||x.id)==this.currentStreamId); if(i)this.playStream(i); } else this.loadContent(); },
             
             focusSearch: function() { 
-                this.zone = 2; 
-                this.lockInput(false); // DESTRAVA SÓ AQUI
+                this.zone = 2; this.lockInput(false); 
             },
 
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
                 
-                if(this.zone !== 2) this.lockInput(true); // SE NAO FOR BUSCA, TRAVA
+                if(this.zone !== 2) this.lockInput(true); // TRAVA
 
                 if(this.zone === 0) document.getElementById(['tab-live','tab-vod','tab-ser','btn-logout'][this.focusIdx]).classList.add('focused');
                 else if(this.zone === 1) { let el = document.getElementById(`cat-${this.focusIdx}`); if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); } }
@@ -469,7 +438,7 @@
             },
 
             handleKey: function(k) {
-                if(this.zone === 0) { // MENU
+                if(this.zone === 0) {
                     if(k===39 && this.focusIdx < 3) this.focusIdx++;
                     if(k===37 && this.focusIdx > 0) this.focusIdx--;
                     if(k===40) { this.zone = 1; this.focusIdx = 0; }
@@ -480,7 +449,7 @@
                         if(this.focusIdx===3) this.logout();
                     }
                 }
-                else if(this.zone === 1) { // CATS
+                else if(this.zone === 1) { 
                     if(k===38) { 
                         if(this.focusIdx > 0) this.focusIdx--; 
                         else { this.zone = 0; this.focusIdx = 0; } 
@@ -489,11 +458,10 @@
                     if(k===39) { this.zone = 2; this.lockInput(false); }
                     if(k===13) { this.loadContent(); }
                 }
-                else if(this.zone === 2) { // SEARCH
+                else if(this.zone === 2) { 
                     if(k===40) {
                         if(this.viewList.length > 0) {
-                            this.zone = 3; this.focusIdx = (this.isSeriesLevel)?-1:0;
-                            this.lockInput(true);
+                            this.zone = 3; this.focusIdx = (this.isSeriesLevel)?-1:0; this.lockInput(true);
                         }
                     }
                     if(k===37) {
@@ -504,7 +472,7 @@
                     if(k===38) { this.zone = 0; this.focusIdx = 0; this.lockInput(true); }
                     if(k===13) this.performGlobalSearch();
                 }
-                else if(this.zone === 3) { // LIST
+                else if(this.zone === 3) {
                     if(k===38) {
                         if(this.isSeriesLevel && this.focusIdx===-1) this.zone=2;
                         else if(this.focusIdx>0) this.focusIdx--;
