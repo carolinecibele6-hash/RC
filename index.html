@@ -13,7 +13,6 @@
             --gold: #D4AF37;
             --gold-dim: #8a7020;
             --text-color: #ffffff;
-            --focus-glow: 0 0 15px rgba(212, 175, 55, 0.6);
         }
 
         body {
@@ -21,13 +20,13 @@
             padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: sans-serif; /* Fonte padrão é mais segura */
+            font-family: sans-serif;
             overflow: hidden;
         }
 
         /* --- TELA DE LOGIN --- */
         #login-screen {
-            position: fixed; /* Fixed garante que cubra tudo */
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
@@ -42,147 +41,185 @@
             background: #111;
             padding: 30px;
             border: 2px solid var(--gold-dim);
-            width: 80%; /* % é melhor para telas pequenas */
+            width: 80%;
             max-width: 400px;
             text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .input-label {
+            color: var(--gold);
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
         }
 
         .input-field {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            background: #333;
-            border: 1px solid #555;
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #444;
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
+            box-sizing: border-box; /* Garante que não estoure a caixa */
         }
 
         .btn-gold {
-            background: var(--gold);
+            background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dim) 100%);
             color: #000;
             border: none;
             padding: 15px;
-            width: 95%;
-            font-size: 20px;
+            width: 100%;
+            font-size: 18px;
             font-weight: bold;
-            margin-top: 15px;
+            margin-top: 20px;
             cursor: pointer;
+            text-transform: uppercase;
         }
 
+        /* Efeito de Foco (Controle Remoto) */
         .focusable:focus, .focusable.focused {
             border: 2px solid #fff !important;
             background: var(--gold) !important;
             color: #000 !important;
             outline: none;
-            box-shadow: 0 0 20px var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+        }
+        
+        /* Input focado precisa manter o texto legível */
+        input.focusable:focus, input.focusable.focused {
+            background: #fff !important; 
+            color: #000 !important;
         }
 
-        /* --- DASHBOARD PRINCIPAL (MODO FLEXBOX) --- */
+        /* --- DASHBOARD PRINCIPAL --- */
         #main-dashboard {
-            display: none; /* Começa escondido */
+            display: none;
             height: 100vh;
             width: 100vw;
-            flex-direction: column; /* Substitui o Grid */
+            flex-direction: column;
             background-color: var(--bg-color);
         }
 
-        /* Topo */
+        /* Header */
         .header {
-            height: 70px;
+            height: 80px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px;
+            padding: 0 40px;
             border-bottom: 2px solid var(--gold-dim);
             background: #0f0f0f;
-            flex-shrink: 0; /* Impede que o header encolha */
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            color: var(--gold);
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px #000;
         }
 
         .search-bar input {
             background: #222;
             border: 1px solid #444;
             color: #fff;
-            padding: 8px;
-            width: 250px;
+            padding: 10px 20px;
+            width: 300px;
+            border-radius: 20px;
+            text-align: center;
         }
 
-        /* Área de Conteúdo */
+        /* Conteúdo */
         .content-area {
-            flex: 1; /* Ocupa o resto da tela */
+            flex: 1;
             display: flex;
             overflow: hidden;
             position: relative;
         }
 
-        /* Menu Home (Visual 01) */
+        /* Menu Home */
         #home-menu {
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
             height: 100%;
+            gap: 30px;
         }
         
         .big-card {
-            width: 180px;
-            height: 180px;
-            margin: 0 20px;
-            background: #1a1a1a;
+            width: 200px;
+            height: 200px;
+            background: #151515;
             border: 2px solid #333;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            transition: transform 0.2s;
         }
         
-        .big-card .card-icon { font-size: 50px; margin-bottom: 10px; }
-        .big-card h3 { margin: 0; color: #ccc; }
+        .big-card.focused { transform: scale(1.1); z-index: 10; border-color: var(--gold); }
+        .big-card .card-icon { font-size: 60px; margin-bottom: 15px; }
+        .big-card h3 { margin: 0; color: #ddd; font-weight: normal; }
 
-        /* Lista Lateral e Grid */
+        /* Listas e Categorias */
         #list-view {
             display: none;
             width: 100%;
             height: 100%;
-            flex-direction: row; /* Lateral + Grid */
+            flex-direction: row;
         }
 
         .sidebar {
-            width: 250px;
+            width: 280px;
             background: #111;
             overflow-y: auto;
             border-right: 1px solid #333;
         }
 
         .menu-item {
-            padding: 15px;
+            padding: 20px 30px;
             color: #aaa;
             display: block;
+            border-bottom: 1px solid #222;
+            font-size: 18px;
         }
-        .menu-item.focused { background: #333; color: var(--gold); border-left: 4px solid var(--gold); }
+        .menu-item.focused { background: #333; color: var(--gold); border-left: 5px solid var(--gold); font-weight: bold; }
 
         .grid-container {
             flex: 1;
-            padding: 20px;
-            display: flex; /* Fallback para grid */
+            padding: 30px;
+            display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
             overflow-y: auto;
+            gap: 20px;
         }
 
         .card {
-            width: 160px;
-            height: 120px;
-            margin: 10px;
-            background: #222;
+            width: 180px;
+            height: 140px;
+            background: #202020;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             border: 2px solid transparent;
+            border-radius: 8px;
         }
+        .card.focused { border-color: var(--gold); background: #303030; transform: scale(1.05); }
 
-        /* Player Overlay */
+        /* Player */
         #player-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: none; z-index: 10000;
@@ -194,21 +231,36 @@
 <body>
 
     <section id="login-screen">
-        <h1 style="color: var(--gold); margin-bottom: 20px;">R&C GOLD</h1>
+        <h1 style="color: var(--gold); margin-bottom: 10px; font-size: 40px;">R&C GOLD</h1>
+        <p style="color: #666; margin-bottom: 30px;">EDITION FOR NETRANGE</p>
+        
         <div class="login-box">
-            <input type="text" class="input-field focusable" id="user" placeholder="Usuário">
-            <input type="password" class="input-field focusable" id="pass" placeholder="Senha">
-            <button class="btn-gold focusable" id="btnLogin" onclick="doLogin()">ENTRAR</button>
+            <div class="input-group">
+                <span class="input-label">Servidor (URL/DNS)</span>
+                <input type="text" class="input-field focusable" id="server" placeholder="http://meuservidor.com">
+            </div>
+
+            <div class="input-group">
+                <span class="input-label">Usuário</span>
+                <input type="text" class="input-field focusable" id="user" placeholder="Digite seu usuário">
+            </div>
+
+            <div class="input-group">
+                <span class="input-label">Senha</span>
+                <input type="password" class="input-field focusable" id="pass" placeholder="Digite sua senha">
+            </div>
+
+            <button class="btn-gold focusable" onclick="doLogin()">ENTRAR NO SISTEMA</button>
         </div>
     </section>
 
     <section id="main-dashboard">
         <div class="header">
-            <div style="color: var(--gold); font-size: 22px;">R&C IPTV</div>
+            <div class="logo-text">R&C IPTV GOLD</div>
             <div class="search-bar">
-                <input type="text" class="focusable" id="global-search" placeholder="Pesquisar..." onkeyup="filterContent()">
+                <input type="text" class="focusable" id="global-search" placeholder="O que você quer assistir?" onkeyup="filterContent()">
             </div>
-            <div id="clock" style="font-size: 20px;">00:00</div>
+            <div id="clock" style="font-size: 22px; font-weight: bold; color: #fff;">00:00</div>
         </div>
 
         <div class="content-area">
@@ -217,24 +269,30 @@
                 <div id="home-menu">
                     <div class="big-card focusable" onclick="loadCategory('live')">
                         <div class="card-icon">📺</div>
-                        <h3>TV</h3>
+                        <h3>TV AO VIVO</h3>
                     </div>
                     <div class="big-card focusable" onclick="loadCategory('movies')">
                         <div class="card-icon">🎬</div>
-                        <h3>Filmes</h3>
+                        <h3>FILMES</h3>
                     </div>
                     <div class="big-card focusable" onclick="loadCategory('series')">
                         <div class="card-icon">🎞️</div>
-                        <h3>Séries</h3>
+                        <h3>SÉRIES</h3>
+                    </div>
+                     <div class="big-card focusable" onclick="alert('Configurações em breve')">
+                        <div class="card-icon">⚙️</div>
+                        <h3>AJUSTES</h3>
                     </div>
                 </div>
             </div>
 
             <div id="list-view">
                 <div class="sidebar" id="category-list">
-                    <div class="menu-item focusable" onclick="filterCat('all')">Todos</div>
+                    <div class="menu-item focusable" onclick="filterCat('all')">Todos os Canais</div>
                     <div class="menu-item focusable" onclick="filterCat('sports')">Esportes</div>
-                    <div class="menu-item focusable" onclick="backToHome()">⬅ VOLTAR</div>
+                    <div class="menu-item focusable" onclick="filterCat('kids')">Infantil</div>
+                    <div class="menu-item focusable" onclick="filterCat('news')">Notícias</div>
+                    <div class="menu-item focusable" style="color: var(--gold);" onclick="backToHome()">⬅ VOLTAR AO INÍCIO</div>
                 </div>
                 <div class="grid-container" id="content-grid">
                     </div>
@@ -248,51 +306,43 @@
     </div>
 
     <script>
-        // Variáveis de Controle
-        let currentScreen = 'login'; 
-        let focusElements = [];
-        let focusIndex = 0;
+        // --- VARIÁVEIS GLOBAIS ---
+        var currentScreen = 'login'; 
+        var focusElements = [];
+        var focusIndex = 0;
 
-        // Ao carregar a página
         window.onload = function() {
             updateFocus();
-            // Tenta focar no primeiro campo de usuário automaticamente
+            // Foca no primeiro campo (Servidor) ao carregar
             if(focusElements.length > 0) highlight(0);
         };
 
-        // --- LÓGICA DE LOGIN ---
+        // --- SISTEMA DE LOGIN ---
         function doLogin() {
+            var server = document.getElementById('server').value;
             var user = document.getElementById('user').value;
             var pass = document.getElementById('pass').value;
 
-            if(user && pass) {
-                // Esconde Login
+            if(server && user && pass) {
+                // Animação simples de saída
                 document.getElementById('login-screen').style.opacity = '0';
                 
-                // Espera 0.5s para transição e TROCA as telas
                 setTimeout(function() {
                     document.getElementById('login-screen').style.display = 'none';
-                    
-                    // IMPORTANTE: Aqui usamos 'flex' ao invés de 'grid'
-                    var dashboard = document.getElementById('main-dashboard');
-                    dashboard.style.display = 'flex'; 
+                    document.getElementById('main-dashboard').style.display = 'flex'; // ATIVA O FLEXBOX
                     
                     currentScreen = 'home';
-                    
-                    // Força atualização do foco para a nova tela
                     updateFocus();
                     focusIndex = 0;
                     highlight(0);
-
                 }, 500);
             } else {
-                alert("Preencha os dados!");
+                alert("Por favor, preencha: Servidor, Usuário e Senha.");
             }
         }
 
-        // --- SISTEMA DE NAVEGAÇÃO (CONTROLE) ---
+        // --- SISTEMA DE NAVEGAÇÃO (KEY MAPPING) ---
         function updateFocus() {
-            // Remove 'focused' de todos antes de atualizar a lista
             var all = document.querySelectorAll('.focused');
             for(var i=0; i<all.length; i++) all[i].classList.remove('focused');
 
@@ -300,21 +350,20 @@
                 focusElements = document.querySelectorAll('#login-screen .focusable');
             } 
             else if (currentScreen === 'home') {
-                focusElements = document.querySelectorAll('#home-view .focusable'); // Apenas os cards grandes
+                focusElements = document.querySelectorAll('#home-view .focusable, .header .focusable');
             }
             else if (currentScreen === 'list') {
-                // Na lista, foca sidebar + grid + busca
                 focusElements = document.querySelectorAll('.header .focusable, #list-view .focusable');
             }
         }
 
         function highlight(index) {
-            if(focusElements.length === 0) return;
+            if(!focusElements.length) return;
             
-            // Remove classe do anterior
+            // Remove anterior
             if(focusElements[focusIndex]) focusElements[focusIndex].classList.remove('focused');
 
-            // Proteção de limites (Loop)
+            // Loop infinito do menu
             if(index >= focusElements.length) index = 0;
             if(index < 0) index = focusElements.length - 1;
 
@@ -322,91 +371,104 @@
             focusElements[focusIndex].classList.add('focused');
             focusElements[focusIndex].focus();
             
-            // Scroll automático se estiver numa lista longa
+            // Scroll suave se necessário
             focusElements[focusIndex].scrollIntoView({block: "center", behavior: "smooth"});
         }
 
-        // Escuta as teclas
         document.addEventListener('keydown', function(e) {
-            // Atualiza a lista de elementos focáveis sempre que mover
-            updateFocus();
+            updateFocus(); // Garante que a lista está atualizada
 
-            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                highlight(focusIndex + 1);
-            } 
-            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                highlight(focusIndex - 1);
-            } 
-            else if (e.key === 'Enter') {
-                if(focusElements[focusIndex]) focusElements[focusIndex].click();
-            }
-            else if (e.key === 'Backspace' || e.key === 'Escape') {
-                if(currentScreen === 'list') backToHome();
-                if(currentScreen === 'player') closePlayer();
+            switch(e.key) {
+                case 'ArrowDown': highlight(focusIndex + 1); break;
+                case 'ArrowUp': highlight(focusIndex - 1); break;
+                
+                // Em grid, esquerda/direita avança 1. 
+                // Se quiser pular linhas, precisa de lógica matemática baseada em colunas.
+                // Para simplificar e não bugar na TV antiga, mantemos linear:
+                case 'ArrowRight': highlight(focusIndex + 1); break; 
+                case 'ArrowLeft': highlight(focusIndex - 1); break;
+                
+                case 'Enter': 
+                    if(focusElements[focusIndex]) focusElements[focusIndex].click();
+                    break;
+                
+                case 'Backspace':
+                case 'Escape':
+                    if(currentScreen === 'list') backToHome();
+                    if(currentScreen === 'player') closePlayer();
+                    break;
             }
         });
 
-        // --- NAVEGAÇÃO DASHBOARD ---
+        // --- NAVEGAÇÃO DE CONTEÚDO ---
         function loadCategory(type) {
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('list-view').style.display = 'flex';
             currentScreen = 'list';
             
-            // Gera conteúdo falso para teste
+            // Simulação de conteúdo (25 canais)
             var grid = document.getElementById('content-grid');
-            grid.innerHTML = ''; // Limpa
+            grid.innerHTML = ''; 
             
-            for(var i=1; i<=20; i++) {
+            for(var i=1; i<=25; i++) {
                 var div = document.createElement('div');
                 div.className = 'card focusable';
-                div.innerHTML = '<span>Canal ' + i + '</span>';
+                // HTML interno do card
+                div.innerHTML = '<div style="font-size:30px; margin-bottom:10px;">📺</div><div style="font-size:14px;">Canal '+i+' FHD</div>';
+                
+                // Função de clique
                 div.onclick = function() { openPlayer(); };
                 grid.appendChild(div);
             }
             
-            // Reseta foco para o primeiro item da lista (menu lateral ou busca)
             setTimeout(function(){
                 updateFocus();
-                focusIndex = 0;
+                focusIndex = 0; // Foca no primeiro item da sidebar ou busca
                 highlight(0);
             }, 100);
         }
 
         function backToHome() {
             document.getElementById('list-view').style.display = 'none';
-            document.getElementById('home-view').style.display = 'flex'; // Volta para Flex
+            document.getElementById('home-view').style.display = 'flex'; 
             currentScreen = 'home';
             setTimeout(function(){
                 updateFocus();
-                focusIndex = 0;
                 highlight(0);
             }, 100);
         }
 
-        // --- PLAYER ---
+        // --- PLAYER CONFIG ---
         function openPlayer() {
             var overlay = document.getElementById('player-overlay');
+            var video = document.getElementById('video-player');
+            
             overlay.style.display = 'block';
             currentScreen = 'player';
-            // Exemplo de vídeo
-            var video = document.getElementById('video-player');
+            
+            // URL de teste (HLS)
+            var testStream = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+
             if(Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource('http://playertest.longtailvideo.com/adaptive/wowzaid3/playlist.m3u8');
+                var hls = new Hls({
+                    maxBufferLength: 30, // Anti-travamento
+                    maxMaxBufferLength: 60
+                });
+                hls.loadSource(testStream);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED,function() { video.play(); });
             } else {
-                video.src = 'http://playertest.longtailvideo.com/adaptive/wowzaid3/playlist.m3u8';
+                // Suporte nativo (Safari / Algumas Smart TVs)
+                video.src = testStream;
                 video.play();
             }
         }
 
         function closePlayer() {
-            var overlay = document.getElementById('player-overlay');
             var video = document.getElementById('video-player');
             video.pause();
-            overlay.style.display = 'none';
-            // Volta para a lista
+            video.src = ""; // Limpa buffer
+            document.getElementById('player-overlay').style.display = 'none';
             currentScreen = 'list';
             updateFocus();
         }
@@ -414,10 +476,9 @@
         // Relógio
         setInterval(function() {
             var d = new Date();
-            var h = d.getHours();
-            var m = d.getMinutes();
+            var h = d.getHours(); var m = d.getMinutes();
             if(h<10) h='0'+h; if(m<10) m='0'+m;
-            document.getElementById('clock').innerHTML = h+':'+m;
+            document.getElementById('clock').innerText = h+':'+m;
         }, 1000);
 
     </script>
