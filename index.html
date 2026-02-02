@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - V4.7 LIVE FIX</title>
+    <title>SKY GOLD - V4.8 NO BORDER</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -11,7 +11,11 @@
     <style>
         /* --- ESTILOS GERAIS --- */
         :root { --bg-body: #101214; --bg-header: #0d0f12; --highlight: #e6b800; --border: #2a2e33; --gold: #FFD700; }
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        
+        /* RESET GLOBAL DE FOCO DA TV (Tira a borda amarela nativa) */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none !important; user-select: none; -webkit-tap-highlight-color: transparent; }
+        *:focus { outline: none !important; border: none !important; box-shadow: none !important; }
+
         body { background: var(--bg-body); color: #e0e0e0; font-family: 'Roboto Condensed', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
         /* LOGIN */
@@ -19,7 +23,7 @@
         .login-box { background: #0a0a0a; border-top: 4px solid var(--gold); width: 450px; padding: 40px; text-align: center; }
         .lg-title { color: var(--gold); font-size: 24px; font-weight: bold; margin-bottom: 30px; }
         .lg-inp { width: 100%; height: 50px; margin-bottom: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; text-align: center; font-size: 18px; padding: 0; }
-        .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold) !important; }
         .lg-btn { width: 100%; height: 55px; background: var(--gold); color: #000; font-weight: bold; font-size: 18px; border: none; cursor: pointer; margin-top: 10px; }
         .lg-btn:focus, .lg-btn:hover { background: #d4b000; box-shadow: 0 0 10px var(--gold); }
 
@@ -40,18 +44,44 @@
         
         .list-item { padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; display: flex; justify-content: space-between; align-items: center; border: 2px solid transparent; cursor: pointer; }
         .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa; }
-        .list-item.focused { background: rgba(230, 184, 0, 0.1); color: #fff; font-weight: bold; border: 2px solid var(--highlight) !important; transform: scale(1.01); z-index: 10; }
+        
+        /* FOCO NA LISTA (Apenas aqui pode ter borda amarela) */
+        .list-item.focused { 
+            background: rgba(230, 184, 0, 0.1); 
+            color: #fff; font-weight: bold; 
+            border: 2px solid var(--highlight) !important; 
+            transform: scale(1.01); z-index: 10; 
+        }
 
         .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .search-bar { padding: 10px; background: #000; display: flex; gap:5px; border-bottom: 1px solid #333; }
-        /* TRAVA TECLADO */
         .search-inp { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 10px; font-size: 14px; text-transform: uppercase; font-weight: bold; }
         .search-inp::placeholder { color: #555; text-transform: none; font-weight: normal; }
-        .search-inp.focused { background: #fff; color: #000; border-color: var(--highlight); }
+        .search-inp.focused { background: #fff; color: #000; border-color: var(--highlight) !important; }
 
         .col-preview { flex: 1; background: #101214; display: flex; flex-direction: column; padding: 20px; }
-        .preview-window { width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .preview-window.active { border-color: var(--highlight); }
+        
+        /* JANELA DE PREVIEW (COM BORDA) */
+        .preview-window { 
+            width: 100%; aspect-ratio: 16/9; background: #000; 
+            border: 2px solid #333; /* Borda padrão */
+            margin-bottom: 20px; position: relative; overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .preview-window.active { border-color: var(--highlight); } /* Borda amarela SÓ no preview */
+        
+        /* TELA CHEIA (SEM BORDA NENHUMA) */
+        .fs { 
+            position: fixed !important; top: 0 !important; left: 0 !important; 
+            width: 100vw !important; height: 100vh !important; 
+            z-index: 99999 !important; 
+            border: 0 !important; /* MATA A BORDA */
+            border-radius: 0 !important;
+            outline: none !important;
+            box-shadow: none !important; 
+            background: #000 !important; 
+            margin: 0 !important; padding: 0 !important;
+        }
         
         .vod-osd { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.8); display: none; align-items: center; padding: 0 15px; gap: 15px; z-index: 100; }
         .vod-btn { font-size: 18px; color: #fff; width: 30px; text-align: center; }
@@ -59,7 +89,6 @@
         .progress-bar { height: 100%; background: var(--highlight); width: 0%; border-radius: 3px; }
         .time-display { font-size: 12px; color: #fff; font-family: monospace; }
 
-        .fs { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index:9999; border: none !important; box-shadow: none !important; background: #000; margin: 0 !important; }
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         video::-webkit-media-controls { display: none !important; }
 
@@ -128,7 +157,7 @@
                     <div class="info-desc" id="lbl-desc">
                         1. OK (1x): Carrega Preview.<br>
                         2. OK (2x): Tela Cheia.<br>
-                        3. Séries tocam o próximo episódio automaticamente.
+                        Séries tocam o próximo episódio automaticamente.
                     </div>
                 </div>
             </div>
@@ -144,6 +173,7 @@
 
     <script>
         let hls = null;
+        
         const HlsConfig = { autoStartLoad: true, startPosition: -1, capLevelToPlayerSize: true, maxBufferLength: 20, maxMaxBufferLength: 40, backBufferLength: 10, enableWorker: true, debug: false };
 
         const App = {
@@ -169,26 +199,20 @@
                 
                 vid.addEventListener('ended', () => {
                     if(App.mode === 'live') {
-                        App.refreshPlayer(); // Live reconecta
+                        App.refreshPlayer(); 
                     } else if(App.mode === 'ser' && App.isSeriesLevel) {
                         if(App.focusIdx < App.viewList.length - 1) {
                             App.focusIdx++; App.renderFocus();
                             let nextItem = App.viewList[App.focusIdx];
-                            App.playStream(nextItem); // Serie toca proximo
+                            App.playStream(nextItem);
                         } else App.exitFullscreen();
                     } else { 
-                        App.isVodPlaying = false; App.exitFullscreen(); // Filme acaba
+                        App.isVodPlaying = false; App.exitFullscreen(); 
                     }
                 });
 
                 vid.addEventListener('error', (e) => {
-                    // Failover: Se nativo falhar, tenta HLS
-                    console.log("Erro Player Nativo, tentando HLS...");
-                    if(App.currentStreamId && App.mode === 'live') {
-                        // Se falhou o TS nativo, tenta carregar como HLS (m3u8)
-                        let item = App.viewList.find(x => (x.stream_id||x.id) == App.currentStreamId);
-                        if(item) App.forceHlsFallback(item);
-                    }
+                    if(App.currentStreamId && App.mode === 'live') setTimeout(() => App.refreshPlayer(), 2000);
                 });
             },
 
@@ -369,14 +393,16 @@
             playStream: function(item) {
                 let vid = document.getElementById('player');
                 let box = document.getElementById('v-box');
-                box.classList.remove('fs');
+                
+                // IMPORTANTE: NÃO REMOVE FS SE FOR RECONEXÃO
+                let isReconnect = (this.currentStreamId === (item.stream_id || item.id));
+                if(!isReconnect) box.classList.remove('fs');
 
                 let streamId = item.stream_id || item.id;
                 this.currentStreamId = streamId; 
                 let ext = item.container_extension || 'mp4';
                 if(this.mode === 'live') ext = 'ts'; 
                 
-                // URL FIX: SERIES USA /movie/
                 let type = (this.mode === 'live') ? 'live' : 'movie';
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
@@ -388,30 +414,20 @@
 
                 if(hls) { hls.destroy(); hls = null; }
 
-                // --- TENTATIVA PADRÃO: NATIVO (TS/MP4) ---
-                vid.src = url;
-                vid.play().catch(e => {
-                    console.log("Erro Player Nativo");
-                });
-            },
-
-            // --- FAILOVER: Se TS nativo falhar, tentar HLS ---
-            forceHlsFallback: function(item) {
-                if(!Hls.isSupported()) return;
-                
-                let vid = document.getElementById('player');
-                let streamId = item.stream_id || item.id;
-                let type = (this.mode === 'live') ? 'live' : 'movie';
-                
-                // Tenta URL com .m3u8
-                let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.m3u8`;
-                
-                console.log("Ativando HLS Fallback...");
-                if(hls) hls.destroy();
-                hls = new Hls(HlsConfig);
-                hls.loadSource(url);
-                hls.attachMedia(vid);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
+                if (this.mode === 'live') {
+                    if (vid.canPlayType('application/vnd.apple.mpegurl')) { vid.src = url; vid.play(); } 
+                    else if (Hls.isSupported()) {
+                        hls = new Hls(HlsConfig); hls.loadSource(url); hls.attachMedia(vid);
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
+                    }
+                } else {
+                    vid.src = url;
+                    vid.play().catch(e => {
+                        if(ext === 'm3u8' && Hls.isSupported()) {
+                            hls = new Hls(); hls.loadSource(url); hls.attachMedia(vid); hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
+                        }
+                    });
+                }
             },
 
             updateVodUI: function() {
