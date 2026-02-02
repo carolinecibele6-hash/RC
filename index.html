@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - AUTO PLAY SERIES</title>
+    <title>SKY GOLD - NO KEYBOARD</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -37,7 +37,8 @@
         .col-cats { width: 25%; background: #1a1d21; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .col-header { padding: 10px; background: #000; color: #fff; text-align: center; font-weight: bold; border-bottom: 1px solid #333; text-transform: uppercase; font-size: 13px; }
         .list-container { flex: 1; overflow-y: auto; }
-        .list-item { padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; display: flex; justify-content: space-between; align-items: center; border: 2px solid transparent; }
+        
+        .list-item { padding: 12px 15px; border-bottom: 1px solid #25282d; font-size: 14px; color: #ccc; display: flex; justify-content: space-between; align-items: center; border: 2px solid transparent; cursor: pointer; }
         .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa; }
         .list-item.focused { background: rgba(230, 184, 0, 0.1); color: #fff; font-weight: bold; border: 2px solid var(--highlight) !important; transform: scale(1.01); z-index: 10; }
 
@@ -105,7 +106,7 @@
                 <div class="list-container" id="list-cats"></div>
             </div>
             <div class="col-content">
-                <div class="col-header">Conteúdo</div>
+                <div class="col-header">Canais / Conteúdo</div>
                 <div class="search-bar">
                     <input type="text" id="search-input" class="search-inp" placeholder="PESQUISAR..." onkeydown="App.handleSearchKey(event)">
                 </div>
@@ -143,7 +144,6 @@
     <script>
         let hls = null;
         
-        // CONFIGURAÇÃO ULTRA LEVE
         const HlsConfig = {
             autoStartLoad: true, startPosition: -1, capLevelToPlayerSize: true,
             maxBufferLength: 10, maxMaxBufferLength: 20, backBufferLength: 10,
@@ -172,27 +172,21 @@
                 const vid = document.getElementById('player');
                 vid.addEventListener('timeupdate', App.updateVodUI);
                 
-                // LOGICA AUTO-PLAY SERIE
                 vid.addEventListener('ended', () => {
                     if(App.mode === 'ser' && App.isSeriesLevel) {
-                        // Toca o próximo se existir
                         if(App.focusIdx < App.viewList.length - 1) {
-                            App.focusIdx++; // Desce um na lista
-                            App.renderFocus(); // Atualiza visual
+                            App.focusIdx++; 
+                            App.renderFocus();
                             let nextItem = App.viewList[App.focusIdx];
-                            App.playStream(nextItem); // Toca o próximo
-                        } else {
-                            App.exitFullscreen(); // Fim da temporada
-                        }
+                            App.playStream(nextItem);
+                        } else { App.exitFullscreen(); }
                     } else {
-                        // Se for filme ou TV, sai do FS
                         App.isVodPlaying = false; 
                         App.exitFullscreen(); 
                     }
                 });
 
                 vid.addEventListener('error', (e) => {
-                    console.log("Erro no player, tentando recuperar...");
                     if(App.currentStreamId) setTimeout(() => App.refreshPlayer(), 2000);
                 });
             },
@@ -258,10 +252,19 @@
                     this.cats.unshift({category_id: 'all', category_name: '★ TODOS / PESQUISA GLOBAL'});
                     
                     let html = '';
-                    this.cats.forEach((c, i) => { html += `<div class="list-item" id="cat-${i}"><span>${c.category_name}</span></div>`; });
+                    this.cats.forEach((c, i) => { 
+                        // Adiciona onclick para mouse
+                        html += `<div class="list-item" id="cat-${i}" onclick="App.clickCat(${i})"><span>${c.category_name}</span></div>`; 
+                    });
                     document.getElementById('list-cats').innerHTML = html;
                     this.renderFocus();
                 } catch(e) { }
+            },
+
+            // Função helper para clique
+            clickCat: function(i) {
+                this.zone = 1; this.focusIdx = i; this.renderFocus();
+                this.loadContent();
             },
 
             loadContent: async function() {
@@ -282,7 +285,13 @@
                     this.list = await res.json();
                     this.viewList = [...this.list];
                     this.renderList();
-                    this.zone = 2; document.getElementById('search-input').focus();
+                    
+                    // CORREÇÃO: VAI PARA A LISTA (ZONE 3), NÃO PARA O INPUT
+                    this.zone = 3; 
+                    this.focusIdx = 0;
+                    this.renderFocus();
+                    document.getElementById('search-input').blur(); // Garante que teclado não abra
+                    
                 } catch(e) { document.getElementById('list-cnt').innerHTML = 'Erro ao carregar lista.'; }
             },
 
@@ -317,20 +326,25 @@
             renderList: function() {
                 let html = '';
                 if(this.isSeriesLevel) {
-                    html += `<div class="list-item" id="cnt-back" style="color:#aaa"><i class="fas fa-arrow-left"></i> <span>VOLTAR</span></div>`;
+                    html += `<div class="list-item" id="cnt-back" onclick="App.loadContent()" style="color:#aaa"><i class="fas fa-arrow-left"></i> <span>VOLTAR</span></div>`;
                     this.viewList.forEach((ep, i) => {
                         let label = `S${ep.season} E${ep.episode_num} - ${ep.title}`;
-                        html += `<div class="list-item" id="cnt-${i}"><span>${label}</span></div>`;
+                        html += `<div class="list-item" id="cnt-${i}" onclick="App.clickContent(${i})"><span>${label}</span></div>`;
                     });
                 } else {
                     this.viewList.forEach((item, i) => {
                         let name = item.name || item.title;
                         let activeClass = (this.currentStreamId === (item.stream_id || item.id)) ? ' active' : '';
-                        html += `<div class="list-item${activeClass}" id="cnt-${i}"><span>${name}</span></div>`;
+                        html += `<div class="list-item${activeClass}" id="cnt-${i}" onclick="App.clickContent(${i})"><span>${name}</span></div>`;
                     });
                 }
                 if(this.viewList.length === 0) html = '<div style="padding:20px;text-align:center">Nenhum resultado</div>';
                 document.getElementById('list-cnt').innerHTML = html;
+            },
+
+            clickContent: function(i) {
+                this.zone = 3; this.focusIdx = i; this.renderFocus();
+                this.selectItem();
             },
 
             openSeries: async function(seriesId) {
@@ -351,7 +365,8 @@
 
             selectItem: function() {
                 if(this.isSeriesLevel && this.focusIdx === -1) { this.loadContent(); return; }
-                let item = this.viewList[this.focusIdx];
+                let idx = this.isSeriesLevel ? this.focusIdx : this.focusIdx;
+                let item = this.viewList[idx];
 
                 if(this.mode === 'ser' && !this.isSeriesLevel) {
                     this.openSeries(item.series_id);
@@ -376,8 +391,8 @@
             playStream: function(item) {
                 let vid = document.getElementById('player');
                 let box = document.getElementById('v-box');
-                // NÃO SAIR DO FULLSCREEN AQUI PARA PERMITIR AUTO-PLAY
-                
+                // Nao tira FS
+
                 let streamId = item.stream_id || item.id;
                 this.currentStreamId = streamId; 
                 
@@ -468,6 +483,7 @@
             },
 
             handleKey: function(k) {
+                // ZONE 0 (Top Menu)
                 if(this.zone === 0) {
                     if(k===39 && this.focusIdx < 3) this.focusIdx++;
                     if(k===37 && this.focusIdx > 0) this.focusIdx--;
@@ -479,25 +495,55 @@
                         if(this.focusIdx===3) this.logout();
                     }
                 }
+                // ZONE 1 (Cats)
                 else if(this.zone === 1) {
-                    if(k===38) { if(this.focusIdx > 0) this.focusIdx--; else { this.zone = 0; this.focusIdx = 0; } }
+                    if(k===38) { 
+                        if(this.focusIdx > 0) this.focusIdx--; 
+                        else { this.zone = 0; this.focusIdx = 0; } // CORREÇÃO: Vai pro Menu
+                    }
                     if(k===40 && this.focusIdx < this.cats.length-1) this.focusIdx++;
+                    
                     if(k===39) { this.zone = 2; document.getElementById('search-input').focus(); }
                     if(k===13) { this.loadContent(); }
                 }
+                // ZONE 2 (Search)
                 else if(this.zone === 2) {
-                    if(k===40) { if(this.viewList.length > 0) { this.zone = 3; this.focusIdx = this.isSeriesLevel ? -1 : 0; document.getElementById('search-input').blur(); } }
-                    if(k===37) { this.zone = 1; document.getElementById('search-input').blur(); let active = document.querySelector('.list-item.active'); this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0; }
+                    if(k===40) {
+                        if(this.viewList.length > 0) {
+                            this.zone = 3; 
+                            this.focusIdx = this.isSeriesLevel ? -1 : 0;
+                            document.getElementById('search-input').blur();
+                        }
+                    }
+                    if(k===37) {
+                        this.zone = 1; 
+                        document.getElementById('search-input').blur();
+                        let active = document.querySelector('.list-item.active');
+                        this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
+                    }
+                    // CORREÇÃO: Subir da Busca vai pro Menu
+                    if(k===38) { this.zone = 0; this.focusIdx = 0; document.getElementById('search-input').blur(); }
                     if(k===13) this.performGlobalSearch();
                 }
+                // ZONE 3 (List)
                 else if(this.zone === 3) {
                     if(k===38) { 
                         if(this.isSeriesLevel && this.focusIdx === -1) this.zone = 2; 
                         else if(this.focusIdx > 0) this.focusIdx--;
-                        else if(this.focusIdx === 0) { if(this.isSeriesLevel) this.focusIdx = -1; else this.zone = 2; }
+                        else if(this.focusIdx === 0) {
+                            if(this.isSeriesLevel) this.focusIdx = -1;
+                            else {
+                                // CORREÇÃO: Subir do topo da lista vai pra busca
+                                this.zone = 2; document.getElementById('search-input').focus(); 
+                            }
+                        }
                     }
                     if(k===40 && this.focusIdx < this.viewList.length-1) this.focusIdx++;
-                    if(k===37) { this.zone = 1; let active = document.querySelector('.list-item.active'); this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0; }
+                    if(k===37) { 
+                        this.zone = 1; 
+                        let active = document.querySelector('.list-item.active');
+                        this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
+                    }
                     if(k===13) this.selectItem();
                 }
                 this.renderFocus();
@@ -509,13 +555,13 @@
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
 
-            // BOTÕES COLORIDOS
+            // COLOR KEYS
             if(k === 403 || k === 82) { App.toggleFS(); return; } // Vermelho
             if(k === 404 || k === 71) { App.refreshPlayer(); return; } // Verde
             if(k === 405 || k === 89) { App.focusSearch(); return; } // Amarelo
             if(k === 406 || k === 66) { App.logout(); return; } // Azul
 
-            // VOD FULLSCREEN CONTROLS
+            // VOD FULLSCREEN
             if(isFullscreen() && App.isVodPlaying) {
                 App.showVodOSD();
                 if(k===39) App.controlVod('fwd');
@@ -544,6 +590,7 @@
             }
 
             if(App.zone === 2 && ((k >= 48 && k <= 90) || k === 8 || k === 32)) return;
+
             if([37,38,39,40].includes(k)) e.preventDefault();
             App.handleKey(k);
         });
