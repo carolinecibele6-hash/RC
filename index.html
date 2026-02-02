@@ -17,7 +17,7 @@
             --text-dim: #888888;
         }
 
-        /* RESET OTIMIZADO PARA TV */
+        /* RESET OTIMIZADO */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         * { box-shadow: none !important; text-shadow: none !important; transition: none !important; }
 
@@ -40,24 +40,42 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- LOGIN --- */
+        /* --- TELA LOGIN (RESTAURADA AO LAYOUT ORIGINAL) --- */
         #loginScreen {
             position: absolute; width: 100%; height: 100%; z-index: 5000;
             display: flex; justify-content: center; align-items: center; background: #000;
         }
         .login-box {
-            width: 450px; padding: 50px; background: var(--bg-panel); border: 2px solid #333; 
-            text-align: center;
+            width: 400px; /* Largura original */
+            padding: 40px; /* Padding original */
+            background: #111; 
+            border: 1px solid #333; 
+            border-radius: 10px; /* Bordas arredondadas originais */
+            text-align: center; 
+            border-top: 4px solid var(--bg-focus); /* Mantém o Dourado */
         }
         .lg-inp {
-            width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
-            text-align: center; margin-bottom: 20px; font-size: 18px;
+            width: 100%; height: 50px; 
+            background: #222; 
+            border: 1px solid #444; 
+            color: #fff;
+            text-align: center; 
+            margin-bottom: 15px; /* Espaçamento original */
+            font-size: 16px; 
+            border-radius: 5px; /* Bordas arredondadas nos inputs */
         }
-        .lg-inp:focus { background: #fff; color: #000; border-color: var(--bg-focus); }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--bg-focus); font-weight: bold; }
         .lg-btn {
-            width: 100%; height: 50px; background: var(--bg-focus); border: none; font-weight: 900;
-            font-size: 20px; cursor: pointer; color: #000; text-transform: uppercase;
+            width: 100%; height: 50px; 
+            background: var(--bg-focus); 
+            border: none; 
+            font-weight: bold;
+            font-size: 18px; 
+            cursor: pointer; 
+            border-radius: 5px; /* Botão arredondado */
+            color: #000;
         }
+        .lg-btn:focus { transform: scale(1.05); }
 
         /* --- MENU PRINCIPAL --- */
         #mainMenu {
@@ -88,7 +106,7 @@
         /* --- INTERFACE DE CONTEÚDO --- */
         #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
         
-        /* Coluna 1: Categorias (Esquerda) */
+        /* Coluna 1: Categorias */
         .col-cats { width: 300px; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; z-index: 20; }
         .panel-head { 
             padding: 15px; font-weight: 900; color: var(--bg-focus); text-align: center;
@@ -103,7 +121,7 @@
         .c-item.active { color: #ddd; background: #151515; border-left: 4px solid #333; }
         .c-item.focused { background: var(--bg-focus); color: #000; border-left: 4px solid #fff; }
 
-        /* Coluna 2: Lista (Meio) */
+        /* Coluna 2: Lista */
         .col-list { width: 400px; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; z-index: 10; }
         .search-box { padding: 10px; background: #000; }
         .s-inp { 
@@ -118,7 +136,7 @@
         }
         .l-item.focused { background: var(--bg-focus); color: #000; font-weight: bold; }
 
-        /* Coluna 3: Player (Direita - Ajustada) */
+        /* Coluna 3: Player + Preview */
         .col-view { 
             flex: 1; background: #000; display: flex; flex-direction: column; 
             padding: 0; 
@@ -161,10 +179,10 @@
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:var(--bg-focus); margin-bottom:30px; font-size:30px;">R&C IPTV GOLD</h2>
+            <h2 style="color:var(--bg-focus); margin-bottom:20px; font-size:24px;">R&C IPTV GOLD</h2>
             <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" autocomplete="off">
-            <input type="text" id="u" class="lg-inp" placeholder="USUÁRIO" autocomplete="off">
-            <input type="password" id="p" class="lg-inp" placeholder="SENHA">
+            <input type="text" id="u" class="lg-inp" placeholder="Usuário" autocomplete="off">
+            <input type="password" id="p" class="lg-inp" placeholder="Senha">
             <button id="btnEnter" class="lg-btn">ENTRAR</button>
         </div>
     </div>
@@ -237,7 +255,7 @@
                 
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
-                // Não sai do fullscreen se acabar/erro
+                // Reconexão automática ao invés de fechar
                 v.addEventListener('ended', ()=> { App.play(App.fIdx, true); });
                 v.addEventListener('error', (e) => {
                     console.log("Erro Player:", e);
@@ -249,7 +267,6 @@
 
             login: async function() {
                 let h=document.getElementById('h').value.trim();
-                // Limpa barra final da URL se houver
                 if(h.endsWith('/')) h = h.slice(0, -1);
                 let u=document.getElementById('u').value.trim();
                 let p=document.getElementById('p').value.trim();
@@ -316,7 +333,6 @@
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`);
                     this.cats = await r.json();
                     
-                    // Converte se não for array (Correção VAZIO)
                     if(this.cats && !Array.isArray(this.cats)) this.cats = Object.values(this.cats);
 
                     let h = '';
@@ -347,11 +363,7 @@
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}&category_id=${c.category_id}`);
                     let data = await r.json();
                     
-                    // --- CORREÇÃO PRINCIPAL "VAZIO" ---
-                    // Alguns servidores retornam Objetos ao invés de Arrays para VOD/Séries
-                    if(data && !Array.isArray(data)) {
-                        data = Object.values(data);
-                    }
+                    if(data && !Array.isArray(data)) data = Object.values(data);
                     
                     this.items = data || [];
                     this.viewItems = [...this.items];
@@ -374,7 +386,6 @@
 
             renderList: function() {
                 let h = '';
-                // Limite de segurança para TVs antigas
                 let limit = this.viewItems.slice(0, 100); 
                 
                 if(this.viewItems.length === 0) {
@@ -434,19 +445,11 @@
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=get_series_info&series_id=${sid}`);
                     let d = await r.json();
                     let e = [];
-                    // Series Info costuma ter estrutura complexa
                     if(d.episodes) {
-                        // Converte objeto de episódios em array se necessário
                         let seasons = d.episodes;
-                        if(Array.isArray(seasons)) {
-                            // Alguns painéis retornam array vazio para temporadas vazias
-                        } 
-                        // Itera sobre as chaves (temporadas)
                         for(let s in seasons) {
                             let eps = seasons[s];
-                            if(eps && Array.isArray(eps)) {
-                                eps.forEach(x=>{x.season=s;e.push(x)});
-                            }
+                            if(eps && Array.isArray(eps)) eps.forEach(x=>{x.season=s;e.push(x)});
                         }
                     }
                     e.sort((a,b)=> (parseInt(a.season)-parseInt(b.season))||(parseInt(a.episode_num)-parseInt(b.episode_num)));
@@ -519,7 +522,6 @@
 
                 if([37,38,39,40].includes(k)) e.preventDefault();
 
-                // VOLTAR
                 if([8,27,461,10009].includes(k)) { 
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) {
@@ -539,20 +541,17 @@
                     if(k===13) this.goContent(['live','vod','ser','cfg'][this.fIdx]);
                 }
                 else {
-                    // CATEGORIAS
                     if(this.zone===1) { 
                         if(k===40 && this.fIdx < this.cats.length-1) this.fIdx++;
                         if(k===38 && this.fIdx > 0) this.fIdx--;
                         if(k===39) { this.savedCatCursor = this.fIdx; this.zone=2; document.getElementById('search-inp').focus(); }
                         if(k===13) { this.selectCategory(); }
                     }
-                    // BUSCA
                     else if(this.zone===2) { 
                         if(k===40 && this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===37) { this.zone=1; this.fIdx = this.savedCatCursor; document.getElementById('search-inp').blur(); }
                         if(k===13) this.doSearch();
                     }
-                    // LISTA
                     else if(this.zone===3) { 
                         if(k===38) {
                             if(this.fIdx>0) this.fIdx--;
