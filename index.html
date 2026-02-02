@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V19</title>
+    <title>R&C GOLD V20</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA PREMIUM V19 --- */
+        /* --- TEMA V20 LUXURY --- */
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
@@ -35,13 +35,12 @@
         .netrange-box {
             width: 450px; padding: 50px; 
             background: #111; border: 1px solid #333; border-radius: 10px;
-            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            text-align: center; box-shadow: 0 0 60px rgba(0,0,0,0.9);
         }
         .nr-header {
             color: var(--gold); font-weight: 900; font-size: 26px; 
             margin-bottom: 30px; letter-spacing: 2px;
         }
-        
         .nr-input {
             width: 100%; padding: 12px; margin-bottom: 15px;
             background: #222; border: 1px solid #444; border-radius: 4px;
@@ -110,7 +109,6 @@
             padding: 12px; text-align: center; border-radius: 4px; font-weight: bold;
         }
         .inp-search.focused { background: #fff; color: #000; border-color: var(--gold); }
-        .inp-search[readonly] { background: #151515; color: #666; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
         .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
@@ -119,7 +117,10 @@
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
         .vid-box.focused { border: 3px solid var(--gold); }
-        .video-off { opacity: 0 !important; }
+        
+        /* Classe Video Off apenas esconde visualmente, mantém áudio/processo se necessário, ou remove src */
+        .video-off { display: none !important; }
+        
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
         .meta { padding: 20px; flex: 1; overflow-y: auto; background: #050505; }
@@ -189,14 +190,14 @@
                 <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px; border:1px solid #333;">
                     <div style="color:#fff; font-size:11px; margin-bottom:5px;">COMANDOS:</div>
                     <div style="color:#888; font-size:11px;">
-                        OK: Tela Cheia / Pausa (VOD)<br>
+                        OK: Tela Cheia<br>
                         Voltar: Sair
                     </div>
                 </div>
 
                 <div class="color-keys">
                     <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
-                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
+                    <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> CATEGORIAS</span>
                     <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
                     <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
                 </div>
@@ -209,9 +210,7 @@
             screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
-            // Controle de Estados
             loadedCatId: -1,
-            isSearchMode: false,
             
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -274,7 +273,6 @@
                 if(m==='exit') { localStorage.clear(); location.reload(); return; }
                 this.mode = m; this.isSeries = false;
                 this.loadedCatId = -1;
-                this.isSearchMode = false;
                 this.setScreen(2);
                 
                 document.getElementById('cat-list').innerHTML = '';
@@ -294,16 +292,14 @@
                 });
             },
 
-            loadCat: function(i, focusList) {
-                if(this.loadedCatId === i && !this.isSearchMode) {
-                    if(focusList) { this.zone=2; this.idx=0; this.refreshFocus(); }
+            loadCat: function(i, autoFocus) {
+                if(this.loadedCatId === i) {
+                    if(autoFocus) { this.zone=2; this.idx=0; this.refreshFocus(); }
                     return;
                 }
 
                 this.memCat = i; this.isSeries = false;
                 this.loadedCatId = i;
-                this.isSearchMode = false; // Não é busca
-                
                 this.stop(); this.clearInfo();
                 
                 var els = document.querySelectorAll('.cat-item');
@@ -317,7 +313,7 @@
                 this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
                     me.items = d||[];
                     me.renderList();
-                    if(focusList) {
+                    if(autoFocus) {
                         me.zone = 2; me.idx = 0; me.refreshFocus();
                     }
                 });
@@ -335,20 +331,17 @@
             },
 
             triggerSearch: function() {
-                document.getElementById('search').setAttribute('readonly', true);
                 document.getElementById('search').blur();
                 setTimeout(function(){ App.globalSearch(); }, 200);
             },
 
             globalSearch: function() {
                 var term = document.getElementById('search').value.toLowerCase().trim();
-                if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
+                if(term.length < 2) return;
                 
                 this.stop(); this.clearInfo();
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
-                
-                this.isSearchMode = true; // Ativa modo busca
-                this.loadedCatId = -1; // Invalida categoria
+                this.loadedCatId = -1; 
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 var me = this;
@@ -362,7 +355,6 @@
                     if(res.length === 0) {
                         alert("Nada encontrado.");
                         me.renderList();
-                        document.getElementById('search').removeAttribute('readonly');
                     } else {
                         me.items = res; me.renderList();
                         me.zone = 2; me.idx = 0; me.refreshFocus();
@@ -371,19 +363,7 @@
             },
 
             clickItem: function(i) {
-                // LOGICA DE VOLTAR DA LISTA
-                if(this.isSeries && i===-1) {
-                    if(this.isSearchMode) {
-                        // Se veio da busca, refaz a busca (restaura lista)
-                        this.isSeries = false;
-                        this.globalSearch();
-                    } else {
-                        // Se veio da categoria, recarrega categoria
-                        this.loadCat(this.memCat, true);
-                    }
-                    return; 
-                }
-
+                if(this.isSeries && i===-1) { this.loadCat(this.memCat, true); return; }
                 var item = this.items[i];
                 if(this.mode==='series' && !this.isSeries) {
                     var me = this;
@@ -426,11 +406,10 @@
             refreshFocus: function() {
                 var els = document.querySelectorAll('.focused');
                 for(var i=0; i<els.length; i++) els[i].classList.remove('focused');
+                
+                // Fecha teclado se não estiver na busca
                 if(this.zone !== 1) {
-                    document.getElementById('search').setAttribute('readonly', true);
                     document.getElementById('search').blur();
-                } else {
-                    document.getElementById('search').removeAttribute('readonly');
                 }
 
                 var id = null;
@@ -481,7 +460,7 @@
                         if(k===38 && this.idx>0) this.idx--;
                         // OK: Carrega lista
                         if(k===13) { this.loadCat(this.idx, true); }
-                        // DIREITA: PULA PRA LISTA (SE JA CARREGOU, SÓ VAI. SE NAO, CARREGA E VAI)
+                        // DIREITA: PULA PRA LISTA (Index 0)
                         if(k===39) { this.loadCat(this.idx, true); }
                     }
                     // BUSCA
@@ -496,7 +475,7 @@
                         
                         if(k===38) { // Cima
                             if(this.idx>min) this.idx--; 
-                            else { this.zone=1; } 
+                            else { this.zone=1; } // Vai pra busca
                         }
                         
                         // ESQUERDA: VOLTA PRA CATEGORIA (Mantendo memória)
@@ -517,7 +496,7 @@
                         
                         if(k===13) { 
                             if(isFull) { 
-                                // SE TV AO VIVO: NAO PAUSA (SÓ SAI DO FULL SE QUISER)
+                                // TV AO VIVO: SÓ FULLSCREEN (SEM PAUSE)
                                 if(this.mode === 'live') { /* nada */ }
                                 else { if(v.paused) v.play(); else v.pause(); } 
                             } else { 
@@ -533,15 +512,22 @@
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
             
-            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
-            if(k===404||k===71) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
-            if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
+            // --- BOTÕES COLORIDOS ---
+            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } // VERMELHO
+            if(k===404||k===71) { 
+                // VERDE: VOLTA PARA CATEGORIAS (TOPO)
+                e.preventDefault(); 
+                if(App.screen===2) { App.zone=0; App.idx=0; App.refreshFocus(); }
+                return;
+            }
+            if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; } // AMARELO (Busca)
+            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } // AZUL (Menu)
             
             // VOLTAR
             if(k===8||k===461||k===27) {
+                // Se estiver na busca, voltar sai para Categoria
                 if(document.activeElement.id === 'search') {
                     e.preventDefault(); document.getElementById('search').blur();
-                    // VOLTAR DA BUSCA -> CATEGORIA
                     App.zone=0; App.refreshFocus(); return;
                 }
 
@@ -552,8 +538,7 @@
                     if(App.zone===2 && App.isSeries) { App.clickItem(-1); return; } 
                     
                     // VOLTAR DA LISTA/CAT -> MENU
-                    if(App.zone===2) { App.zone=0; App.refreshFocus(); return; }
-                    if(App.zone===0) { App.setScreen(1); return; }
+                    if(App.zone===2 || App.zone===0) { App.setScreen(1); return; }
                 }
                 return;
             }
