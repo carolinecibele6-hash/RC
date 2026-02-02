@@ -9,62 +9,67 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- RESET & VARS (Estilo Portal Dark Blue/Grey) --- */
+        /* --- VARS GERAIS --- */
         :root {
+            /* Cores do App (Estilo Portal) */
             --bg-body: #101214;
-            --bg-panel: #1a1d21;
             --bg-header: #0d0f12;
-            --highlight: #e6b800; /* Dourado/Laranja Warez */
-            --focus-bg: #e6b800;
-            --focus-txt: #000;
-            --text-main: #e0e0e0;
-            --text-muted: #888;
+            --highlight: #e6b800; /* Dourado STB */
             --border: #2a2e33;
+            
+            /* Cores do Login (Estilo Original SKY GOLD) */
+            --gold: #FFD700; 
         }
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         body { 
-            background: var(--bg-body); color: var(--text-main); 
+            background: var(--bg-body); color: #e0e0e0; 
             font-family: 'Roboto Condensed', sans-serif; 
             height: 100vh; overflow: hidden; display: flex; flex-direction: column; 
         }
 
-        /* --- TELA LOGIN (Estilo Terminal/Box) --- */
+        /* --- TELA LOGIN (VISUAL ANTIGO RESTAURADO) --- */
         #loginScreen {
-            position: absolute; top:0; left:0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #232830 0%, #000000 100%);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
+            position: absolute; width: 100%; height: 100%;
+            background: #000; z-index: 5000;
+            display: flex; justify-content: center; align-items: center;
         }
         .login-box {
-            width: 500px; background: rgba(0,0,0,0.8); border: 1px solid #444;
-            padding: 40px; text-align: center; border-radius: 8px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            background: #0a0a0a;
+            border-top: 4px solid var(--gold); /* Linha Dourada */
+            width: 450px; padding: 40px; text-align: center;
+            box-shadow: none; border-radius: 0;
         }
-        .lg-title { font-size: 28px; color: var(--highlight); margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; }
+        .lg-title { color: var(--gold); font-size: 24px; font-weight: bold; margin-bottom: 30px; letter-spacing: normal; text-transform: none; }
+        
         .lg-inp {
-            width: 100%; padding: 12px; margin-bottom: 15px; background: #222; 
-            border: 1px solid #555; color: #fff; text-align: center; font-size: 16px;
+            width: 100%; height: 50px; margin-bottom: 15px;
+            background: #1a1a1a; border: 1px solid #333; color: #fff;
+            text-align: center; font-size: 18px; padding: 0;
         }
-        .lg-inp:focus { border-color: var(--highlight); background: #333; }
+        .lg-inp:focus { background: #fff; color: #000; border-color: var(--gold); }
+        
         .lg-btn {
-            width: 100%; padding: 15px; background: #333; color: #fff; font-weight: bold;
-            border: 1px solid #555; cursor: pointer; margin-top: 10px; transition: 0.2s;
+            width: 100%; height: 55px; background: var(--gold); color: #000;
+            font-weight: bold; font-size: 18px; border: none; cursor: pointer; margin-top: 10px;
         }
-        .lg-btn:hover, .lg-btn:focus { background: var(--highlight); color: #000; border-color: #fff; }
+        .lg-btn:focus { box-shadow: 0 0 15px var(--gold); transform: scale(1.02); background: var(--gold); color: #000; border:none; }
+        .lg-btn:hover { background: var(--gold); }
+
 
         /* --- INTERFACE PRINCIPAL (PORTAL MODE) --- */
         #appInterface { display: none; width: 100%; height: 100%; flex-direction: column; }
 
-        /* 1. TOP HEADER (Info Bar) */
+        /* 1. TOP HEADER */
         .top-bar {
             height: 40px; background: var(--bg-header); border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
-            font-size: 14px; color: var(--text-muted);
+            font-size: 14px; color: #888;
         }
         .top-left { display: flex; gap: 20px; }
         .top-right { display: flex; gap: 20px; align-items: center; }
         .status-icon { color: var(--highlight); margin-right: 5px; }
 
-        /* 2. MAIN NAV (Abas Superiores grandes ou Menu Lateral) -> Vamos usar Menu Superior Estilo Portal */
+        /* 2. MAIN NAV */
         .main-nav {
             height: 60px; background: linear-gradient(to bottom, #2a2e33, #1a1d21);
             display: flex; align-items: center; padding: 0 20px; gap: 10px;
@@ -77,7 +82,7 @@
         .nav-item.active-mode { background: rgba(255,255,255,0.05); color: #fff; border-bottom: 2px solid var(--highlight); }
         .nav-item.focused { background: var(--highlight); color: #000; border-color: #fff; box-shadow: 0 0 10px rgba(230,184,0,0.4); }
 
-        /* 3. CONTEÚDO (3 Colunas: Categorias | Lista | Preview+Info) */
+        /* 3. CONTEÚDO (3 Colunas) */
         .workspace { flex: 1; display: flex; overflow: hidden; background: #15171a; }
 
         /* Coluna Esquerda: Categorias */
@@ -92,16 +97,15 @@
         .list-item.active { background: #25282d; color: #fff; border-left: 4px solid #aaa; }
         .list-item.focused { background: var(--highlight); color: #000; font-weight: bold; border-left: 4px solid #fff; }
 
-        /* Coluna Meio: Lista de Canais/Filmes */
+        /* Coluna Meio: Lista */
         .col-content { width: 35%; background: #1e2126; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .search-bar { padding: 8px; background: #2a2e33; display: flex; gap:5px; border-bottom: 1px solid #000; }
         .search-inp { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 5px 10px; }
         .search-inp.focused { background: #fff; color: #000; }
 
-        /* Coluna Direita: PREVIEW BOX (O coração do layout STB) */
+        /* Coluna Direita: PREVIEW */
         .col-preview { flex: 1; background: #101214; display: flex; flex-direction: column; padding: 20px; }
         
-        /* Janela de Vídeo (Miniatura) */
         .preview-window {
             width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; 
             margin-bottom: 20px; position: relative; overflow: hidden;
@@ -109,10 +113,9 @@
         }
         .preview-window.active { border-color: var(--highlight); }
         video { width: 100%; height: 100%; object-fit: contain; }
-        /* Esconde controles nativos para visual limpo */
         video::-webkit-media-controls { display: none !important; }
 
-        /* Info do Programa */
+        /* Info */
         .info-panel { flex: 1; border: 1px solid #2a2e33; background: #1a1d21; padding: 15px; border-radius: 4px; overflow: hidden; }
         .info-title { font-size: 22px; color: var(--highlight); margin-bottom: 10px; font-weight: bold; }
         .info-meta { font-size: 13px; color: #aaa; margin-bottom: 15px; display: flex; gap: 15px; }
@@ -120,7 +123,7 @@
         .epg-bar { margin-top: 15px; height: 4px; background: #333; border-radius: 2px; overflow: hidden; }
         .epg-progress { width: 0%; height: 100%; background: var(--highlight); }
 
-        /* 4. FOOTER (Color Buttons) */
+        /* 4. FOOTER */
         .bottom-bar {
             height: 50px; background: #0d0f12; border-top: 1px solid var(--border);
             display: flex; justify-content: center; align-items: center; gap: 30px;
@@ -132,7 +135,6 @@
         .dot.yellow { background: #ffbb33; }
         .dot.blue { background: #33b5e5; }
 
-        /* Scrollbars custom */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #333; }
     </style>
@@ -141,12 +143,11 @@
 
     <div id="loginScreen">
         <div class="login-box">
-            <div class="lg-title"><i class="fas fa-tv"></i> SMART UP <span style="font-size:14px; color:#666">v2.4</span></div>
-            <input type="text" id="h" class="lg-inp" placeholder="URL do Servidor (http://...)" value="">
-            <input type="text" id="u" class="lg-inp" placeholder="Username">
-            <input type="password" id="p" class="lg-inp" placeholder="Password">
-            <button id="btnEnter" class="lg-btn" onclick="App.login()">CONNECT</button>
-            <div style="margin-top:15px; font-size:12px; color:#555">Use as setas do controle remoto</div>
+            <div class="lg-title">SKY GOLD</div>
+            <input type="text" id="h" class="lg-inp" placeholder="http://url-do-servidor">
+            <input type="text" id="u" class="lg-inp" placeholder="Usuário">
+            <input type="password" id="p" class="lg-inp" placeholder="Senha">
+            <button id="btnEnter" class="lg-btn" onclick="App.login()">ENTRAR</button>
         </div>
     </div>
 
@@ -173,8 +174,7 @@
         <div class="workspace">
             <div class="col-cats">
                 <div class="col-header">Grupos</div>
-                <div class="list-container" id="list-cats">
-                    </div>
+                <div class="list-container" id="list-cats"></div>
             </div>
 
             <div class="col-content">
@@ -222,19 +222,16 @@
         const App = {
             screen: 'login',
             mode: 'live',
-            zone: 0, // 0:Nav, 1:Cats, 2:Busca, 3:Lista
+            zone: 0, 
             focusIdx: 0,
             
             cats: [],
             list: [],
             viewList: [],
             creds: {},
-            
-            // Controle de Séries
             isSeriesLevel: false,
             
             init: function() {
-                // Recupera login salvo
                 if(localStorage.getItem('sk_h')) {
                     document.getElementById('h').value = localStorage.getItem('sk_h');
                     document.getElementById('u').value = localStorage.getItem('sk_u');
@@ -242,7 +239,6 @@
                 }
                 document.getElementById('h').focus();
                 
-                // Relógio Topo
                 setInterval(() => {
                     let now = new Date();
                     document.getElementById('clock').innerText = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
@@ -256,10 +252,9 @@
                 let p = document.getElementById('p').value.trim();
                 if(!h.startsWith('http')) h = 'http://'+h;
 
-                document.getElementById('btnEnter').innerText = "CONECTANDO...";
+                document.getElementById('btnEnter').innerText = "ENTRANDO...";
                 
                 try {
-                    // Teste simples na API
                     let res = await fetch(`${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`);
                     let json = await res.json();
                     
@@ -273,11 +268,11 @@
                         this.switchMode('live');
                     } else {
                         alert("Login Inválido");
-                        document.getElementById('btnEnter').innerText = "CONNECT";
+                        document.getElementById('btnEnter').innerText = "ENTRAR";
                     }
                 } catch(e) {
-                    alert("Erro de Conexão ou URL");
-                    document.getElementById('btnEnter').innerText = "CONNECT";
+                    alert("Erro de Conexão");
+                    document.getElementById('btnEnter').innerText = "ENTRAR";
                 }
             },
 
@@ -285,23 +280,20 @@
                 localStorage.clear(); location.reload();
             },
 
-            // --- NAVEGAÇÃO ENTRE MODOS ---
             switchMode: async function(newMode) {
                 this.mode = newMode;
-                this.zone = 1; this.focusIdx = 0; // Foco nas categorias
+                this.zone = 1; this.focusIdx = 0; 
                 this.list = []; this.viewList = [];
                 this.isSeriesLevel = false;
                 
                 document.getElementById('list-cnt').innerHTML = '';
                 document.getElementById('search-input').value = '';
 
-                // UI Abas
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-mode'));
                 if(newMode === 'live') document.getElementById('tab-live').classList.add('active-mode');
                 if(newMode === 'vod') document.getElementById('tab-vod').classList.add('active-mode');
                 if(newMode === 'ser') document.getElementById('tab-ser').classList.add('active-mode');
 
-                // Carrega Categorias
                 let action = (newMode === 'live') ? 'get_live_categories' : (newMode === 'vod' ? 'get_vod_categories' : 'get_series_categories');
                 
                 document.getElementById('list-cats').innerHTML = '<div style="padding:10px; color:#666; text-align:center">Carregando...</div>';
@@ -319,7 +311,6 @@
                 } catch(e) { console.log(e); }
             },
 
-            // --- CARREGA CONTEÚDO (Lista do Meio) ---
             loadContent: async function() {
                 let cat = this.cats[this.focusIdx];
                 let cid = cat.category_id;
@@ -327,7 +318,6 @@
 
                 document.getElementById('list-cnt').innerHTML = '<div style="padding:20px; text-align:center">Carregando Lista...</div>';
                 
-                // Marca categoria ativa
                 document.querySelectorAll('.list-item').forEach(l => l.classList.remove('active'));
                 document.getElementById(`cat-${this.focusIdx}`).classList.add('active');
 
@@ -342,7 +332,6 @@
 
                     this.renderList();
                     
-                    // Foco vai para a busca (Zone 2)
                     this.zone = 2; 
                     document.getElementById('search-input').focus(); 
                     
@@ -354,7 +343,6 @@
             renderList: function() {
                 let html = '';
                 if(this.isSeriesLevel) {
-                    // Botão Voltar dentro da lista
                     html += `<div class="list-item" id="cnt-back" style="color:#aaa"><i class="fas fa-level-up-alt"></i> <span>.. VOLTAR</span></div>`;
                     
                     this.viewList.forEach((ep, i) => {
@@ -365,7 +353,6 @@
                 } else {
                     this.viewList.forEach((item, i) => {
                         let name = item.name || item.title;
-                        // Ícone muda se for canal ou pasta
                         let icon = this.mode === 'ser' ? 'fa-folder' : 'fa-play-circle';
                         html += `<div class="list-item" id="cnt-${i}"><span>${name}</span> <i class="fas ${icon}"></i></div>`;
                     });
@@ -384,7 +371,6 @@
                 this.renderList();
             },
 
-            // --- SÉRIES (Entrar na pasta) ---
             openSeries: async function(seriesId) {
                 document.getElementById('list-cnt').innerHTML = '<div style="padding:20px;text-align:center">Carregando Episódios...</div>';
                 try {
@@ -408,9 +394,7 @@
                 } catch(e) { document.getElementById('list-cnt').innerHTML = 'Erro Série'; }
             },
 
-            // --- PLAYER ---
             selectItem: function() {
-                // Se for botão voltar da lista de séries
                 if(this.isSeriesLevel && this.focusIdx === -1) {
                     this.loadContent(); return;
                 }
@@ -434,12 +418,10 @@
                 let type = (this.mode === 'live') ? 'live' : (this.mode === 'ser' ? 'series' : 'movie');
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${streamId}.${ext}`;
 
-                // Update INFO PANEL
                 document.getElementById('lbl-title').innerText = item.name || item.title;
                 document.getElementById('lbl-desc').innerText = item.plot || "Reproduzindo agora...";
                 document.getElementById('lbl-cat').innerText = this.mode.toUpperCase();
 
-                // SETUP HLS
                 if(Hls.isSupported()) {
                     if(hlsPlayer) hlsPlayer.destroy();
                     hlsPlayer = new Hls();
@@ -451,23 +433,19 @@
                     vid.play();
                 }
 
-                // Efeito visual na lista
                 document.querySelectorAll('.list-item').forEach(i => i.style.color = '#ccc');
                 let el = document.getElementById(`cnt-${this.focusIdx}`);
                 if(el) el.style.color = 'var(--highlight)';
             },
 
-            // --- RENDERIZAR O CURSOR (FOCO) ---
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
 
-                // ZONE 0: NAV TOPO
                 if(this.zone === 0) {
                     let map = ['tab-live','tab-vod','tab-ser','btn-logout'];
                     let el = document.getElementById(map[this.focusIdx]);
                     if(el) el.classList.add('focused');
                 }
-                // ZONE 1: CATEGORIAS (Esquerda)
                 else if(this.zone === 1) {
                     let el = document.getElementById(`cat-${this.focusIdx}`);
                     if(el) {
@@ -475,12 +453,10 @@
                         el.scrollIntoView({block:'center'});
                     }
                 }
-                // ZONE 2: BUSCA
                 else if(this.zone === 2) {
                     let el = document.getElementById('search-input');
                     el.classList.add('focused'); el.focus();
                 }
-                // ZONE 3: LISTA (Meio)
                 else if(this.zone === 3) {
                     if(this.isSeriesLevel && this.focusIdx === -1) {
                         let el = document.getElementById('cnt-back');
@@ -497,7 +473,6 @@
             },
 
             handleKey: function(k) {
-                // ZONE 0 (Topo)
                 if(this.zone === 0) {
                     if(k===39 && this.focusIdx < 3) this.focusIdx++;
                     if(k===37 && this.focusIdx > 0) this.focusIdx--;
@@ -509,7 +484,6 @@
                         if(this.focusIdx===3) this.logout();
                     }
                 }
-                // ZONE 1 (Categorias)
                 else if(this.zone === 1) {
                     if(k===38) {
                         if(this.focusIdx > 0) this.focusIdx--;
@@ -518,40 +492,36 @@
                     if(k===40 && this.focusIdx < this.cats.length-1) this.focusIdx++;
                     if(k===39 || k===13) { this.loadContent(); return; }
                 }
-                // ZONE 2 (Busca)
                 else if(this.zone === 2) {
-                    if(k===40) { // Baixo -> Lista
+                    if(k===40) {
                         this.zone = 3; 
                         this.focusIdx = this.isSeriesLevel ? -1 : 0;
                         document.getElementById('search-input').blur();
                     }
-                    if(k===37) { // Esq -> Cats
+                    if(k===37) {
                         this.zone = 1; 
                         document.getElementById('search-input').blur();
-                        // Tenta manter cat selecionada
                         let active = document.querySelector('.list-item.active');
                         this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
                     }
                 }
-                // ZONE 3 (Lista)
                 else if(this.zone === 3) {
-                    if(k===38) { // Cima
-                        if(this.isSeriesLevel && this.focusIdx === -1) this.zone = 2; // Já tá no topo
+                    if(k===38) { 
+                        if(this.isSeriesLevel && this.focusIdx === -1) this.zone = 2; 
                         else if(this.focusIdx > 0) this.focusIdx--;
                         else if(this.focusIdx === 0) {
-                            if(this.isSeriesLevel) this.focusIdx = -1; // Vai pro botao voltar
-                            else this.zone = 2; // Vai pra busca
+                            if(this.isSeriesLevel) this.focusIdx = -1;
+                            else this.zone = 2;
                         }
                     }
                     if(k===40 && this.focusIdx < this.viewList.length-1) this.focusIdx++;
-                    if(k===37) { // Esq -> Cats
+                    if(k===37) { 
                         this.zone = 1; 
                         let active = document.querySelector('.list-item.active');
                         this.focusIdx = active ? parseInt(active.id.split('-')[1]) : 0;
                     }
                     if(k===13) this.selectItem();
                     
-                    // Fullscreen se apertar Direita no conteúdo
                     if(k===39) {
                         let box = document.getElementById('v-box');
                         if(box.requestFullscreen) box.requestFullscreen();
@@ -562,7 +532,6 @@
             }
         };
 
-        // --- FULLSCREEN & KEY HANDLER ---
         function isFullscreen() {
             return document.fullscreenElement || document.webkitFullscreenElement || null;
         }
@@ -574,27 +543,33 @@
         document.addEventListener('keydown', (e) => {
             let k = e.keyCode;
             
-            // Login
             if(App.screen === 'login') {
                 if(k===13) document.activeElement.click();
-                if(k===40) { /* nav simples input */ }
+                if(k===40) { 
+                    let map = ['h','u','p','btnEnter'];
+                    let curr = map.indexOf(document.activeElement.id);
+                    if(curr < 3) document.getElementById(map[curr+1]).focus();
+                }
+                if(k===38) { 
+                    let map = ['h','u','p','btnEnter'];
+                    let curr = map.indexOf(document.activeElement.id);
+                    if(curr > 0) document.getElementById(map[curr-1]).focus();
+                }
                 return;
             }
 
-            // Voltar / Exit
             if(k === 8 || k === 461 || k === 27 || k === 10009) {
                 e.preventDefault();
                 if(isFullscreen()) {
                     exitFullscreen();
                     setTimeout(App.renderFocus, 200);
                 }
-                else if(App.zone === 3 && App.isSeriesLevel) { App.loadContent(); } // Sai da serie
+                else if(App.zone === 3 && App.isSeriesLevel) { App.loadContent(); }
                 else if(App.zone === 3 || App.zone === 2) { App.zone = 1; App.renderFocus(); }
                 else if(App.zone === 1) { App.zone = 0; App.renderFocus(); }
                 return;
             }
 
-            // Permite digitação na busca
             if(App.zone === 2 && ((k >= 65 && k <= 90) || k === 8 || k === 32)) return;
 
             if([37,38,39,40].includes(k)) e.preventDefault();
