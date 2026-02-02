@@ -3,129 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V9</title>
+    <title>R&C GOLD LUXURY V10</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA PREMIUM LUXO --- */
-        :root { --bg: #000; --gold: #D4AF37; --text: #fff; --panel: rgba(18,18,18,0.98); }
+        /* --- TEMA LUXURY V10 --- */
+        :root { 
+            --bg-grad: radial-gradient(circle at top right, #1a1a1a, #000000);
+            --panel: rgba(20, 20, 20, 0.95);
+            --gold: #FFD700;
+            --gold-glow: 0 0 15px rgba(255, 215, 0, 0.4);
+            --text: #f0f0f0;
+            --focus-bg: linear-gradient(90deg, #FFD700, #DBA514);
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
         body {
-            background-color: var(--bg); color: var(--text);
+            background: var(--bg-grad); color: var(--text);
             font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
         }
 
+        /* UTILITÁRIOS */
         .hide { display: none !important; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* LOGIN */
+        /* TELA LOGIN */
         #login-layer { 
             background: url('https://img.freepik.com/free-vector/luxury-black-background-with-golden-lines_1017-25272.jpg') no-repeat center center/cover;
             z-index: 50;
         }
         .login-card {
-            width: 450px; padding: 50px; background: var(--panel);
-            border: 1px solid #333; border-radius: 8px; text-align: center;
+            width: 450px; padding: 50px; background: rgba(10,10,10,0.95);
+            border: 1px solid #333; border-radius: 12px; text-align: center;
             box-shadow: 0 0 80px rgba(0,0,0,1);
         }
-        .nr-title { color: var(--gold); font-weight: 800; font-size: 28px; margin-bottom: 40px; letter-spacing: 2px; }
+        .nr-title { color: var(--gold); font-weight: 800; font-size: 32px; margin-bottom: 40px; letter-spacing: 3px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
         
         .nr-input {
             width: 100%; padding: 15px; margin-bottom: 20px;
-            background: #111; border: 1px solid #444; border-radius: 4px;
+            background: #151515; border: 1px solid #444; border-radius: 6px;
             color: #fff; text-align: center; font-size: 18px; font-weight: 600;
+            transition: all 0.2s;
         }
-        .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); }
+        .nr-input:focus, .nr-input.focused { 
+            background: #fff; color: #000; border-color: var(--gold); 
+            box-shadow: var(--gold-glow); transform: scale(1.02);
+        }
         
         .nr-btn {
             width: 100%; padding: 15px; margin-top: 10px;
-            background: linear-gradient(90deg, #b8860b, var(--gold)); 
+            background: var(--focus-bg); 
             color: #000; font-weight: 800; font-size: 18px;
-            border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
+            border: none; border-radius: 6px; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .nr-btn.focused { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); border: 2px solid #fff; }
+        .nr-btn.focused { transform: scale(1.05); box-shadow: var(--gold-glow); border: 2px solid #fff; }
 
         /* MENU PRINCIPAL */
         #dash-layer { 
-            background: url('https://img.freepik.com/free-vector/dark-polygonal-background_1055-620.jpg') no-repeat center center/cover;
+            background: url('https://img.freepik.com/free-vector/dark-low-poly-background_1048-7971.jpg') no-repeat center center/cover;
         }
         .acc-info {
             position: absolute; top: 40px; right: 60px; text-align: right;
             font-size: 14px; color: #aaa; background: rgba(0,0,0,0.8);
             padding: 10px 25px; border-radius: 30px; border: 1px solid #333;
         }
-        .acc-info h2 { color: var(--gold); font-size: 18px; margin: 0; }
-        .acc-info p { color: #aaa; font-size: 12px; margin: 5px 0 0 0; }
-
+        
         .warez-grid { display: flex; gap: 40px; margin-top: 50px; }
         .warez-card {
             width: 220px; height: 220px; 
-            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-            border: 1px solid #333; border-radius: 15px;
+            background: linear-gradient(145deg, #181818, #0a0a0a);
+            border: 1px solid #333; border-radius: 20px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: all 0.2s;
         }
-        .warez-card i { font-size: 60px; margin-bottom: 25px; color: #666; transition: 0.2s; }
-        .warez-card span { font-size: 16px; font-weight: 600; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+        .warez-card i { font-size: 60px; margin-bottom: 25px; color: #555; transition: 0.3s; }
+        .warez-card span { font-size: 16px; font-weight: 700; color: #888; letter-spacing: 1px; text-transform: uppercase; }
         
+        /* Foco Menu Vibrante */
         .warez-card.focused { 
-            border: 2px solid var(--gold); background: #000; 
-            transform: scale(1.15); box-shadow: 0 0 40px rgba(212, 175, 55, 0.3); z-index: 10;
+            background: #000; border: 2px solid var(--gold); 
+            transform: scale(1.15); box-shadow: 0 0 50px rgba(212, 175, 55, 0.2); 
+            z-index: 10;
         }
-        .warez-card.focused i { color: var(--gold); }
+        .warez-card.focused i { color: var(--gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
         .warez-card.focused span { color: #fff; }
 
         /* CONTEÚDO */
-        #content-layer { display: flex; background: #080808; }
+        #content-layer { display: flex; background: #050505; }
         
-        .col-cat { width: 280px; background: #050505; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        /* Coluna 1 */
+        .col-cat { width: 280px; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .cat-head { padding: 20px; text-align: center; background: #000; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; font-size: 18px; letter-spacing: 1px; }
         .cat-list { flex: 1; overflow-y: auto; }
         
-        .cat-item { padding: 15px 20px; color: #777; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 500; }
-        .cat-item.active { background: #111; color: #fff; border-left: 4px solid #444; }
-        .cat-item.focused { background: var(--gold); color: #000; font-weight: 800; border-left: 4px solid #fff; }
+        .cat-item { padding: 15px 20px; color: #888; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 500; transition: 0.1s; }
+        .cat-item.active { background: #151515; color: #fff; border-left: 4px solid #444; }
+        
+        /* Foco Categoria: Barra sólida dourada */
+        .cat-item.focused { 
+            background: var(--focus-bg); color: #000; font-weight: 900; 
+            border-left: none; box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
 
+        /* Coluna 2 */
         .col-list { width: 450px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .search-box { padding: 10px; background: #000; border-bottom: 1px solid #222; }
         
-        .inp-search { 
-            width: 100%; background: #222; border: 1px solid #333; color: #fff; 
-            padding: 12px; text-align: center; border-radius: 6px; font-weight: bold;
-        }
+        .inp-search { width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 12px; text-align: center; border-radius: 6px; font-weight: bold; }
         .inp-search:focus { background: #fff; color: #000; border-color: var(--gold); }
-        .inp-search[readonly] { background: #151515; color: #888; border-color: #333; }
+        .inp-search[readonly] { background: #111; color: #555; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
-        .item { 
-            padding: 15px 20px; border-bottom: 1px solid #1a1a1a; color: #bbb; 
-            white-space: nowrap; overflow: hidden; font-size: 15px; display: block;
+        .item { padding: 15px 20px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 15px; }
+        
+        /* Foco Lista: Dourado Vibrante */
+        .item.focused { 
+            background: var(--focus-bg); color: #000; font-weight: 800; 
+            transform: scale(1.02); margin: 2px 0; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
-        .item.focused { background: #eee; color: #000; font-weight: 800; transform: scale(1.02); margin: 2px 0; border-radius: 4px; outline: none; }
 
-        /* Coluna 3 - Player (Janelinha) */
+        /* Coluna 3 */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
-        .vid-box.focused { border: 3px solid var(--gold); box-shadow: 0 0 30px rgba(212,175,55,0.3); }
+        .vid-box.focused { border: 3px solid var(--gold); box-shadow: 0 0 40px rgba(212,175,55,0.2); }
+        
+        .video-off { display: none !important; opacity: 0 !important; width: 0 !important; }
         
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
         .meta { padding: 30px; flex: 1; overflow-y: auto; background: linear-gradient(to top, #000, #0a0a0a); }
-        .meta-title { font-size: 26px; color: var(--gold); font-weight: 800; margin-bottom: 10px; line-height: 1.2; }
-        .meta-desc { font-size: 14px; color: #888; margin-bottom: 20px; }
+        .meta-title { font-size: 26px; color: var(--gold); font-weight: 800; margin-bottom: 10px; line-height: 1.2; text-shadow: 0 2px 5px #000; }
+        .meta-desc { font-size: 14px; color: #aaa; margin-bottom: 20px; }
         
         .color-keys { display: flex; gap: 20px; font-size: 12px; font-weight: bold; margin-top: auto; }
-        .ck-btn { display: flex; align-items: center; gap: 5px; }
+        .ck-btn { display: flex; align-items: center; gap: 5px; text-shadow: 0 1px 2px #000; }
         
         .fs-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 9999; border: none !important; background: #000; }
         
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: 900; font-size: 24px; }
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: 900; font-size: 24px; letter-spacing: 2px; }
 
     </style>
 </head>
@@ -166,23 +188,23 @@
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search" class="inp-search" placeholder="BUSCAR..." autocomplete="off" onkeydown="if(event.keyCode===13) App.triggerSearch()">
+                <input type="text" id="search" class="inp-search" placeholder="BUSCAR CONTEÚDO..." autocomplete="off" onkeydown="if(event.keyCode===13) App.triggerSearch()">
             </div>
             <div id="item-list" class="item-list"></div>
         </div>
         <div class="col-play">
-            <div id="vid-box" class="vid-box">
+            <div id="vid-box" class="vid-box video-off">
                 <video id="player"></video>
             </div>
             <div class="meta">
                 <div id="meta-title" class="meta-title">R&C PLAYER</div>
-                <div id="meta-desc" class="meta-desc">Selecione para assistir.</div>
+                <div id="meta-desc" class="meta-desc">Selecione na lista para iniciar.</div>
                 
-                <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px;">
+                <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px; border:1px solid #333;">
                     <div style="color:#fff; font-size:12px; margin-bottom:5px;">CONTROLES:</div>
                     <div style="color:#888; font-size:12px;">
                         <b>OK 1x:</b> TELA CHEIA<br>
-                        <b>OK (Full):</b> PAUSA / PLAY<br>
+                        <b>OK (Full):</b> PAUSAR / CONTINUAR<br>
                         <b>VOLTAR:</b> SAIR
                     </div>
                 </div>
@@ -202,6 +224,8 @@
             screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
+            // Controle de Cache para não recarregar
+            loadedCatId: -1,
             
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -259,10 +283,11 @@
             openMode: function(m) {
                 if(m==='exit') { localStorage.clear(); location.reload(); return; }
                 this.mode = m; this.isSeries = false;
+                this.loadedCatId = -1; // Reset
                 this.setScreen(2);
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
-                this.clearInfo(); // Limpa info antiga
+                this.clearInfo();
                 
                 var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                 var me = this;
@@ -277,9 +302,13 @@
             },
 
             loadCat: function(i) {
+                // CORREÇÃO DA SETA DIREITA: SE JÁ ESTÁ CARREGADO, NÃO FAZ NADA
+                if(this.loadedCatId === i) return;
+                
                 this.memCat = i; this.isSeries = false;
+                this.loadedCatId = i; // Marca como carregado
                 this.stop();
-                this.clearInfo(); // Limpa ao trocar categoria
+                this.clearInfo();
                 
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
@@ -315,36 +344,28 @@
 
             globalSearch: function() {
                 var term = document.getElementById('search').value.toLowerCase().trim();
-                if(term.length < 2) {
-                    document.getElementById('search').removeAttribute('readonly');
-                    return;
-                }
+                if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
                 
-                this.stop();
-                this.clearInfo(); // Limpa nome do canal anterior
+                this.stop(); this.clearInfo();
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 var me = this;
+                this.loadedCatId = -1; // Reset cache pq saiu da categoria
                 
                 this.req("action="+act, function(d){
                     var all = d || [];
                     var res = [];
                     for(var i=0; i<all.length; i++) {
                         var n = (all[i].name || all[i].title || "").toLowerCase();
-                        if(n.indexOf(term) > -1) {
-                            res.push(all[i]);
-                            if(res.length >= 100) break; 
-                        }
+                        if(n.indexOf(term) > -1) { res.push(all[i]); if(res.length >= 100) break; }
                     }
-                    
                     if(res.length === 0) {
                         alert("Nada encontrado.");
                         me.renderList();
                         document.getElementById('search').removeAttribute('readonly');
                     } else {
-                        me.items = res;
-                        me.renderList();
+                        me.items = res; me.renderList();
                         me.zone = 2; me.idx = 0; me.refreshFocus();
                     }
                 });
@@ -373,10 +394,9 @@
                 
                 document.getElementById('meta-title').innerText = item.name||item.title;
                 document.getElementById('meta-desc').innerText = "Reproduzindo...";
-                
                 var v = document.getElementById('player');
-                v.src = url; 
-                v.play();
+                document.getElementById('vid-box').classList.remove('video-off');
+                v.src = url; v.play();
                 this.zone = 3; this.refreshFocus();
             },
 
@@ -385,13 +405,11 @@
             },
             
             stop: function() { 
-                var v=document.getElementById('player'); 
-                v.pause(); v.src=""; 
-                // A janelinha fica, mas para de tocar.
+                var v=document.getElementById('player'); v.pause(); v.src=""; 
+                document.getElementById('vid-box').classList.add('video-off');
             },
             
             clearInfo: function() {
-                // Limpa o texto da janelinha para não mostrar nome antigo
                 document.getElementById('meta-title').innerText = "R&C PLAYER";
                 document.getElementById('meta-desc').innerText = "Aguardando seleção...";
             },
@@ -399,7 +417,6 @@
             toggleFull: function() {
                 var v = document.getElementById('player');
                 var box = document.getElementById('vid-box');
-                
                 if(box.classList.contains('fs-mode')) {
                     box.classList.remove('fs-mode');
                 } else {
@@ -461,7 +478,13 @@
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
-                        if(k===39 || k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
+                        // ENTER ou DIREITA carrega a categoria
+                        if(k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
+                        // DIREITA APENAS MOVE (SE JÁ CARREGADO)
+                        if(k===39) { 
+                            if(this.loadedCatId === this.idx) { this.zone=2; this.idx=0; } 
+                            else { this.loadCat(this.idx); this.zone=2; this.idx=0; }
+                        }
                     }
                     else if(this.zone===1) {
                         if(k===40) { this.zone=2; this.idx=0; }
