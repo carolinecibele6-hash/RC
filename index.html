@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD WAREZ</title>
+    <title>R&C GOLD FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA R&C (DARK/GOLD) --- */
-        :root { --bg: #050505; --card: #141414; --gold: #D4AF37; --text: #fff; --sel: #1f1f1f; }
+        /* --- TEMA R&C GOLD --- */
+        :root { --bg: #050505; --gold: #D4AF37; --text: #fff; --panel: #111; }
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
         body {
@@ -24,73 +24,45 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: var(--bg); }
 
-        /* --- TELA 1: LOGIN (ESTILO NETRANGE) --- */
-        #login-layer {
-            background: #080808; z-index: 50;
-        }
+        /* LOGIN (NETRANGE STYLE) */
+        #login-layer { background: #080808; z-index: 50; }
         .netrange-card {
-            width: 400px; padding: 40px;
-            background: #111; border-radius: 10px;
-            border: 1px solid #333; text-align: center;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            width: 400px; padding: 40px; background: #111; border-radius: 10px;
+            border: 1px solid #333; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
-        .nr-title { color: var(--gold); font-weight: 900; font-size: 24px; margin-bottom: 30px; letter-spacing: 1px; }
-        
         .nr-input {
             width: 100%; padding: 12px; margin-bottom: 15px;
             background: #222; border: 1px solid #444; border-radius: 5px;
             color: #fff; text-align: center; font-size: 16px;
         }
-        /* Foco claro para saber onde está */
-        .nr-input:focus, .nr-input.focused {
-            background: #fff; color: #000; border-color: var(--gold);
-        }
-
+        .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); }
         .nr-btn {
             width: 100%; padding: 12px; margin-top: 10px;
-            background: var(--gold); color: #000; font-weight: bold; font-size: 16px;
+            background: var(--gold); color: #000; font-weight: bold;
             border: none; border-radius: 5px; cursor: pointer;
         }
         .nr-btn.focused { background: #fff; transform: scale(1.02); }
 
-        /* --- TELA 2: MENU PRINCIPAL (ESTILO WAREZ VISUAL01) --- */
-        #dash-layer {
-            background: url('https://img.freepik.com/free-vector/black-gold-hexagonal-pattern-background_1017-27387.jpg') no-repeat center center/cover;
-        }
-        .warez-logo { margin-bottom: 50px; font-size: 40px; font-weight: 900; text-shadow: 0 2px 10px #000; }
-        
+        /* MENU (WAREZ STYLE) */
+        #dash-layer { background: url('https://img.freepik.com/free-vector/black-gold-hexagonal-pattern-background_1017-27387.jpg') no-repeat center center/cover; }
         .warez-grid { display: flex; gap: 30px; }
-        
         .warez-card {
-            width: 200px; height: 200px;
-            background: rgba(20, 20, 20, 0.9);
+            width: 200px; height: 200px; background: rgba(20, 20, 20, 0.9);
             border: 2px solid #333; border-radius: 15px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: transform 0.1s;
         }
         .warez-card i { font-size: 50px; margin-bottom: 20px; color: #aaa; }
-        .warez-card span { font-weight: bold; font-size: 18px; color: #aaa; }
+        .warez-card.focused { border: 3px solid var(--gold); background: #000; transform: scale(1.1); }
+        .warez-card.focused i { color: #fff; }
 
-        /* Foco Warez (Borda Verde/Dourada Brilhante) */
-        .warez-card.focused {
-            border: 3px solid var(--gold); background: #000;
-            transform: scale(1.1); box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
-        }
-        .warez-card.focused i, .warez-card.focused span { color: #fff; }
-
-        /* --- TELA 3: CONTEÚDO (ESTILO LISTA LEVE) --- */
+        /* CONTEÚDO (3 COLUNAS) */
         #content-layer { display: flex; }
         
-        /* Coluna 1: Categorias */
         .col-cat { width: 25%; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .cat-head { padding: 15px; text-align: center; background: #000; font-weight: bold; color: var(--gold); border-bottom: 1px solid #222; }
-        .cat-list { flex: 1; overflow-y: auto; }
-        
         .cat-item { padding: 12px 15px; color: #888; border-bottom: 1px solid #151515; font-size: 14px; white-space: nowrap; overflow: hidden; }
         .cat-item.active { background: #1a1a1a; color: #fff; border-left: 4px solid #555; }
         .cat-item.focused { background: var(--gold); color: #000; font-weight: bold; border-left: 4px solid #fff; }
 
-        /* Coluna 2: Lista */
         .col-list { width: 35%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .search-box { padding: 8px; background: #000; border-bottom: 1px solid #222; }
         .inp-search { width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 8px; text-align: center; border-radius: 4px; }
@@ -100,26 +72,18 @@
         .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; white-space: nowrap; overflow: hidden; font-size: 14px; }
         .item.focused { background: var(--gold); color: #000; font-weight: bold; }
 
-        /* Coluna 3: Player/Info */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-frame { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
-        /* Borda de foco no player */
         .vid-frame.focused { border: 4px solid var(--gold); }
-        
         video { width: 100%; height: 100%; object-fit: contain; }
         
         .meta { padding: 20px; flex: 1; overflow-y: auto; }
         .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
-        .meta-desc { font-size: 13px; color: #888; margin-bottom: 15px; }
         
-        /* Botões Coloridos */
-        .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; flex-wrap: wrap; margin-top: auto; }
-        .ck-btn i { font-size: 14px; margin-right: 5px; }
-
-        /* Fullscreen Real */
+        .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; margin-top: auto; }
+        
         .fs-mode { position: fixed !important; top: 0; left: 0; width: 100vw !important; height: 100vh !important; z-index: 9999; border: none !important; background: #000; }
-
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: bold; font-size: 24px; }
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 9000; display: none; align-items: center; justify-content: center; color: var(--gold); font-weight: bold; font-size: 24px; }
 
     </style>
 </head>
@@ -129,17 +93,17 @@
 
     <div id="login-layer" class="layer flex-center">
         <div class="netrange-card">
-            <div class="nr-title">R&C GOLD PLAYER</div>
-            
+            <div class="nr-title">R&C GOLD</div>
             <input type="text" id="url" class="nr-input" placeholder="http://servidor.com">
             <input type="text" id="user" class="nr-input" placeholder="Usuário">
-            <input type="password" id="pass" class="nr-input" placeholder="Senha"> <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:15px; color:#555; font-size:12px;">Use SETAS para mover e OK para digitar</div>
+            <input type="password" id="pass" class="nr-input" placeholder="Senha">
+            <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR</button>
+            <div style="margin-top:15px; color:#555; font-size:12px;">Use SETAS e OK</div>
         </div>
     </div>
 
     <div id="dash-layer" class="layer flex-center hide">
-        <div class="warez-logo">R&C GOLD</div>
+        <div class="nr-title" style="font-size:40px; margin-bottom:50px;">R&C GOLD</div>
         <div class="warez-grid">
             <div class="warez-card" id="m0"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
             <div class="warez-card" id="m1"><i class="fas fa-film"></i><span>FILMES</span></div>
@@ -151,12 +115,12 @@
 
     <div id="content-layer" class="layer hide">
         <div class="col-cat">
-            <div class="cat-head">CATEGORIAS</div>
+            <div style="padding:15px; text-align:center; background:#000; font-weight:bold; color:var(--gold);">CATEGORIAS</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search" class="inp-search" placeholder="Pesquisar..." onchange="App.search()">
+                <input type="text" id="search" class="inp-search" placeholder="BUSCA GLOBAL..." onchange="App.globalSearch()">
             </div>
             <div id="item-list" class="item-list"></div>
         </div>
@@ -166,36 +130,34 @@
             </div>
             <div class="meta">
                 <div id="meta-title" class="meta-title">R&C GOLD</div>
-                <div id="meta-desc" class="meta-desc">Selecione um canal para assistir.</div>
-                
-                <div class="color-keys">
-                    <span style="color:#ff4444"><i class="fas fa-square"></i> FULLSCREEN</span>
-                    <span style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
-                    <span style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
-                    <span style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
+                <div id="meta-desc" style="color:#888; font-size:13px;">Selecione um canal.</div>
+                <div style="margin-top:20px; color:#fff; font-size:12px;">
+                    OK 1x: Fullscreen | OK 2x: Sair Fullscreen
                 </div>
-                <div style="margin-top:10px; color:#fff; font-size:12px;">OK 1x: Play | OK 2x: Tela Cheia</div>
+                <div class="color-keys" style="margin-top:20px;">
+                    <span style="color:#f44">■ TELA CHEIA</span>
+                    <span style="color:#4f4">■ RECARREGAR</span>
+                    <span style="color:#ffbb33">■ BUSCAR</span>
+                    <span style="color:#4bf">■ VOLTAR</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         var App = {
-            screen: 0, // 0:Login, 1:Dash, 2:Content
-            zone: 0, idx: 0,
+            screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
             
             start: function() {
-                if(localStorage.getItem('nr_h')) {
-                    document.getElementById('url').value = localStorage.getItem('nr_h');
-                    document.getElementById('user').value = localStorage.getItem('nr_u');
-                    document.getElementById('pass').value = localStorage.getItem('nr_p');
+                if(localStorage.getItem('rc_h')) {
+                    document.getElementById('url').value = localStorage.getItem('rc_h');
+                    document.getElementById('user').value = localStorage.getItem('rc_u');
+                    document.getElementById('pass').value = localStorage.getItem('rc_p');
                 }
-                this.idx = 0; 
-                this.refreshFocus();
+                this.idx = 0; this.refreshFocus();
                 
-                // Auto-Next
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
@@ -206,16 +168,10 @@
                 document.getElementById('loader').style.display = 'flex';
                 var x = new XMLHttpRequest();
                 var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q;
-                
                 x.open("GET", url, true);
                 x.timeout = 15000;
-                x.onload = function() {
-                    document.getElementById('loader').style.display='none';
-                    if(x.status===200) {
-                        try { cb(JSON.parse(x.responseText)); } catch(e){ cb(null); }
-                    } else cb(null);
-                };
-                x.onerror = function() { document.getElementById('loader').style.display='none'; alert("Erro Rede"); };
+                x.onload = function(){ document.getElementById('loader').style.display='none'; if(x.status===200) try{cb(JSON.parse(x.responseText))}catch(e){cb(null)} else cb(null); };
+                x.onerror = function(){ document.getElementById('loader').style.display='none'; alert("Erro Rede"); };
                 x.send();
             },
 
@@ -224,51 +180,41 @@
                 var h = document.getElementById('url').value.trim();
                 var u = document.getElementById('user').value.trim();
                 var p = document.getElementById('pass').value.trim();
-                
                 if(h.indexOf('http')===-1) h='http://'+h;
                 this.creds = {h:h, u:u, p:p};
-                
                 var me = this;
                 this.req("", function(d){
                     if(d && d.user_info && d.user_info.auth===1) {
-                        localStorage.setItem('nr_h', h);
-                        localStorage.setItem('nr_u', u);
-                        localStorage.setItem('nr_p', p);
-                        var ts = d.user_info.exp_date;
-                        document.getElementById('venc').innerText = ts ? new Date(ts*1000).toLocaleDateString() : "Ilimitado";
+                        localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
+                        document.getElementById('venc').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
                         me.setScreen(1);
-                    } else alert("Dados Inválidos");
+                    } else alert("Erro Login");
                 });
             },
 
             setScreen: function(n) {
-                this.stop();
+                this.stop(); // Limpa video antigo ao trocar de tela
                 document.getElementById('login-layer').classList.add('hide');
                 document.getElementById('dash-layer').classList.add('hide');
                 document.getElementById('content-layer').classList.add('hide');
-                
                 if(n===0) document.getElementById('login-layer').classList.remove('hide');
                 if(n===1) document.getElementById('dash-layer').classList.remove('hide');
                 if(n===2) document.getElementById('content-layer').classList.remove('hide');
-                
-                this.screen = n;
-                this.idx = 0; this.zone = 0;
-                this.refreshFocus();
+                this.screen = n; this.idx = 0; this.zone = 0; this.refreshFocus();
             },
 
-            // --- CARREGAR CONTEÚDO ---
+            // --- CONTEÚDO ---
             openMode: function(m) {
                 if(m==='exit') { localStorage.clear(); location.reload(); return; }
                 this.mode = m; this.isSeries = false;
                 this.setScreen(2);
-                
-                var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
-                var me = this;
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
                 
+                var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
+                var me = this;
                 this.req("action="+act, function(d){
-                    me.cats = d || [];
+                    me.cats = d||[];
                     var h = '';
                     for(var i=0; i<me.cats.length; i++) h += '<div class="cat-item" id="c'+i+'">'+me.cats[i].category_name+'</div>';
                     document.getElementById('cat-list').innerHTML = h;
@@ -279,8 +225,10 @@
 
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
-                var all = document.querySelectorAll('.cat-item');
-                for(var j=0; j<all.length; j++) all[j].classList.remove('active');
+                this.stop(); // Limpa video ao trocar categoria
+                
+                var els = document.querySelectorAll('.cat-item');
+                for(var j=0; j<els.length; j++) els[j].classList.remove('active');
                 var el = document.getElementById('c'+i); if(el) el.classList.add('active');
 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
@@ -288,17 +236,15 @@
                 document.getElementById('item-list').innerHTML = '<div style="padding:10px; color:#555">Carregando...</div>';
                 
                 this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
-                    me.items = d || [];
+                    me.items = d||[];
                     me.renderList();
                 });
             },
 
             renderList: function() {
                 var h = '';
-                // Otimização: Renderiza max 50 para não travar
                 var max = this.items.length > 50 ? 50 : this.items.length;
                 if(this.isSeries) h += '<div class="item" id="i-1" style="color:gold">.. VOLTAR</div>';
-                
                 for(var i=0; i<max; i++) {
                     var n = this.items[i].name || this.items[i].title;
                     h += '<div class="item" id="i'+i+'">'+n+'</div>';
@@ -306,24 +252,45 @@
                 document.getElementById('item-list').innerHTML = h;
             },
 
-            search: function() {
-                // Busca na lista carregada (Global trava a TV)
-                var t = document.getElementById('search').value.toLowerCase();
-                var res = [];
-                for(var i=0; i<this.items.length; i++) {
-                    var n = (this.items[i].name||this.items[i].title||"").toLowerCase();
-                    if(n.indexOf(t)>-1) res.push(this.items[i]);
-                }
-                this.items = res;
-                this.renderList();
-                this.zone=2; this.idx=0; this.refreshFocus();
+            // --- BUSCA GLOBAL ---
+            globalSearch: function() {
+                var term = document.getElementById('search').value.toLowerCase().trim();
+                if(term.length < 3) return;
+                
+                this.stop(); // Limpa video para busca
+                document.getElementById('item-list').innerHTML = '<div style="padding:10px; color:gold">Buscando globalmente...</div>';
+                
+                var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                var me = this;
+                
+                // Fetch sem ID de categoria = Busca em tudo
+                this.req("action="+act, function(d){
+                    var all = d || [];
+                    var res = [];
+                    // Filtra na memória para não travar
+                    for(var i=0; i<all.length; i++) {
+                        var n = (all[i].name || all[i].title || "").toLowerCase();
+                        if(n.indexOf(term) > -1) {
+                            res.push(all[i]);
+                            if(res.length >= 50) break; // Limite de segurança
+                        }
+                    }
+                    me.items = res;
+                    me.renderList();
+                    // Pula para lista se achar algo
+                    if(res.length > 0) {
+                        me.zone = 2; me.idx = 0; me.refreshFocus();
+                    } else {
+                        document.getElementById('item-list').innerHTML = '<div style="padding:10px">Nada encontrado.</div>';
+                    }
+                });
             },
 
-            // --- PLAYER E LOGICA DE OK ---
+            // --- PLAYER ---
             clickItem: function(i) {
                 if(this.isSeries && i===-1) { this.loadCat(this.memCat); return; }
-                
                 var item = this.items[i];
+                
                 if(this.mode==='series' && !this.isSeries) {
                     var me = this;
                     this.req("action=get_series_info&series_id="+item.series_id, function(d){
@@ -345,63 +312,50 @@
                 v.src = url; 
                 v.play();
                 
-                // --- MUDANÇA CRÍTICA: FOCO VAI PRO PLAYER ---
-                this.zone = 3; 
-                this.refreshFocus();
+                this.zone = 3; this.refreshFocus(); // Foco no player
             },
 
             next: function() {
-                if(this.isSeries && this.items[this.idx+1]) {
-                    this.idx++; this.clickItem(this.idx);
-                }
+                if(this.isSeries && this.items[this.idx+1]) { this.idx++; this.clickItem(this.idx); }
             },
             
             stop: function() { var v=document.getElementById('player'); v.pause(); v.src=""; },
             
             toggleFull: function() {
-                var b = document.getElementById('vid-frame');
-                b.classList.toggle('fs-mode');
+                document.getElementById('vid-frame').classList.toggle('fs-mode');
             },
 
-            // --- NAVEGAÇÃO E TECLAS ---
+            // --- FOCO ---
             refreshFocus: function() {
                 var els = document.querySelectorAll('.focused');
                 for(var i=0; i<els.length; i++) els[i].classList.remove('focused');
-                
-                // Fecha teclado se sair do input
-                if(document.activeElement.tagName !== 'INPUT') document.activeElement.blur();
+                if(document.activeElement.tagName!=='INPUT') document.activeElement.blur();
 
                 var id = null;
-                // LOGIN (Manual para corrigir bug de input)
-                if(this.screen===0) {
+                if(this.screen===0) { // Login
                     id = ['url','user','pass','btn-login'][this.idx];
                     var el = document.getElementById(id);
-                    // Foca input se for input, senão só classe visual
                     if(this.idx < 3) el.focus(); else { document.activeElement.blur(); el.classList.add('focused'); }
                     return;
                 }
-
-                if(this.screen===1) id = 'm'+this.idx;
-                
+                if(this.screen===1) id='m'+this.idx;
                 if(this.screen===2) {
-                    if(this.zone===0) id = 'c'+this.idx;
-                    if(this.zone===1) id = 'search';
-                    if(this.zone===2) id = (this.isSeries && this.idx===-1) ? 'i-1' : 'i'+this.idx;
-                    if(this.zone===3) id = 'vid-frame';
+                    if(this.zone===0) id='c'+this.idx;
+                    if(this.zone===1) id='search';
+                    if(this.zone===2) id=(this.isSeries && this.idx===-1)?'i-1':'i'+this.idx;
+                    if(this.zone===3) id='vid-frame';
                 }
-
                 if(id) {
                     var el = document.getElementById(id);
                     if(el) {
                         el.classList.add('focused');
-                        if(el.tagName==='INPUT') el.focus();
-                        else el.scrollIntoView({block:'nearest'});
+                        if(el.tagName==='INPUT') el.focus(); else el.scrollIntoView({block:'nearest'});
                     }
                 }
             },
 
             move: function(k) {
-                // LOGIN - Lógica manual para garantir que setas funcionem
+                // LOGIN
                 if(this.screen===0) {
                     if(k===40 && this.idx<3) this.idx++;
                     if(k===38 && this.idx>0) this.idx--;
@@ -409,27 +363,24 @@
                     this.refreshFocus();
                     return;
                 }
-
+                // DASH
                 if(this.screen===1) {
                     if(k===39 && this.idx<3) this.idx++;
                     if(k===37 && this.idx>0) this.idx--;
                     if(k===13) this.openMode(['live','movie','series','exit'][this.idx]);
                     this.refreshFocus();
                 }
-
+                // CONTENT
                 if(this.screen===2) {
-                    // CATS
-                    if(this.zone===0) {
+                    if(this.zone===0) { // Cat
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
                         if(k===39 || k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; }
                     }
-                    // SEARCH
-                    else if(this.zone===1) {
+                    else if(this.zone===1) { // Search
                         if(k===40) { this.zone=2; this.idx=0; }
                     }
-                    // LIST
-                    else if(this.zone===2) {
+                    else if(this.zone===2) { // List
                         var max = (this.items.length>50?50:this.items.length)-1;
                         var min = this.isSeries?-1:0;
                         if(k===40 && this.idx<max) this.idx++;
@@ -438,58 +389,61 @@
                         if(k===39) { this.zone=3; }
                         if(k===13) this.clickItem(this.idx);
                     }
-                    // PLAYER (Lógica do OK)
-                    else if(this.zone===3) {
+                    else if(this.zone===3) { // Player
                         var v = document.getElementById('player');
-                        if(k===37) {
+                        if(k===37) { 
                             if(document.getElementById('vid-frame').classList.contains('fs-mode')) v.currentTime-=15;
-                            else { this.zone=2; } // Sai do player se não for Full
+                            else this.zone=2; // Volta pra lista
                         }
                         if(k===39) v.currentTime+=15;
-                        if(k===38) this.zone=2;
-                        if(k===13) { 
-                            // 1o OK já foi usado para entrar aqui.
-                            // Se apertar OK aqui: Alterna Fullscreen
-                            this.toggleFull();
-                        }
+                        if(k===13) this.toggleFull(); // Lógica de 1x/2x OK
                     }
                     this.refreshFocus();
                 }
             }
         };
 
+        // --- TECLAS GERAIS ---
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
             
             // Atalhos
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
-            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); var s=v.src; v.src=''; v.src=s; v.play(); return; }
+            if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; }
             
-            // Voltar
+            // VOLTAR HIERÁRQUICO
             if(k===8||k===461||k===27) {
                 e.preventDefault();
                 if(App.screen===2) {
-                    if(document.getElementById('vid-frame').classList.contains('fs-mode')) App.toggleFull();
-                    else if(App.zone===3) { App.zone=2; App.refreshFocus(); }
-                    else App.setScreen(1);
+                    // 1. Sai do Fullscreen
+                    if(document.getElementById('vid-frame').classList.contains('fs-mode')) {
+                        App.toggleFull(); return;
+                    }
+                    // 2. Sai do Player para Lista
+                    if(App.zone===3) {
+                        App.zone=2; App.refreshFocus(); return;
+                    }
+                    // 3. Sai da Lista para Categoria
+                    if(App.zone===2) {
+                        App.zone=0; App.refreshFocus(); return;
+                    }
+                    // 4. Sai da Categoria para Menu
+                    if(App.zone===0) {
+                        App.setScreen(1); return;
+                    }
                 }
                 return;
             }
 
-            // Nav
+            // NAV
             if([13,37,38,39,40].indexOf(k)>-1) {
-                // Se estiver no input, deixa o comportamento padrão do Enter
-                if(document.activeElement.tagName==='INPUT' && k===13) return;
-                
-                // Em input, seta CIMA/BAIXO deve ser interceptada para mudar de campo
-                if(document.activeElement.tagName==='INPUT' && (k===38 || k===40)) {
-                    e.preventDefault(); App.move(k); return;
+                if(document.activeElement.tagName==='INPUT') {
+                    // Permite Enter para busca e Setas Cima/Baixo para sair do input
+                    if(k===13) return; 
+                    if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
+                    return; 
                 }
-                // Em input, Esquerda/Direita deve mover cursor (não mudar zona)
-                if(document.activeElement.tagName==='INPUT' && (k===37 || k===39)) return;
-
                 e.preventDefault();
                 App.move(k);
             }
