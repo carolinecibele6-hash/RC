@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V26 UNLOCKED</title>
+    <title>R&C GOLD V27 LIVE FIX</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA LITE GOLD V26 (VISUAL V24) --- */
+        /* --- TEMA LITE GOLD (V24/V25/V26 STYLE) --- */
         :root { --bg: #000; --gold: #D4AF37; --panel: #111; --text: #fff; }
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; width: 100vw; height: 100vh; overflow: hidden; transform: translateZ(0); }
@@ -71,13 +71,11 @@
         
         .fs-mode { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9999; border:none !important; background:#000; }
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9000; display:none; align-items:center; justify-content:center; color:var(--gold); font-size:24px; font-weight:700; }
-        #debug-msg { position:fixed; bottom:10px; right:10px; color:red; z-index:9999; font-size:12px; background:rgba(0,0,0,0.8); padding:5px; display:none; }
     </style>
 </head>
 <body onload="App.start()">
 
     <div id="loader">CARREGANDO SISTEMA...</div>
-    <div id="debug-msg"></div>
 
     <div id="login-layer" class="layer flex-center">
         <div class="login-box">
@@ -139,7 +137,7 @@
             screen: 0, zone: 0, idx: 0,
             creds: {h:'', u:'', p:''}, modeType: 'xtream', dataM3U: [],
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
-            loadedCatId: -1, isSearchMode: false, hls: null,
+            loadedCatId: -1, isSearchMode: false, hls: null, activeReq: null,
 
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -151,36 +149,25 @@
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
-                v.addEventListener('error', function(e) { 
-                    console.log("Erro Playback", e);
-                    // Tenta recuperar se der erro no nativo
-                    if(!Hls.isSupported()) setTimeout(function(){ v.load(); v.play(); }, 2000);
-                });
+                // Limpeza ao sair da página
+                window.onbeforeunload = function(){ if(me.hls) me.hls.destroy(); };
             },
 
-            // --- REDE ROBUSTA (XTREAM + M3U) ---
+            // --- REDE OTIMIZADA (ABORT + CACHE BUSTER) ---
             req: function(q, cb) {
+                if(this.activeReq) this.activeReq.abort(); 
                 document.getElementById('loader').style.display = 'flex';
-                var x = new XMLHttpRequest();
-                // Random evita cache agressivo da TV
-                var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q;
+                this.activeReq = new XMLHttpRequest();
+                var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q + "&r="+Math.random();
                 
-                x.open("GET", url, true);
-                x.timeout = 30000; // Timeout longo para listas grandes
-                x.onload = function(){ 
+                this.activeReq.open("GET", url, true);
+                this.activeReq.timeout = 15000;
+                this.activeReq.onload = function(){ 
                     document.getElementById('loader').style.display='none'; 
-                    if(x.status===200) {
-                        try { cb(JSON.parse(x.responseText)); } 
-                        catch(e) { console.log("JSON Parse Error", e); cb(null); } 
-                    } else { cb(null); }
+                    if(this.status===200) try{cb(JSON.parse(this.responseText))}catch(e){cb(null)} else cb(null); 
                 };
-                x.onerror = function(){ 
-                    document.getElementById('loader').style.display='none'; 
-                    document.getElementById('debug-msg').style.display='block';
-                    document.getElementById('debug-msg').innerText = "Erro Conexão. Verifique URL.";
-                    setTimeout(function(){document.getElementById('debug-msg').style.display='none'}, 5000);
-                };
-                x.send();
+                this.activeReq.onerror = function(){ document.getElementById('loader').style.display='none'; App.activeReq = null; };
+                this.activeReq.send();
             },
 
             login: function() {
@@ -206,7 +193,7 @@
                             document.getElementById('d-conn').innerText = (d.user_info.active_cons||0)+"/"+(d.user_info.max_connections||0);
                             document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString('pt-BR') : "Ilimitado";
                             me.setScreen(1);
-                        } else alert("Dados Incorretos ou Lista Vencida");
+                        } else alert("Dados Incorretos");
                     });
                 }
             },
@@ -222,8 +209,9 @@
                         document.getElementById('d-date').innerText = "M3U";
                         document.getElementById('d-exp').innerText = "Local";
                         App.setScreen(1);
-                    } else alert("Erro ao baixar M3U");
+                    } else alert("Erro M3U");
                 };
+                x.onerror = function() { document.getElementById('loader').style.display='none'; alert("Erro CORS M3U"); };
                 x.send();
             },
 
@@ -281,7 +269,6 @@
 
             renderCats: function() {
                 var html = '';
-                // Renderização Turbo V1 (innerHTML direto)
                 for(var i=0; i<this.cats.length; i++) {
                     html += '<div class="cat-item" id="c'+i+'">'+this.cats[i].category_name+'</div>';
                 }
@@ -315,11 +302,11 @@
             },
 
             renderList: function() {
-                var max = this.items.length > 500 ? 500 : this.items.length; // Limite alto para Turbo
+                // MODO TURBO (STRING BUILDER)
+                var max = this.items.length > 500 ? 500 : this.items.length;
                 var h = '';
                 if(this.isSeries) h += '<div class="item" id="i-1" style="color:var(--gold)">.. VOLTAR</div>';
                 
-                // Construção de String rápida
                 for(var i=0; i<max; i++) {
                     var n = this.items[i].name || this.items[i].title;
                     h += '<div class="item" id="i'+i+'">'+n+'</div>';
@@ -375,44 +362,56 @@
                         });
                         return;
                     }
-                    var ext = (this.mode==='live')?'ts':'mp4'; // Padrão
+                    var ext = (this.mode==='live')?'ts':'mp4';
                     if(this.mode!=='live' && item.container_extension) ext = item.container_extension;
-                    
-                    // Base URL
-                    var base = this.creds.h + "/" + (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id);
-                    url = base + "." + ext;
+                    url = this.creds.h + "/" + (this.mode==='live'?'live':(this.mode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
                     title = item.name||item.title;
                 }
 
                 document.getElementById('meta-title').innerText = title;
                 document.getElementById('meta-desc').innerText = "Carregando...";
                 document.getElementById('vid-box').classList.remove('video-off');
-                var v = document.getElementById('player');
+                this.playVideo(url);
+                this.zone = 3; this.refreshFocus();
+            },
 
-                // --- TENTATIVA DE REPRODUÇÃO INTELIGENTE ---
-                if(Hls.isSupported() && (url.includes('.m3u8') || this.mode === 'live')) {
+            playVideo: function(url) {
+                var v = document.getElementById('player');
+                
+                // --- TRUQUE MÁGICO V27: Conversão de .ts para .m3u8 ---
+                var finalUrl = url;
+                if(url.indexOf('.ts') > -1) {
+                    finalUrl = url.replace('.ts', '.m3u8');
+                }
+
+                if(Hls.isSupported()) {
                     if(this.hls) { this.hls.destroy(); }
-                    var hls = new Hls({
-                        enableWorker: true,
-                        lowLatencyMode: true,
-                        backBufferLength: 90
-                    });
+                    this.hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+                    this.hls.loadSource(finalUrl);
+                    this.hls.attachMedia(v);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
                     
-                    // Se for Live, tenta usar HLS mesmo se a URL for .ts (Transmuxing)
-                    hls.loadSource(url);
-                    hls.attachMedia(v);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
-                    hls.on(Hls.Events.ERROR, function(e,data){
-                        if(data.fatal) {
-                            // Se falhar no HLS, tenta nativo direto
-                            hls.destroy(); v.src = url; v.play();
+                    // Se falhar no M3U8, tenta voltar pro TS original ou nativo
+                    var me = this;
+                    this.hls.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            console.log("Erro HLS, tentando nativo/ts...");
+                            me.hls.destroy();
+                            v.src = url; // Volta pra URL original
+                            v.play();
                         }
                     });
-                    this.hls = hls;
-                } else {
-                    v.src = url; v.play();
+                } 
+                else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Nativo (Samsung/LG/Safari)
+                    v.src = finalUrl;
+                    v.play();
                 }
-                this.zone = 3; this.refreshFocus();
+                else {
+                    // Fallback
+                    v.src = url;
+                    v.play();
+                }
             },
 
             stop: function() { 
@@ -515,12 +514,11 @@
 
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
-            
             // CORES
-            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } 
-            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } 
-            if(k===405||k===89) { e.preventDefault(); if(App.screen===2){ App.zone=1; App.refreshFocus(); } return; } 
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } 
+            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } // RED
+            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } // GREEN
+            if(k===405||k===89) { e.preventDefault(); if(App.screen===2){ App.zone=1; App.refreshFocus(); } return; } // YELLOW
+            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } // BLUE
             
             // VOLTAR
             if(k===8||k===461||k===27) {
