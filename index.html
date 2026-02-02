@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD PREMIUM V12</title>
+    <title>R&C GOLD V13 FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA R&C GOLD PREMIUM --- */
+        /* --- TEMA FINAL V13 --- */
         :root { 
-            --bg: #0b0b0b; 
-            --gold: #D4AF37; 
+            --bg: #050505; 
+            --gold: #FFD700; 
+            --gold-dark: #b8860b;
             --text: #ffffff; 
-            --card-bg: #151515;
-            --focus-border: 2px solid #D4AF37;
+            --panel: #111;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -30,18 +30,16 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* --- 1. TELA LOGIN (Estilo NetRange 01.PNG adaptado) --- */
-        #login-layer { 
-            background: #050505; z-index: 50;
-        }
+        /* --- 1. LOGIN (AMARELO) --- */
+        #login-layer { background: #080808; z-index: 50; }
         .netrange-box {
-            width: 400px; padding: 40px; 
+            width: 450px; padding: 50px; 
             background: #111; border: 1px solid #333; border-radius: 10px;
-            text-align: center;
+            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
         .nr-header {
-            color: var(--gold); font-weight: 900; font-size: 22px; 
-            margin-bottom: 30px; letter-spacing: 1px; text-transform: uppercase;
+            color: var(--gold); font-weight: 900; font-size: 24px; 
+            margin-bottom: 30px; letter-spacing: 2px;
         }
         
         .nr-input {
@@ -51,94 +49,93 @@
         }
         .nr-input:focus { background: #fff; color: #000; border-color: var(--gold); }
         
+        /* Botão Amarelo/Dourado */
         .nr-btn {
             width: 100%; padding: 12px; margin-top: 15px;
-            background: #009944; /* Verde do NetRange original */
-            color: #fff; font-weight: 800; font-size: 16px;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+            color: #000; font-weight: 800; font-size: 16px;
             border: none; border-radius: 4px; cursor: pointer; text-transform: uppercase;
         }
-        /* Foco personalizado Dourado */
-        .nr-btn.focused { background: var(--gold); color: #000; transform: scale(1.02); }
+        .nr-btn.focused { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); border: 2px solid #fff; }
 
-        /* --- 2. MENU PRINCIPAL (Estilo Visual01.jpg) --- */
+        /* --- 2. MENU PRINCIPAL (LAYOUT SOLICITADO) --- */
         #dash-layer { 
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            flex-direction: column; /* Organiza Topo - Meio - Baixo */
         }
         
-        /* Logo Central */
-        .dash-header {
-            margin-bottom: 40px; text-align: center;
-        }
+        /* Topo: Logo */
+        .dash-header { margin-bottom: auto; margin-top: 60px; }
         .dash-logo { font-size: 50px; font-weight: 900; letter-spacing: -2px; }
         .dash-logo span { color: var(--gold); }
 
-        /* Grade de Cartões */
-        .cards-container { display: flex; gap: 30px; }
+        /* Meio: Botões */
+        .cards-container { display: flex; gap: 40px; margin-bottom: auto; }
         
         .dash-card {
-            width: 180px; height: 180px;
-            background: #1a1a1a; border: 2px solid #333; border-radius: 12px;
+            width: 200px; height: 200px;
+            background: #151515; border: 2px solid #333; border-radius: 15px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: all 0.2s;
         }
-        .dash-card i { font-size: 50px; margin-bottom: 20px; color: #fff; }
-        .dash-card span { font-size: 14px; font-weight: 700; color: #fff; text-transform: uppercase; }
+        .dash-card i { font-size: 60px; margin-bottom: 20px; color: #666; }
+        .dash-card span { font-size: 14px; font-weight: 700; color: #888; text-transform: uppercase; }
         
-        /* Foco estilo Visual01 (Borda Colorida) */
         .dash-card.focused {
             background: #000; border: 3px solid var(--gold);
-            transform: scale(1.1); box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            transform: scale(1.15); box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+            z-index: 10;
         }
         .dash-card.focused i { color: var(--gold); }
+        .dash-card.focused span { color: #fff; }
 
-        /* Painel de Informações da Conta */
-        .account-panel {
-            margin-top: 50px;
-            display: flex; gap: 40px;
-            background: rgba(255,255,255,0.05);
-            padding: 15px 40px; border-radius: 50px;
-            font-size: 12px; color: #aaa;
+        /* Rodapé: Informações */
+        .dash-footer {
+            width: 90%; display: flex; justify-content: space-between;
+            border-top: 1px solid #333; padding: 20px 0; margin-bottom: 30px;
+            color: #888; font-size: 14px;
         }
-        .acc-item b { color: #fff; font-size: 14px; display: block; margin-top: 2px; }
+        .foot-left { text-align: left; }
+        .foot-center { text-align: center; color: var(--gold); font-weight: bold; font-size: 16px; }
+        .foot-right { text-align: right; }
+        .dash-footer b { color: #fff; display: block; margin-top: 5px; font-size: 16px; }
 
-        /* --- 3. CONTEÚDO (Lista) --- */
+        /* --- 3. CONTEÚDO --- */
         #content-layer { display: flex; background: #000; }
         
         .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .cat-head { padding: 15px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; font-size: 16px; }
+        .cat-head { padding: 15px; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 1px solid #222; }
         .cat-list { flex: 1; overflow-y: auto; }
         
-        .cat-item { padding: 12px 15px; color: #777; border-bottom: 1px solid #111; font-size: 13px; white-space: nowrap; overflow: hidden; font-weight: 600; }
-        .cat-item.active { background: #111; color: #fff; border-left: 3px solid #333; }
-        .cat-item.focused { background: var(--gold); color: #000; border-left: 3px solid #fff; }
+        .cat-item { padding: 12px 15px; color: #777; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; font-weight: 600; }
+        .cat-item.active { background: #111; color: #fff; border-left: 4px solid #333; }
+        .cat-item.focused { background: var(--gold); color: #000; border-left: 4px solid #fff; font-weight: 800; }
 
         .col-list { width: 35%; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .search-box { padding: 10px; background: #000; border-bottom: 1px solid #222; }
         
         .inp-search { 
             width: 100%; background: #222; border: 1px solid #333; color: #fff; 
-            padding: 10px; text-align: center; border-radius: 4px; font-weight: bold; font-size: 14px;
+            padding: 12px; text-align: center; border-radius: 4px; font-weight: bold;
         }
         .inp-search:focus { background: #fff; color: #000; border-color: var(--gold); }
+        /* readonly visual */
         .inp-search[readonly] { background: #151515; color: #666; }
         
         .item-list { flex: 1; overflow-y: auto; scroll-behavior: auto; }
-        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; white-space: nowrap; overflow: hidden; font-size: 13px; }
+        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
         .item.focused { background: #eee; color: #000; font-weight: 800; transform: scale(1.02); margin: 2px 0; border-radius: 2px; }
 
-        /* Coluna Player */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
-        
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; position: relative; }
         .vid-box.focused { border: 3px solid var(--gold); }
         
-        /* Classe Mágica: Some com a janelinha fantasma */
-        .video-off { opacity: 0 !important; }
+        .video-off { opacity: 0 !important; } /* Esconde conteúdo antigo */
         
         video { width: 100%; height: 100%; object-fit: contain; background: #000; }
         
         .meta { padding: 20px; flex: 1; overflow-y: auto; background: #050505; }
-        .meta-title { font-size: 20px; color: var(--gold); font-weight: 800; margin-bottom: 10px; line-height: 1.2; }
+        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
         .meta-desc { font-size: 13px; color: #888; margin-bottom: 20px; }
         
         .color-keys { display: flex; gap: 15px; font-size: 11px; font-weight: bold; margin-top: auto; }
@@ -156,12 +153,12 @@
 
     <div id="login-layer" class="layer flex-center">
         <div class="netrange-box">
-            <div class="nr-header">R&C GOLD PLAYER</div>
-            <input type="text" id="url" class="nr-input" placeholder="http://servidor.com" autocomplete="off">
+            <div class="nr-header">R&C GOLD</div>
+            <input type="text" id="url" class="nr-input" placeholder="http://..." autocomplete="off">
             <input type="text" id="user" class="nr-input" placeholder="Usuário" autocomplete="off">
             <input type="password" id="pass" class="nr-input" placeholder="Senha" autocomplete="off">
             <button id="btn-login" class="nr-btn" onclick="App.login()">CONECTAR</button>
-            <div style="margin-top:20px; color:#555; font-size:11px;">Use as SETAS para navegar e OK para digitar</div>
+            <div style="margin-top:20px; color:#555; font-size:11px;">Use SETAS e OK</div>
         </div>
     </div>
 
@@ -177,11 +174,10 @@
             <div class="dash-card" id="m3"><i class="fas fa-sync-alt"></i><span>TROCAR PLAYLIST</span></div>
         </div>
 
-        <div class="account-panel">
-            <div class="acc-item">USUÁRIO<b id="acc-name">...</b></div>
-            <div class="acc-item">VENCIMENTO<b id="acc-exp">...</b></div>
-            <div class="acc-item">STATUS<b id="acc-status">...</b></div>
-            <div class="acc-item">CONEXÕES<b id="acc-conn">...</b></div>
+        <div class="dash-footer">
+            <div class="foot-left">USUÁRIO<b id="d-user">...</b></div>
+            <div class="foot-center">TELAS<b id="d-conn">...</b></div>
+            <div class="foot-right">VENCIMENTO<b id="d-exp">...</b></div>
         </div>
     </div>
 
@@ -192,7 +188,7 @@
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search" class="inp-search" placeholder="BUSCAR..." autocomplete="off" onkeydown="if(event.keyCode===13) App.triggerSearch()">
+                <input type="text" id="search" class="inp-search" placeholder="BUSCAR..." autocomplete="off">
             </div>
             <div id="item-list" class="item-list"></div>
         </div>
@@ -202,19 +198,18 @@
             </div>
             <div class="meta">
                 <div id="meta-title" class="meta-title">R&C PLAYER</div>
-                <div id="meta-desc" class="meta-desc">Aguardando seleção...</div>
+                <div id="meta-desc" class="meta-desc">Aguardando...</div>
                 
                 <div style="padding:15px; background:#111; border-radius:8px; margin-bottom:20px; border:1px solid #333;">
                     <div style="color:#fff; font-size:11px; margin-bottom:5px;">COMANDOS:</div>
                     <div style="color:#888; font-size:11px;">
-                        <b>OK (Lista):</b> Tocar<br>
-                        <b>OK (Vídeo):</b> Tela Cheia / Pausar<br>
-                        <b>Voltar:</b> Sair
+                        OK: Tela Cheia / Pausa<br>
+                        Voltar: Sair
                     </div>
                 </div>
 
                 <div class="color-keys">
-                    <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
+                    <span class="ck-btn" style="color:#ff4444"><i class="fas fa-square"></i> FULLSCREEN</span>
                     <span class="ck-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
                     <span class="ck-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
                     <span class="ck-btn" style="color:#33b5e5"><i class="fas fa-square"></i> MENU</span>
@@ -264,11 +259,9 @@
                     if(d && d.user_info && d.user_info.auth===1) {
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
                         
-                        // PREENCHE INFO NO MENU
-                        document.getElementById('acc-name').innerText = u;
-                        document.getElementById('acc-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
-                        document.getElementById('acc-status').innerText = d.user_info.status;
-                        document.getElementById('acc-conn').innerText = d.user_info.active_cons + "/" + d.user_info.max_connections;
+                        document.getElementById('d-user').innerText = u;
+                        document.getElementById('d-conn').innerText = (d.user_info.active_cons||0) + "/" + (d.user_info.max_connections||0);
+                        document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
 
                         me.setScreen(1);
                     } else alert("Dados Incorretos");
@@ -291,10 +284,10 @@
                 this.mode = m; this.isSeries = false;
                 this.setScreen(2);
                 
-                // LIMPEZA TOTAL
+                // Limpeza Total ao entrar
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('item-list').innerHTML = '';
-                document.getElementById('search').value = ''; // LIMPA BUSCA
+                document.getElementById('search').value = ''; // Limpa input
                 this.clearInfo();
                 
                 var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
@@ -311,8 +304,8 @@
 
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
-                this.stop();
-                this.clearInfo(); // LIMPA INFO
+                this.stop(); 
+                this.clearInfo(); // Limpa info ao trocar categoria
                 
                 var els = document.querySelectorAll('.cat-item');
                 for(var j=0; j<els.length; j++) els[j].classList.remove('active');
@@ -350,7 +343,7 @@
                 var term = document.getElementById('search').value.toLowerCase().trim();
                 if(term.length < 2) { document.getElementById('search').removeAttribute('readonly'); return; }
                 
-                this.stop(); this.clearInfo(); // LIMPA
+                this.stop(); this.clearInfo();
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:gold">Buscando...</div>';
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
@@ -417,6 +410,7 @@
             },
             
             clearInfo: function() {
+                // Função para limpar nome e descrição
                 document.getElementById('meta-title').innerText = "R&C PLAYER";
                 document.getElementById('meta-desc').innerText = "Aguardando seleção...";
             },
@@ -494,7 +488,12 @@
                         var max = (this.items.length>100?100:this.items.length)-1;
                         var min = this.isSeries?-1:0;
                         if(k===40 && this.idx<max) this.idx++;
-                        if(k===38) { if(this.idx>min) this.idx--; else this.zone=1; }
+                        
+                        if(k===38) { // Cima
+                            if(this.idx>min) this.idx--; 
+                            else { this.zone=1; } 
+                        }
+                        
                         if(k===37) { this.zone=0; this.idx=this.memCat; }
                         if(k===39) { this.zone=3; }
                         if(k===13) this.clickItem(this.idx);
@@ -524,7 +523,6 @@
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
             if(k===404||k===71) { e.preventDefault(); var v=document.getElementById('player'); v.src=v.src; v.play(); return; }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.refreshFocus(); return; }
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; }
             
             if(k===8||k===461||k===27) {
                 e.preventDefault();
@@ -539,9 +537,11 @@
             }
 
             if([13,37,38,39,40].indexOf(k)>-1) {
+                // LÓGICA DAS SETAS NO INPUT (Restaura navegação antiga)
                 if(document.activeElement.tagName==='INPUT') {
                     if(k===13) { App.triggerSearch(); return; }
-                    if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
+                    // Se apertar Baixo (40), previne padrão e chama move() para sair do input
+                    if(k===40) { e.preventDefault(); App.move(k); return; }
                     return; 
                 }
                 e.preventDefault();
