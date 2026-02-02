@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD - PLAYER V5</title>
+    <title>R&C GOLD - ULTIMATE V6</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -108,7 +108,9 @@
         .cat-list { flex: 1; overflow-y: auto; }
         
         .cat-item { padding: 15px 20px; color: #aaa; font-weight: 600; border-bottom: 1px solid #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Active = Categoria aberta (conteudo visivel) */
         .cat-item.active { background: #222; color: #fff; border-left: 4px solid #555; }
+        /* Focused = Onde o cursor está */
         .cat-item.focused { background: var(--gold) !important; color: #000 !important; border-left: 4px solid #fff !important; }
 
         /* Coluna 2: Conteúdo */
@@ -137,7 +139,6 @@
         
         video { width: 100%; height: 100%; }
 
-        /* TOAST DE FEEDBACK (Minimalista) */
         #toast-msg {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             color: #fff; font-size: 40px; font-weight: 900; text-shadow: 0 2px 10px #000;
@@ -182,7 +183,7 @@
         <div class="status-bar">
             <span id="st-exp">VENCE: <b>...</b></span>
             <span id="st-conn">TELAS: <b>...</b></span>
-            <span>R&C V5.0</span>
+            <span>R&C V6.0 - GLOBAL SEARCH</span>
         </div>
     </div>
 
@@ -194,7 +195,7 @@
         
         <div class="main-list">
             <div class="search-bar">
-                <input type="text" id="search-inp" class="s-input" placeholder="DIGITE PARA BUSCAR...">
+                <input type="text" id="search-inp" class="s-input" placeholder="BUSCA GLOBAL...">
             </div>
             <div class="cont-list" id="cont-list"></div>
         </div>
@@ -207,14 +208,15 @@
             <div class="meta-info">
                 <div class="meta-title" id="meta-title">BEM VINDO</div>
                 <div class="meta-desc" id="meta-desc">
-                    1. Navegue nas Categorias e aperte <b>OK</b> para abrir.<br>
-                    2. Use a Busca para encontrar canais ou filmes.<br>
-                    3. No Fullscreen: Setas para Avançar/Voltar e OK para Pausar.
+                    1. <b>OK</b> abre a Categoria.<br>
+                    2. <b>Botão Amarelo</b> Busca em TUDO.<br>
+                    3. Séries tocam em sequência.<br>
+                    4. Setas navegam sem abrir.
                 </div>
                 <div class="help-keys">
                     <span class="k-btn" style="color:#ff4444"><i class="fas fa-square"></i> TELA CHEIA</span>
                     <span class="k-btn" style="color:#00C851"><i class="fas fa-square"></i> RECARREGAR</span>
-                    <span class="k-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR</span>
+                    <span class="k-btn" style="color:#ffbb33"><i class="fas fa-square"></i> BUSCAR GLOBAL</span>
                     <span class="k-btn" style="color:#33b5e5"><i class="fas fa-square"></i> VOLTAR</span>
                 </div>
             </div>
@@ -227,6 +229,7 @@
             creds: {}, userInfo: {}, mode: 'live',
             categories: [], content: [], viewContent: [],
             isSeries: false, memCatIdx: 0,
+            fullContentCache: null, // Para busca global
 
             init: function() {
                 this.hlsConfig = {
@@ -339,6 +342,7 @@
                 document.getElementById('cont-list').innerHTML = '';
                 
                 this.focusZone = 0; this.focusIdx = 0; this.memCatIdx = 0; this.isSeries = false;
+                this.fullContentCache = null; // Limpa cache de busca global
 
                 let action = mode==='live'?'get_live_categories':(mode==='vod'?'get_vod_categories':'get_series_categories');
                 let data = await this.apiCall(`action=${action}`);
@@ -379,11 +383,14 @@
                 let limit = this.viewContent.slice(0, 150); 
                 
                 if(this.viewContent.length === 0) {
-                    html = '<div style="padding:20px; color:#555; text-align:center">NENHUM CONTEÚDO</div>';
+                    html = '<div style="padding:20px; color:#555; text-align:center">VAZIO OU CARREGANDO...</div>';
                 } else if (this.isSeries) {
                     html += `<div class="cont-item" id="item-back" style="color:var(--gold)">VOLTAR</div>`;
                     limit.forEach((item, i) => {
-                        html += `<div class="cont-item" id="item-${i}">S${item.season} E${item.episode_num} - ${item.title}</div>`;
+                        // S01 E01 formatado
+                        let s = item.season ? String(item.season).padStart(2, '0') : '00';
+                        let e = item.episode_num ? String(item.episode_num).padStart(2, '0') : '00';
+                        html += `<div class="cont-item" id="item-${i}">S${s} E${e} - ${item.title}</div>`;
                     });
                 } else {
                     limit.forEach((item, i) => {
@@ -393,28 +400,50 @@
                 document.getElementById('cont-list').innerHTML = html;
             },
 
-            doSearch: function() {
+            // --- BUSCA GLOBAL (FORÇADA) ---
+            startSearch: function() {
+                this.focusZone = 1;
+                document.getElementById('search-inp').focus();
+                this.updateContentFocus();
+            },
+
+            doSearch: async function() {
                 let term = document.getElementById('search-inp').value.toLowerCase();
                 if(term.length < 2) return;
-                
+
+                // SE NÃO TIVER BAIXADO TUDO AINDA, BAIXA AGORA (BUSCA GLOBAL)
+                if(!this.fullContentCache) {
+                    document.getElementById('meta-desc').innerText = "Baixando catálogo completo para Busca Global...";
+                    let action = this.mode==='live'?'get_live_streams':(this.mode==='vod'?'get_vod_streams':'get_series');
+                    // Chama SEM category_id para pegar tudo
+                    let data = await this.apiCall(`action=${action}`);
+                    if(data && !Array.isArray(data)) data = Object.values(data);
+                    this.fullContentCache = data || [];
+                }
+
                 let keywords = term.split(' ').filter(k => k.trim() !== '');
-                this.viewContent = this.content.filter(item => {
+                
+                // Filtra no CACHE GLOBAL
+                this.viewContent = this.fullContentCache.filter(item => {
                     let name = (item.name || item.title || "").toLowerCase();
                     return keywords.every(k => name.includes(k));
                 });
                 
+                this.isSeries = false; // Busca global mostra séries como items, não eps
                 this.renderContentList();
+                
                 if(this.viewContent.length > 0) {
                     this.focusZone = 2; this.focusIdx = 0;
                     document.getElementById('search-inp').blur();
                     this.updateContentFocus();
+                } else {
+                    document.getElementById('cont-list').innerHTML = '<div style="padding:20px;text-align:center">NADA ENCONTRADO</div>';
                 }
             },
 
-            // --- PLAYER VOD CONTROL ---
+            // --- PLAYER ---
             currentStreamId: null, hls: null, toastTimer: null,
 
-            // Mostra texto sem barra (Limpo)
             showToast: function(txt) {
                 let t = document.getElementById('toast-msg');
                 t.innerText = txt;
@@ -483,7 +512,15 @@
                         for(let s in seasons) if(Array.isArray(seasons[s])) seasons[s].forEach(ep => { ep.season = s; episodes.push(ep); });
                     }
                 }
-                episodes.sort((a,b) => (parseInt(a.season)-parseInt(b.season)) || (parseInt(a.episode_num)-parseInt(b.episode_num)));
+                
+                // ORDENAÇÃO MELHORADA
+                episodes.sort((a,b) => {
+                    let sA = parseInt(a.season) || 0; let sB = parseInt(b.season) || 0;
+                    let eA = parseInt(a.episode_num) || 0; let eB = parseInt(b.episode_num) || 0;
+                    if(sA !== sB) return sA - sB;
+                    return eA - eB;
+                });
+
                 this.isSeries = true; this.content = episodes; this.viewContent = episodes;
                 this.renderContentList();
                 this.focusZone = 2; this.focusIdx = 0; this.updateContentFocus();
@@ -531,32 +568,27 @@
 
                 if(this.state === 'content') {
                     
-                    // --- CONTROLES DE FULLSCREEN VOD (NOVA LÓGICA) ---
                     if(this.isFS()) {
                         let v = document.getElementById('player');
-                        
-                        // Retornar (Exit FS)
                         if(k===8 || k===27 || k===461 || k===10009) { this.toggleFullscreen(); return; }
-                        
-                        // Controles apenas para VOD/Séries (Live só pausa)
                         if(this.mode !== 'live') {
-                            if(k===39) { v.currentTime += 15; this.showToast('>> 15s'); } // Avançar
-                            else if(k===37) { v.currentTime -= 15; this.showToast('<< 15s'); } // Voltar
-                            else if(k===13 || k===32) { // OK = Pause/Play
-                                if(v.paused) { v.play(); this.showToast('PLAY'); }
-                                else { v.pause(); this.showToast('PAUSE'); }
+                            if(k===39) { v.currentTime += 15; this.showToast('>> 15s'); }
+                            else if(k===37) { v.currentTime -= 15; this.showToast('<< 15s'); }
+                            else if(k===13 || k===32) { 
+                                if(v.paused) { v.play(); this.showToast('PLAY'); } else { v.pause(); this.showToast('PAUSE'); }
                             }
                         } else {
-                            // Live só Play/Pause
                             if(k===13 || k===32) v.paused ? v.play() : v.pause();
                         }
                         return;
                     }
 
-                    // --- NAVEGAÇÃO PADRÃO (Sem ser FS) ---
-
+                    // Botão Amarelo -> Busca
+                    if(k===405 || k===89) { this.startSearch(); return; }
+                    
                     if(k===403 || k===82) { this.toggleFullscreen(); return; }
                     
+                    // Voltar
                     if([8,27,461,10009, 406].includes(k)) { 
                         if(this.isSeries) {
                             this.isSeries = false; this.loadCategoryContent(this.memCatIdx);
@@ -571,7 +603,13 @@
                     if(this.focusZone === 0) { // CATS
                         if(k===40 && this.focusIdx < this.categories.length-1) { this.focusIdx++; this.updateContentFocus(); }
                         if(k===38 && this.focusIdx > 0) { this.focusIdx--; this.updateContentFocus(); }
-                        if(k===13 || k===39) { this.loadCategoryContent(this.focusIdx); this.focusZone = 1; this.updateContentFocus(); }
+                        if(k===13) { // APENAS OK CARREGA
+                            this.loadCategoryContent(this.focusIdx);
+                            this.focusZone = 1; this.updateContentFocus();
+                        }
+                        if(k===39) { // SETA DIREITA APENAS MUDA O FOCO (SEM CARREGAR)
+                            this.focusZone = 1; this.updateContentFocus();
+                        }
                     }
                     else if(this.focusZone === 1) { // SEARCH
                         if(k===40 && this.viewContent.length > 0) {
