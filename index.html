@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD - ULTIMATE</title>
+    <title>SKY GOLD - IBO STYLE</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -12,7 +12,7 @@
         :root {
             --bg-body: #050505;
             --bg-card: #151515;
-            --gold: #FFD700; /* AMARELO SKY GOLD */
+            --gold: #FFD700;
             --focus-glow: 0 0 25px rgba(255, 215, 0, 0.4);
             --text-main: #eee;
         }
@@ -28,7 +28,7 @@
         /* --- LOADER --- */
         #loader {
             position: fixed; top:0; left:0; width:100%; height:100%; background: #000;
-            z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column;
+            z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column;
         }
         .spinner {
             width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--gold);
@@ -56,7 +56,7 @@
         }
         .lg-btn:focus { box-shadow: var(--focus-glow); transform: scale(1.05); }
 
-        /* --- MENU PRINCIPAL --- */
+        /* --- MENU --- */
         #mainMenu {
             display: none; width: 100%; height: 100%; flex-direction: column; 
             align-items: center; justify-content: center; z-index: 100;
@@ -73,13 +73,12 @@
         }
         .nav-card i { font-size: 60px; margin-bottom: 20px; }
         .nav-card span { font-size: 20px; font-weight: bold; }
-        
         .nav-card.focused {
             border-color: var(--gold); color: #fff; background: #1a1a1a;
             box-shadow: var(--focus-glow); transform: scale(1.1);
         }
 
-        /* --- INTERFACE CONTEÚDO --- */
+        /* --- CONTENT --- */
         #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
         
         .col-cats { width: 300px; background: #0a0a0a; border-right: 1px solid #222; display: flex; flex-direction: column; }
@@ -121,7 +120,6 @@
 
         .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9000; border:none !important; margin:0 !important; background:#000; border-radius: 0 !important; }
         
-        /* OSD BARRA VOD */
         .vod-osd {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 80px;
             background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
@@ -145,7 +143,7 @@
             <input type="text" id="h" class="lg-inp" placeholder="URL">
             <input type="text" id="u" class="lg-inp" placeholder="Usuário">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
-            <button id="btnEnter" class="lg-btn">ENTRAR</button>
+            <button id="btnEnter" class="lg-btn" onclick="App.loginManual()">ENTRAR</button>
         </div>
     </div>
 
@@ -213,52 +211,77 @@
             scr: 'login', zone: 0, fIdx: 0,
             creds: {}, mode: 'live',
             cats: [], items: [], viewItems: [],
-            isSeries: false, currId: null,
-            playTimer: null, // Timer para debouncing do preview
+            isSeries: false, currId: null, playTimer: null,
 
             init: function() {
-                // AUTO LOGIN (Mantém conectado)
-                if(localStorage.getItem('sg_h')) {
-                    this.creds = {
-                        h: localStorage.getItem('sg_h'),
-                        u: localStorage.getItem('sg_u'),
-                        p: localStorage.getItem('sg_p')
-                    };
-                    document.getElementById('loginScreen').style.display = 'none';
-                    this.goMenu(); // Pula direto pro menu
+                // VERIFICAÇÃO RIGOROSA: Só loga automático se tiver TODOS os dados
+                let savedH = localStorage.getItem('sg_h');
+                let savedU = localStorage.getItem('sg_u');
+                let savedP = localStorage.getItem('sg_p');
+
+                if (savedH && savedU && savedP) {
+                    // Tem dados: Login Silencioso (Auto)
+                    this.creds = { h: savedH, u: savedU, p: savedP };
+                    this.login(true); 
                 } else {
+                    // Não tem dados (Primeira vez): MOSTRA TELA DE LOGIN
+                    document.getElementById('loginScreen').style.display = 'flex';
                     document.getElementById('h').focus();
+                    this.load(false);
                 }
 
                 document.addEventListener('keydown', this.onKey.bind(this));
                 
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
-                v.addEventListener('ended', this.onEnded); // Auto proximo ep
+                v.addEventListener('ended', this.onEnded);
                 v.addEventListener('play', ()=> App.hideOSD());
                 v.addEventListener('pause', ()=> App.showOSD('<i class="fas fa-pause"></i>'));
             },
 
             load: function(s) { document.getElementById('loader').style.display = s?'flex':'none'; },
 
-            login: async function() {
-                let h=document.getElementById('h').value.trim();
-                let u=document.getElementById('u').value.trim();
-                let p=document.getElementById('p').value.trim();
-                if(!h.startsWith('http')) h = 'http://'+h;
+            // Login Manual (Botão Entrar)
+            loginManual: function() {
+                let h = document.getElementById('h').value.trim();
+                let u = document.getElementById('u').value.trim();
+                let p = document.getElementById('p').value.trim();
+                if(!h || !u || !p) return alert("Preencha todos os campos!");
+                
+                this.creds = { h: h, u: u, p: p };
+                this.login(false);
+            },
+
+            // Processo de Login (Comum)
+            login: async function(isAuto) {
+                if(!this.creds.h.startsWith('http')) this.creds.h = 'http://'+this.creds.h;
 
                 this.load(true);
                 try {
-                    let r = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
+                    let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}`);
                     let d = await r.json();
+                    
                     if(d.user_info && d.user_info.status === 'Active') {
-                        this.creds = {h,u,p};
-                        // Salva dados (Cookie Eterno)
-                        localStorage.setItem('sg_h',h); localStorage.setItem('sg_u',u); localStorage.setItem('sg_p',p);
+                        // SUCESSO: Salva dados agora
+                        localStorage.setItem('sg_h', this.creds.h); 
+                        localStorage.setItem('sg_u', this.creds.u); 
+                        localStorage.setItem('sg_p', this.creds.p);
+                        
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
-                    } else alert('Erro Login');
-                } catch(e) { alert('Erro Conexão'); }
+                    } else {
+                        if(isAuto) {
+                            // Se falhar no auto login, volta pra tela de login
+                            alert("Sessão expirada. Faça login novamente.");
+                            localStorage.clear();
+                            location.reload();
+                        } else {
+                            alert('Dados Incorretos');
+                        }
+                    }
+                } catch(e) { 
+                    if(!isAuto) alert('Erro de Conexão. Verifique a URL.');
+                }
                 this.load(false);
             },
 
@@ -319,7 +342,7 @@
 
             renderList: function() {
                 let h = '';
-                let limit = this.viewItems.slice(0, 100); // Leveza: Renderiza menos itens
+                let limit = this.viewItems.slice(0, 100); 
                 
                 if(this.isSeries) {
                     h += `<div class="l-item" id="l-back" style="color:#aaa">VOLTAR</div>`;
@@ -334,39 +357,26 @@
                 document.getElementById('list-cnt').innerHTML = h || '<div style="padding:10px">Vazio</div>';
             },
 
-            // --- LÓGICA DE PLAYER OTIMIZADA ---
             requestPlay: function(idx) {
-                // DEBOUNCE: Só carrega o vídeo se parar de navegar por 500ms
-                // Isso evita travamentos quando segura a seta pra baixo
                 clearTimeout(this.playTimer);
-                
-                // Atualiza Info texto imediatamente
                 let it = this.viewItems[idx];
                 if(it) {
                      document.getElementById('lbl-title').innerText = it.name||it.title;
                      document.getElementById('lbl-desc').innerText = "Carregando preview...";
                 }
-
-                this.playTimer = setTimeout(() => {
-                    App.play(idx);
-                }, 500);
+                this.playTimer = setTimeout(() => { App.play(idx); }, 500);
             },
 
             play: function(idx) {
                 let it = this.viewItems[idx];
                 if(!it) return;
                 
-                // Se for série e não estiver dentro dela, abre pasta
                 if(this.mode==='ser' && !this.isSeries) { this.openSeries(it.series_id); return; }
 
                 let vid = document.getElementById('player');
                 let sid = it.stream_id || it.id;
                 
-                // Se já estiver tocando e apertar OK -> Fullscreen
-                if(this.currId === sid && vid.src && !vid.paused) {
-                    this.enterFS();
-                    return;
-                }
+                if(this.currId === sid && vid.src && !vid.paused) { this.enterFS(); return; }
                 
                 this.currId = sid;
                 let ext = it.container_extension || (this.mode==='live'?'ts':'mp4');
@@ -375,7 +385,7 @@
 
                 if(hls) { hls.destroy(); hls=null; }
                 vid.pause(); vid.src = "";
-                document.activeElement.blur(); // Tira foco do input
+                document.activeElement.blur(); 
 
                 if(this.mode === 'live' && Hls.isSupported()) {
                     hls = new Hls(HlsConfig); hls.loadSource(url); hls.attachMedia(vid);
@@ -399,16 +409,14 @@
                 this.load(false);
             },
 
-            // --- AUTO PROXIMO EPISODIO ---
             onEnded: function() {
                 App.exitFS();
                 if(App.isSeries) {
-                    // Verifica se tem proximo na lista
                     if(App.fIdx < App.viewItems.length - 1) {
-                        App.fIdx++; // Desce um item
-                        App.renderFocus(); // Atualiza visual
-                        App.play(App.fIdx); // Toca
-                        setTimeout(() => App.enterFS(), 2000); // Volta pro fullscreen opcionalmente
+                        App.fIdx++; 
+                        App.renderFocus(); 
+                        App.play(App.fIdx); 
+                        setTimeout(() => App.enterFS(), 2000); 
                     }
                 }
             },
@@ -426,7 +434,6 @@
                 v.src = ""; setTimeout(()=> { v.src=s; v.currentTime=t; v.play(); }, 500);
             },
 
-            // --- TELA CHEIA & CONTROLES ---
             isFS: function() { return document.getElementById('v-box').classList.contains('fs'); },
             enterFS: function() { document.getElementById('v-box').classList.add('fs'); document.activeElement.blur(); },
             exitFS: function() { document.getElementById('v-box').classList.remove('fs'); },
@@ -447,7 +454,6 @@
             },
             hideOSD: function() { document.getElementById('osd').style.display='none'; },
 
-            // --- BUSCA ---
             handleSearch: function(e) { if(e.keyCode===13) this.doSearch(); },
             doSearch: async function() {
                 let t = document.getElementById('search-inp').value.toLowerCase();
@@ -464,7 +470,6 @@
                 this.load(false);
             },
 
-            // --- INPUTS ---
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
                 if(this.scr==='menu') {
@@ -481,8 +486,6 @@
                         if(this.isSeries && this.fIdx===0) id = 'l-0';
                         let e=document.getElementById(id);
                         if(e){e.classList.add('focused'); e.scrollIntoView({block:'center'});}
-                        
-                        // AUTO PREVIEW AO NAVEGAR
                         if(this.fIdx >= 0) this.requestPlay(this.fIdx);
                     }
                 }
@@ -491,27 +494,23 @@
             onKey: function(e) {
                 let k = e.keyCode;
 
-                // LOGIN
                 if(this.scr==='login') {
-                    if(k===13) this.login();
+                    if(k===13) this.loginManual();
                     else if(k===40) { let t=document.activeElement.nextElementSibling; if(t)t.focus(); }
+                    else if(k===38) { let t=document.activeElement.previousElementSibling; if(t)t.focus(); }
                     return;
                 }
 
-                // 1. TECLAS DE COR
-                if(k===403 || k===82) { this.isFS() ? this.exitFS() : this.enterFS(); return; } // RED
-                if(k===404 || k===71) { this.refreshPlayer(); return; } // GREEN
-                if(k===405 || k===89) { if(this.scr==='content') { this.zone=2; document.getElementById('search-inp').focus(); this.renderFocus(); } return; } // YELLOW
-                if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; } // BLUE
+                if(k===403 || k===82) { this.isFS() ? this.exitFS() : this.enterFS(); return; }
+                if(k===404 || k===71) { this.refreshPlayer(); return; }
+                if(k===405 || k===89) { if(this.scr==='content') { this.zone=2; document.getElementById('search-inp').focus(); this.renderFocus(); } return; }
+                if(k===406 || k===66) { this.exitFS(); this.goMenu(); return; }
 
-                // 2. PLAYER FULLSCREEN (AVANÇAR/VOLTAR)
                 if(this.isFS()) {
                     e.preventDefault();
                     let v = document.getElementById('player');
                     if(k===13 || k===32) v.paused ? v.play() : v.pause();
                     if(k===8 || k===27 || k===461) this.exitFS();
-                    
-                    // CONTROLES DE AVANÇO/RETORNO
                     if(this.mode !== 'live') {
                          if(k===39) { v.currentTime+=15; this.showOSD('+15s'); setTimeout(()=>this.hideOSD(), 1000); }
                          if(k===37) { v.currentTime-=15; this.showOSD('-15s'); setTimeout(()=>this.hideOSD(), 1000); }
@@ -519,7 +518,6 @@
                     return;
                 }
 
-                // 3. NAVEGAÇÃO COMUM
                 if([37,38,39,40].includes(k)) e.preventDefault();
                 
                 if([8,27,461,10009].includes(k)) {
@@ -537,7 +535,6 @@
                 }
                 else { 
                     if(this.zone===2 && ((k>=48 && k<=90)||k===32)) return;
-                    
                     if(this.zone===1) { 
                         if(k===40 && this.fIdx<this.cats.length-1) this.fIdx++;
                         if(k===38 && this.fIdx>0) this.fIdx--;
@@ -559,7 +556,7 @@
                         if(k===37) { this.zone=1; this.fIdx=0; }
                         if(k===13) {
                             if(this.isSeries && this.fIdx===-1) this.loadCat();
-                            else this.play(this.fIdx); // Aqui o clique manual força o play imediato
+                            else this.play(this.fIdx);
                         }
                     }
                 }
