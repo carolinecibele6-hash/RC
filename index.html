@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD - ULTIMATE</title>
+    <title>R&C GOLD - NETRANGE</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA PREMIUM GOLD (Baseado no seu arquivo) --- */
+        /* --- ESTILOS FIXOS (DARK/GOLD) --- */
         :root {
             --bg-dark: #050505;
-            --bg-panel: #141414;
             --gold: #FFD700;
             --gold-dim: #b39700;
             --text-white: #ffffff;
-            --focus-border: 3px solid var(--gold);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; outline: none; }
@@ -29,98 +27,81 @@
             display: flex; flex-direction: column;
         }
 
-        /* TELA DE LOGIN */
+        /* TELA LOGIN */
         #loginScreen {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: url('https://img.freepik.com/free-vector/black-gold-hexagonal-pattern-background_1017-27387.jpg') no-repeat center center/cover;
+            background: #000;
             z-index: 5000; display: flex; align-items: center; justify-content: center;
         }
         .login-card {
-            background: rgba(0,0,0,0.95); padding: 40px; border-radius: 10px;
-            border: 2px solid var(--gold-dim); width: 500px; text-align: center;
+            background: #111; padding: 40px; border-radius: 10px;
+            border: 2px solid var(--gold-dim); width: 80%; max-width: 500px; text-align: center;
         }
-        .lg-title { font-size: 35px; font-weight: 800; color: var(--gold); margin-bottom: 30px; letter-spacing: 2px; }
-        
+        .lg-title { font-size: 30px; font-weight: 800; color: var(--gold); margin-bottom: 20px; }
         .lg-inp {
-            width: 100%; padding: 15px; margin-bottom: 15px; background: #222;
-            border: 2px solid #444; color: #fff; font-size: 18px; border-radius: 5px; text-align: center;
+            width: 100%; padding: 10px; margin-bottom: 10px; background: #222;
+            border: 2px solid #444; color: #fff; font-size: 18px; text-align: center;
         }
+        /* Classe especial para inputs focados (para diferenciar visualmente) */
         .lg-inp.focused { background: #fff; color: #000; border-color: var(--gold); }
         
         .lg-btn {
             width: 100%; padding: 15px; background: var(--gold); color: #000;
-            font-weight: 800; font-size: 18px; border: none; border-radius: 5px; cursor: pointer;
+            font-weight: 800; font-size: 18px; border: none; margin-top: 10px;
         }
-        .lg-btn.focused { background: #fff; transform: scale(1.02); }
+        .lg-btn.focused { background: #fff; border: 3px solid var(--gold); }
 
         /* DASHBOARD */
         #dashboard {
             display: none; width: 100%; height: 100%; flex-direction: column;
             align-items: center; justify-content: center;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
         }
-        .dash-logo { font-size: 50px; font-weight: 900; margin-bottom: 50px; }
-        .dash-logo span { color: var(--gold); }
+        .dash-logo { font-size: 40px; font-weight: 900; margin-bottom: 40px; color: var(--gold); }
         
-        .dash-grid { display: flex; gap: 30px; }
+        .dash-grid { display: flex; gap: 20px; }
         .dash-item {
-            width: 200px; height: 180px; background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            width: 180px; height: 160px; background: #1a1a1a;
             border: 2px solid #333; border-radius: 10px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .dash-item i { font-size: 50px; margin-bottom: 15px; color: #666; }
-        .dash-item span { font-size: 18px; font-weight: 600; color: #888; }
+        .dash-item i { font-size: 40px; margin-bottom: 10px; color: #666; }
+        .dash-item span { font-size: 16px; font-weight: 600; color: #888; }
         
         .dash-item.focused {
-            background: var(--gold); border-color: #fff; transform: scale(1.1); z-index: 10;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+            background: var(--gold); border-color: #fff; transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); z-index: 10;
         }
         .dash-item.focused i, .dash-item.focused span { color: #000; }
 
-        .status-bar {
-            position: absolute; bottom: 30px; width: 90%; display: flex; justify-content: space-between;
-            color: #888; font-size: 14px; border-top: 1px solid #333; padding-top: 15px;
-        }
-        .status-bar b { color: var(--gold); }
-
-        /* INTERFACE CONTEÚDO (3 COLUNAS) */
+        /* CONTEÚDO (3 COLUNAS) */
         #contentArea { display: none; width: 100%; height: 100%; }
         
-        /* Coluna 1 */
         .side-menu { width: 25%; background: #111; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .side-head { padding: 20px; background: #000; color: var(--gold); font-weight: 800; text-align: center; }
+        .side-head { padding: 15px; background: #000; color: var(--gold); font-weight: bold; text-align: center; }
         .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { padding: 15px 20px; color: #aaa; border-bottom: 1px solid #1a1a1a; white-space: nowrap; overflow: hidden; }
-        .cat-item.active { border-left: 4px solid #555; background: #222; color: #fff; }
-        .cat-item.focused { background: var(--gold) !important; color: #000 !important; border-left: 4px solid #fff !important; }
+        .cat-item { padding: 12px 15px; color: #aaa; border-bottom: 1px solid #222; font-size: 14px; white-space: nowrap; overflow: hidden; }
+        .cat-item.active { background: #222; color: #fff; border-left: 4px solid #555; }
+        .cat-item.focused { background: var(--gold) !important; color: #000 !important; font-weight: bold; border-left: 4px solid #fff !important; }
 
-        /* Coluna 2 */
         .main-list { width: 35%; background: #0a0a0a; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .search-bar { padding: 10px; background: #000; }
-        .s-input { width: 100%; background: #222; border: 1px solid #333; padding: 10px; color: #fff; text-align: center; }
+        .search-bar { padding: 5px; background: #000; }
+        .s-input { width: 100%; background: #222; border: 1px solid #333; padding: 8px; color: #fff; text-align: center; }
         .s-input.focused { background: #fff; color: #000; }
+        
         .cont-list { flex: 1; overflow-y: auto; }
-        .cont-item { padding: 15px; border-bottom: 1px solid #141414; color: #ccc; white-space: nowrap; overflow: hidden; }
+        .cont-item { padding: 12px; border-bottom: 1px solid #141414; color: #ccc; white-space: nowrap; overflow: hidden; font-size: 14px; }
         .cont-item.focused { background: var(--gold) !important; color: #000 !important; font-weight: bold; }
 
-        /* Coluna 3 */
         .preview-area { flex: 1; background: #000; display: flex; flex-direction: column; }
-        .video-container { width: 100%; height: 50%; background: #000; position: relative; border-bottom: 2px solid #222; }
+        .video-container { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #222; }
         .video-container.focused { border: 2px solid var(--gold); }
         video { width: 100%; height: 100%; }
         
-        .meta-info { padding: 20px; flex: 1; background: #080808; overflow-y: auto; }
-        .meta-title { font-size: 24px; color: var(--gold); font-weight: bold; margin-bottom: 10px; }
-        .meta-desc { font-size: 14px; color: #aaa; line-height: 1.5; }
-
-        .fs-mode { position: fixed; top: 0; left: 0; width: 100% !important; height: 100% !important; z-index: 9999; }
+        .meta-info { padding: 20px; flex: 1; overflow-y: auto; }
+        .meta-title { font-size: 20px; color: var(--gold); font-weight: bold; margin-bottom: 5px; }
         
-        /* Loader */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999; display: none;
-            justify-content: center; align-items: center; color: var(--gold); font-weight: bold;
-        }
+        .fs-mode { position: fixed; top: 0; left: 0; width: 100% !important; height: 100% !important; z-index: 9999; border: none; }
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; color: var(--gold); }
 
     </style>
 </head>
@@ -131,116 +112,93 @@
     <div id="loginScreen">
         <div class="login-card">
             <div class="lg-title">R&C GOLD</div>
-            <input type="text" id="h" class="lg-inp focusable" placeholder="URL DO SERVIDOR (http://...)" value="">
-            <input type="text" id="u" class="lg-inp focusable" placeholder="USUÁRIO">
-            <input type="password" id="p" class="lg-inp focusable" placeholder="SENHA">
-            <button id="btnEnter" class="lg-btn focusable" onclick="App.doLogin()">ENTRAR</button>
+            <input type="text" id="h" class="lg-inp" placeholder="URL (http://...)" value="">
+            <input type="text" id="u" class="lg-inp" placeholder="USUÁRIO">
+            <input type="password" id="p" class="lg-inp" placeholder="SENHA">
+            <button id="btnEnter" class="lg-btn">ENTRAR</button>
         </div>
     </div>
 
     <div id="dashboard">
-        <div class="dash-logo">R&C <span>GOLD</span></div>
+        <div class="dash-logo">R&C GOLD</div>
         <div class="dash-grid">
-            <div class="dash-item focusable" onclick="App.openContent('live')">
-                <i class="fas fa-tv"></i><span>TV AO VIVO</span>
-            </div>
-            <div class="dash-item focusable" onclick="App.openContent('movie')">
-                <i class="fas fa-film"></i><span>FILMES</span>
-            </div>
-            <div class="dash-item focusable" onclick="App.openContent('series')">
-                <i class="fas fa-video"></i><span>SÉRIES</span>
-            </div>
-            <div class="dash-item focusable" onclick="location.reload()">
-                <i class="fas fa-sign-out-alt"></i><span>SAIR</span>
-            </div>
+            <div class="dash-item" id="menu-live"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
+            <div class="dash-item" id="menu-movie"><i class="fas fa-film"></i><span>FILMES</span></div>
+            <div class="dash-item" id="menu-series"><i class="fas fa-video"></i><span>SÉRIES</span></div>
         </div>
-        <div class="status-bar">
-            <span id="st-exp">VENCE: <b>...</b></span>
-            <span id="st-conn">TELAS: <b>...</b></span>
-        </div>
+        <div style="margin-top:20px; color:#666;">Use as SETAS e ENTER</div>
     </div>
 
     <div id="contentArea">
         <div class="side-menu">
-            <div class="side-head" id="lbl-mode">CATEGORIAS</div>
+            <div class="side-head">CATEGORIAS</div>
             <div class="cat-list" id="cat-list"></div>
         </div>
-        
         <div class="main-list">
             <div class="search-bar">
-                <input type="text" id="search-inp" class="s-input focusable" placeholder="BUSCAR..." onkeyup="App.doSearch()">
+                <input type="text" id="search-inp" class="s-input" placeholder="BUSCAR...">
             </div>
             <div class="cont-list" id="cont-list"></div>
         </div>
-
         <div class="preview-area">
-            <div class="video-container focusable" id="player-box">
+            <div class="video-container" id="player-box">
                 <video id="player"></video>
             </div>
             <div class="meta-info">
-                <div class="meta-title" id="meta-title">R&C GOLD</div>
-                <div class="meta-desc" id="meta-desc">
-                    Selecione um canal ou filme.<br>
-                    Pressione OK no vídeo para Tela Cheia.
-                </div>
+                <div class="meta-title" id="meta-title">Info</div>
+                <div style="color:#aaa; font-size:12px;">Pressione OK para Tela Cheia</div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- MOTOR COMPATÍVEL COM NETRANGE (ES5) ---
+        // --- SISTEMA R&C (ES5 PURO) ---
         var App = {
             state: 'login', // login, dashboard, content
-            focusZone: 0,   // 0:Cats, 1:Search, 2:List, 3:Player
+            focusZone: 0,   // 0:Cat, 1:Search, 2:List, 3:Player
             focusIdx: 0,
             
-            // Dados
-            creds: { h: '', u: '', p: '' },
-            categories: [], 
-            content: [], 
+            // Controle Interno
+            creds: { h:'', u:'', p:'' },
+            categories: [],
+            content: [],
             viewContent: [],
-            isSeries: false,
+            mode: 'live',
             memCatIdx: 0,
 
-            // Inicialização
             init: function() {
-                var savedH = localStorage.getItem('rc_h');
-                if(savedH) {
-                    document.getElementById('h').value = savedH;
+                // Recupera dados salvos
+                if(localStorage.getItem('rc_h')) {
+                    document.getElementById('h').value = localStorage.getItem('rc_h');
                     document.getElementById('u').value = localStorage.getItem('rc_u');
                     document.getElementById('p').value = localStorage.getItem('rc_p');
                 }
+                // Foca no primeiro input
                 this.updateFocus();
             },
 
-            // --- FUNÇÃO AJAX (Substitui fetch para TVs antigas) ---
+            // --- API AJAX (Segura para TV) ---
             apiCall: function(params, callback) {
                 document.getElementById('loader').style.display = 'flex';
                 var xhr = new XMLHttpRequest();
                 var url = this.creds.h + "/player_api.php?username=" + this.creds.u + "&password=" + this.creds.p + "&" + params;
-                
                 xhr.open("GET", url, true);
+                xhr.timeout = 10000; // 10s timeout
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
                         document.getElementById('loader').style.display = 'none';
                         if (xhr.status === 200) {
-                            try {
-                                var json = JSON.parse(xhr.responseText);
-                                callback(json);
-                            } catch (e) { callback(null); }
-                        } else {
-                            callback(null);
-                        }
+                            try { callback(JSON.parse(xhr.responseText)); } catch(e) { callback(null); }
+                        } else { callback(null); }
                     }
                 };
                 xhr.send();
             },
 
-            // --- LOGIN ---
+            // --- AÇÕES ---
             doLogin: function() {
                 var h = document.getElementById('h').value.trim();
-                if(h.indexOf('http') === -1) h = 'http://' + h; // Correção automática
-                
+                if(h.indexOf('http') === -1) h = 'http://' + h;
                 this.creds.h = h;
                 this.creds.u = document.getElementById('u').value.trim();
                 this.creds.p = document.getElementById('p').value.trim();
@@ -248,29 +206,22 @@
                 var self = this;
                 this.apiCall("", function(data) {
                     if(data && data.user_info && data.user_info.auth === 1) {
-                        // Salva dados
                         localStorage.setItem('rc_h', self.creds.h);
                         localStorage.setItem('rc_u', self.creds.u);
                         localStorage.setItem('rc_p', self.creds.p);
-
-                        // Atualiza Info
-                        var exp = new Date(data.user_info.exp_date * 1000);
-                        document.getElementById('st-exp').innerHTML = "VENCE: <b>" + exp.toLocaleDateString() + "</b>";
-                        document.getElementById('st-conn').innerHTML = "TELAS: <b>" + data.user_info.active_cons + "/" + data.user_info.max_connections + "</b>";
-
+                        
                         document.getElementById('loginScreen').style.display = 'none';
                         document.getElementById('dashboard').style.display = 'flex';
                         self.state = 'dashboard';
                         self.focusIdx = 0;
                         self.updateFocus();
                     } else {
-                        alert("Login falhou! Verifique os dados.");
+                        alert("Falha no Login");
                     }
                 });
             },
 
-            // --- CARREGAR CONTEÚDO ---
-            openContent: function(mode) {
+            loadContent: function(mode) {
                 this.mode = mode;
                 document.getElementById('dashboard').style.display = 'none';
                 document.getElementById('contentArea').style.display = 'flex';
@@ -278,19 +229,18 @@
                 
                 var action = (mode === 'live') ? 'get_live_categories' : (mode === 'movie' ? 'get_vod_categories' : 'get_series_categories');
                 var self = this;
-                
                 this.apiCall("action=" + action, function(data) {
                     self.categories = data || [];
-                    self.renderCategories();
-                    if(self.categories.length > 0) self.loadCategoryContent(0);
+                    self.renderCats();
+                    if(self.categories.length > 0) self.loadCatItems(0);
                     
-                    self.focusZone = 0; 
+                    self.focusZone = 0; // Começa nas categorias
                     self.focusIdx = 0;
                     self.updateFocus();
                 });
             },
 
-            renderCategories: function() {
+            renderCats: function() {
                 var html = '';
                 for(var i=0; i<this.categories.length; i++) {
                     html += '<div class="cat-item" id="cat-'+i+'">' + this.categories[i].category_name + '</div>';
@@ -298,30 +248,27 @@
                 document.getElementById('cat-list').innerHTML = html;
             },
 
-            loadCategoryContent: function(idx) {
-                // Marca visualmente
+            loadCatItems: function(idx) {
+                this.memCatIdx = idx;
+                // Marca visualmente a categoria ativa (mas não o foco)
                 var all = document.querySelectorAll('.cat-item');
                 for(var i=0; i<all.length; i++) all[i].classList.remove('active');
                 var el = document.getElementById('cat-'+idx);
                 if(el) el.classList.add('active');
-                
-                this.memCatIdx = idx;
-                var catId = this.categories[idx].category_id;
+
                 var action = (this.mode === 'live') ? 'get_live_streams' : (this.mode === 'movie' ? 'get_vod_streams' : 'get_series');
                 var self = this;
-
-                this.apiCall("action=" + action + "&category_id=" + catId, function(data) {
+                this.apiCall("action=" + action + "&category_id=" + this.categories[idx].category_id, function(data) {
                     self.content = data || [];
-                    self.viewContent = self.content; // Cópia para busca
+                    self.viewContent = self.content;
                     self.renderList();
                 });
             },
 
             renderList: function() {
                 var html = '';
-                // Limite para não travar TV
-                var limit = this.viewContent.length > 100 ? 100 : this.viewContent.length;
-                
+                var limit = this.viewContent.length > 50 ? 50 : this.viewContent.length; // Limite de 50 para não travar
+                if(limit === 0) html = '<div style="padding:10px;">Vazio</div>';
                 for(var i=0; i<limit; i++) {
                     var name = this.viewContent[i].name || this.viewContent[i].title;
                     html += '<div class="cont-item" id="item-'+i+'">' + name + '</div>';
@@ -329,156 +276,167 @@
                 document.getElementById('cont-list').innerHTML = html;
             },
 
-            // --- BUSCA ---
-            doSearch: function() {
-                var term = document.getElementById('search-inp').value.toLowerCase();
-                if(term.length < 2) return;
-
-                var filtered = [];
-                for(var i=0; i<this.content.length; i++) {
-                    var name = (this.content[i].name || this.content[i].title || "").toLowerCase();
-                    if(name.indexOf(term) > -1) filtered.push(this.content[i]);
-                }
-                this.viewContent = filtered;
-                this.renderList();
-            },
-
-            // --- PLAYER ---
-            play: function(idx) {
+            playItem: function(idx) {
                 if(!this.viewContent[idx]) return;
                 var item = this.viewContent[idx];
-                
-                // Se for série, precisa de lógica extra (simplificada aqui para exemplo)
-                if(this.mode === 'series') { alert("Séries em breve..."); return; }
-
-                var streamId = item.stream_id;
                 var ext = (this.mode === 'live') ? 'ts' : 'mp4';
                 var type = (this.mode === 'live') ? 'live' : 'movie';
-                var url = this.creds.h + "/" + type + "/" + this.creds.u + "/" + this.creds.p + "/" + streamId + "." + ext;
+                var url = this.creds.h + "/" + type + "/" + this.creds.u + "/" + this.creds.p + "/" + item.stream_id + "." + ext;
 
-                // Meta Info
                 document.getElementById('meta-title').innerText = item.name || item.title;
-                document.getElementById('meta-desc').innerText = "Reproduzindo...";
-
-                var video = document.getElementById('player');
+                var vid = document.getElementById('player');
                 
                 if(Hls.isSupported() && this.mode === 'live') {
-                    var hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play(); });
+                    var hls = new Hls(); hls.loadSource(url); hls.attachMedia(vid);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() { vid.play(); });
                 } else {
-                    video.src = url;
-                    video.play();
+                    vid.src = url; vid.play();
                 }
             },
 
-            // --- SISTEMA DE FOCO (CONTROLE REMOTO) ---
+            // --- SISTEMA DE FOCO MANUAL (CORRIGIDO) ---
             updateFocus: function() {
-                // Remove focos antigos
-                var focused = document.querySelectorAll('.focused');
-                for(var i=0; i<focused.length; i++) focused[i].classList.remove('focused');
-
-                var els = [];
-                if(this.state === 'login') {
-                    els = document.querySelectorAll('#loginScreen .focusable');
-                } else if (this.state === 'dashboard') {
-                    els = document.querySelectorAll('#dashboard .focusable');
-                } else if (this.state === 'content') {
-                    if(this.focusZone === 0) { // Categorias
-                        var catEl = document.getElementById('cat-' + this.focusIdx);
-                        if(catEl) { catEl.classList.add('focused'); catEl.scrollIntoView({block: "center"}); }
-                        return;
-                    } else if (this.focusZone === 1) { // Busca
-                        document.getElementById('search-inp').classList.add('focused');
-                        document.getElementById('search-inp').focus();
-                        return;
-                    } else if (this.focusZone === 2) { // Lista
-                        var itemEl = document.getElementById('item-' + this.focusIdx);
-                        if(itemEl) { itemEl.classList.add('focused'); itemEl.scrollIntoView({block: "center"}); }
-                        return;
-                    } else if (this.focusZone === 3) { // Player
-                        document.getElementById('player-box').classList.add('focused');
-                        return;
-                    }
-                }
-
-                // Aplica foco genérico (Login/Dash)
-                if(els.length > 0) {
-                    if(this.focusIdx >= els.length) this.focusIdx = 0;
-                    if(this.focusIdx < 0) this.focusIdx = els.length - 1;
-                    els[this.focusIdx].classList.add('focused');
-                    els[this.focusIdx].focus();
-                }
-            },
-
-            moveFocus: function(dir) {
-                // Lógica Simplificada de Navegação
-                if(this.state === 'content') {
-                    if(this.focusZone === 0) { // CATS
-                        if(dir === 'down') this.focusIdx++;
-                        if(dir === 'up') this.focusIdx--;
-                        if(dir === 'right') { 
-                            this.loadCategoryContent(this.focusIdx); 
-                            this.focusZone = 1; // Vai pra busca
-                        }
-                    } else if(this.focusZone === 1) { // BUSCA
-                        if(dir === 'down') { this.focusZone = 2; this.focusIdx = 0; }
-                        if(dir === 'left') { this.focusZone = 0; this.focusIdx = this.memCatIdx; }
-                    } else if(this.focusZone === 2) { // LISTA
-                        if(dir === 'down') this.focusIdx++;
-                        if(dir === 'up') {
-                            if(this.focusIdx === 0) this.focusZone = 1; // Sobe pra busca
-                            else this.focusIdx--;
-                        }
-                        if(dir === 'left') { this.focusZone = 0; this.focusIdx = this.memCatIdx; }
-                        if(dir === 'right') { this.focusZone = 3; }
-                    } else if(this.focusZone === 3) { // PLAYER
-                        if(dir === 'left') { this.focusZone = 2; }
-                    }
-                } else {
-                    // Login e Dashboard (Linear)
-                    if(dir === 'down' || dir === 'right') this.focusIdx++;
-                    if(dir === 'up' || dir === 'left') this.focusIdx--;
-                }
-                this.updateFocus();
-            },
-            
-            enter: function() {
-                var focused = document.querySelector('.focused');
-                if(focused && focused.onclick) focused.click(); // Trigger click
+                // 1. Remove foco de tudo
+                var all = document.querySelectorAll('.focused');
+                for(var i=0; i<all.length; i++) all[i].classList.remove('focused');
                 
-                if(this.state === 'content' && this.focusZone === 2) {
-                    this.play(this.focusIdx);
+                // 2. Remove foco nativo do navegador (isso evita o teclado aparecer sozinho)
+                document.activeElement.blur();
+
+                var targetId = null;
+
+                if(this.state === 'login') {
+                    var els = ['h', 'u', 'p', 'btnEnter'];
+                    targetId = els[this.focusIdx];
+                } 
+                else if (this.state === 'dashboard') {
+                    var els = ['menu-live', 'menu-movie', 'menu-series'];
+                    targetId = els[this.focusIdx];
+                } 
+                else if (this.state === 'content') {
+                    if(this.focusZone === 0) targetId = 'cat-' + this.focusIdx;
+                    if(this.focusZone === 1) targetId = 'search-inp';
+                    if(this.focusZone === 2) targetId = 'item-' + this.focusIdx;
+                    if(this.focusZone === 3) targetId = 'player-box';
                 }
-                if(this.state === 'content' && this.focusZone === 3) {
-                    // Fullscreen
-                    var pbox = document.getElementById('player-box');
-                    if(pbox.classList.contains('fs-mode')) pbox.classList.remove('fs-mode');
-                    else pbox.classList.add('fs-mode');
+
+                // 3. Aplica o foco visual e lógico
+                if(targetId) {
+                    var el = document.getElementById(targetId);
+                    if(el) {
+                        el.classList.add('focused');
+                        // Só damos focus() real se for INPUT, senão o teclado abre.
+                        if(el.tagName === 'INPUT') {
+                            el.focus(); 
+                        } else {
+                            el.scrollIntoView({block: "center", behavior: "auto"});
+                        }
+                    }
+                }
+            },
+
+            // --- CONTROLADOR DE TECLAS (IMPEDE O PADRÃO DA TV) ---
+            handleKey: function(key) {
+                // LOGIN
+                if(this.state === 'login') {
+                    if(key === 40 && this.focusIdx < 3) { this.focusIdx++; this.updateFocus(); }
+                    if(key === 38 && this.focusIdx > 0) { this.focusIdx--; this.updateFocus(); }
+                    if(key === 13) {
+                        if(this.focusIdx === 3) this.doLogin(); // Botão Entrar
+                        else { this.focusIdx++; this.updateFocus(); } // Enter no input pula pro proximo
+                    }
+                }
+                // DASHBOARD
+                else if(this.state === 'dashboard') {
+                    if(key === 39 && this.focusIdx < 2) { this.focusIdx++; this.updateFocus(); }
+                    if(key === 37 && this.focusIdx > 0) { this.focusIdx--; this.updateFocus(); }
+                    if(key === 13) {
+                        var modes = ['live', 'movie', 'series'];
+                        this.loadContent(modes[this.focusIdx]);
+                    }
+                }
+                // CONTEÚDO
+                else if(this.state === 'content') {
+                    
+                    // -- ZONA 0: CATEGORIAS --
+                    if(this.focusZone === 0) {
+                        if(key === 40 && this.focusIdx < this.categories.length-1) { this.focusIdx++; this.updateFocus(); }
+                        if(key === 38 && this.focusIdx > 0) { this.focusIdx--; this.updateFocus(); }
+                        if(key === 39 || key === 13) { // Direita ou OK Carrega
+                            this.loadCatItems(this.focusIdx);
+                            this.focusZone = 2; // Pula direto pra lista (mais intuitivo que busca)
+                            this.focusIdx = 0;
+                            this.updateFocus();
+                        }
+                    }
+                    // -- ZONA 1: BUSCA --
+                    else if(this.focusZone === 1) {
+                        if(key === 40) { this.focusZone = 2; this.focusIdx = 0; this.updateFocus(); } // Baixo -> Lista
+                        if(key === 13) { /* Logica de busca aqui */ }
+                    }
+                    // -- ZONA 2: LISTA DE CANAIS --
+                    else if(this.focusZone === 2) {
+                        if(key === 40 && this.focusIdx < this.viewContent.length-1) { this.focusIdx++; this.updateFocus(); }
+                        if(key === 38) {
+                            if(this.focusIdx > 0) { this.focusIdx--; this.updateFocus(); }
+                            else { this.focusZone = 1; this.updateFocus(); } // Sobe pra busca
+                        }
+                        if(key === 37) { // Esquerda -> Categorias
+                            this.focusZone = 0; 
+                            this.focusIdx = this.memCatIdx; 
+                            this.updateFocus(); 
+                        }
+                        if(key === 39) { // Direita -> Player
+                            this.focusZone = 3; 
+                            this.updateFocus(); 
+                        }
+                        if(key === 13) { this.playItem(this.focusIdx); }
+                    }
+                    // -- ZONA 3: PLAYER --
+                    else if(this.focusZone === 3) {
+                        if(key === 37) { this.focusZone = 2; this.updateFocus(); }
+                        if(key === 13) {
+                            var box = document.getElementById('player-box');
+                            if(box.classList.contains('fs-mode')) box.classList.remove('fs-mode');
+                            else box.classList.add('fs-mode');
+                        }
+                    }
                 }
             }
         };
 
-        // --- CONTROLE DAS TECLAS ---
+        // --- LISTENER GLOBAL BLOQUEADOR ---
         document.addEventListener('keydown', function(e) {
-            switch(e.key) {
-                case 'ArrowDown': App.moveFocus('down'); break;
-                case 'ArrowUp': App.moveFocus('up'); break;
-                case 'ArrowLeft': App.moveFocus('left'); break;
-                case 'ArrowRight': App.moveFocus('right'); break;
-                case 'Enter': App.enter(); break;
-                case 'Backspace': 
-                    if(App.state === 'content') {
-                        document.getElementById('contentArea').style.display = 'none';
-                        document.getElementById('dashboard').style.display = 'flex';
-                        App.state = 'dashboard';
-                        App.focusIdx = 0;
-                        App.updateFocus();
+            var key = e.keyCode || e.which;
+            
+            // Lista de teclas importantes: Enter(13), Esquerda(37), Cima(38), Direita(39), Baixo(40), Voltar(461/8)
+            var navKeys = [13, 37, 38, 39, 40, 461, 8, 27];
+
+            if(navKeys.indexOf(key) !== -1) {
+                // LÓGICA DE PROTEÇÃO:
+                // Se estamos num INPUT e apertamos Cima/Baixo/Enter, o navegador quer controlar.
+                // Mas se estamos num DIV (canal, botão), NÃO queremos o navegador controlando.
+                
+                var activeTag = document.activeElement.tagName;
+                
+                if(activeTag === 'INPUT') {
+                    // No input, só deixamos o navegador agir se for Enter (pra abrir teclado) ou digitar.
+                    // Se for Seta para Baixo/Cima, queremos sair do input.
+                    if(key === 40 || key === 38) {
+                        e.preventDefault(); // Impede o navegador de prender o cursor no input
+                        document.activeElement.blur(); // Tira o foco
+                        App.handleKey(key);
                     }
-                    break;
+                    // Se for Enter no input, deixamos passar (return) pra abrir teclado
+                    return; 
+                } else {
+                    // Se NÃO é input, BLOQUEIA TUDO e usa nosso script
+                    e.preventDefault();
+                    App.handleKey(key);
+                }
             }
         });
+
     </script>
 </body>
 </html>
