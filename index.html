@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD LITE V24</title>
+    <title>R&C GOLD V25 TURBO</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0"></script>
 
     <style>
-        /* --- TEMA LITE EXTREME V24 --- */
-        /* Cores sólidas = Zero processamento de GPU para renderizar */
+        /* --- TEMA LITE GOLD (V24 STYLE) --- */
         :root { 
             --bg: #000000; 
             --gold: #D4AF37; 
             --panel: #111111;
             --text: #ffffff;
-            --focus: #D4AF37; 
+            --sel: #1a1a1a;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -25,17 +24,19 @@
             background-color: var(--bg); color: var(--text);
             font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
+            /* Aceleração GPU */
+            transform: translateZ(0);
         }
 
         .hide { display: none !important; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* LOGIN SIMPLES */
+        /* LOGIN */
         #login-layer { background: #000; z-index: 50; }
         .login-box {
             width: 400px; padding: 30px; background: #111; 
-            border: 1px solid #333; /* Borda simples, sem sombra */
+            border: 1px solid #333;
         }
         .nr-header { color: var(--gold); font-weight: 700; font-size: 24px; margin-bottom: 20px; text-align: center; }
         
@@ -53,7 +54,7 @@
         }
         .nr-btn.focused { background: #fff; transform: scale(1.02); }
 
-        /* DASHBOARD LITE */
+        /* DASHBOARD */
         #dash-layer { flex-direction: column; background: #050505; }
         .dash-header { margin-top: 40px; margin-bottom: auto; text-align: center; }
         .dash-logo { font-size: 40px; font-weight: 700; color: #fff; }
@@ -68,7 +69,6 @@
         .dash-card i { font-size: 50px; margin-bottom: 15px; color: #666; }
         .dash-card span { font-size: 14px; font-weight: 700; color: #888; }
         
-        /* Foco de Alto Contraste (Sem blur/shadow) */
         .dash-card.focused { background: var(--gold); border: 2px solid #fff; }
         .dash-card.focused i { color: #000; }
         .dash-card.focused span { color: #000; }
@@ -104,7 +104,7 @@
         .vid-box.focused { border: 4px solid var(--gold); }
         .video-off { display: none !important; }
         
-        video { width: 100%; height: 100%; background: #000; }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
         
         .meta { padding: 20px; flex: 1; overflow-y: auto; background: #050505; }
         .meta-title { font-size: 18px; color: var(--gold); margin-bottom: 10px; font-weight: 700; }
@@ -168,7 +168,7 @@
                 <div id="meta-title" class="meta-title">R&C PLAYER</div>
                 <div id="meta-desc" class="meta-desc">Selecione para iniciar.</div>
                 <div class="color-keys">
-                    <span class="ck-btn" style="color:#f44">■ TELA CHEIA</span>
+                    <span class="ck-btn" style="color:#f44">■ FULLSCREEN</span>
                     <span class="ck-btn" style="color:#4f4">■ CATEGORIAS</span>
                     <span class="ck-btn" style="color:#fb3">■ BUSCAR</span>
                     <span class="ck-btn" style="color:#4bf">■ MENU</span>
@@ -194,23 +194,30 @@
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
-                // Tratamento de Erro Simples
-                v.addEventListener('error', function(e) { console.log("Erro video, tentando recuperar..."); });
+                
+                // Tratamento de erro automático
+                v.addEventListener('error', function() {
+                    console.log("Erro player, tentando recuperar...");
+                    if(me.hls) me.hls.recoverMediaError();
+                });
             },
 
+            // --- REDE ULTRA-RÁPIDA (ABORT + CACHE BUSTER) ---
             req: function(q, cb) {
-                if(this.activeReq) this.activeReq.abort();
+                if(this.activeReq) this.activeReq.abort(); // Cancela requisição anterior
                 document.getElementById('loader').style.display = 'flex';
                 this.activeReq = new XMLHttpRequest();
-                // Random no final para forçar bypass de cache
-                var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q + "&r="+Math.random();
+                var cbStr = "&r=" + Math.floor(Math.random() * 9999); // Evita cache
+                var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q + cbStr;
+                
                 this.activeReq.open("GET", url, true);
-                this.activeReq.timeout = 20000;
+                this.activeReq.timeout = 15000;
                 this.activeReq.onload = function(){ 
                     document.getElementById('loader').style.display='none'; 
+                    App.activeReq = null;
                     if(this.status===200) try{cb(JSON.parse(this.responseText))}catch(e){cb(null)} else cb(null); 
                 };
-                this.activeReq.onerror = function(){ document.getElementById('loader').style.display='none'; };
+                this.activeReq.onerror = function(){ document.getElementById('loader').style.display='none'; App.activeReq = null; };
                 this.activeReq.send();
             },
 
@@ -255,7 +262,6 @@
                         App.setScreen(1);
                     } else alert("Erro M3U");
                 };
-                x.onerror = function() { document.getElementById('loader').style.display='none'; alert("Erro Rede M3U"); };
                 x.send();
             },
 
@@ -312,9 +318,12 @@
             },
 
             renderCats: function() {
-                var h = '';
-                for(var i=0; i<this.cats.length; i++) h += '<div class="cat-item" id="c'+i+'">'+this.cats[i].category_name+'</div>';
-                document.getElementById('cat-list').innerHTML = h;
+                var html = '';
+                // Renderização Turbo: String direta, sem createElement
+                for(var i=0; i<this.cats.length; i++) {
+                    html += '<div class="cat-item" id="c'+i+'">'+this.cats[i].category_name+'</div>';
+                }
+                document.getElementById('cat-list').innerHTML = html;
                 if(this.cats.length>0) this.loadCat(0);
                 this.zone=0; this.idx=0; this.refreshFocus();
             },
@@ -344,7 +353,7 @@
             },
 
             renderList: function() {
-                var max = this.items.length > 200 ? 200 : this.items.length;
+                var max = this.items.length > 250 ? 250 : this.items.length; // Limite seguro aumentado
                 var h = '';
                 if(this.isSeries) h += '<div class="item" id="i-1" style="color:var(--gold)">.. VOLTAR</div>';
                 for(var i=0; i<max; i++) {
@@ -413,16 +422,18 @@
                 document.getElementById('vid-box').classList.remove('video-off');
                 var v = document.getElementById('player');
 
-                // TENTA RODAR NATIVO PRIMEIRO (Melhor para TV)
-                if(this.hls) { this.hls.destroy(); this.hls=null; }
-                
-                // Se for .ts ou se falhar, HLS entra
-                if(Hls.isSupported() && (url.includes('.ts') || url.includes('.m3u8') || this.mode==='live')) {
-                    var hls = new Hls({maxBufferLength: 10, maxMaxBufferLength: 20}); // Buffer LEVE
-                    hls.loadSource(url);
-                    hls.attachMedia(v);
-                    hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
-                    this.hls = hls;
+                // --- CONFIGURAÇÃO HLS AGRESSIVA PARA CORRIGIR AO VIVO ---
+                if(Hls.isSupported()) {
+                    if(this.hls) { this.hls.destroy(); }
+                    // Transmuxing Enable e Baixa Latência
+                    this.hls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 90
+                    });
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(v);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
                 } else {
                     v.src = url; v.play();
                 }
@@ -490,8 +501,8 @@
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
-                        if(k===13) this.loadCat(this.idx, true); // OK Carrega
-                        if(k===39) this.loadCat(this.idx, true); // Dir Carrega e Vai
+                        if(k===13) this.loadCat(this.idx, true); 
+                        if(k===39) this.loadCat(this.idx, true); 
                     }
                     // BUSCA
                     else if(this.zone===1) { if(k===40) { this.zone=2; this.idx=0; } }
@@ -526,10 +537,10 @@
 
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
-            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } // RED
-            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } // GREEN
-            if(k===405||k===89) { e.preventDefault(); if(App.screen===2){ App.zone=1; App.refreshFocus(); } return; } // YELLOW
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } // BLUE
+            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } 
+            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } 
+            if(k===405||k===89) { e.preventDefault(); if(App.screen===2){ App.zone=1; App.refreshFocus(); } return; } 
+            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } 
             
             if(k===8||k===461||k===27) {
                 if(document.activeElement.id === 'search') { e.preventDefault(); document.getElementById('search').blur(); App.zone=0; App.refreshFocus(); return; }
@@ -551,7 +562,8 @@
                     if(k===38 || k===40) { e.preventDefault(); App.move(k); return; }
                     return; 
                 }
-                e.preventDefault(); App.move(k);
+                e.preventDefault();
+                App.move(k);
             }
         });
     </script>
