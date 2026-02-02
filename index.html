@@ -3,31 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD LITE</title>
+    <title>R&C GOLD FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- ESTILOS ULTRA OTIMIZADOS (SEM SOMBRAS/GRADIENTES) --- */
-        :root { --bg: #000000; --panel: #111111; --gold: #FFD700; --text: #FFFFFF; }
+        /* --- ESTILOS FIXOS --- */
+        :root { --bg: #000000; --gold: #FFD700; --text: #FFFFFF; }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        /* Importante: user-select none no geral, mas TEXT nos inputs */
+        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; user-select: none; }
+        input { user-select: text !important; } 
 
-        /* GERAL */
         .hidden { display: none !important; }
         .flex { display: flex; }
-        .flex-col { flex-direction: column; }
         .center { align-items: center; justify-content: center; }
 
         /* LOGIN */
         #loginScreen { position: fixed; top:0; left:0; width:100%; height:100%; z-index: 999; background: #000; }
-        .login-box { border: 2px solid var(--gold); padding: 30px; width: 400px; background: #111; text-align: center; }
-        .inp { width: 100%; padding: 10px; margin-bottom: 10px; background: #222; border: 1px solid #444; color: #fff; font-size: 18px; text-align: center; }
+        .login-box { border: 2px solid var(--gold); padding: 40px; width: 450px; background: #111; text-align: center; }
+        .inp { width: 100%; padding: 12px; margin-bottom: 15px; background: #222; border: 1px solid #444; color: #fff; font-size: 18px; text-align: center; font-weight: bold; }
+        /* Cor de foco clara para saber onde está */
         .inp.focused { background: #fff; color: #000; border-color: var(--gold); }
-        .btn { width: 100%; padding: 12px; background: var(--gold); color: #000; font-weight: 800; border: none; font-size: 16px; margin-top: 5px; }
-        .btn.focused { background: #fff; border: 4px solid var(--gold); }
+        .btn { width: 100%; padding: 15px; background: var(--gold); color: #000; font-weight: 800; border: none; font-size: 16px; margin-top: 10px; cursor: pointer; }
+        .btn.focused { background: #fff; border: 4px solid var(--gold); transform: scale(1.05); }
 
         /* DASHBOARD */
         #dashboard { background: #050505; }
@@ -45,21 +46,20 @@
         .cat-item.active { color: #fff; background: #222; border-left: 5px solid #555; }
         .cat-item.focused { background: var(--gold); color: #000; border-left: 5px solid #fff; font-weight: bold; }
 
-        .search-box { padding: 5px; background: #000; border-bottom: 1px solid #333; }
+        .search-box { padding: 8px; background: #000; border-bottom: 1px solid #333; }
         .list-scroll { flex: 1; overflow-y: auto; }
-        .item { padding: 12px; border-bottom: 1px solid #1a1a1a; color: #ccc; white-space: nowrap; overflow: hidden; font-size: 14px; }
+        .item { padding: 14px; border-bottom: 1px solid #1a1a1a; color: #ccc; white-space: nowrap; overflow: hidden; font-size: 14px; }
         .item.focused { background: var(--gold); color: #000; font-weight: bold; }
 
         /* PLAYER */
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 2px solid #333; position: relative; }
-        .vid-box.focused { border: 4px solid var(--gold); } /* Borda grossa para ver que tá focado */
+        .vid-box.focused { border: 4px solid var(--gold); }
         video { width: 100%; height: 100%; background: #000; }
         
         .info-box { padding: 20px; flex: 1; overflow-y: auto; }
         .info-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
         .keys { display: flex; gap: 15px; font-size: 11px; margin-top: 15px; font-weight: bold; flex-wrap: wrap; }
 
-        /* UTILS */
         .fs-mode { position: fixed !important; top:0; left:0; width:100% !important; height:100% !important; z-index: 5000; border: none !important; }
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 6000; display: none; align-items: center; justify-content: center; color: var(--gold); font-size: 20px; font-weight: bold; }
 
@@ -71,16 +71,17 @@
 
     <div id="loginScreen" class="flex center">
         <div class="login-box">
-            <h1 style="color:var(--gold); margin-bottom:20px;">R&C LITE</h1>
-            <input type="text" id="h" class="inp" placeholder="URL">
+            <h1 style="color:var(--gold); margin-bottom:30px;">LOGIN</h1>
+            <input type="text" id="h" class="inp" placeholder="URL (http://...)">
             <input type="text" id="u" class="inp" placeholder="USUÁRIO">
             <input type="password" id="p" class="inp" placeholder="SENHA">
             <button id="btnEnter" class="btn">ENTRAR</button>
+            <div style="margin-top:15px; color:#666; font-size:12px;">Use SETAS para navegar e OK para escrever</div>
         </div>
     </div>
 
     <div id="dashboard" class="hidden flex center">
-        <h1 style="color:#fff; margin-bottom:40px;">MENU <span style="color:var(--gold)">PRINCIPAL</span></h1>
+        <h1 style="color:#fff; margin-bottom:40px;">R&C <span style="color:var(--gold)">GOLD</span></h1>
         <div class="flex">
             <div class="dash-item" id="m0"><i class="fas fa-tv"></i><span>TV</span></div>
             <div class="dash-item" id="m1"><i class="fas fa-film"></i><span>FILMES</span></div>
@@ -106,7 +107,7 @@
                 <video id="player"></video>
             </div>
             <div class="info-box">
-                <div id="meta-title" class="info-title">R&C PLAYER</div>
+                <div id="meta-title" class="info-title">PLAYER</div>
                 <div id="meta-desc" style="color:#888; font-size:14px;">Selecione um canal.</div>
                 <div class="keys">
                     <span style="color:#f44">■ TELA CHEIA (Vermelho)</span>
@@ -114,16 +115,13 @@
                     <span style="color:#ff4">■ BUSCAR (Amarelo)</span>
                     <span style="color:#4bf">■ VOLTAR (Azul)</span>
                 </div>
-                <div class="keys" style="color:#fff; margin-top:5px;">
-                    Setas: Navegar | Direita: Ir pro Vídeo
-                </div>
             </div>
         </div>
     </div>
 
     <script>
         var App = {
-            state: 'login', zone: 0, idx: 0, // zone: 0=Cats, 1=Search, 2=List, 3=Player
+            state: 'login', zone: 0, idx: 0,
             creds: {h:'', u:'', p:''},
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
             
@@ -135,14 +133,11 @@
                 }
                 this.focus();
                 
-                // Auto-Next
                 var v = document.getElementById('player');
                 var me = this;
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
-                v.addEventListener('error', function(){ console.log("Err"); });
             },
 
-            // --- REDE ---
             req: function(q, cb) {
                 document.getElementById('loader').style.display = 'flex';
                 var x = new XMLHttpRequest();
@@ -159,7 +154,6 @@
                 x.send();
             },
 
-            // --- LOGIN ---
             login: function() {
                 var h = document.getElementById('h').value.trim();
                 if(h.indexOf('http')===-1) h='http://'+h;
@@ -186,7 +180,6 @@
                 this.screen('login');
             },
 
-            // --- NAVEGAÇÃO ---
             screen: function(name) {
                 this.stop();
                 document.getElementById('loginScreen').className = 'hidden';
@@ -200,14 +193,12 @@
                 this.focus();
             },
 
-            // --- CONTEÚDO ---
             load: function(m) {
                 this.mode = m; this.isSeries = false;
                 this.screen('content');
                 var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                 var me = this;
                 
-                // Limpa visual
                 document.getElementById('cat-list').innerHTML = '';
                 document.getElementById('cont-list').innerHTML = '';
 
@@ -223,7 +214,6 @@
 
             loadCat: function(i) {
                 this.memCat = i; this.isSeries = false;
-                // Marca ativo
                 var all = document.querySelectorAll('.cat-item');
                 for(var j=0; j<all.length; j++) all[j].classList.remove('active');
                 var el = document.getElementById('c'+i); if(el) el.classList.add('active');
@@ -266,7 +256,6 @@
                 });
             },
 
-            // --- PLAYER ---
             clickItem: function(i) {
                 if(this.isSeries && i===-1) { this.loadCat(this.memCat); return; }
                 var item = this.items[i];
@@ -285,7 +274,6 @@
                     return;
                 }
 
-                // Play Logic
                 var ext = (this.mode==='live')?'ts':'mp4';
                 if(this.mode!=='live' && item.container_extension) ext = item.container_extension;
                 var id = item.stream_id || item.id;
@@ -297,8 +285,6 @@
                 var v = document.getElementById('player');
                 v.src = url; 
                 v.play();
-                
-                // IMPORTANTE: NÃO MUDA O FOCO AQUI (Mantém na lista)
             },
 
             next: function() {
@@ -317,11 +303,11 @@
                 else b.className = 'vid-box fs-mode';
             },
 
-            // --- FOCUS SYSTEM ---
             focus: function() {
                 var all = document.querySelectorAll('.focused');
                 for(var i=0; i<all.length; i++) all[i].classList.remove('focused');
                 
+                // Remove foco do input se não estiver nele, para fechar teclado
                 if(document.activeElement.tagName !== 'INPUT') document.activeElement.blur();
                 
                 var id = null;
@@ -338,7 +324,9 @@
                     var el = document.getElementById(id);
                     if(el) {
                         el.classList.add('focused');
-                        if(el.tagName==='INPUT') {} // Manual focus
+                        if(el.tagName==='INPUT') { 
+                           // NÃO foca automaticamente para não abrir teclado
+                        } 
                         else el.scrollIntoView({block:'center', behavior:'auto'});
                     }
                 }
@@ -350,7 +338,11 @@
                     if(k===38 && this.idx>0) { this.idx--; this.focus(); }
                     if(k===13) {
                         if(this.idx===3) this.login();
-                        else { this.idx++; this.focus(); document.getElementById(['h','u','p'][this.idx]).focus(); }
+                        else { 
+                            // ENTER NO INPUT: FOCA PARA DIGITAR
+                            var field = document.getElementById(['h','u','p'][this.idx]);
+                            field.focus();
+                        }
                     }
                 }
                 else if(this.state==='dashboard') {
@@ -362,19 +354,16 @@
                     }
                 }
                 else if(this.state==='content') {
-                    // Categoria
-                    if(this.zone===0) {
+                    if(this.zone===0) { // Cats
                         if(k===40 && this.idx<this.cats.length-1) { this.idx++; this.focus(); }
                         if(k===38 && this.idx>0) { this.idx--; this.focus(); }
                         if(k===39 || k===13) { this.loadCat(this.idx); this.zone=2; this.idx=0; this.focus(); }
                     }
-                    // Busca
-                    else if(this.zone===1) {
+                    else if(this.zone===1) { // Search
                         if(k===40) { this.zone=2; this.idx=0; this.focus(); }
                         if(k===13) document.getElementById('s-inp').focus();
                     }
-                    // Lista
-                    else if(this.zone===2) {
+                    else if(this.zone===2) { // List
                         var min = this.isSeries ? -1 : 0;
                         if(k===40 && this.idx<this.items.length-1) { this.idx++; this.focus(); }
                         if(k===38) {
@@ -382,17 +371,15 @@
                             else { this.zone=1; this.focus(); }
                         }
                         if(k===37) { this.zone=0; this.idx=this.memCat; this.focus(); }
-                        if(k===39) { this.zone=3; this.focus(); }
+                        if(k===39) { this.zone=3; this.focus(); } // Vai pro player
                         if(k===13) this.clickItem(this.idx);
                     }
-                    // Player
-                    else if(this.zone===3) {
+                    else if(this.zone===3) { // Player
                         var v = document.getElementById('player');
                         if(k===37) v.currentTime -= 15;
                         if(k===39) v.currentTime += 15;
                         if(k===13) { if(v.paused) v.play(); else v.pause(); }
-                        // Para sair do player, use a seta esquerda se o video não for full, ou Back
-                        if(k===38) { this.zone=2; this.focus(); } // Sobe de volta pra lista se quiser
+                        if(k===38) { this.zone=2; this.focus(); } // Sobe pra lista
                     }
                 }
             }
@@ -400,29 +387,35 @@
 
         document.addEventListener('keydown', function(e){
             var k = e.keyCode || e.which;
+            
             // Cores
-            if(k===403 || k===82) { e.preventDefault(); App.full(); return; } // RED
-            if(k===404 || k===71) { e.preventDefault(); var v=document.getElementById('player'); var s=v.src; v.src=''; v.src=s; v.play(); return; } // GREEN
-            if(k===405 || k===89) { e.preventDefault(); App.zone=1; App.focus(); return; } // YELLOW
-            if(k===406 || k===66) { e.preventDefault(); App.screen('dashboard'); return; } // BLUE
+            if(k===403 || k===82) { e.preventDefault(); App.full(); return; }
+            if(k===404 || k===71) { e.preventDefault(); var v=document.getElementById('player'); var s=v.src; v.src=''; v.src=s; v.play(); return; }
+            if(k===405 || k===89) { e.preventDefault(); App.zone=1; App.focus(); return; }
+            if(k===406 || k===66) { e.preventDefault(); App.screen('dashboard'); return; }
             
             // Voltar
             if(k===8 || k===461 || k===27) {
                 e.preventDefault();
                 if(App.state==='content') {
                     if(document.getElementById('vid-box').className.indexOf('fs')>-1) App.full();
-                    else if(App.zone===3) { App.zone=2; App.focus(); } // Sai do player p/ lista
+                    else if(App.zone===3) { App.zone=2; App.focus(); }
                     else App.screen('dashboard');
                 }
                 return;
             }
 
-            // Nav
+            // Navegação
             if([13,37,38,39,40].indexOf(k)>-1) {
-                if(document.activeElement.tagName==='INPUT' && k!==13 && k!==40) return;
-                e.preventDefault();
-                if(document.activeElement.tagName==='INPUT') document.activeElement.blur();
-                App.key(k);
+                // Se estiver no input, deixa o Enter nativo (para confirmar texto/fechar teclado)
+                if(document.activeElement.tagName==='INPUT' && k===13) return;
+                
+                // Se for seta no input, bloqueia e usa nossa navegação (sair do input)
+                if(document.activeElement.tagName==='INPUT') {
+                    e.preventDefault(); document.activeElement.blur(); App.key(k);
+                } else {
+                    e.preventDefault(); App.key(k);
+                }
             }
         });
     </script>
