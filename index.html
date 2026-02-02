@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD V32 FINAL</title>
+    <title>R&C GOLD STB V33</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA V32 (O visual que você gostou) --- */
-        :root { --bg: #000; --gold: #D4AF37; --panel: #111; --text: #fff; }
+        /* --- TEMA STB GOLD (VISUAL V29) --- */
+        :root { --bg: #000; --gold: #D4AF37; --panel: #111; --text: #fff; --focus-bg: #D4AF37; --focus-txt: #000; }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
         
         body { 
             background-color: var(--bg); color: var(--text); 
             font-family: 'Montserrat', sans-serif; 
             width: 100vw; height: 100vh; overflow: hidden; 
-            transform: translateZ(0);
+            transform: translateZ(0); /* Aceleração de Hardware */
         }
 
         .hide { display: none !important; }
@@ -43,9 +44,9 @@
         .dash-card { width: 160px; height: 160px; background: #151515; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; }
         .dash-card i { font-size: 50px; margin-bottom: 15px; color: #666; }
         .dash-card span { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; }
-        .dash-card.focused { background: var(--gold); border: 3px solid #fff; transform: scale(1.1); z-index: 5; }
-        .dash-card.focused i { color: #000; }
-        .dash-card.focused span { color: #000; }
+        .dash-card.focused { background: var(--focus-bg); border: 3px solid #fff; transform: scale(1.1); z-index: 5; }
+        .dash-card.focused i { color: var(--focus-txt); }
+        .dash-card.focused span { color: var(--focus-txt); }
 
         .dash-footer { width: 90%; display: flex; justify-content: space-between; border-top: 1px solid #333; padding: 20px 0; margin-bottom: 30px; color: #666; font-size: 13px; }
         .dash-footer b { display: block; color: #fff; margin-top: 5px; font-size: 15px; }
@@ -57,7 +58,7 @@
         .cat-list { flex: 1; overflow-y: auto; }
         .cat-item { padding: 12px 15px; color: #888; border-bottom: 1px solid #151515; font-size: 13px; white-space: nowrap; overflow: hidden; }
         .cat-item.active { background: #1a1a1a; color: #fff; border-left: 4px solid #333; }
-        .cat-item.focused { background: var(--gold); color: #000; font-weight: 700; border-left: 4px solid #fff; }
+        .cat-item.focused { background: var(--focus-bg); color: var(--focus-txt); font-weight: 700; border-left: 4px solid #fff; }
 
         .col-list { width: 40%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
         .search-box { padding: 10px; border-bottom: 1px solid #222; background: #000; }
@@ -65,6 +66,7 @@
         .inp-search.focused { background: #fff; color: #000; }
         
         .item-list { flex: 1; overflow-y: auto; }
+        /* Renderização Otimizada (Altura Fixa) */
         .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #ccc; font-size: 13px; white-space: nowrap; overflow: hidden; height: 40px; line-height: 16px; }
         .item.focused { background: #eee; color: #000; font-weight: 700; transform: scale(1.01); }
         .fav-star { float: right; color: var(--gold); font-size: 14px; }
@@ -73,6 +75,7 @@
         .vid-box { width: 100%; height: 50%; background: #000; border-bottom: 1px solid #333; position: relative; }
         .vid-box.focused { border: 4px solid var(--gold); }
         .video-off { display: none !important; }
+        
         video { width: 100%; height: 100%; background: #000; object-fit: contain; }
         
         .meta { padding: 25px; flex: 1; overflow-y: auto; background: #050505; }
@@ -87,12 +90,12 @@
 </head>
 <body onload="App.start()">
 
-    <div id="loader">CARREGANDO...</div>
+    <div id="loader">CARREGANDO SISTEMA...</div>
 
     <div id="login-layer" class="layer flex-center">
         <div class="login-box">
-            <div class="nr-header">R&C GOLD</div>
-            <input type="text" id="inp0" class="nr-input" placeholder="URL (http://...)" autocomplete="off">
+            <div class="nr-header">R&C GOLD STB</div>
+            <input type="text" id="inp0" class="nr-input" placeholder="URL ou M3U" autocomplete="off">
             <input type="text" id="inp1" class="nr-input" placeholder="Usuário" autocomplete="off">
             <input type="password" id="inp2" class="nr-input" placeholder="Senha" autocomplete="off">
             <button id="inp3" class="nr-btn" onclick="App.login()">CONECTAR</button>
@@ -137,7 +140,7 @@
                 <div id="meta-desc" class="meta-desc">Aguardando seleção...</div>
                 <div class="color-keys">
                     <span class="ck-btn" style="color:#f44">■ TELA CHEIA</span>
-                    <span class="ck-btn" style="color:#4f4">■ VOLTAR CATEGORIA</span>
+                    <span class="ck-btn" style="color:#4f4">■ CATEGORIAS</span>
                     <span class="ck-btn" style="color:#fb3">■ FAVORITAR</span>
                     <span class="ck-btn" style="color:#4bf">■ MENU</span>
                 </div>
@@ -148,10 +151,10 @@
     <script>
         var App = {
             screen: 0, zone: 0, idx: 0,
-            creds: {h:'', u:'', p:''}, 
+            creds: {h:'', u:'', p:''}, modeType: 'xtream', dataM3U: [],
             cats: [], items: [], mode: 'live', memCat: 0, isSeries: false,
             loadedCatId: -1, isSearchMode: false, hls: null, activeReq: null,
-            favs: [], favMap: {},
+            favs: [], favMap: {}, retryCount: 0,
 
             start: function() {
                 if(localStorage.getItem('rc_h')) {
@@ -161,12 +164,29 @@
                 }
                 this.loadFavs();
                 this.idx = 0; this.refreshFocus();
+                
                 var v = document.getElementById('player');
                 var me = this;
+                
+                // EVENTOS DO PLAYER (Estilo STB)
                 v.addEventListener('ended', function(){ if(me.isSeries) me.next(); });
-                // Auto Recovery simples
-                v.addEventListener('error', function(){ 
-                    if(!Hls.isSupported()) setTimeout(function(){ v.load(); v.play(); }, 2000); 
+                
+                // --- MECANISMO DE FALLBACK (CORREÇÃO DE ERRO) ---
+                v.addEventListener('error', function(e) {
+                    console.log("Erro Playback, tentando recuperar...", v.src);
+                    
+                    if(me.retryCount < 2) {
+                        me.retryCount++;
+                        // Se for .ts e falhou, tenta HLS
+                        if(v.src.indexOf('.ts') > -1) {
+                            var newUrl = v.src.replace('.ts', '.m3u8');
+                            me.playHLS(newUrl);
+                        } 
+                        // Se for .m3u8 e falhou, tenta recarregar
+                        else if(v.src.indexOf('.m3u8') > -1 && me.hls) {
+                            me.hls.recoverMediaError();
+                        }
+                    }
                 });
             },
 
@@ -175,8 +195,7 @@
                 this.favs = fs ? JSON.parse(fs) : [];
                 this.favMap = {};
                 for(var i=0; i<this.favs.length; i++) {
-                    var item = this.favs[i];
-                    var uid = item.stream_id || item.series_id || item.id;
+                    var uid = this.favs[i].stream_id || this.favs[i].series_id || this.favs[i].id;
                     this.favMap[uid] = true;
                 }
             },
@@ -204,7 +223,6 @@
                 }
             },
 
-            // --- REDE OTIMIZADA ---
             req: function(q, cb) {
                 if(this.activeReq) this.activeReq.abort();
                 document.getElementById('loader').style.display = 'flex';
@@ -212,12 +230,12 @@
                 var url = this.creds.h + "/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&"+q;
                 
                 this.activeReq.open("GET", url, true);
-                this.activeReq.timeout = 25000;
+                this.activeReq.timeout = 20000;
                 this.activeReq.onload = function(){ 
                     document.getElementById('loader').style.display='none'; 
                     if(this.status===200) try{cb(JSON.parse(this.responseText))}catch(e){cb(null)} else cb(null); 
                 };
-                this.activeReq.onerror = function(){ document.getElementById('loader').style.display='none'; App.activeReq = null; };
+                this.activeReq.onerror = function(){ document.getElementById('loader').style.display='none'; };
                 this.activeReq.send();
             },
 
@@ -227,20 +245,56 @@
                 var p = document.getElementById('inp2').value.trim();
                 if(!h) return;
                 
-                if(h.endsWith('/')) h = h.slice(0, -1);
-                if(h.indexOf('http')===-1) h='http://'+h;
-                this.creds = {h:h, u:u, p:p};
-                var me = this;
-                this.req("", function(d){
-                    if(d && d.user_info && d.user_info.auth===1) {
-                        localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
-                        var created = d.user_info.created_at ? new Date(d.user_info.created_at*1000).toLocaleDateString('pt-BR') : "--";
-                        document.getElementById('d-date').innerText = created;
-                        document.getElementById('d-conn').innerText = (d.user_info.active_cons||0)+"/"+(d.user_info.max_connections||0);
-                        document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString('pt-BR') : "Ilimitado";
-                        me.setScreen(1);
-                    } else alert("Dados Incorretos");
-                });
+                localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
+
+                if(u === "" || h.toLowerCase().includes('.m3u')) {
+                    this.modeType = 'm3u'; this.loadM3U(h);
+                } else {
+                    this.modeType = 'xtream';
+                    if(h.endsWith('/')) h = h.slice(0, -1);
+                    if(h.indexOf('http')===-1) h='http://'+h;
+                    this.creds = {h:h, u:u, p:p};
+                    var me = this;
+                    this.req("", function(d){
+                        if(d && d.user_info && d.user_info.auth===1) {
+                            var created = d.user_info.created_at ? new Date(d.user_info.created_at*1000).toLocaleDateString('pt-BR') : "--";
+                            document.getElementById('d-date').innerText = created;
+                            document.getElementById('d-conn').innerText = (d.user_info.active_cons||0)+"/"+(d.user_info.max_connections||0);
+                            document.getElementById('d-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString('pt-BR') : "Ilimitado";
+                            me.setScreen(1);
+                        } else alert("Dados Incorretos");
+                    });
+                }
+            },
+
+            loadM3U: function(url) {
+                document.getElementById('loader').style.display = 'flex';
+                var x = new XMLHttpRequest();
+                x.open("GET", url, true);
+                x.onload = function() {
+                    document.getElementById('loader').style.display='none';
+                    if(x.status===200) {
+                        App.parseM3U(x.responseText);
+                        document.getElementById('d-date').innerText = "M3U";
+                        document.getElementById('d-exp').innerText = "Local";
+                        App.setScreen(1);
+                    } else alert("Erro M3U");
+                };
+                x.send();
+            },
+
+            parseM3U: function(data) {
+                var lines = data.split('\n'); this.dataM3U = []; var grp = "Geral";
+                for(var i=0; i<lines.length; i++) {
+                    var l = lines[i].trim();
+                    if(l.startsWith('#EXTINF')) {
+                        var u = (lines[i+1]||"").trim();
+                        var m = l.match(/group-title="([^"]+)"/);
+                        if(m) grp = m[1];
+                        var n = l.substring(l.lastIndexOf(',')+1).trim();
+                        this.dataM3U.push({name:n, group:grp, url:u, id:u});
+                    }
+                }
             },
 
             setScreen: function(n) {
@@ -269,9 +323,22 @@
                     return;
                 }
 
-                var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
-                var me = this;
-                this.req("action="+act, function(d){ me.cats = d||[]; me.renderCats(); });
+                if(this.modeType === 'm3u') {
+                    var gs = {};
+                    this.dataM3U.forEach(function(i){ 
+                        var g = i.group.toUpperCase(); var add=false;
+                        if(m==='live' && !g.includes('FILME') && !g.includes('SERIE')) add=true;
+                        if(m==='movie' && g.includes('FILME')) add=true;
+                        if(m==='series' && g.includes('SERIE')) add=true;
+                        if(add) gs[i.group]=true;
+                    });
+                    this.cats = Object.keys(gs).map(function(k){ return {category_name:k, category_id:k}; });
+                    this.renderCats();
+                } else {
+                    var act = m==='live'?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
+                    var me = this;
+                    this.req("action="+act, function(d){ me.cats = d||[]; me.renderCats(); });
+                }
             },
 
             renderCats: function() {
@@ -300,20 +367,22 @@
                     return;
                 }
 
-                var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                var me = this;
-                document.getElementById('item-list').innerHTML = '<div style="padding:10px">Carregando...</div>';
-                
-                // MODO TURBO (Carrega tudo, sem frescura)
-                this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
-                    me.items = d||[]; 
-                    me.renderList();
-                    if(foc) { me.zone=2; me.idx=0; me.refreshFocus(); }
-                });
+                if(this.modeType === 'm3u') {
+                    var gid = this.cats[i].category_id;
+                    this.items = this.dataM3U.filter(function(it){ return it.group===gid; });
+                    this.renderList(); if(foc) { this.zone=2; this.idx=0; this.refreshFocus(); }
+                } else {
+                    var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                    var me = this;
+                    document.getElementById('item-list').innerHTML = '<div style="padding:10px">Carregando...</div>';
+                    this.req("action="+act+"&category_id="+this.cats[i].category_id, function(d){
+                        me.items = d||[]; me.renderList();
+                        if(foc) { me.zone=2; me.idx=0; me.refreshFocus(); }
+                    });
+                }
             },
 
             renderList: function() {
-                // RENDERIZAÇÃO INSTANTÂNEA (STRING BUILDER)
                 var max = this.items.length > 500 ? 500 : this.items.length;
                 var html = [];
                 if(this.isSeries) html.push('<div class="item" id="i-1" style="color:var(--gold)">.. VOLTAR</div>');
@@ -336,16 +405,21 @@
                 this.loadedCatId = -1; this.isSearchMode = true;
                 
                 var act = this.mode==='live'?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                var me = this;
-                this.req("action="+act, function(d){
-                    var all=d||[]; var res=[];
-                    for(var i=0; i<all.length; i++) {
-                        var n = (all[i].name||all[i].title||"").toLowerCase();
-                        if(n.includes(term)) { res.push(all[i]); if(res.length>=100) break; }
-                    }
-                    if(res.length===0) { alert("Nada encontrado."); me.renderList(); document.getElementById('search').removeAttribute('readonly'); }
-                    else { me.items=res; me.renderList(); me.zone=2; me.idx=0; me.refreshFocus(); }
-                });
+                if(this.modeType==='m3u') {
+                    this.items = this.dataM3U.filter(function(it){ return it.name.toLowerCase().includes(term); });
+                    this.renderList(); this.zone=2; this.idx=0; this.refreshFocus();
+                } else {
+                    var me = this;
+                    this.req("action="+act, function(d){
+                        var all=d||[]; var res=[];
+                        for(var i=0; i<all.length; i++) {
+                            var n = (all[i].name||all[i].title||"").toLowerCase();
+                            if(n.includes(term)) { res.push(all[i]); if(res.length>=100) break; }
+                        }
+                        if(res.length===0) { alert("Nada encontrado."); me.renderList(); document.getElementById('search').removeAttribute('readonly'); }
+                        else { me.items=res; me.renderList(); me.zone=2; me.idx=0; me.refreshFocus(); }
+                    });
+                }
             },
 
             triggerSearch: function() {
@@ -361,53 +435,62 @@
                 var playMode = item._sm || this.mode; 
                 var url = ""; var title = "";
 
-                if(playMode==='series' && !this.isSeries) {
-                    var me = this;
-                    this.req("action=get_series_info&series_id="+item.series_id, function(d){
-                        var eps=[]; if(d && d.episodes) for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
-                        me.items=eps; me.isSeries=true; me.renderList(); me.idx=0; me.refreshFocus();
-                    });
-                    return;
+                if(this.modeType==='m3u') {
+                    url = item.url; title = item.name;
+                } else {
+                    if(playMode==='series' && !this.isSeries) {
+                        var me = this;
+                        this.req("action=get_series_info&series_id="+item.series_id, function(d){
+                            var eps=[]; if(d && d.episodes) for(var k in d.episodes) for(var x=0; x<d.episodes[k].length; x++) eps.push(d.episodes[k][x]);
+                            me.items=eps; me.isSeries=true; me.renderList(); me.idx=0; me.refreshFocus();
+                        });
+                        return;
+                    }
+                    var ext = (playMode==='live')?'ts':'mp4';
+                    if(playMode!=='live' && item.container_extension) ext = item.container_extension;
+                    
+                    url = this.creds.h + "/" + (playMode==='live'?'live':(playMode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
+                    title = item.name||item.title;
                 }
-                
-                var ext = (playMode==='live')?'ts':'mp4';
-                if(playMode!=='live' && item.container_extension) ext = item.container_extension;
-                
-                url = this.creds.h + "/" + (playMode==='live'?'live':(playMode==='movie'?'movie':'series')) + "/" + this.creds.u + "/" + this.creds.p + "/" + (item.stream_id||item.id) + "." + ext;
-                title = item.name||item.title;
 
                 document.getElementById('meta-title').innerText = title;
                 document.getElementById('meta-desc').innerText = "Carregando...";
                 document.getElementById('vid-box').classList.remove('video-off');
-                var v = document.getElementById('player');
-
-                // --- CORREÇÃO DEFINITIVA ---
-                // SE FOR LIVE: USA HLS.js (Com conversão .ts -> .m3u8)
-                // SE FOR VOD: USA NATIVO (Sem HLS.js)
                 
-                if(this.hls) { this.hls.destroy(); this.hls = null; }
-
+                this.retryCount = 0;
+                
+                // --- MOTOR V33: SEPARAÇÃO TOTAL ---
                 if(playMode === 'live') {
-                    if(url.includes('.ts')) url = url.replace('.ts', '.m3u8'); // Conversão Mágica
-
-                    if(Hls.isSupported()) {
-                        var hls = new Hls({ enableWorker: true, lowLatencyMode: true });
-                        hls.loadSource(url);
-                        hls.attachMedia(v);
-                        hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
-                        // Fallback Nativo se HLS falhar
-                        var me = this;
-                        hls.on(Hls.Events.ERROR, function(e,data){ if(data.fatal) { me.hls.destroy(); v.src = url; v.play(); } });
-                        this.hls = hls;
-                    } else {
-                        v.src = url; v.play();
-                    }
+                    // LIVE: TENTA DIRETO, SE FALHAR VAI PRO HLS (No onError)
+                    // Mas TVs preferem m3u8 para live
+                    if(url.includes('.ts')) url = url.replace('.ts', '.m3u8');
+                    this.playHLS(url);
                 } else {
-                    // VOD: Direto e Reto
-                    v.src = url; 
-                    v.play();
+                    // VOD: DIRETO SEMPRE
+                    this.playDirect(url);
                 }
                 this.zone = 3; this.refreshFocus();
+            },
+
+            playDirect: function(url) {
+                var v = document.getElementById('player');
+                if(this.hls) { this.hls.destroy(); this.hls=null; }
+                v.src = url; 
+                v.play();
+            },
+
+            playHLS: function(url) {
+                var v = document.getElementById('player');
+                if(Hls.isSupported()) {
+                    if(this.hls) this.hls.destroy();
+                    var hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+                    hls.loadSource(url);
+                    hls.attachMedia(v);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() { v.play(); });
+                    this.hls = hls;
+                } else {
+                    v.src = url; v.play();
+                }
             },
 
             stop: function() { 
@@ -472,13 +555,16 @@
                     this.refreshFocus();
                 }
                 if(this.screen===2) {
+                    // CAT
                     if(this.zone===0) { 
                         if(k===40 && this.idx<this.cats.length-1) this.idx++;
                         if(k===38 && this.idx>0) this.idx--;
                         if(k===13) this.loadCat(this.idx, true); 
                         if(k===39) this.loadCat(this.idx, true); 
                     }
+                    // BUSCA
                     else if(this.zone===1) { if(k===40) { this.zone=2; this.idx=0; } }
+                    // LISTA
                     else if(this.zone===2) { 
                         var max = (this.items.length>500?500:this.items.length)-1;
                         var min = this.isSeries?-1:0;
@@ -492,6 +578,7 @@
                         if(k===39) this.zone=3; 
                         if(k===13) this.clickItem(this.idx);
                     }
+                    // PLAYER
                     else if(this.zone===3) { 
                         var v = document.getElementById('player');
                         var isFull = document.getElementById('vid-box').classList.contains('fs-mode');
@@ -512,9 +599,9 @@
             var k = e.keyCode || e.which;
             
             if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; } 
-            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; }
-            if(k===405||k===89) { e.preventDefault(); App.toggleFav(); return; }
-            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; }
+            if(k===404||k===71) { e.preventDefault(); if(App.screen===2){ App.zone=0; App.idx=0; App.refreshFocus(); } return; } 
+            if(k===405||k===89) { e.preventDefault(); App.toggleFav(); return; } 
+            if(k===406||k===66) { e.preventDefault(); App.setScreen(1); return; } 
             
             if(k===8||k===461||k===27) {
                 if(document.activeElement.id === 'search') { e.preventDefault(); document.getElementById('search').blur(); App.zone=0; App.refreshFocus(); return; }
