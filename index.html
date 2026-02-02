@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD V5 - MANUAL</title>
+    <title>SKY GOLD - AUTO LOGIN FIXED</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -13,7 +13,7 @@
             --bg-body: #000;
             --sky-gold: #FFD700;
             --sky-gold-dim: #b39700;
-            --neon-glow: 0 0 12px rgba(255, 215, 0, 0.4);
+            --neon-glow: 0 0 15px rgba(255, 215, 0, 0.4);
             --text-main: #f0f0f0;
         }
 
@@ -25,132 +25,134 @@
             height: 100vh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* LOADERS */
+        /* --- LOADER --- */
         #loader {
             position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
         }
         .spinner {
-            width: 50px; height: 50px; border: 4px solid #333; border-top: 4px solid var(--sky-gold);
-            border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px;
+            width: 60px; height: 60px; border: 4px solid #333; border-top: 4px solid var(--sky-gold);
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 20px;
             box-shadow: var(--neon-glow);
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* LOGIN */
+        /* --- TELA LOGIN --- */
         #loginScreen {
             position: absolute; width: 100%; height: 100%; z-index: 5000;
-            display: none; /* Controlado via JS */
+            display: none; /* JS controla visibilidade */
             justify-content: center; align-items: center; background: #050505;
         }
         .login-box {
-            width: 400px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 12px;
-            text-align: center; border-top: 3px solid var(--sky-gold); box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            width: 450px; padding: 50px; background: #111; border: 1px solid #333; border-radius: 15px;
+            text-align: center; border-top: 2px solid var(--sky-gold); box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
+        .lg-title { color: var(--sky-gold); margin-bottom: 30px; font-size: 28px; text-shadow: var(--neon-glow); }
+        
         .lg-inp {
-            width: 100%; height: 50px; background: #222; border: 1px solid #444; color: #fff;
-            text-align: center; margin-bottom: 12px; font-size: 14px; border-radius: 6px;
+            width: 100%; height: 55px; background: #222; border: 1px solid #444; color: #fff;
+            text-align: center; margin-bottom: 15px; font-size: 16px; border-radius: 8px;
         }
-        .lg-inp:focus { border-color: var(--sky-gold); background: #000; color: var(--sky-gold); }
+        .lg-inp:focus { background: #000; border-color: var(--sky-gold); box-shadow: var(--neon-glow); }
+        
         .lg-btn {
-            width: 100%; height: 50px; background: var(--sky-gold); border: none; font-weight: 800;
-            font-size: 16px; cursor: pointer; border-radius: 6px; color: #000; margin-top: 10px;
-            text-transform: uppercase; letter-spacing: 1px;
+            width: 100%; height: 55px; background: linear-gradient(45deg, var(--sky-gold-dim), var(--sky-gold)); 
+            border: none; font-weight: 900; font-size: 18px; cursor: pointer; border-radius: 8px; color: #000;
+            text-transform: uppercase; margin-top: 10px;
         }
-        .lg-btn:focus { transform: scale(1.05); box-shadow: var(--neon-glow); }
+        .lg-btn:focus { transform: scale(1.05); box-shadow: 0 0 20px var(--sky-gold); }
 
-        /* MENU */
+        /* --- MENU PRINCIPAL --- */
         #mainMenu {
             display: none; width: 100%; height: 100%; flex-direction: column; 
             align-items: center; justify-content: center; z-index: 100;
         }
-        .logo-txt { font-size: 55px; font-weight: 800; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
+        .logo-txt { font-size: 60px; font-weight: 900; color: #fff; margin-bottom: 50px; letter-spacing: -2px; }
         .logo-txt span { color: var(--sky-gold); text-shadow: var(--neon-glow); font-style: italic; }
         
-        .cards-container { display: flex; gap: 30px; }
+        .cards-container { display: flex; gap: 40px; }
         .nav-card {
-            width: 180px; height: 180px; background: #111; border-radius: 16px;
+            width: 200px; height: 200px; background: #111; border-radius: 20px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             border: 2px solid #222; transition: all 0.2s; color: #666;
         }
-        .nav-card i { font-size: 45px; margin-bottom: 15px; }
-        .nav-card span { font-size: 15px; font-weight: 700; text-transform: uppercase; }
+        .nav-card i { font-size: 50px; margin-bottom: 20px; }
+        .nav-card span { font-size: 18px; font-weight: 700; text-transform: uppercase; }
         
         .nav-card.focused {
             border-color: var(--sky-gold); color: var(--sky-gold); background: #1a1a1a;
-            box-shadow: var(--neon-glow); transform: scale(1.1);
+            box-shadow: var(--neon-glow); transform: scale(1.15); z-index: 10;
         }
 
-        /* CONTEÚDO */
+        /* --- INTERFACE DE CONTEÚDO --- */
         #contentInterface { display: none; width: 100%; height: 100%; display: flex; }
         
-        .col-cats { width: 280px; background: #080808; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .col-list { width: 420px; background: #0e0e0e; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 30px; align-items: center; }
+        .col-cats { width: 280px; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-list { width: 420px; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-view { flex: 1; background: #000; display: flex; flex-direction: column; padding: 40px; align-items: center; }
 
-        .panel-head { padding: 20px; font-weight: 800; color: var(--sky-gold); text-align: center; border-bottom: 1px solid #222; font-size: 14px; letter-spacing: 1px; }
-        .list-wrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px; }
+        .panel-head { padding: 20px; font-weight: 900; color: var(--sky-gold); text-align: center; font-size: 16px; border-bottom: 1px solid #222; }
+        .list-wrap { flex: 1; overflow-y: auto; padding: 10px; }
         
         .c-item, .l-item { 
-            padding: 14px; margin-bottom: 5px; color: #888; border-radius: 6px; font-size: 13px; font-weight: 600;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 1px solid transparent; transition: 0.1s;
+            padding: 15px; margin-bottom: 6px; color: #999; border-radius: 6px; font-size: 14px; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .c-item.active { background: #181818; color: #fff; border-left: 3px solid #444; }
-        .c-item.focused { background: var(--sky-gold); color: #000; font-weight: 800; box-shadow: var(--neon-glow); }
+        .c-item.active { color: #fff; background: #1a1a1a; border-left: 3px solid #555; }
+        .c-item.focused { background: var(--sky-gold); color: #000; font-weight: 900; box-shadow: var(--neon-glow); transform: scale(1.02); }
         
-        .l-item.focused { 
-            background: #fff; color: #000; font-weight: 800; 
-            border-left: 5px solid var(--sky-gold); transform: scale(1.02); z-index: 10;
-        }
-
         .search-box { padding: 15px; background: #080808; border-bottom: 1px solid #222; }
         .s-inp { 
-            width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: var(--sky-gold); 
-            text-align: center; font-weight: bold; border-radius: 6px; text-transform: uppercase;
+            width: 100%; padding: 12px; background: #181818; border: 1px solid #333; color: var(--sky-gold); 
+            text-transform: uppercase; border-radius: 5px; text-align: center; font-weight: bold;
         }
         .s-inp.focused { background: #fff; color: #000; border-color: var(--sky-gold); }
 
-        /* PLAYER & OSD */
+        .l-item.focused { 
+            background: #fff; color: #000; font-weight: 900; 
+            border-left: 5px solid var(--sky-gold); transform: scale(1.03); z-index: 5;
+        }
+
         .frame { 
-            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #333; border-radius: 10px;
-            margin-bottom: 25px; position: relative; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            width: 100%; aspect-ratio: 16/9; background: #000; border: 2px solid #222; border-radius: 12px;
+            margin-bottom: 25px; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
         }
         .frame.focused { border-color: var(--sky-gold); box-shadow: var(--neon-glow); }
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
-        .info-title { font-size: 28px; color: var(--sky-gold); font-weight: 800; margin-bottom: 10px; width: 100%; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .info-desc { font-size: 14px; color: #999; width: 100%; line-height: 1.5; }
+        .info-title { font-size: 32px; color: var(--sky-gold); font-weight: 900; margin-bottom: 15px; width: 100%; }
+        .info-desc { font-size: 15px; color: #aaa; width: 100%; max-height: 100px; overflow: hidden; }
 
-        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9000; border:none !important; border-radius:0 !important; margin:0 !important; }
+        .fs { position: fixed !important; top:0; left:0; width:100vw !important; height:100vh !important; z-index:9000; border:none !important; margin:0 !important; background:#000; border-radius: 0 !important; }
         
         .vod-osd {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 90px;
-            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-            display: none; flex-direction: column; justify-content: flex-end; padding: 25px; pointer-events: none;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100px;
+            background: linear-gradient(to top, rgba(0,0,0,1), transparent);
+            display: none; flex-direction: column; justify-content: flex-end; padding: 30px; pointer-events: none;
         }
-        .osd-row { display: flex; justify-content: space-between; color: #fff; font-weight: bold; margin-bottom: 8px; font-size: 15px; }
-        .prog-bg { width: 100%; height: 6px; background: #444; border-radius: 3px; overflow: hidden; }
+        .osd-txt { color: #fff; font-size: 20px; font-weight: bold; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .prog-bg { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
         .prog-fill { height: 100%; width: 0%; background: var(--sky-gold); box-shadow: 0 0 10px var(--sky-gold); }
         
-        .seek-toast {
+        .seek-notify {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85); color: var(--sky-gold); border: 2px solid var(--sky-gold);
-            padding: 15px 35px; font-size: 28px; font-weight: 900; border-radius: 12px; display: none;
-            box-shadow: var(--neon-glow);
+            font-size: 40px; color: #fff; background: rgba(0,0,0,0.8); padding: 20px 40px;
+            border-radius: 10px; display: none; border: 2px solid var(--sky-gold); box-shadow: var(--neon-glow);
         }
 
         ::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
-<body onload="App.init()">
+<body onload="SkyApp.init()">
 
     <div id="loader">
         <div class="spinner"></div>
+        <div style="color:#666; font-weight:bold; letter-spacing:2px">CONECTANDO SKY GOLD...</div>
     </div>
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:var(--sky-gold); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px"><i class="fas fa-user-circle"></i> Acesso</h2>
+            <div class="lg-title"><i class="fas fa-crown"></i> SKY GOLD</div>
             <input type="text" id="h" class="lg-inp" placeholder="URL DNS (http://...)">
             <input type="text" id="u" class="lg-inp" placeholder="Usuário">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
@@ -159,12 +161,14 @@
     </div>
 
     <div id="mainMenu">
-        <div class="logo-txt"><i class="fas fa-star"></i> SKY <span>GOLD</span></div>
+        <div class="logo-area">
+            <div class="logo-txt"><i class="fas fa-star"></i> SKY <span>GOLD</span></div>
+        </div>
         <div class="cards-container">
             <div class="nav-card focused" id="card-live"><i class="fas fa-tv"></i><span>TV Ao Vivo</span></div>
             <div class="nav-card" id="card-mov"><i class="fas fa-film"></i><span>Filmes</span></div>
             <div class="nav-card" id="card-ser"><i class="fas fa-layer-group"></i><span>Séries</span></div>
-            <div class="nav-card" id="card-cfg"><i class="fas fa-sign-out-alt"></i><span>Sair</span></div>
+            <div class="nav-card" id="card-cfg"><i class="fas fa-power-off"></i><span>Sair</span></div>
         </div>
     </div>
 
@@ -175,62 +179,66 @@
         </div>
         <div class="col-list">
             <div class="search-box">
-                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR CONTEÚDO" onkeydown="App.handleSearch(event)">
+                <input type="text" id="search-inp" class="s-inp" placeholder="BUSCAR..." onkeydown="SkyApp.handleSearch(event)">
             </div>
             <div class="list-wrap" id="list-cnt"></div>
         </div>
         <div class="col-view">
             <div class="frame" id="v-box">
                 <video id="player" playsinline></video>
-                <div class="seek-toast" id="seek-osd"></div>
+                <div class="seek-notify" id="seek-osd"></div>
                 <div class="vod-osd" id="osd">
-                    <div class="osd-row"><span id="st-tit">Pausado</span><span id="st-time">00:00</span></div>
+                    <div class="osd-txt">
+                        <span id="osd-stat">PAUSADO</span>
+                        <span id="osd-time">00:00 / 00:00</span>
+                    </div>
                     <div class="prog-bg"><div class="prog-fill" id="prog-bar"></div></div>
                 </div>
             </div>
             <div class="info-title" id="lbl-title">Bem Vindo ao Sky Gold</div>
-            <div class="info-desc" id="lbl-desc">Navegue pelo menu para selecionar TV, Filmes ou Séries.</div>
+            <div class="info-desc" id="lbl-desc">Navegue pelas listas para começar a assistir.</div>
         </div>
     </div>
 
     <script>
         let hls = null;
+        let seekTimer = null;
         let osdTimer = null;
-        let searchTimer = null;
 
-        const App = {
+        const SkyApp = {
             scr: 'login', zone: 0, fIdx: 0,
             creds: {}, mode: 'live',
-            cats: [], items: [], viewItems: [], 
+            cats: [], items: [], viewItems: [],
             renderedCount: 0, isSeries: false, currId: null,
 
             init: function() {
-                // RECUPERA DADOS MAS NÃO LOGA SOZINHO
-                let h = localStorage.getItem('sg_h');
-                let u = localStorage.getItem('sg_u');
-                let p = localStorage.getItem('sg_p');
+                // --- LÓGICA DE AUTO LOGIN CORRIGIDA ---
+                let h = localStorage.getItem('sky_h');
+                let u = localStorage.getItem('sky_u');
+                let p = localStorage.getItem('sky_p');
 
-                if(h && h !== "null") document.getElementById('h').value = h;
-                if(u && u !== "null") document.getElementById('u').value = u;
-                if(p && p !== "null") document.getElementById('p').value = p;
-
-                // Força o Loader sumir imediatamente e foca no botão Entrar
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                
-                // Se tiver dados, foca no botão, senão no primeiro campo
-                if(h && u && p) document.getElementById('btnEnter').focus();
-                else document.getElementById('h').focus();
+                if(h && u && p) {
+                    // SE TEM DADOS: Preenche e tenta logar (Loader continua ativo)
+                    this.creds = {h,u,p};
+                    document.getElementById('h').value = h;
+                    document.getElementById('u').value = u;
+                    document.getElementById('p').value = p;
+                    this.login(true);
+                } else {
+                    // SE NÃO TEM DADOS: Desativa Loader IMEDIATAMENTE e mostra tela de login
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('loginScreen').style.display = 'flex';
+                    document.getElementById('h').focus();
+                }
 
                 document.addEventListener('keydown', this.onKey.bind(this));
                 
-                // Eventos Player
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
                 v.addEventListener('play', () => this.hideOSD());
                 v.addEventListener('pause', () => this.showOSD('PAUSADO', false));
                 v.addEventListener('ended', () => {
-                    if(this.isSeries && this.fIdx < this.viewItems.length-1) {
+                    if(this.isSeries && this.fIdx < this.viewItems.length - 1) {
                         this.fIdx++; this.play(this.fIdx); this.renderFocus();
                     } else this.exitFS();
                 });
@@ -238,15 +246,14 @@
 
             load: function(s) { document.getElementById('loader').style.display = s?'flex':'none'; },
 
-            login: async function() {
-                let h=document.getElementById('h').value.trim();
-                let u=document.getElementById('u').value.trim();
-                let p=document.getElementById('p').value.trim();
+            login: async function(isAuto = false) {
+                let h=isAuto ? this.creds.h : document.getElementById('h').value.trim();
+                let u=isAuto ? this.creds.u : document.getElementById('u').value.trim();
+                let p=isAuto ? this.creds.p : document.getElementById('p').value.trim();
                 
-                if(!h) { alert('Preencha a URL'); return; }
-                if(!h.startsWith('http')) h='http://'+h;
+                if(!h.startsWith('http')) h = 'http://'+h;
 
-                this.load(true);
+                if(!isAuto) this.load(true);
 
                 try {
                     let r = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
@@ -254,60 +261,73 @@
                     
                     if(d.user_info && d.user_info.status === 'Active') {
                         this.creds = {h,u,p};
-                        // Salva para a próxima vez (apenas preencher campos)
-                        localStorage.setItem('sg_h',h); localStorage.setItem('sg_u',u); localStorage.setItem('sg_p',p);
+                        localStorage.setItem('sky_h',h); localStorage.setItem('sky_u',u); localStorage.setItem('sky_p',p);
                         
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
                     } else {
-                        alert('Dados Inválidos!');
+                        // Se falhar o auto login, limpa e mostra a tela
+                        if(isAuto) {
+                            localStorage.clear();
+                            document.getElementById('loader').style.display = 'none';
+                            document.getElementById('loginScreen').style.display = 'flex';
+                            alert('Sessão expirada. Faça login novamente.');
+                        } else {
+                            alert('Dados Inválidos!');
+                            this.load(false);
+                        }
                     }
                 } catch(e) { 
-                     alert('Erro de Conexão. Verifique a URL.');
+                    if(isAuto) {
+                        // Se der erro de conexão no auto login, libera a tela
+                        document.getElementById('loader').style.display = 'none';
+                        document.getElementById('loginScreen').style.display = 'flex';
+                    } else {
+                        alert('Erro de Conexão. Verifique a URL.');
+                        this.load(false);
+                    }
                 }
-                this.load(false);
             },
 
             goMenu: function() {
-                this.scr='menu'; this.zone=0; this.fIdx=0; this.stopPlayer();
+                this.scr = 'menu'; this.zone = 0; this.fIdx = 0;
+                this.stopPlayer();
                 document.getElementById('mainMenu').style.display='flex';
                 document.getElementById('contentInterface').style.display='none';
+                this.load(false);
                 this.renderCards();
             },
 
             renderCards: function() {
-                ['card-live','card-mov','card-ser','card-cfg'].forEach((id,i) => {
-                    let el = document.getElementById(id);
-                    if(i===this.fIdx) el.classList.add('focused');
-                    else el.classList.remove('focused');
-                });
+                let ids = ['card-live','card-mov','card-ser','card-cfg'];
+                ids.forEach(id => document.getElementById(id).classList.remove('focused'));
+                document.getElementById(ids[this.fIdx]).classList.add('focused');
             },
 
             goContent: async function(m) {
-                if(m==='cfg') { localStorage.clear(); location.reload(); return; }
-                this.mode=m; this.scr='content'; this.zone=1; this.fIdx=0;
-                this.isSeries=false; this.items=[]; this.viewItems=[];
+                if(m === 'cfg') { localStorage.clear(); location.reload(); return; }
                 
+                this.mode = m; this.scr = 'content'; 
+                this.zone = 1; this.fIdx = 0; 
+                this.items = []; this.viewItems = []; this.isSeries = false;
+
                 document.getElementById('mainMenu').style.display='none';
                 document.getElementById('contentInterface').style.display='flex';
-                document.getElementById('cat-head').innerText = m==='live'?'CANAIS TV':(m==='vod'?'FILMES':'SÉRIES');
+                document.getElementById('cat-head').innerText = m==='live'?'CANAIS':(m==='vod'?'FILMES':'SÉRIES');
                 document.getElementById('list-cnt').innerHTML = '';
-
+                
                 this.load(true);
                 try {
                     let act = m==='live'?'get_live_categories':(m==='vod'?'get_vod_categories':'get_series_categories');
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`);
                     this.cats = await r.json();
-                    this.renderCats();
+                    
+                    let h = '';
+                    this.cats.forEach((c,i)=> h+=`<div class="c-item" id="c-${i}">${c.category_name}</div>`);
+                    document.getElementById('list-cat').innerHTML = h;
+                    this.renderFocus();
                 } catch(e){}
                 this.load(false);
-            },
-
-            renderCats: function() {
-                let h='';
-                this.cats.forEach((c,i)=> h+=`<div class="c-item" id="c-${i}">${c.category_name}</div>`);
-                document.getElementById('list-cat').innerHTML = h;
-                this.renderFocus();
             },
 
             loadCat: async function() {
@@ -315,7 +335,7 @@
                 document.querySelectorAll('.c-item').forEach(e=>e.classList.remove('active'));
                 document.getElementById('c-'+this.fIdx).classList.add('active');
                 
-                this.isSeries=false;
+                this.isSeries = false;
                 this.load(true);
                 try {
                     let act = this.mode==='live'?'get_live_streams':(this.mode==='vod'?'get_vod_streams':'get_series');
@@ -327,7 +347,7 @@
                     document.getElementById('list-cnt').innerHTML = '';
                     this.appendItems(50);
                     
-                    this.zone=2; document.getElementById('search-inp').focus();
+                    this.zone = 2; document.getElementById('search-inp').focus();
                     this.renderFocus();
                 } catch(e){}
                 this.load(false);
@@ -344,7 +364,7 @@
                     let it = this.viewItems[i];
                     let div = document.createElement('div');
                     div.className = 'l-item'; div.id = `l-${i}`;
-                    div.innerText = this.isSeries ? `S${it.season} E${it.episode_num} - ${it.title}` : (it.name || it.title);
+                    div.innerText = this.isSeries ? `S${it.season} E${it.episode_num} - ${it.title}` : (it.name||it.title);
                     fragment.appendChild(div);
                 }
                 
@@ -365,7 +385,7 @@
                 let vid = document.getElementById('player');
                 let sid = it.stream_id || it.id;
                 
-                if(this.currId === sid && !vid.paused) { this.enterFS(); return; }
+                if(this.currId === sid && vid.src && !vid.paused) { this.enterFS(); return; }
                 
                 this.currId = sid;
                 let ext = it.container_extension;
@@ -376,9 +396,10 @@
                 let url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${sid}.${ext}`;
 
                 document.getElementById('lbl-title').innerText = it.name||it.title;
-                document.getElementById('lbl-desc').innerText = "Carregando sinal...";
+                document.getElementById('lbl-desc').innerText = "Carregando...";
+
                 this.stopPlayer();
-                
+
                 if(this.mode === 'live' && Hls.isSupported()) {
                     hls = new Hls({capLevelToPlayerSize:true});
                     hls.loadSource(url); hls.attachMedia(vid);
@@ -405,10 +426,16 @@
             },
 
             stopPlayer: function() {
-                let v = document.getElementById('player');
-                v.pause(); v.removeAttribute('src'); v.load();
+                let v = document.getElementById('player'); v.pause(); v.removeAttribute('src'); v.load();
                 if(hls) { hls.destroy(); hls=null; }
                 this.currId = null;
+            },
+
+            refreshPlayer: function() {
+                if(!this.currId) return;
+                let v = document.getElementById('player');
+                let t = v.currentTime; let s = v.src;
+                v.src = ""; setTimeout(()=> { v.src=s; v.currentTime=t; v.play(); }, 200);
             },
 
             isFS: function() { return document.getElementById('v-box').classList.contains('fs'); },
@@ -420,58 +447,57 @@
                 if(!v.duration) return;
                 v.currentTime += val;
                 
-                let t = document.getElementById('seek-osd');
-                t.innerText = val>0 ? `+${val}s` : `${val}s`;
-                t.style.display='block';
-                setTimeout(()=>t.style.display='none', 800);
+                let n = document.getElementById('seek-osd');
+                n.innerText = val > 0 ? `+${val}s` : `${val}s`;
+                n.style.display = 'block';
+                clearTimeout(seekTimer);
+                seekTimer = setTimeout(()=> n.style.display='none', 1000);
+                
                 this.showOSD('BUSCANDO...', true);
             },
 
-            showOSD: function(txt, autoHide) {
-                if(this.mode==='live') return;
-                document.getElementById('st-tit').innerText = txt;
-                document.getElementById('osd').style.display = 'flex';
-                clearTimeout(osdTimer);
-                if(autoHide) { osdTimer = setTimeout(() => this.hideOSD(), 2500); }
-            },
-            hideOSD: function() { document.getElementById('osd').style.display='none'; },
-
             updOSD: function() {
-                if(!App.isFS() || App.mode === 'live') return;
+                if(!SkyApp.isFS() || SkyApp.mode === 'live') return;
                 let v = document.getElementById('player');
                 if(isNaN(v.duration)) return;
                 let p = (v.currentTime/v.duration)*100;
                 document.getElementById('prog-bar').style.width = p+'%';
                 
-                let cur = new Date(v.currentTime * 1000).toISOString().substr(11, 8);
-                let tot = new Date(v.duration * 1000).toISOString().substr(11, 8);
-                document.getElementById('st-time').innerText = `${cur} / ${tot}`;
+                const fmt = (t) => { let m = Math.floor(t/60); let s = Math.floor(t%60); return `${m}:${s<10?'0'+s:s}`; };
+                document.getElementById('osd-time').innerText = `${fmt(v.currentTime)} / ${fmt(v.duration)}`;
             },
+            
+            showOSD: function(txt, auto) {
+                if(this.mode==='live') return;
+                document.getElementById('osd-stat').innerText = txt;
+                document.getElementById('osd').style.display='flex';
+                clearTimeout(osdTimer);
+                if(auto) osdTimer = setTimeout(()=> SkyApp.hideOSD(), 2500);
+            },
+            hideOSD: function() { document.getElementById('osd').style.display='none'; },
 
-            handleSearch: function(e) { if(e.keyCode === 13) { clearTimeout(searchTimer); this.doSearch(); } },
+            handleSearch: function(e) { if(e.keyCode===13) this.doSearch(); },
             doSearch: function() {
-                let term = document.getElementById('search-inp').value.toLowerCase();
-                if(term.length < 3) return;
-                this.viewItems = this.items.filter(i => (i.name||i.title).toLowerCase().includes(term));
-                this.renderedCount = 0;
-                document.getElementById('list-cnt').innerHTML = '';
-                this.appendItems(50);
+                let t = document.getElementById('search-inp').value.toLowerCase();
+                if(t.length<3) return;
+                this.viewItems = this.items.filter(i=>(i.name||i.title).toLowerCase().includes(t));
+                this.renderedCount = 0; document.getElementById('list-cnt').innerHTML=''; this.appendItems(50);
                 if(this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); this.renderFocus(); }
             },
 
             renderFocus: function() {
                 document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
+                
                 if(this.scr==='menu') {
-                    ['card-live','card-mov','card-ser','card-cfg'].forEach((id,i)=>{
-                        if(i===this.fIdx) document.getElementById(id).classList.add('focused');
-                    });
+                    let ids=['card-live','card-mov','card-ser','card-cfg'];
+                    document.getElementById(ids[this.fIdx]).classList.add('focused');
                 } else {
                     if(this.zone===1) {
                         let e=document.getElementById('c-'+this.fIdx);
                         if(e){e.classList.add('focused'); e.scrollIntoView({block:'center'});}
-                    } 
-                    else if(this.zone===2) document.getElementById('search-inp').classList.add('focused');
-                    else if(this.zone===3) {
+                    } else if(this.zone===2) {
+                        document.getElementById('search-inp').classList.add('focused');
+                    } else if(this.zone===3) {
                         let id = (this.isSeries && this.fIdx===-1) ? 'l-back' : 'l-'+this.fIdx;
                         let e=document.getElementById(id);
                         if(e){e.classList.add('focused'); e.scrollIntoView({block:'nearest'});}
@@ -481,10 +507,10 @@
 
             onKey: function(e) {
                 let k = e.keyCode;
-                // LOGIN SCREEN KEY
+
                 if(this.scr==='login') {
                     if(k===13) {
-                        if(document.activeElement.id==='p'||document.activeElement.id==='btnEnter') this.login();
+                        if(document.activeElement.id==='p' || document.activeElement.id==='btnEnter') this.login();
                         else document.activeElement.nextElementSibling?.focus();
                     }
                     else if(k===40) document.activeElement.nextElementSibling?.focus();
@@ -493,18 +519,19 @@
                 }
 
                 if(this.isFS()) {
-                    e.preventDefault();
-                    if(k===8||k===27||k===461||k===10009) this.exitFS();
-                    if(k===13||k===32) { let v=document.getElementById('player'); v.paused?v.play():v.pause(); }
-                    if(this.mode!=='live') {
-                        if(k===39) this.seek(15);
-                        if(k===37) this.seek(-15);
+                    e.preventDefault(); 
+                    let v = document.getElementById('player');
+                    if(k===13 || k===32) v.paused ? v.play() : v.pause();
+                    if(k===8 || k===27 || k===461 || k===10009) this.exitFS();
+                    if(this.mode !== 'live') {
+                         if(k===39) this.seek(15);
+                         if(k===37) this.seek(-15);
                     }
                     return;
                 }
 
                 if([37,38,39,40].includes(k)) e.preventDefault();
-
+                
                 if([8,27,461,10009].includes(k)) {
                     if(this.scr==='menu') return;
                     if(this.isSeries && this.zone===3) this.loadCat();
@@ -518,30 +545,31 @@
                     if(k===37 && this.fIdx>0) this.fIdx--;
                     if(k===13) this.goContent(['live','vod','ser','cfg'][this.fIdx]);
                 }
-                else {
-                    if(this.zone===2 && k>=48 && k<=90) return;
-                    if(this.zone===1) {
+                else { 
+                    if(this.zone===2 && ((k>=48 && k<=90)||k===32)) return;
+                    
+                    if(this.zone===1) { 
                         if(k===40 && this.fIdx<this.cats.length-1) this.fIdx++;
                         if(k===38 && this.fIdx>0) this.fIdx--;
                         if(k===39) { this.zone=2; document.getElementById('search-inp').focus(); }
                         if(k===13) this.loadCat();
                     }
-                    else if(this.zone===2) {
+                    else if(this.zone===2) { 
                         if(k===40 && this.viewItems.length) { this.zone=3; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===37) { this.zone=1; this.fIdx=0; document.getElementById('search-inp').blur(); }
                         if(k===13) this.doSearch();
                     }
-                    else if(this.zone===3) {
+                    else if(this.zone===3) { 
                         if(k===38) {
                             if(this.fIdx>0) this.fIdx--;
-                            else if(this.isSeries && this.fIdx===0) this.fIdx=-1; 
+                            else if(this.isSeries && this.fIdx===0) this.fIdx=-1;
                             else { this.zone=2; document.getElementById('search-inp').focus(); }
                         }
                         if(k===40) {
-                            if(this.fIdx < this.viewItems.length-1) {
+                             if(this.fIdx < this.viewItems.length-1) {
                                 this.fIdx++;
                                 if(this.fIdx >= this.renderedCount - 10) this.appendItems(30);
-                            }
+                             }
                         }
                         if(k===37) { this.zone=1; this.fIdx=0; }
                         if(k===13) {
@@ -551,9 +579,11 @@
                     }
                 }
                 
-                if(k===403||k===82) this.isFS()?this.exitFS():this.enterFS();
+                if(k===403||k===82) { this.isFS()?this.exitFS():this.enterFS(); }
+                if(k===404||k===71) { this.refreshPlayer(); }
+                if(k===405||k===89) { if(this.scr==='content'){this.zone=2; document.getElementById('search-inp').focus();} }
                 if(k===406||k===66) { this.exitFS(); this.goMenu(); }
-                
+
                 this.renderCards();
                 this.renderFocus();
             }
