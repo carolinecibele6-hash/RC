@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY GOLD V4 - STABLE</title>
+    <title>SKY GOLD V5 - MANUAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
@@ -29,7 +29,6 @@
         #loader {
             position: fixed; top:0; left:0; width:100%; height:100%; background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
-            transition: opacity 0.3s;
         }
         .spinner {
             width: 50px; height: 50px; border: 4px solid #333; border-top: 4px solid var(--sky-gold);
@@ -41,7 +40,7 @@
         /* LOGIN */
         #loginScreen {
             position: absolute; width: 100%; height: 100%; z-index: 5000;
-            display: none; /* Inicia oculto, JS decide se mostra */
+            display: none; /* Controlado via JS */
             justify-content: center; align-items: center; background: #050505;
         }
         .login-box {
@@ -147,16 +146,15 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <span style="color:#666; font-size:12px; letter-spacing:1px; font-weight:bold">INICIANDO SISTEMA...</span>
     </div>
 
     <div id="loginScreen">
         <div class="login-box">
-            <h2 style="color:var(--sky-gold); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px"><i class="fas fa-user-lock"></i> Login</h2>
+            <h2 style="color:var(--sky-gold); margin-bottom:20px; text-transform:uppercase; letter-spacing:2px"><i class="fas fa-user-circle"></i> Acesso</h2>
             <input type="text" id="h" class="lg-inp" placeholder="URL DNS (http://...)">
             <input type="text" id="u" class="lg-inp" placeholder="Usuário">
             <input type="password" id="p" class="lg-inp" placeholder="Senha">
-            <button id="btnEnter" class="lg-btn">ACESSAR AGORA</button>
+            <button id="btnEnter" class="lg-btn">ACESSAR</button>
         </div>
     </div>
 
@@ -207,32 +205,26 @@
             renderedCount: 0, isSeries: false, currId: null,
 
             init: function() {
-                // SAFETY TIMEOUT: Se travar, libera em 3s
-                setTimeout(() => {
-                    if(document.getElementById('loader').style.display !== 'none' && this.scr === 'login') {
-                         this.toggleLoader(false);
-                    }
-                }, 3000);
-
+                // RECUPERA DADOS MAS NÃO LOGA SOZINHO
                 let h = localStorage.getItem('sg_h');
                 let u = localStorage.getItem('sg_u');
                 let p = localStorage.getItem('sg_p');
 
-                // LÓGICA IMEDIATA: Tem login?
-                if(h && u && p && h !== "null") {
-                    // Tem dados: Tenta Logar
-                    this.creds = { h, u, p };
-                    document.getElementById('h').value = h;
-                    document.getElementById('u').value = u;
-                    document.getElementById('p').value = p;
-                    this.login(true);
-                } else {
-                    // Não tem dados: Libera Login IMEDIATAMENTE
-                    this.toggleLoader(false);
-                }
+                if(h && h !== "null") document.getElementById('h').value = h;
+                if(u && u !== "null") document.getElementById('u').value = u;
+                if(p && p !== "null") document.getElementById('p').value = p;
+
+                // Força o Loader sumir imediatamente e foca no botão Entrar
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                
+                // Se tiver dados, foca no botão, senão no primeiro campo
+                if(h && u && p) document.getElementById('btnEnter').focus();
+                else document.getElementById('h').focus();
 
                 document.addEventListener('keydown', this.onKey.bind(this));
                 
+                // Eventos Player
                 const v = document.getElementById('player');
                 v.addEventListener('timeupdate', this.updOSD);
                 v.addEventListener('play', () => this.hideOSD());
@@ -244,31 +236,17 @@
                 });
             },
 
-            toggleLoader: function(show) {
-                const l = document.getElementById('loader');
-                const s = document.getElementById('loginScreen');
-                
-                if(show) {
-                    l.style.display = 'flex';
-                    s.style.display = 'none';
-                } else {
-                    l.style.display = 'none';
-                    if(this.scr === 'login') {
-                        s.style.display = 'flex';
-                        document.getElementById('h').focus();
-                    }
-                }
-            },
+            load: function(s) { document.getElementById('loader').style.display = s?'flex':'none'; },
 
-            login: async function(auto=false) {
-                let h=auto?this.creds.h:document.getElementById('h').value.trim();
-                let u=auto?this.creds.u:document.getElementById('u').value.trim();
-                let p=auto?this.creds.p:document.getElementById('p').value.trim();
+            login: async function() {
+                let h=document.getElementById('h').value.trim();
+                let u=document.getElementById('u').value.trim();
+                let p=document.getElementById('p').value.trim();
                 
-                if(!h) { if(!auto) alert('Preencha a URL'); return; }
+                if(!h) { alert('Preencha a URL'); return; }
                 if(!h.startsWith('http')) h='http://'+h;
 
-                if(!auto) this.toggleLoader(true);
+                this.load(true);
 
                 try {
                     let r = await fetch(`${h}/player_api.php?username=${u}&password=${p}`);
@@ -276,33 +254,22 @@
                     
                     if(d.user_info && d.user_info.status === 'Active') {
                         this.creds = {h,u,p};
+                        // Salva para a próxima vez (apenas preencher campos)
                         localStorage.setItem('sg_h',h); localStorage.setItem('sg_u',u); localStorage.setItem('sg_p',p);
                         
                         document.getElementById('loginScreen').style.display='none';
                         this.goMenu();
                     } else {
-                        // Se falhar o auto-login, limpa tudo e pede login manual
-                        if(auto) { 
-                            localStorage.clear(); 
-                            this.toggleLoader(false); 
-                        } else {
-                            alert('Dados Inválidos!');
-                            this.toggleLoader(false);
-                        }
+                        alert('Dados Inválidos!');
                     }
                 } catch(e) { 
-                    if(auto) { 
-                         this.toggleLoader(false); 
-                    } else {
-                         alert('Erro de Conexão. Verifique a URL.');
-                         this.toggleLoader(false);
-                    }
+                     alert('Erro de Conexão. Verifique a URL.');
                 }
+                this.load(false);
             },
 
             goMenu: function() {
                 this.scr='menu'; this.zone=0; this.fIdx=0; this.stopPlayer();
-                document.getElementById('loader').style.display='none'; // Garante que saiu
                 document.getElementById('mainMenu').style.display='flex';
                 document.getElementById('contentInterface').style.display='none';
                 this.renderCards();
@@ -326,14 +293,14 @@
                 document.getElementById('cat-head').innerText = m==='live'?'CANAIS TV':(m==='vod'?'FILMES':'SÉRIES');
                 document.getElementById('list-cnt').innerHTML = '';
 
-                this.toggleLoader(true);
+                this.load(true);
                 try {
                     let act = m==='live'?'get_live_categories':(m==='vod'?'get_vod_categories':'get_series_categories');
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`);
                     this.cats = await r.json();
                     this.renderCats();
                 } catch(e){}
-                this.toggleLoader(false);
+                this.load(false);
             },
 
             renderCats: function() {
@@ -349,7 +316,7 @@
                 document.getElementById('c-'+this.fIdx).classList.add('active');
                 
                 this.isSeries=false;
-                this.toggleLoader(true);
+                this.load(true);
                 try {
                     let act = this.mode==='live'?'get_live_streams':(this.mode==='vod'?'get_vod_streams':'get_series');
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}&category_id=${c.category_id}`);
@@ -363,7 +330,7 @@
                     this.zone=2; document.getElementById('search-inp').focus();
                     this.renderFocus();
                 } catch(e){}
-                this.toggleLoader(false);
+                this.load(false);
             },
 
             appendItems: function(batchSize) {
@@ -423,7 +390,7 @@
             },
             
             openSeries: async function(sid) {
-                this.toggleLoader(true);
+                this.load(true);
                 try {
                     let r = await fetch(`${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=get_series_info&series_id=${sid}`);
                     let d = await r.json();
@@ -434,7 +401,7 @@
                     this.renderedCount=0; document.getElementById('list-cnt').innerHTML=''; this.appendItems(50);
                     this.zone=3; this.fIdx=0; this.renderFocus();
                 } catch(e){}
-                this.toggleLoader(false);
+                this.load(false);
             },
 
             stopPlayer: function() {
@@ -514,6 +481,7 @@
 
             onKey: function(e) {
                 let k = e.keyCode;
+                // LOGIN SCREEN KEY
                 if(this.scr==='login') {
                     if(k===13) {
                         if(document.activeElement.id==='p'||document.activeElement.id==='btnEnter') this.login();
