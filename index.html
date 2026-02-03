@@ -441,8 +441,9 @@
                 var id = item.stream_id || item.id;
                 var url = this.creds.h+"/"+type+"/"+this.creds.u+"/"+this.creds.p+"/"+id+"."+ext;
                 
+                // --- MODIFICAÇÃO: PERMITIR TELA CHEIA COM OK ---
                 if(this.currentPlayingUrl === url) { 
-                    if(this.mode !== 'live') this.toggleFull(); 
+                    this.toggleFull(); 
                     return; 
                 }
 
@@ -456,14 +457,9 @@
                 if(document.getElementById('it'+this.idx)) document.getElementById('it'+this.idx).classList.add('playing-item');
                 this.zone=3; this.updateFocus();
                 
-                // LIVE TV: AUTO-FULLSCREEN APÓS 4 SEGUNDOS
+                // --- MODIFICAÇÃO: AUTO-FULLSCREEN REMOVIDO PARA LIVE ---
                 if(this.mode==='live') {
                     this.osd("AO VIVO ▶");
-                    this.autoFullTimer = setTimeout(function(){
-                        if(!document.getElementById('vid-box').classList.contains('fs') && App.currentPlayingUrl === url) {
-                            App.toggleFull();
-                        }
-                    }, 4000);
                 } else {
                     this.osd("PLAY ▶");
                 }
@@ -478,9 +474,18 @@
                     document.getElementById('meta-title').innerText = "SÉRIES";
                     this.updateFocus(); return;
                 }
-                if(this.zone===2) { this.resetInfo(); this.zone=0; this.idx=0; this.updateFocus(); return; }
+                
+                // --- MODIFICAÇÃO: NÃO PARAR O VÍDEO AO VOLTAR PARA CATEGORIAS ---
+                if(this.zone===2) { 
+                    this.zone=0; 
+                    this.idx=0; 
+                    this.updateFocus(); 
+                    return; 
+                }
+                
+                if(this.zone===0) { this.setScr(1); return; } // Vai pro dashboard (aqui para o vídeo)
                 if(this.zone===1) { this.zone=2; this.idx=0; this.updateFocus(); return; }
-                if(this.zone===0) { this.setScr(1); return; }
+                if(this.scr===1) { this.setScr(0); return; }
             },
 
             toggleFull: function() {
