@@ -3,408 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C PRO V26</title>
+    <title>R&C P2P CLEAN</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-
     <style>
-        /* --- ESTILO GOLD PRO --- */
-        :root { --bg: #000; --gold: #FFD700; --gray: #1a1a1a; }
+        /* --- ESTILO P2P DARK CLEAN --- */
+        :root { --bg: #090909; --panel: #111; --focus: #FFD700; --text-dim: #888; }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        body { background: var(--bg); color: #fff; font-family: sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
         
-        body {
-            background-color: var(--bg); color: #fff;
-            font-family: 'Montserrat', sans-serif;
-            width: 100vw; height: 100vh; overflow: hidden;
-        }
-
+        /* LAYOUT PRINCIPAL */
+        #app { display: flex; height: 100%; width: 100%; }
         .hide { display: none !important; }
+
+        /* 1. SIDEBAR (MENU ESQUERDO) */
+        #sidebar {
+            width: 80px; background: #000; border-right: 1px solid #222;
+            display: flex; flex-direction: column; align-items: center; padding-top: 30px; z-index: 2;
+        }
+        .menu-icon {
+            font-size: 24px; color: var(--text-dim); margin-bottom: 40px; 
+            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
+            border-radius: 10px; transition: 0.2s;
+        }
+
+        /* 2. ÁREA DE LISTAS (MEIO) */
+        #list-area {
+            width: 400px; background: var(--panel); border-right: 1px solid #222;
+            display: flex; flex-direction: column; height: 100%;
+        }
+        .list-header { padding: 20px; font-weight: bold; color: var(--focus); border-bottom: 1px solid #222; text-transform: uppercase;}
+        .list-container { flex: 1; overflow-y: hidden; /* Scroll manual via JS */ position: relative; }
+        .list-scroll { position: absolute; top: 0; left: 0; width: 100%; }
         
-        /* HEADER */
-        .header {
-            height: 10vh; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 4vw; background: #050505; border-bottom: 2px solid #222;
+        .item {
+            padding: 15px 20px; border-bottom: 1px solid #1a1a1a; color: #aaa;
+            font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .logo { font-size: 3vh; font-weight: 800; }
-        .logo span { color: var(--gold); }
-        .keys-hint { font-size: 1.5vh; color: #666; display: flex; gap: 15px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
-        /* --- LOGIN (FIXED) --- */
-        #screen-login { height: 90vh; display: flex; align-items: center; justify-content: center; }
-        .login-box { width: 40%; background: #111; padding: 40px; border: 1px solid #333; border-radius: 10px; }
-        .inp-row { margin-bottom: 15px; }
-        .inp-row label { display: block; color: var(--gold); font-size: 12px; margin-bottom: 5px; }
-        .ipt { 
-            width: 100%; height: 45px; background: #000; border: 1px solid #444; color: white; 
-            font-size: 18px; padding-left: 10px;
+        /* 3. ÁREA DE PREVIEW / DETALHES (DIREITA) */
+        #preview-area {
+            flex: 1; background: #050505; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; position: relative;
         }
-        .btn-enter {
-            width: 100%; height: 50px; background: #222; color: #fff; border: 1px solid var(--gold);
-            font-weight: bold; margin-top: 20px; font-size: 18px; cursor: pointer;
+        #bg-poster {
+            position: absolute; top:0; left:0; width: 100%; height: 100%; 
+            opacity: 0.3; background-size: cover; background-position: center; z-index: 0;
         }
-        /* Foco no botão deixa ele dourado */
-        .btn-enter.focused { background: var(--gold); color: #000; }
+        .info-box { z-index: 1; text-align: center; padding: 40px; max-width: 80%; }
+        .info-title { font-size: 40px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 10px #000; }
+        .info-meta { font-size: 20px; color: #ccc; }
 
-        /* --- DASHBOARD --- */
-        #screen-dash { height: 90vh; display: flex; align-items: center; justify-content: center; gap: 30px; }
-        .tile {
-            width: 20vw; height: 30vh; background: #111; border: 2px solid #222;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        /* 4. BUSCA */
+        #search-overlay {
+            position: absolute; top:0; left: 80px; width: 400px; height: 100%; background: #151515;
+            z-index: 10; border-right: 1px solid var(--focus); display: none; flex-direction: column;
         }
-        .tile i { font-size: 6vh; color: #555; margin-bottom: 20px; }
-        
-        /* --- LISTAS --- */
-        #screen-list { height: 90vh; display: flex; }
-        .sidebar { width: 30%; background: #080808; border-right: 1px solid #222; overflow-y: auto; height: 100%; }
-        .content { width: 70%; background: #000; overflow-y: auto; height: 100%; padding: 20px; }
-        
-        .list-item { padding: 15px; border-bottom: 1px solid #1a1a1a; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #search-input {
+            width: 100%; padding: 20px; background: #222; color: #fff; border: none; font-size: 20px;
+            border-bottom: 2px solid var(--focus);
+        }
 
-        /* --- BUSCA --- */
-        #screen-search { height: 90vh; display: flex; flex-direction: column; align-items: center; padding-top: 50px; background: rgba(0,0,0,0.95); }
-        .search-bar { width: 60%; font-size: 30px; padding: 10px; text-align: center; background: #111; border: 2px solid var(--gold); color: white; }
-        #search-results { width: 80%; margin-top: 30px; overflow-y: auto; height: 60vh; }
+        /* 5. PLAYER */
+        #player-fs { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index: 999; display: none; }
+        video { width: 100%; height: 100%; }
+        #osd { position: absolute; top: 30px; right: 30px; background: var(--focus); color: #000; padding: 10px 20px; font-weight: bold; border-radius: 5px; display: none; }
 
-        /* --- PLAYER --- */
-        #screen-player { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:999; }
-        video { width: 100%; height: 100%; object-fit: contain; }
-
-        /* --- FOCUS SYSTEM --- */
+        /* FOCO */
         .focused {
-            border-color: var(--gold) !important;
-            background: var(--gold) !important;
-            color: #000 !important;
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
-            font-weight: bold;
-            z-index: 10;
+            background: var(--focus) !important; color: #000 !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); font-weight: bold; transform: scale(1.02);
         }
-        .focused i { color: #000 !important; }
-        .tile.focused { transform: scale(1.1); }
-        
-        /* Loading */
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:2000; display:flex; justify-content:center; align-items:center; flex-direction:column; }
-        #toast { position: fixed; top: 20px; right: 20px; background: var(--gold); color: black; padding: 10px 20px; font-weight: bold; z-index: 3000; display: none; }
+        .menu-icon.focused { background: #333; color: #fff; border-left: 4px solid var(--focus); }
+        .menu-icon.active { color: var(--focus); }
     </style>
 </head>
 <body>
 
-    <div id="loading" class="hide">
-        <h2 style="color:var(--gold)">CARREGANDO...</h2>
-    </div>
-    <div id="toast">AÇÃO</div>
+    <script>
+        const CONFIG = {
+            url:  "http://SEU_DNS_AQUI:80",  // Ex: http://meuserver.com:80
+            user: "SEU_USUARIO",             // Ex: usuario123
+            pass: "SUA_SENHA"                // Ex: 12345
+        };
+    </script>
+    <div id="app">
+        <div id="sidebar">
+            <div class="menu-icon" id="menu-live">TV</div>
+            <div class="menu-icon" id="menu-movie">VOD</div>
+            <div class="menu-icon" id="menu-series">SER</div>
+            <div class="menu-icon" id="menu-search">🔍</div>
+        </div>
 
-    <div class="header">
-        <div class="logo">R&C <span>PRO</span></div>
-        <div class="keys-hint">
-            <span><span class="dot" style="background:red"></span>FULL</span>
-            <span><span class="dot" style="background:green"></span>TOPO</span>
-            <span><span class="dot" style="background:yellow"></span>BUSCA</span>
-            <span><span class="dot" style="background:blue"></span>MENU</span>
+        <div id="list-area">
+            <div class="list-header" id="header-title">CANAIS</div>
+            <div class="list-container">
+                <div class="list-scroll" id="dynamic-list">
+                    </div>
+            </div>
+        </div>
+        
+        <div id="search-overlay">
+            <input type="text" id="search-input" placeholder="Digite para buscar...">
+            <div class="list-container">
+                <div class="list-scroll" id="search-results"></div>
+            </div>
+        </div>
+
+        <div id="preview-area">
+            <div id="bg-poster"></div>
+            <div class="info-box">
+                <div class="info-title" id="info-title">BEM VINDO</div>
+                <div class="info-meta" id="info-desc">Selecione uma categoria à esquerda</div>
+            </div>
         </div>
     </div>
 
-    <div id="screen-login">
-        <div class="login-box">
-            <div class="inp-row">
-                <label>SERVIDOR (DNS)</label>
-                <input type="text" id="host" class="ipt focusable" placeholder="http://...">
-            </div>
-            <div class="inp-row">
-                <label>USUÁRIO</label>
-                <input type="text" id="user" class="ipt focusable">
-            </div>
-            <div class="inp-row">
-                <label>SENHA</label>
-                <input type="password" id="pass" class="ipt focusable">
-            </div>
-            <button class="btn-enter focusable" onclick="App.doLogin()">ENTRAR</button>
-        </div>
-    </div>
-
-    <div id="screen-dash" class="hide">
-        <div class="tile focusable" onclick="App.loadCats('live')"><i class="fas fa-tv"></i>TV AO VIVO</div>
-        <div class="tile focusable" onclick="App.loadCats('movie')"><i class="fas fa-film"></i>FILMES</div>
-        <div class="tile focusable" onclick="App.loadCats('series')"><i class="fas fa-video"></i>SÉRIES</div>
-        <div class="tile focusable" onclick="App.changeUser()"><i class="fas fa-user-cog"></i>TROCAR CONTA</div>
-    </div>
-
-    <div id="screen-list" class="hide">
-        <div class="sidebar" id="list-cats"></div>
-        <div class="content" id="list-items"></div>
-    </div>
-
-    <div id="screen-search" class="hide">
-        <input type="text" id="search-input" class="search-bar focusable" placeholder="DIGITE E APERTE OK">
-        <div id="search-results"></div>
-    </div>
-
-    <div id="screen-player" class="hide">
-        <video id="player"></video>
+    <div id="player-fs">
+        <video id="video-player"></video>
+        <div id="osd">PLAY</div>
     </div>
 
     <script>
         const App = {
-            scr: 'login', // login, dash, cats, items, search, player
-            items: [],
-            idx: 0,
-            creds: {},
+            state: 'sidebar', // sidebar, cats, items, search, player
+            focusIdx: 0,
+            menuIdx: 0,
+            catsData: [],
+            itemsData: [],
             
-            // Variáveis de Estado
-            type: '',
-            playList: [],
-            playIdx: 0,
-
+            // Controle de API
+            currentType: 'live', // live, movie, series
+            
             init: function() {
-                // Tenta Login Automático
-                const s = localStorage.getItem('rc_v26_creds');
-                if(s) {
-                    this.creds = JSON.parse(s);
-                    document.getElementById('host').value = this.creds.host;
-                    document.getElementById('user').value = this.creds.user;
-                    document.getElementById('pass').value = this.creds.pass;
-                    // Foca no botão conectar direto
-                    setTimeout(() => { this.scan(); this.idx = 3; this.update(); }, 500);
-                } else {
-                    this.scan();
+                if(CONFIG.url.includes("SEU_DNS")) {
+                    alert("⚠️ EDITE O ARQUIVO HTML COM SEUS DADOS DE LOGIN!");
+                    return;
                 }
-
-                // Evento de Teclado Global
-                document.addEventListener('keydown', (e) => this.handleKey(e));
                 
-                // Auto Play
-                document.getElementById('player').addEventListener('ended', () => this.nextVideo());
-            },
+                // Mapeia Menu
+                this.menuEls = [
+                    document.getElementById('menu-live'),
+                    document.getElementById('menu-movie'),
+                    document.getElementById('menu-series'),
+                    document.getElementById('menu-search')
+                ];
 
-            // --- NAVEGAÇÃO ---
-            scan: function() {
-                let s = '';
-                if(this.scr === 'login') s = '#screen-login .focusable';
-                if(this.scr === 'dash') s = '#screen-dash .focusable';
-                if(this.scr === 'cats') s = '#list-cats .list-item';
-                if(this.scr === 'items') s = '#list-items .list-item';
-                if(this.scr === 'search') s = '#screen-search .focusable, #search-results .list-item';
+                this.renderFocus();
+                document.addEventListener('keydown', (e) => this.onKey(e));
                 
-                this.items = document.querySelectorAll(s);
-                if(this.idx >= this.items.length) this.idx = 0;
-                this.update();
+                // Carrega inicial (Live Categories)
+                this.loadCategories('live');
             },
 
-            update: function() {
-                document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
-                if(this.items[this.idx]) {
-                    const el = this.items[this.idx];
-                    el.classList.add('focused');
-                    el.scrollIntoView({block: 'center', behavior: 'auto'});
-                    
-                    // Lógica do Teclado (Importante!)
-                    if(el.tagName === 'INPUT') {
-                        el.focus(); 
-                    } else {
-                        // Se não for input, tira o foco de qualquer input para fechar teclado
-                        if(document.activeElement.tagName === 'INPUT') document.activeElement.blur();
-                        el.focus();
-                    }
-                }
-            },
-
-            // --- CONTROLE REMOTO ---
-            handleKey: function(e) {
+            // --- NAVEGAÇÃO CENTRAL ---
+            onKey: function(e) {
                 const k = e.keyCode;
 
-                // 1. BOTÕES COLORIDOS (PRIORIDADE)
-                if(k === 403 || k === 122) { // VERMELHO -> Fullscreen
-                    this.toggleFull(); return;
-                }
-                if(k === 404) { // VERDE -> Topo
-                    this.idx = 0; this.update(); return;
-                }
-                if(k === 405) { // AMARELO -> Busca
-                    this.openSearch(); return;
-                }
-                if(k === 406) { // AZUL -> Menu Principal
-                    this.closePlayer();
-                    this.setScreen('dash'); return;
-                }
-
-                // 2. PLAYER NAV
-                if(this.scr === 'player') {
+                // PLAYER
+                if(this.state === 'player') {
                     e.preventDefault();
-                    const v = document.getElementById('player');
-                    if(k===13 || k===19) v.paused ? v.play() : v.pause();
-                    if(k===39) v.currentTime += 15;
-                    if(k===37) v.currentTime -= 15;
-                    if(k===8 || k===461 || k===10009) this.closePlayer();
+                    this.handlePlayer(k);
                     return;
                 }
 
-                // 3. GERAL NAV
-                if(k===8 || k===461 || k===10009) { // Voltar
-                    if(this.scr === 'items') { this.scr = 'cats'; this.scan(); }
-                    else if(this.scr === 'cats' || this.scr === 'search') { this.setScreen('dash'); }
+                // BACK
+                if(k===8 || k===461 || k===10009) {
+                    if(this.state === 'items') { this.state = 'cats'; this.renderList(this.catsData, 'cat'); this.focusIdx = 0; }
+                    else if(this.state === 'cats' || this.state === 'search') { this.state = 'sidebar'; this.focusIdx = this.menuIdx; }
+                    this.renderFocus();
                     return;
                 }
 
-                if(k===38) { // Cima
-                    this.idx--; if(this.idx < 0) this.idx = 0;
-                    this.update();
+                // NAVEGAÇÃO
+                if(k===38) this.move(-1); // Cima
+                if(k===40) this.move(1);  // Baixo
+                
+                if(k===39) { // Direita
+                    if(this.state === 'sidebar') {
+                        if(this.menuIdx === 3) { // Busca
+                            this.openSearch();
+                        } else {
+                            this.state = 'cats'; 
+                            this.focusIdx = 0;
+                        }
+                    } 
+                    else if(this.state === 'cats') {
+                        // Enter na categoria tbm serve
+                        this.enterCategory();
+                    }
+                    this.renderFocus();
                 }
-                else if(k===40) { // Baixo
-                    this.idx++; if(this.idx >= this.items.length) this.idx = this.items.length-1;
-                    this.update();
+
+                if(k===37) { // Esquerda
+                    if(this.state === 'items') {
+                        this.state = 'cats';
+                        this.renderList(this.catsData, 'cat');
+                        this.focusIdx = 0;
+                    } 
+                    else if(this.state === 'cats' || this.state === 'search') {
+                        this.state = 'sidebar';
+                        this.focusIdx = this.menuIdx;
+                        // Fecha busca se tiver aberta
+                        document.getElementById('search-overlay').style.display = 'none';
+                    }
+                    this.renderFocus();
                 }
-                else if(k===39) { // Direita
-                    if(this.scr === 'cats') { this.scr = 'items'; this.idx=0; this.scan(); }
-                    else if(this.scr === 'dash') { this.idx++; if(this.idx >= this.items.length) this.idx = this.items.length-1; this.update(); }
-                }
-                else if(k===37) { // Esquerda
-                    if(this.scr === 'items') { this.scr = 'cats'; this.scan(); }
-                    else if(this.scr === 'dash') { this.idx--; if(this.idx < 0) this.idx=0; this.update(); }
-                }
-                else if(k===13) { // Enter
-                    if(this.items[this.idx]) {
-                        // Se estiver no Input, fecha teclado e tenta logar se for senha
-                        if(this.items[this.idx].id === 'search-input') { this.doSearch(); return; }
-                        this.items[this.idx].click();
+
+                if(k===13) { // Enter
+                    if(this.state === 'sidebar') { /* Nada, usa direita */ }
+                    else if(this.state === 'cats') { this.enterCategory(); }
+                    else if(this.state === 'items') { this.playItem(); }
+                    else if(this.state === 'search') {
+                         if(document.activeElement.id === 'search-input') this.doSearch();
+                         else this.playItem(true); // Play item da busca
                     }
                 }
             },
 
-            // --- LÓGICA LOGIN ---
-            doLogin: function() {
-                const h = document.getElementById('host').value;
-                const u = document.getElementById('user').value;
-                const p = document.getElementById('pass').value;
+            move: function(dir) {
+                let max = 0;
+                if(this.state === 'sidebar') max = 3;
+                else if(this.state === 'cats') max = this.catsData.length - 1;
+                else if(this.state === 'items') max = this.itemsData.length - 1;
+                else if(this.state === 'search') {
+                     // Se foco no input
+                     if(document.activeElement.id === 'search-input' && dir === 1) {
+                         document.getElementById('search-input').blur();
+                         this.focusIdx = 0; // Vai pro primeiro item
+                         this.renderFocus(); return;
+                     }
+                     if(dir === -1 && this.focusIdx === 0) {
+                         document.getElementById('search-input').focus();
+                         return;
+                     }
+                     max = this.itemsData.length - 1;
+                }
+
+                this.focusIdx += dir;
+                if(this.focusIdx < 0) this.focusIdx = 0;
+                if(this.focusIdx > max) this.focusIdx = max;
+
+                if(this.state === 'sidebar') this.menuIdx = this.focusIdx; // Salva pos menu
                 
-                if(!h || !u || !p) return;
+                this.renderFocus();
+            },
+
+            renderFocus: function() {
+                // Limpa focos
+                document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
+
+                if(this.state === 'sidebar') {
+                    this.menuEls[this.focusIdx].classList.add('focused');
+                    this.updatePreview('MENU', 'Selecione uma opção');
+                } 
+                else {
+                    // Listas (Cats, Items, Search)
+                    const containerId = this.state === 'search' ? 'search-results' : 'dynamic-list';
+                    const list = document.getElementById(containerId);
+                    const items = list.children;
+                    
+                    if(items[this.focusIdx]) {
+                        const el = items[this.focusIdx];
+                        el.classList.add('focused');
+                        
+                        // Scroll Lógico (Mantém foco no meio)
+                        const itemH = 50; // Altura aproximada
+                        const listH = document.querySelector('.list-container').clientHeight;
+                        const scrollPos = (this.focusIdx * itemH) - (listH / 2) + (itemH / 2);
+                        list.style.transform = `translateY(-${Math.max(0, scrollPos)}px)`;
+
+                        // Update Preview se for item
+                        if(this.state === 'items' || (this.state === 'search' && document.activeElement.id !== 'search-input')) {
+                            const data = this.itemsData[this.focusIdx];
+                            if(data) {
+                                let img = data.stream_icon || data.cover || '';
+                                document.getElementById('bg-poster').style.backgroundImage = `url('${img}')`;
+                                document.getElementById('info-title').innerText = data.name;
+                                document.getElementById('info-desc').innerText = "Pressione OK para assistir";
+                            }
+                        }
+                    }
+                }
+            },
+
+            // --- LÓGICA DE DADOS ---
+            loadCategories: function(type) {
+                this.currentType = type;
+                // Visual Highlight Menu
+                this.menuEls.forEach(e => e.classList.remove('active'));
+                if(type==='live') this.menuEls[0].classList.add('active');
+                if(type==='movie') this.menuEls[1].classList.add('active');
+                if(type==='series') this.menuEls[2].classList.add('active');
+
+                const action = type==='live' ? 'get_live_categories' : (type==='movie'?'get_vod_categories':'get_series_categories');
                 
-                this.load(true);
-                fetch(`${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`)
-                .then(r => r.json())
-                .then(d => {
-                    localStorage.setItem('rc_v26_creds', JSON.stringify({host:h, user:u, pass:p}));
-                    this.creds = {host:h, user:u, pass:p};
-                    this.setScreen('dash');
-                    this.load(false);
-                })
-                .catch(e => {
-                    this.load(false);
-                    alert("Erro de conexão.");
+                fetch(`${CONFIG.url}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=${action}`)
+                .then(r=>r.json()).then(d => {
+                    this.catsData = d;
+                    this.renderList(d, 'cat');
+                    document.getElementById('header-title').innerText = type === 'live' ? "CATEGORIAS TV" : "CATEGORIAS VOD";
                 });
             },
 
-            changeUser: function() {
-                localStorage.removeItem('rc_v26_creds');
-                location.reload();
-            },
+            enterCategory: function() {
+                const cat = this.catsData[this.focusIdx];
+                let action = '';
+                if(this.currentType==='live') action=`get_live_streams&category_id=${cat.category_id}`;
+                if(this.currentType==='movie') action=`get_vod_streams&category_id=${cat.category_id}`;
+                if(this.currentType==='series') action=`get_series&category_id=${cat.category_id}`;
 
-            // --- CONTEÚDO ---
-            loadCats: function(type) {
-                this.type = type;
-                this.load(true);
-                const url = `${this.creds.host}/player_api.php?username=${this.creds.user}&password=${this.creds.pass}&action=`;
-                const act = type==='live' ? 'get_live_categories' : (type==='movie' ? 'get_vod_categories' : 'get_series_categories');
-
-                fetch(url+act).then(r=>r.json()).then(d => {
-                    const c = document.getElementById('list-cats');
-                    c.innerHTML = '';
-                    d.forEach(i => {
-                        const el = document.createElement('div');
-                        el.className = 'list-item focusable';
-                        el.innerText = i.category_name;
-                        el.onclick = () => {
-                            // Limpa visual
-                            Array.from(c.children).forEach(x=>x.style.color='#888');
-                            el.style.color= 'var(--gold)';
-                            this.loadItems(i.category_id);
-                        };
-                        c.appendChild(el);
-                    });
-                    this.setScreen('cats');
-                    this.load(false);
-                    // Reseta area de itens
-                    document.getElementById('list-items').innerHTML = '<h3 style="color:#444">SELECIONE UMA CATEGORIA</h3>';
+                document.getElementById('header-title').innerText = "CARREGANDO...";
+                
+                fetch(`${CONFIG.url}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=${action}`)
+                .then(r=>r.json()).then(d => {
+                    this.itemsData = d;
+                    this.renderList(d, 'item');
+                    this.state = 'items';
+                    this.focusIdx = 0;
+                    this.renderFocus();
+                    document.getElementById('header-title').innerText = cat.category_name;
                 });
             },
 
-            loadItems: function(catId) {
-                this.load(true);
-                const url = `${this.creds.host}/player_api.php?username=${this.creds.user}&password=${this.creds.pass}&action=`;
-                let act = '';
-                if(this.type==='live') act=`get_live_streams&category_id=${catId}`;
-                if(this.type==='movie') act=`get_vod_streams&category_id=${catId}`;
-                if(this.type==='series') act=`get_series&category_id=${catId}`;
-
-                fetch(url+act).then(r=>r.json()).then(d => {
-                    const c = document.getElementById('list-items');
-                    c.innerHTML = '';
-                    this.playList = d; // Salva para auto-play
-
-                    d.forEach((i, index) => {
-                        const el = document.createElement('div');
-                        el.className = 'list-item focusable';
-                        el.innerText = i.name;
-                        el.onclick = () => {
-                            this.playIdx = index;
-                            this.play(i);
-                        };
-                        c.appendChild(el);
-                    });
-                    this.load(false);
-                    // Pula automaticamente para a direita
-                    this.scr = 'items'; this.idx = 0; this.scan();
+            renderList: function(data, mode) {
+                const list = document.getElementById(this.state === 'search' ? 'search-results' : 'dynamic-list');
+                list.innerHTML = '';
+                list.style.transform = 'translateY(0px)'; // Reset scroll
+                
+                data.forEach(i => {
+                    const div = document.createElement('div');
+                    div.className = 'item';
+                    div.innerText = mode === 'cat' ? i.category_name : i.name;
+                    list.appendChild(div);
                 });
+            },
+
+            updatePreview: function(title, desc) {
+                document.getElementById('info-title').innerText = title;
+                document.getElementById('info-desc').innerText = desc;
+                document.getElementById('bg-poster').style.backgroundImage = 'none';
             },
 
             // --- BUSCA ---
             openSearch: function() {
-                this.setScreen('search');
+                this.state = 'search';
+                this.itemsData = [];
+                document.getElementById('search-overlay').style.display = 'flex';
                 document.getElementById('search-results').innerHTML = '';
                 document.getElementById('search-input').value = '';
-                this.idx = 0; this.scan();
+                document.getElementById('search-input').focus();
             },
 
             doSearch: function() {
                 const term = document.getElementById('search-input').value;
                 if(term.length < 3) return;
                 
-                this.load(true);
-                document.getElementById('search-input').blur(); // Fecha teclado
-                
                 // Busca em VOD (Padrão)
-                fetch(`${this.creds.host}/player_api.php?username=${this.creds.user}&password=${this.creds.pass}&action=get_vod_streams`)
+                fetch(`${CONFIG.url}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_vod_streams`)
                 .then(r=>r.json()).then(d => {
                     const res = d.filter(i => i.name.toLowerCase().includes(term.toLowerCase()));
-                    const c = document.getElementById('search-results');
-                    c.innerHTML = '';
-                    this.type = 'movie'; // Assume filme na busca
-                    
-                    res.forEach(i => {
-                        const el = document.createElement('div');
-                        el.className = 'list-item focusable';
-                        el.innerText = i.name;
-                        el.onclick = () => this.play(i);
-                        c.appendChild(el);
-                    });
-                    this.load(false);
-                    this.scan();
+                    this.itemsData = res;
+                    this.currentType = 'movie'; // Assume filme
+                    this.renderList(res, 'item');
+                    // Tira foco do input
+                    document.getElementById('search-input').blur();
+                    this.focusIdx = 0;
+                    this.renderFocus();
                 });
             },
 
             // --- PLAYER ---
-            play: function(item) {
-                const v = document.getElementById('player');
+            playItem: function(fromSearch=false) {
+                const item = this.itemsData[this.focusIdx];
                 let url = '';
-                if(this.type === 'live') url = `${this.creds.host}/live/${this.creds.user}/${this.creds.pass}/${item.stream_id}.m3u8`;
-                else url = `${this.creds.host}/movie/${this.creds.user}/${this.creds.pass}/${item.stream_id}.${item.container_extension || 'mp4'}`;
-
-                this.scr = 'player';
-                document.getElementById('screen-player').classList.remove('hide');
                 
-                this.toast(`TOCANDO: ${item.name}`);
+                if(this.currentType === 'live') {
+                    url = `${CONFIG.url}/live/${CONFIG.user}/${CONFIG.pass}/${item.stream_id}.m3u8`;
+                } else {
+                    url = `${CONFIG.url}/movie/${CONFIG.user}/${CONFIG.pass}/${item.stream_id}.${item.container_extension||'mp4'}`;
+                }
+
+                const v = document.getElementById('video-player');
+                this.state = 'player';
+                document.getElementById('player-fs').style.display = 'block';
 
                 if(Hls.isSupported() && url.includes('.m3u8')) {
                     const hls = new Hls();
@@ -417,44 +399,25 @@
                 }
             },
 
-            nextVideo: function() {
-                if(this.type === 'live') return;
-                this.playIdx++;
-                if(this.playIdx < this.playList.length) {
-                    this.toast("PRÓXIMO VÍDEO...");
-                    setTimeout(() => this.play(this.playList[this.playIdx]), 2000);
-                } else {
-                    this.closePlayer();
+            handlePlayer: function(k) {
+                const v = document.getElementById('video-player');
+                const osd = document.getElementById('osd');
+                
+                const showOsd = (txt) => {
+                    osd.innerText = txt; osd.style.display='block';
+                    setTimeout(()=>osd.style.display='none', 2000);
+                };
+
+                if(k===8 || k===461 || k===10009) { // Voltar
+                    v.pause(); v.src = "";
+                    document.getElementById('player-fs').style.display = 'none';
+                    this.state = document.getElementById('search-overlay').style.display === 'flex' ? 'search' : 'items';
                 }
-            },
-
-            closePlayer: function() {
-                const v = document.getElementById('player');
-                v.pause(); v.src = "";
-                document.getElementById('screen-player').classList.add('hide');
-                this.scr = 'items'; this.scan();
-            },
-
-            toggleFull: function() {
-                if(!document.fullscreenElement) document.documentElement.requestFullscreen();
-                else document.exitFullscreen();
-            },
-
-            // --- UTIL ---
-            setScreen: function(s) {
-                ['login','dash','list','search','player'].forEach(x => document.getElementById('screen-'+x).classList.add('hide'));
-                document.getElementById('screen-'+s).classList.remove('hide');
-                this.scr = s;
-                this.idx = 0;
-                this.scan();
-            },
-
-            load: function(s) { document.getElementById('loading').classList.toggle('hide', !s); },
-            
-            toast: function(msg) {
-                const t = document.getElementById('toast');
-                t.innerText = msg; t.style.display='block';
-                setTimeout(()=>t.style.display='none', 3000);
+                if(k===13 || k===19) {
+                    v.paused ? (v.play(), showOsd("PLAY")) : (v.pause(), showOsd("PAUSE"));
+                }
+                if(k===39) { v.currentTime += 15; showOsd(">> 15s"); }
+                if(k===37) { v.currentTime -= 15; showOsd("<< 15s"); }
             }
         };
 
