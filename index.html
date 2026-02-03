@@ -1,36 +1,555 @@
-// Suponha que você já carregou a lista completa de séries da API e salvou em:
-let allSeriesGlobal = []; // Array gigante de objetos {name: "Nome", stream_id: 123, cover: "..."}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R&C GOLD UNIVERSAL V9</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-// Função JS equivalente à sua lógica Python de filtrar nomes limpos
-function filtrarSeriesNaTV(termoBusca) {
-    const buscaLimpa = termoBusca.toLowerCase()
-        .replace("filmes", "")
-        .replace("movie", "")
-        .replace("series", "")
-        .replace("serie", "")
-        .strip();
-
-    // Regex JS para tentar isolar o nome base (similar ao seu re.split do Python)
-    // Remove S01, E01, 1x01, etc para pegar só o nome da obra
-    const regexLimpador = /\s(S\d+|Ep\d+|Temporada|\d+x\d+|\d+)/i;
-
-    const candidatos = new Set(); // Usar Set para evitar duplicatas automaticamente
-
-    allSeriesGlobal.forEach(serie => {
-        if (serie.name.toLowerCase().includes(buscaLimpa)) {
-            // Tenta extrair o nome base limpo
-            let nomeBase = serie.name.split(regexLimpador)[0].trim();
-            if (nomeBase) {
-                candidatos.add(nomeBase);
-            }
+    <style>
+        /* --- TEMA PREMIUM V9 --- */
+        :root { 
+            --bg: #050505; 
+            --gold: #00e676; /* Verde Neon */
+            --text: #ffffff; 
+            --panel: #111;
         }
-    });
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+        
+        body {
+            background-color: var(--bg); color: var(--text);
+            font-family: 'Montserrat', sans-serif;
+            width: 100vw; height: 100vh; overflow: hidden;
+        }
 
-    // Converte o Set de volta para Array e ordena
-    const listaNomesOrdenada = Array.from(candidatos).sort();
+        .hide { display: none !important; }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-    return listaNomesOrdenada; // Retorna a lista limpa para exibir na UI de busca
-}
+        /* FOCUS */
+        .focused {
+            border: 2px solid #fff !important;
+            background: var(--gold) !important;
+            color: #000 !important;
+            transform: scale(1.02);
+            font-weight: 800;
+            box-shadow: 0 0 25px rgba(0, 230, 118, 0.5);
+            z-index: 20;
+        }
+        .focused i { color: #000 !important; }
+        .playing-item { color: var(--gold) !important; border-left: 3px solid var(--gold); background: #111; }
 
-// ATENÇÃO: Se 'allSeriesGlobal' tiver 50.000 itens, esse loop vai travar a TV por alguns segundos.
-// POR ISSO O IDEAL É UM BACKEND FAZER ESSA PESQUISA.
+        /* LOGIN */
+        #login-layer { background: radial-gradient(circle at center, #111 0%, #000 100%); }
+        .login-box { width: 450px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 12px; text-align: center; }
+        .logo-txt { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 20px; }
+        .logo-txt span { color: var(--gold); }
+        .inp { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-weight: bold; }
+        .btn { background: var(--gold); color: #000; border: none; cursor: pointer; text-transform: uppercase; margin-top: 15px; font-weight: 800; }
+
+        /* DASHBOARD */
+        #dash-layer { flex-direction: column; background: #080808; }
+        .dash-grid { display: flex; gap: 30px; margin-top: 40px; }
+        .card { width: 200px; height: 180px; background: #151515; border: 2px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
+        .card i { font-size: 50px; margin-bottom: 15px; color: #555; }
+
+        /* CONTEÚDO */
+        #content-layer { display: flex; }
+        .col-cat { width: 25%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .cat-head { padding: 15px; background: var(--gold); color: #000; font-weight: 900; text-align: center; }
+        .cat-list { flex: 1; overflow-y: auto; }
+        .cat-item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #888; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; }
+        .cat-item.active { border-left: 5px solid var(--gold); background: #1a1a1a; color: #fff; }
+
+        .col-list { width: 35%; background: #0e0e0e; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .search-area { padding: 10px; background: #000; border-bottom: 1px solid #333; display: flex; gap: 10px; position: relative; align-items: center; }
+        .search-icon-btn { position: absolute; left: 20px; z-index: 5; color: #666; cursor: pointer; font-size: 18px; padding: 5px; }
+        .search-icon-btn:hover { color: var(--gold); }
+        .inp-search { width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 10px 10px 10px 40px; text-align: left; font-weight: bold; border-radius: 4px; text-transform: uppercase; }
+        .item-list { flex: 1; overflow-y: auto; }
+        .item { padding: 12px 15px; border-bottom: 1px solid #1a1a1a; color: #bbb; white-space: nowrap; overflow: hidden; font-size: 14px; }
+        
+        /* PLAYER */
+        .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
+        
+        .vid-box { 
+            width: 100%; height: 50%; background: #000; position: relative; border-bottom: 2px solid #333; 
+            transform: translateZ(0); 
+        }
+        
+        /* FULLSCREEN LIMPO: Sem bordas, sem outline */
+        .vid-box.fs { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            z-index: 9999; border: none !important; outline: none !important; box-shadow: none !important;
+        }
+        
+        video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; }
+
+        /* OSD */
+        .osd-status {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(0,0,0,0.8); color: var(--gold);
+            padding: 8px 15px; border-radius: 5px; font-weight: bold;
+            display: none; border: 1px solid var(--gold);
+            z-index: 10000;
+        }
+
+        .meta { padding: 20px; flex: 1; background: #050505; display: flex; flex-direction: column; }
+        .meta-title { font-size: 24px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
+        .meta-desc { font-size: 13px; color: #666; margin-bottom: auto; }
+        
+        .keys { display: flex; gap: 15px; margin-top: 15px; padding: 15px; background: #111; border-radius: 8px; }
+        .key { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: bold; color: #aaa; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:20000; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--gold); font-weight:bold; }
+    </style>
+</head>
+<body onload="App.init()">
+
+    <div id="loader" class="hide">
+        <i class="fas fa-circle-notch fa-spin" style="font-size:40px; margin-bottom:15px"></i>
+        <div id="load-txt">CARREGANDO...</div>
+    </div>
+
+    <div id="login-layer" class="layer flex-center">
+        <div class="login-box">
+            <div class="logo-txt">R&C <span>GOLD</span></div>
+            <input type="text" id="i0" class="inp focusable" placeholder="http://url_dns" tabindex="1">
+            <input type="text" id="i1" class="inp focusable" placeholder="Usuário" tabindex="2">
+            <input type="password" id="i2" class="inp focusable" placeholder="Senha" tabindex="3">
+            <button id="i3" class="inp btn focusable" onclick="App.login()" tabindex="4">CONECTAR</button>
+            <div id="msg-login" style="color:red; margin-top:10px; font-size:12px"></div>
+        </div>
+    </div>
+
+    <div id="dash-layer" class="layer hide flex-center">
+        <div class="logo-txt" style="font-size:50px">R&C <span>GOLD</span></div>
+        <div class="dash-grid">
+            <div id="m0" class="card focusable" onclick="App.openMode('live')"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
+            <div id="m1" class="card focusable" onclick="App.openMode('movie')"><i class="fas fa-film"></i><span>FILMES</span></div>
+            <div id="m2" class="card focusable" onclick="App.openMode('series')"><i class="fas fa-video"></i><span>SÉRIES</span></div>
+            <div id="m3" class="card focusable" onclick="App.logout()"><i class="fas fa-sign-out-alt"></i><span>SAIR</span></div>
+        </div>
+    </div>
+
+    <div id="content-layer" class="layer hide">
+        <div class="col-cat">
+            <div class="cat-head">CATEGORIAS</div>
+            <div id="cat-list" class="cat-list"></div>
+        </div>
+        <div class="col-list">
+            <div class="search-area">
+                <i class="fas fa-search search-icon-btn" onclick="App.doSearch()"></i>
+                <input type="text" id="search" class="inp-search focusable" placeholder="PESQUISAR..." onkeyup="if(event.keyCode===13) App.doSearch()">
+            </div>
+            <div id="item-list" class="item-list"></div>
+        </div>
+        <div class="col-play">
+            <div id="vid-box" class="vid-box">
+                <video id="player"></video>
+                <div id="osd" class="osd-status">PLAY</div>
+            </div>
+            <div class="meta">
+                <div id="meta-title" class="meta-title">R&C GOLD</div>
+                <div id="meta-desc" class="meta-desc">Selecione um conteúdo.</div>
+                
+                <div class="keys">
+                    <div class="key"><div class="dot" style="background:#ff4444"></div> TELA CHEIA</div>
+                    <div class="key"><div class="dot" style="background:#00C851"></div> TOPO</div>
+                    <div class="key"><div class="dot" style="background:#ffbb33"></div> BUSCAR</div>
+                    <div class="key"><div class="dot" style="background:#33b5e5"></div> MENU</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var PlayerEngine = {
+            hls: null, video: null, url: null, retryCount: 0, monitorInterval: null, lastTime: 0,
+            
+            init: function() { this.video = document.getElementById('player'); },
+
+            play: function(url, isLive) {
+                this.stop(); 
+                this.retryCount = 0;
+                this.url = url;
+
+                // --- 1. MODO VOD (FILMES/SÉRIES) ---
+                if (!isLive) {
+                    console.log("VOD Mode: Native Controls");
+                    // ATIVA CONTROLES NATIVOS (Barra some sozinha)
+                    this.video.controls = true; 
+                    this.video.src = url;
+                    this.video.play();
+                    return; 
+                }
+
+                // --- 2. MODO LIVE TV ---
+                // Desativa controles nativos para Live (visual mais limpo)
+                this.video.controls = false;
+
+                // Fix para PC Live (M3U8)
+                var isPC = Hls.isSupported() && !/(SMART-TV|SmartTV|NetCast|Tizen|Web0S)/.test(navigator.userAgent);
+                if(isPC && url.indexOf('.m3u8') === -1) url = url.replace('.ts', '.m3u8');
+
+                if (Hls.isSupported() && (isLive || url.includes('.m3u8'))) {
+                    var config = { maxBufferLength: 30, enableWorker: true, lowLatencyMode: true };
+                    this.hls = new Hls(config);
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(this.video);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, () => { this.video.play(); });
+                    
+                    this.hls.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) {
+                            if(data.type === Hls.ErrorTypes.NETWORK_ERROR) this.hls.startLoad();
+                            else this.hls.recoverMediaError();
+                        }
+                    });
+                    this.startMonitor(isLive);
+                } else {
+                    this.video.src = url;
+                    this.video.play();
+                }
+            },
+
+            stop: function() {
+                if(this.hls) { this.hls.destroy(); this.hls = null; }
+                if(this.video) { 
+                    this.video.pause(); 
+                    this.video.src = ""; 
+                    this.video.load();
+                    this.video.controls = false; // Reseta controles
+                }
+                clearInterval(this.monitorInterval);
+            },
+
+            startMonitor: function(isLive) {
+                if(!isLive) return;
+                clearInterval(this.monitorInterval);
+                this.lastTime = 0;
+                this.monitorInterval = setInterval(() => {
+                    var v = this.video;
+                    if(!v.paused && v.readyState > 2) {
+                        if(v.currentTime === this.lastTime) {
+                            this.retryCount++;
+                            App.osd("RECONECTANDO... (" + this.retryCount + ")");
+                            if(this.hls) this.hls.recoverMediaError(); else v.load();
+                        }
+                        this.lastTime = v.currentTime;
+                    }
+                }, 5000);
+            }
+        };
+
+        var App = {
+            scr: 0, zone: 0, idx: 0,
+            creds: {h:'', u:'', p:''},
+            mode: '', 
+            fullData: [], globalData: null, seriesEps: [], 
+            isFolder: false, memIdx: 0, currentPlayingUrl: '',
+            
+            init: function() {
+                if(localStorage.getItem('rc_h')) {
+                    document.getElementById('i0').value = localStorage.getItem('rc_h');
+                    document.getElementById('i1').value = localStorage.getItem('rc_u');
+                    document.getElementById('i2').value = localStorage.getItem('rc_p');
+                }
+                this.updateFocus();
+                PlayerEngine.init();
+                var v = document.getElementById('player');
+                v.onended = function() { App.exitFull(); };
+            },
+
+            req: function(url, cb) {
+                var x = new XMLHttpRequest();
+                x.open("GET", url, true);
+                x.timeout = 40000;
+                x.onload = function() {
+                    if(x.status===200) { try{ cb(JSON.parse(x.responseText)); }catch(e){cb(null);} }
+                    else cb(null);
+                };
+                x.onerror = function(){ cb(null); };
+                x.send();
+            },
+
+            login: function() {
+                var h = document.getElementById('i0').value.trim();
+                var u = document.getElementById('i1').value.trim();
+                var p = document.getElementById('i2').value.trim();
+                if(h.endsWith('/')) h=h.slice(0,-1);
+                if(h.indexOf('http')===-1) h='http://'+h;
+                document.getElementById('loader').classList.remove('hide');
+                document.getElementById('load-txt').innerText = "CONECTANDO...";
+                this.req(h+"/player_api.php?username="+u+"&password="+p, function(d){
+                    document.getElementById('loader').classList.add('hide');
+                    if(d && d.user_info && d.user_info.auth==1) {
+                        App.creds={h:h,u:u,p:p};
+                        localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
+                        App.setScr(1);
+                    } else document.getElementById('msg-login').innerText="Login falhou.";
+                });
+            },
+            
+            logout: function() { localStorage.clear(); location.reload(); },
+
+            setScr: function(n) {
+                PlayerEngine.stop();
+                document.getElementById('login-layer').classList.add('hide');
+                document.getElementById('dash-layer').classList.add('hide');
+                document.getElementById('content-layer').classList.add('hide');
+                this.scr=n; this.zone=0; this.idx=0;
+                if(n===0) document.getElementById('login-layer').classList.remove('hide');
+                if(n===1) document.getElementById('dash-layer').classList.remove('hide');
+                if(n===2) document.getElementById('content-layer').classList.remove('hide');
+                this.updateFocus();
+            },
+
+            resetInfo: function() {
+                document.getElementById('meta-title').innerText = "R&C GOLD";
+                document.getElementById('meta-desc').innerText = "Selecione um conteúdo.";
+                PlayerEngine.stop();
+            },
+
+            openMode: function(m) {
+                this.mode = m; 
+                this.setScr(2);
+                this.resetInfo();
+                document.getElementById('cat-list').innerHTML="";
+                document.getElementById('item-list').innerHTML="";
+                document.getElementById('search').value="";
+                this.isFolder = false; this.globalData = null;
+                var act = (m==='live')?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
+                document.getElementById('loader').classList.remove('hide');
+                document.getElementById('load-txt').innerText = "CATEGORIAS...";
+                this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
+                    document.getElementById('loader').classList.add('hide');
+                    if(d) {
+                        App.fullData=[]; 
+                        var h=""; for(var i=0;i<d.length;i++) h+='<div class="cat-item" id="c'+i+'" data-id="'+d[i].category_id+'">'+d[i].category_name+'</div>';
+                        document.getElementById('cat-list').innerHTML=h;
+                        App.zone=0; App.idx=0; App.updateFocus();
+                    }
+                });
+            },
+
+            loadContent: function(catIdx) {
+                this.resetInfo();
+                var el = document.getElementById('c'+catIdx);
+                if(!el) return;
+                var cid = el.getAttribute('data-id');
+                var all=document.querySelectorAll('.cat-item');
+                for(var i=0;i<all.length;i++) all[i].classList.remove('active');
+                el.classList.add('active');
+                var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                document.getElementById('loader').classList.remove('hide');
+                document.getElementById('load-txt').innerText = "CARREGANDO...";
+                document.getElementById('item-list').innerHTML="";
+                this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act+"&category_id="+cid, function(d){
+                    document.getElementById('loader').classList.add('hide');
+                    if(d) {
+                        App.fullData = d;
+                        App.isFolder = false;
+                        App.renderList(d);
+                        App.zone=2; App.idx=0; App.updateFocus();
+                    }
+                });
+            },
+
+            renderList: function(d) {
+                var h=""; var max=d.length>200?200:d.length;
+                if(max===0) h='<div style="padding:20px">Vazio</div>';
+                for(var i=0;i<max;i++) {
+                    var n = d[i].name || d[i].title;
+                    h+='<div class="item" id="it'+i+'">'+n+'</div>';
+                }
+                document.getElementById('item-list').innerHTML=h;
+            },
+
+            doSearch: function() {
+                var t = document.getElementById('search').value.toLowerCase();
+                if(t.length < 3) return;
+                document.getElementById('item-list').innerHTML = '<div style="padding:20px">Buscando...</div>';
+                if(this.globalData) {
+                    this.filterGlobal(t);
+                } else {
+                    var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                    this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
+                        if(d) { App.globalData = d; App.filterGlobal(t); }
+                    });
+                }
+            },
+
+            filterGlobal: function(term) {
+                var res = this.globalData.filter(function(x){
+                    var n = (x.name||x.title||"").toLowerCase();
+                    return n.indexOf(term) > -1;
+                });
+                this.fullData = res; this.isFolder = false; this.renderList(res);
+                this.zone=2; this.idx=0; this.updateFocus();
+            },
+
+            clickItem: function() {
+                if(this.isFolder) { this.playStream(this.seriesEps[this.idx]); return; }
+                if(this.mode !== 'series') {
+                    var el = document.getElementById('it'+this.idx);
+                    var name = el.innerText;
+                    var item = this.fullData.find(function(x){ return (x.name==name||x.title==name); });
+                    if(item) this.playStream(item);
+                    return;
+                }
+                var el = document.getElementById('it'+this.idx);
+                var name = el.innerText;
+                var item = this.fullData.find(function(x){ return (x.name==name||x.title==name); });
+                if(item) {
+                    this.memIdx = this.idx;
+                    document.getElementById('loader').classList.remove('hide');
+                    document.getElementById('load-txt').innerText = "EPISÓDIOS...";
+                    this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action=get_series_info&series_id="+item.series_id, function(d){
+                        document.getElementById('loader').classList.add('hide');
+                        if(d && d.episodes) {
+                            var eps = [];
+                            for(var k in d.episodes) {
+                                for(var j=0; j<d.episodes[k].length; j++) eps.push(d.episodes[k][j]);
+                            }
+                            App.seriesEps = eps;
+                            App.isFolder = true;
+                            App.renderList(eps);
+                            document.getElementById('meta-title').innerText = "📂 " + (item.name || item.title);
+                            App.idx=0; App.updateFocus();
+                        }
+                    });
+                }
+            },
+
+            playStream: function(item) {
+                var ext = (this.mode==='live')?'ts':(item.container_extension||'mp4');
+                var type = (this.mode==='live')?'live':(this.mode==='movie'?'movie':'series');
+                var id = item.stream_id || item.id;
+                var url = this.creds.h+"/"+type+"/"+this.creds.u+"/"+this.creds.p+"/"+id+"."+ext;
+                
+                if(this.currentPlayingUrl === url) { this.toggleFull(); return; }
+
+                this.currentPlayingUrl = url;
+                document.getElementById('meta-title').innerText = item.name || item.title;
+                document.getElementById('meta-desc').innerText = "Reproduzindo...";
+                
+                // ENGINE
+                PlayerEngine.play(url, this.mode === 'live');
+                
+                var all=document.querySelectorAll('.item');
+                for(var i=0;i<all.length;i++) all[i].classList.remove('playing-item');
+                if(document.getElementById('it'+this.idx)) document.getElementById('it'+this.idx).classList.add('playing-item');
+
+                this.zone=3; this.updateFocus();
+                if(this.mode==='live') this.osd("PLAY ▶");
+            },
+
+            back: function() {
+                var v = document.getElementById('vid-box');
+                if(v.classList.contains('fs')) { this.exitFull(); return; }
+                if(this.zone===3) { this.zone=2; this.updateFocus(); return; }
+                if(this.zone===2 && this.isFolder) {
+                    this.isFolder = false; this.renderList(this.fullData); this.idx = this.memIdx;
+                    document.getElementById('meta-title').innerText = "SÉRIES";
+                    this.updateFocus(); return;
+                }
+                if(this.zone===2) { this.resetInfo(); this.zone=0; this.idx=0; this.updateFocus(); return; }
+                if(this.zone===1) { this.zone=2; this.idx=0; this.updateFocus(); return; }
+                if(this.zone===0) { this.setScr(1); return; }
+            },
+
+            toggleFull: function() {
+                var b = document.getElementById('vid-box');
+                if(b.classList.contains('fs')) this.exitFull();
+                else { b.classList.add('fs'); this.osd("TELA CHEIA"); }
+            },
+            exitFull: function() { document.getElementById('vid-box').classList.remove('fs'); },
+            
+            osd: function(m) {
+                var o = document.getElementById('osd'); o.innerText=m; o.style.display='block';
+                setTimeout(function(){o.style.display='none'}, 2000);
+            },
+
+            updateFocus: function() {
+                var all=document.querySelectorAll('.focused');
+                for(var i=0;i<all.length;i++) all[i].classList.remove('focused');
+                var el=null;
+                if(this.scr===0) el=document.getElementById('i'+this.idx);
+                if(this.scr===1) el=document.getElementById('m'+this.idx);
+                if(this.scr===2) {
+                    if(this.zone===0) el=document.getElementById('c'+this.idx);
+                    if(this.zone===1) el=document.getElementById('search');
+                    if(this.zone===2) el=document.getElementById('it'+this.idx);
+                    if(this.zone===3) el=document.getElementById('vid-box');
+                }
+                if(el) {
+                    el.classList.add('focused');
+                    if(el.tagName==='INPUT') el.focus();
+                    else el.scrollIntoView({block:'center'});
+                }
+            },
+            
+            move: function(d) {
+                if(this.scr===0) { if(d===1 && this.idx<3) this.idx++; if(d===0 && this.idx>0) this.idx--; }
+                if(this.scr===1) { if(d===3 && this.idx<3) this.idx++; if(d===2 && this.idx>0) this.idx--; }
+                if(this.scr===2) {
+                    if(this.zone===3) {
+                        var isFs = document.getElementById('vid-box').classList.contains('fs');
+                        // Se for VOD Nativo, as setas do controle podem conflitar com o browser
+                        // Mas deixamos aqui para LIVE e suporte
+                        if(!isFs) this.zone=2;
+                        return;
+                    }
+                    if(this.zone===0) { 
+                        if(d===1) this.idx++; if(d===0 && this.idx>0) this.idx--; 
+                        if(d===3) { this.loadContent(this.idx); }
+                    }
+                    else if(this.zone===2) {
+                        if(d===1) this.idx++; if(d===0 && this.idx>0) this.idx--;
+                        if(d===2) { this.zone=0; this.idx=0; }
+                        if(d===3) this.zone=3;
+                        if(d===0 && this.idx===0) this.zone=1;
+                    }
+                    else if(this.zone===1) { 
+                        if(d===1) { this.zone=2; this.idx=0; }
+                    }
+                }
+                this.updateFocus();
+            },
+            
+            action: function() {
+                if(this.scr===0) this.login();
+                if(this.scr===1) { var m=['live','movie','series']; if(this.idx<3) this.openMode(m[this.idx]); else this.logout(); }
+                if(this.scr===2) {
+                    if(this.zone===0) this.loadContent(this.idx);
+                    if(this.zone===2) this.clickItem();
+                    if(this.zone===3) { this.toggleFull(); }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', function(e){
+            var k=e.keyCode;
+            if(App.scr === 0) {
+                if(k === 9) { e.preventDefault(); App.idx++; if(App.idx > 3) App.idx = 0; App.updateFocus(); return; }
+                if(k === 8) { return; } 
+                if(k === 13) { App.action(); return; }
+            }
+            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
+            if(k===404||k===71) { e.preventDefault(); if(App.scr===2){App.zone=0;App.idx=0;App.updateFocus();} return; }
+            if(k===405||k===89) { e.preventDefault(); if(App.scr===2){App.zone=1;App.updateFocus();} return; }
+            if(k===406||k===66) { e.preventDefault(); App.setScr(1); return; }
+            if([37,38,39,40,13].indexOf(k)>-1) {
+                if(document.activeElement.tagName==='INPUT'&&k!==13) return;
+                e.preventDefault();
+                if(k===13) App.action(); else if(k===38) App.move(0); else if(k===40) App.move(1); else if(k===37) App.move(2); else if(k===39) App.move(3);
+            }
+            if(k===8||k===461||k===27) { e.preventDefault(); App.back(); }
+        });
+    </script>
+</body>
+</html>
