@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STB SMART UP PRO</title>
+    <title>R&C AUTOMATIC V25</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- ESTILO STB GOLD LEVE --- */
+        /* --- VISUAL OTIMIZADO PARA TV --- */
         :root { 
-            --bg: #000000; 
+            --bg: #000; 
             --gold: #FFD700; 
-            --gold-dim: #b8860b;
-            --focus: #FFD700;
-            --panel: #101010;
+            --panel: #111;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -26,352 +24,297 @@
             width: 100vw; height: 100vh; overflow: hidden;
         }
 
-        /* UTILITÁRIOS */
         .hide { display: none !important; }
-        .flex { display: flex !important; }
         
         /* HEADER */
         .header {
-            height: 10vh; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 4vw; background: linear-gradient(180deg, rgba(10,10,10,1) 0%, transparent);
-            border-bottom: 1px solid #222;
+            height: 12vh; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 4vw; background: #0a0a0a; border-bottom: 2px solid #222;
         }
-        .logo { font-size: 2.8vh; font-weight: 800; letter-spacing: 2px; }
+        .logo { font-size: 3vh; font-weight: 800; color: #fff; }
         .logo span { color: var(--gold); }
-        .clock { color: #888; font-size: 2vh; }
 
-        /* --- TELA LOGIN (STB STYLE) --- */
+        /* --- LOGIN --- */
         #screen-login {
-            height: 90vh; display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle, #1a1a1a 0%, #000000 90%);
+            height: 88vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .login-box {
-            width: 40vw; background: rgba(20,20,20,0.95); padding: 4vh;
-            border: 1px solid var(--gold-dim); border-radius: 8px; text-align: center;
+        .login-card {
+            width: 40%; background: #151515; padding: 40px; border-radius: 10px; border: 1px solid #333;
         }
-        .login-box h2 { color: var(--gold); margin-bottom: 3vh; }
-        
-        .inp-group { margin-bottom: 2vh; text-align: left; }
-        .inp-group label { font-size: 1.2vh; color: #666; margin-left: 5px; }
-        .ipt {
-            width: 100%; padding: 1.5vh; background: #000; border: 1px solid #333; 
-            color: #fff; border-radius: 4px; font-size: 1.8vh;
+        .input-row { margin-bottom: 20px; }
+        .input-row label { display: block; color: #888; margin-bottom: 5px; font-size: 14px; }
+        .stb-input {
+            width: 100%; height: 50px; background: #000; border: 2px solid #333; color: white;
+            font-size: 20px; padding-left: 10px;
         }
-        .ipt:focus { border-color: var(--gold); }
-        
-        .btn {
-            width: 100%; padding: 2vh; background: var(--gold-dim); color: #000;
-            font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-top: 1vh;
+        .btn-connect {
+            width: 100%; height: 50px; background: var(--gold); color: black; font-weight: bold; border: none; margin-top: 10px;
         }
 
-        /* --- DASHBOARD (MENU) --- */
+        /* --- DASHBOARD --- */
         #screen-dash {
-            height: 90vh; display: flex; align-items: center; justify-content: center; gap: 2vw;
+            height: 88vh; display: flex; align-items: center; justify-content: center; gap: 30px;
         }
-        .tile {
-            width: 18vw; height: 30vh; background: #080808; border: 1px solid #222;
+        .menu-tile {
+            width: 200px; height: 200px; background: #151515; border: 2px solid #333;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 10px; transition: transform 0.2s;
         }
-        .tile i { font-size: 5vh; margin-bottom: 2vh; color: #555; }
-        .tile span { font-size: 1.8vh; font-weight: 600; color: #888; }
+        .menu-tile i { font-size: 60px; margin-bottom: 10px; color: #555; }
 
-        /* --- LISTAS (CATEGORIAS E CANAIS) --- */
-        #screen-list { height: 90vh; display: flex; }
+        /* --- LISTAS --- */
+        #screen-list { height: 88vh; display: flex; }
         
-        .col-left { width: 30vw; height: 100%; background: #0a0a0a; border-right: 1px solid #222; overflow-y: auto; }
-        .col-right { width: 70vw; height: 100%; background: #000; overflow-y: auto; padding: 2vh; }
+        .sidebar { width: 30%; height: 100%; background: #080808; overflow-y: auto; border-right: 1px solid #222; }
+        .main-content { width: 70%; height: 100%; background: #000; overflow-y: auto; padding: 20px; }
 
-        .item-list {
-            padding: 1.5vh 2vh; border-bottom: 1px solid #151515; font-size: 1.6vh; color: #aaa;
+        .list-item {
+            padding: 15px; border-bottom: 1px solid #1a1a1a; color: #aaa; font-size: 18px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        /* Header da coluna */
-        .col-head { padding: 2vh; color: var(--gold); font-weight: bold; background: #111; border-bottom: 1px solid var(--gold); }
 
-        /* --- PLAYER PURO --- */
+        /* --- PLAYER --- */
         #screen-player {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999;
         }
-        video { width: 100%; height: 100%; }
-
-        /* TOAST (Aviso na tela sem barra) */
-        #osd-msg {
-            position: absolute; top: 5vh; right: 5vh; 
-            background: rgba(255, 215, 0, 0.9); color: #000; 
-            padding: 1vh 3vh; border-radius: 50px; font-weight: 800; font-size: 2vh;
-            display: none; z-index: 1000; box-shadow: 0 0 30px rgba(255,215,0,0.3);
+        video { width: 100%; height: 100%; object-fit: contain; }
+        
+        #auto-play-msg {
+            position: absolute; top: 20px; right: 20px; background: var(--gold); color: black;
+            padding: 10px 20px; font-weight: bold; z-index: 1000; display: none;
         }
 
-        /* --- FOCO --- */
+        /* --- FOCO REAL --- */
         .focused {
+            border-color: var(--gold) !important;
             background: var(--gold) !important;
             color: #000 !important;
-            border-color: var(--gold) !important;
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(255,215,0,0.2);
-            z-index: 10;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            font-weight: bold;
         }
-        .focused i, .focused span { color: #000 !important; }
-        .tile.focused { transform: scale(1.1); }
-
-        /* RODAPÉ COLORIDO */
-        .footer-keys {
-            position: fixed; bottom: 0; width: 100%; height: 5vh; background: #050505;
-            display: flex; align-items: center; justify-content: center; gap: 3vw; border-top: 1px solid #222;
-        }
-        .key { display: flex; align-items: center; gap: 0.5vw; font-size: 1.2vh; color: #666; }
-        .dot { width: 1.2vh; height: 1.2vh; border-radius: 50%; }
-
-        /* LOADING */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000;
-        }
-        .spin { width: 40px; height: 40px; border: 4px solid #333; border-top: 4px solid var(--gold); border-radius: 50%; animation: s 1s infinite linear; }
-        @keyframes s { 100% { transform: rotate(360deg); } }
-
+        .focused i { color: #000 !important; }
+        
+        /* Loading */
+        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; display:flex; justify-content:center; align-items:center; flex-direction: column; color: var(--gold);}
     </style>
 </head>
 <body>
 
-    <div id="osd-msg">PAUSE</div>
-
-    <div id="loader" class="hide">
-        <div class="spin"></div>
-        <div style="margin-top:20px; color:var(--gold)" id="load-txt">CARREGANDO...</div>
+    <div id="loading" class="hide">
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 50px;"></i>
+        <h3 style="margin-top: 20px;">CARREGANDO...</h3>
     </div>
 
+    <div id="auto-play-msg">PRÓXIMO EPISÓDIO EM 3s...</div>
+
     <div class="header">
-        <div class="logo">STB <span>UP</span></div>
-        <div class="clock" id="clock">00:00</div>
+        <div class="logo">R&C <span>AUTO</span></div>
+        <div id="clock">00:00</div>
     </div>
 
     <div id="screen-login">
-        <div class="login-box">
-            <h2>CONFIGURAÇÃO SERVIDOR</h2>
-            <div class="inp-group">
-                <label>DNS / URL (Ex: http://line.com:80)</label>
-                <input type="text" id="host" class="ipt focusable" placeholder="http://...">
+        <div class="login-card">
+            <div class="input-row">
+                <label>DNS (http://...)</label>
+                <input type="text" id="host" class="stb-input focusable" placeholder="http://url:porta">
             </div>
-            <div class="inp-group">
+            <div class="input-row">
                 <label>USUÁRIO</label>
-                <input type="text" id="user" class="ipt focusable">
+                <input type="text" id="user" class="stb-input focusable">
             </div>
-            <div class="inp-group">
+            <div class="input-row">
                 <label>SENHA</label>
-                <input type="password" id="pass" class="ipt focusable">
+                <input type="password" id="pass" class="stb-input focusable" onkeydown="App.checkEnterLogin(event)">
             </div>
-            <button class="btn focusable" onclick="App.doLogin()">CONECTAR</button>
+            <button class="btn-connect focusable" onclick="App.login()">CONECTAR</button>
         </div>
     </div>
 
     <div id="screen-dash" class="hide">
-        <div class="tile focusable" onclick="App.getCategories('live')">
-            <i class="fas fa-tv"></i><span>TV AO VIVO</span>
-        </div>
-        <div class="tile focusable" onclick="App.getCategories('movie')">
-            <i class="fas fa-film"></i><span>FILMES</span>
-        </div>
-        <div class="tile focusable" onclick="App.getCategories('series')">
-            <i class="fas fa-video"></i><span>SÉRIES</span>
-        </div>
-        <div class="tile focusable" onclick="App.logout()">
-            <i class="fas fa-sign-out-alt"></i><span>SAIR</span>
-        </div>
+        <div class="menu-tile focusable" onclick="App.loadCats('live')"><i class="fas fa-tv"></i>TV AO VIVO</div>
+        <div class="menu-tile focusable" onclick="App.loadCats('movie')"><i class="fas fa-film"></i>FILMES</div>
+        <div class="menu-tile focusable" onclick="App.loadCats('series')"><i class="fas fa-video"></i>SÉRIES</div>
     </div>
 
     <div id="screen-list" class="hide">
-        <div class="col-left">
-            <div class="col-head">CATEGORIAS</div>
-            <div id="list-cats"></div>
-        </div>
-        <div class="col-right">
-            <div class="col-head" id="title-items">CONTEÚDO</div>
-            <div id="list-items"></div>
+        <div class="sidebar" id="container-cats"></div>
+        <div class="main-content" id="container-items">
+            <h2 style="color:#444; text-align:center; margin-top:20%">SELECIONE UMA CATEGORIA</h2>
         </div>
     </div>
 
     <div id="screen-player" class="hide">
-        <video id="vid"></video>
-    </div>
-
-    <div class="footer-keys">
-        <div class="key"><div class="dot" style="background:red"></div> SAIR/VOLTAR</div>
-        <div class="key"><div class="dot" style="background:green"></div> ORDENAR</div>
-        <div class="key"><div class="dot" style="background:yellow"></div> FAVORITOS</div>
-        <div class="key"><div class="dot" style="background:blue"></div> TELA CHEIA</div>
+        <video id="player"></video>
     </div>
 
     <script>
         const App = {
-            scr: 'login', // login, dash, list, player
+            scr: 'login', // login, dash, cats, items, player
             items: [],
             idx: 0,
+            
             creds: {},
-            type: '',
-            hls: null,
-
+            playlist: [], // Lista atual para o Auto-Play
+            playIndex: -1, // Índice do vídeo tocando
+            
             init: function() {
                 // Relógio
-                setInterval(() => {
-                    const d = new Date();
-                    document.getElementById('clock').innerText = d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-                }, 1000);
+                setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), 1000);
+                
+                // Configura Player para Auto-Play
+                const vid = document.getElementById('player');
+                vid.addEventListener('ended', () => {
+                    this.notify("PRÓXIMO EPISÓDIO...");
+                    setTimeout(() => { this.nextEpisode(); }, 3000);
+                });
 
-                // Recuperar Login
-                const s = localStorage.getItem('stb_data');
+                // Auto Login
+                const s = localStorage.getItem('rc_auto_login');
                 if(s) {
                     this.creds = JSON.parse(s);
                     document.getElementById('host').value = this.creds.host;
                     document.getElementById('user').value = this.creds.user;
                     document.getElementById('pass').value = this.creds.pass;
-                    // Auto Focus no botão Conectar
-                    setTimeout(() => {
-                        this.scan('#screen-login .focusable');
-                        this.idx = 3; this.focus();
-                    }, 500);
+                    // Foca botão conectar
+                    setTimeout(() => { this.scan(); this.idx = 3; this.update(); }, 500);
                 } else {
-                    this.scan('#screen-login .focusable');
+                    this.scan();
                 }
 
-                // Teclado
-                document.addEventListener('keydown', (e) => this.key(e));
+                // CONTROLE REMOTO GLOBAL
+                document.addEventListener('keydown', (e) => this.remote(e));
             },
 
-            // --- SISTEMA DE FOCO ---
-            scan: function(selector) {
-                this.items = document.querySelectorAll(selector);
-                this.idx = 0;
-                this.focus();
+            // --- NAVEGAÇÃO "INFALÍVEL" ---
+            scan: function() {
+                let s = '';
+                if(this.scr === 'login') s = '#screen-login .focusable';
+                if(this.scr === 'dash') s = '#screen-dash .focusable';
+                if(this.scr === 'cats') s = '#container-cats .list-item';
+                if(this.scr === 'items') s = '#container-items .list-item';
+                
+                this.items = document.querySelectorAll(s);
+                // Se perder referência, reseta índice
+                if(this.idx >= this.items.length) this.idx = 0;
+                this.update();
             },
-            
-            focus: function() {
+
+            update: function() {
                 document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
                 if(this.items[this.idx]) {
                     const el = this.items[this.idx];
                     el.classList.add('focused');
-                    el.scrollIntoView({block:'center', behavior:'smooth'});
+                    el.scrollIntoView({block:'center', behavior:'auto'}); // 'auto' é mais rápido que 'smooth' para TV
+                    
+                    // Hack para abrir teclado só se for input
                     if(el.tagName === 'INPUT') el.focus();
+                    else document.activeElement.blur(); // Tira foco do input anterior
                 }
             },
 
-            // --- CONTROLE REMOTO ---
-            key: function(e) {
+            remote: function(e) {
                 const k = e.keyCode;
-
-                // PLAYER KEYS (Prioridade)
+                
+                // PLAYER (Prioridade)
                 if(this.scr === 'player') {
                     e.preventDefault();
-                    const v = document.getElementById('vid');
-                    
-                    if(k===13 || k===19) { // Enter/Pause
-                        v.paused ? (v.play(), this.osd("PLAY ▶")) : (v.pause(), this.osd("PAUSE ⏸"));
-                    }
-                    else if(k===39) { v.currentTime += 15; this.osd(">> 15s"); } // Dir
-                    else if(k===37) { v.currentTime -= 15; this.osd("<< 15s"); } // Esq
-                    else if(k===403 || k===8 || k===461 || k===10009 || k===27) { this.stop(); } // Voltar/Red
-                    else if(k===406) { // Azul (Zoom)
-                        v.style.objectFit = v.style.objectFit==='cover' ? 'contain' : 'cover';
-                        this.osd(v.style.objectFit==='cover' ? "ZOOM: CHEIO" : "ZOOM: NORMAL");
-                    }
+                    const v = document.getElementById('player');
+                    if(k===8 || k===461 || k===10009 || k===403) this.stop(); // Voltar
+                    if(k===13 || k===19) v.paused ? v.play() : v.pause(); // OK
+                    if(k===39) v.currentTime += 15; // Direita
+                    if(k===37) v.currentTime -= 15; // Esquerda
                     return;
                 }
 
-                // TECLAS GERAIS
-                if(k===403 || k===8 || k===461 || k===10009) { // Red/Back
+                // GERAL
+                if(k===8 || k===461 || k===10009) { // Back
                     this.back(); return;
                 }
 
                 if(k===38) { // Cima
                     this.idx--; if(this.idx < 0) this.idx = 0;
-                    this.focus();
+                    this.update();
                 }
                 else if(k===40) { // Baixo
                     this.idx++; if(this.idx >= this.items.length) this.idx = this.items.length-1;
-                    this.focus();
-                }
-                else if(k===37) { // Esquerda
-                    if(this.scr==='list' && document.activeElement.closest('.col-right')) {
-                        this.scan('#list-cats .item-list'); // Volta para coluna esquerda
-                    }
+                    this.update();
                 }
                 else if(k===39) { // Direita
-                    if(this.scr==='list' && document.activeElement.closest('.col-left')) {
-                        // Se tiver itens na direita, vai pra lá
-                        if(document.querySelector('#list-items .item-list')) {
-                            this.scan('#list-items .item-list');
-                        }
-                    }
+                    if(this.scr === 'cats') { this.scr = 'items'; this.scan(); this.idx=0; this.update(); }
+                    else if(this.scr === 'dash') { this.idx++; if(this.idx >= this.items.length) this.idx=this.items.length-1; this.update(); }
+                }
+                else if(k===37) { // Esquerda
+                    if(this.scr === 'items') { this.scr = 'cats'; this.scan(); this.idx=0; this.update(); }
+                    else if(this.scr === 'dash') { this.idx--; if(this.idx < 0) this.idx=0; this.update(); }
                 }
                 else if(k===13) { // Enter
-                    if(this.items[this.idx].tagName === 'INPUT') {
-                         // Fecha teclado se possível e foca proximo
-                         this.items[this.idx].blur();
-                         if(this.items[this.idx].id === 'pass') this.doLogin();
-                    } else {
-                        this.items[this.idx].click();
-                    }
+                     if(this.items[this.idx]) this.items[this.idx].click();
                 }
             },
 
-            // --- LÓGICA ---
-            doLogin: function() {
-                const h = document.getElementById('host').value.replace(/\/$/, "");
-                const u = document.getElementById('user').value;
-                const p = document.getElementById('pass').value;
+            // --- LOGIN AUTOMÁTICO (ENTER) ---
+            checkEnterLogin: function(e) {
+                if(e.keyCode === 13) {
+                    e.preventDefault();
+                    document.getElementById('pass').blur(); // Fecha teclado
+                    this.login(); // Loga direto
+                }
+            },
 
-                if(!h || !u || !p) { alert("Preencha tudo!"); return; }
-
-                this.loading(true);
-                // Testa login
+            login: function() {
+                const h = document.getElementById('host').value.trim();
+                const u = document.getElementById('user').value.trim();
+                const p = document.getElementById('pass').value.trim();
+                
+                if(!h || !u || !p) return;
+                
+                this.load(true);
                 fetch(`${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`)
                 .then(r => r.json())
                 .then(d => {
-                    localStorage.setItem('stb_data', JSON.stringify({host:h, user:u, pass:p}));
+                    localStorage.setItem('rc_auto_login', JSON.stringify({host:h, user:u, pass:p}));
                     this.creds = {host:h, user:u, pass:p};
-                    this.nav('dash');
-                    this.loading(false);
+                    this.screen('dash');
+                    this.load(false);
                 })
                 .catch(e => {
-                    this.loading(false);
-                    alert("Erro de conexão. Verifique DNS.");
+                    this.load(false);
+                    alert("Erro. Verifique dados e Internet.");
                 });
             },
 
-            getCategories: function(type) {
+            // --- CONTEÚDO ---
+            loadCats: function(type) {
                 this.type = type;
-                this.loading(true);
-                let action = type==='live' ? 'get_live_categories' : (type==='movie' ? 'get_vod_categories' : 'get_series_categories');
-
+                this.load(true);
+                let action = type === 'live' ? 'get_live_categories' : (type === 'movie' ? 'get_vod_categories' : 'get_series_categories');
+                
                 fetch(`${this.creds.host}/player_api.php?username=${this.creds.user}&password=${this.creds.pass}&action=${action}`)
                 .then(r => r.json())
                 .then(d => {
-                    const el = document.getElementById('list-cats');
-                    el.innerHTML = '';
-                    d.forEach(c => {
-                        const div = document.createElement('div');
-                        div.className = 'item-list focusable';
-                        div.innerText = c.category_name;
-                        div.onclick = () => {
-                            // Marca visual
-                            document.querySelectorAll('#list-cats .item-list').forEach(x => x.style.color = '#aaa');
-                            div.style.color = 'var(--gold)';
-                            this.getStreams(c.category_id);
+                    const c = document.getElementById('container-cats');
+                    c.innerHTML = '';
+                    d.forEach(item => {
+                        const el = document.createElement('div');
+                        el.className = 'list-item focusable';
+                        el.innerText = item.category_name;
+                        el.onclick = () => {
+                             // Efeito visual de seleção
+                             Array.from(c.children).forEach(k=>k.style.color='#aaa');
+                             el.style.color='var(--gold)';
+                             this.loadItems(item.category_id);
                         };
-                        el.appendChild(div);
+                        c.appendChild(el);
                     });
-                    
-                    document.getElementById('list-items').innerHTML = '<div style="color:#444; padding:20px">Selecione uma Categoria</div>';
-                    this.nav('list');
-                    this.loading(false);
-                    this.scan('#list-cats .item-list');
-                })
-                .catch(e => { this.loading(false); alert("Erro ao baixar categorias"); });
+                    this.screen('list');
+                    this.scr = 'cats'; 
+                    this.scan();
+                    this.load(false);
+                });
             },
 
-            getStreams: function(catId) {
-                this.loading(true);
+            loadItems: function(catId) {
+                this.load(true);
                 let action = '';
                 if(this.type === 'live') action = `get_live_streams&category_id=${catId}`;
                 if(this.type === 'movie') action = `get_vod_streams&category_id=${catId}`;
@@ -380,87 +323,98 @@
                 fetch(`${this.creds.host}/player_api.php?username=${this.creds.user}&password=${this.creds.pass}&action=${action}`)
                 .then(r => r.json())
                 .then(d => {
-                    const el = document.getElementById('list-items');
-                    el.innerHTML = '';
-                    d.forEach(i => {
-                        const div = document.createElement('div');
-                        div.className = 'item-list focusable';
-                        div.innerText = i.name;
-                        div.onclick = () => this.play(i);
-                        el.appendChild(div);
+                    const c = document.getElementById('container-items');
+                    c.innerHTML = '';
+                    
+                    // SALVA A LISTA PARA O AUTO-PLAY
+                    this.playlist = d; 
+
+                    d.forEach((item, index) => {
+                        const el = document.createElement('div');
+                        el.className = 'list-item focusable';
+                        el.innerText = item.name;
+                        el.onclick = () => {
+                            this.playIndex = index; // Marca onde começou
+                            this.play(item);
+                        };
+                        c.appendChild(el);
                     });
-                    this.loading(false);
-                    // Pula o foco para a direita automaticamente
-                    this.scan('#list-items .item-list');
+                    this.load(false);
+                    // Pula automaticamente para a direita
+                    this.scr = 'items';
+                    this.scan();
                 });
             },
 
+            // --- PLAYER + AUTO PLAY ---
             play: function(item) {
-                const v = document.getElementById('vid');
+                const vid = document.getElementById('player');
                 let url = '';
-                let ext = item.container_extension || 'mp4'; // Padrão vod
-
+                
                 if(this.type === 'live') {
-                    url = `${this.creds.host}/live/${this.creds.user}/${this.creds.pass}/${item.stream_id}.m3u8`;
+                     url = `${this.creds.host}/live/${this.creds.user}/${this.creds.pass}/${item.stream_id}.m3u8`;
                 } else {
-                    url = `${this.creds.host}/movie/${this.creds.user}/${this.creds.pass}/${item.stream_id}.${ext}`;
+                     let ext = item.container_extension || 'mp4';
+                     url = `${this.creds.host}/movie/${this.creds.user}/${this.creds.pass}/${item.stream_id}.${ext}`;
                 }
 
                 document.getElementById('screen-player').classList.remove('hide');
                 this.scr = 'player';
+                this.notify(`TOCANDO: ${item.name}`);
 
                 if(Hls.isSupported() && url.includes('.m3u8')) {
-                    if(this.hls) this.hls.destroy();
-                    this.hls = new Hls();
-                    this.hls.loadSource(url);
-                    this.hls.attachMedia(v);
-                    this.hls.on(Hls.Events.MANIFEST_PARSED, () => v.play());
+                    const hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(vid);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => vid.play());
                 } else {
-                    v.src = url;
-                    v.play();
+                    vid.src = url;
+                    vid.play();
+                }
+            },
+
+            nextEpisode: function() {
+                // Lógica de Auto-Play
+                if(this.type === 'live') return; // Live não tem próximo
+
+                const nextIdx = this.playIndex + 1;
+                if(nextIdx < this.playlist.length) {
+                    this.playIndex = nextIdx;
+                    this.play(this.playlist[nextIdx]);
+                } else {
+                    this.stop(); // Acabou a lista
                 }
             },
 
             stop: function() {
-                const v = document.getElementById('vid');
+                const v = document.getElementById('player');
                 v.pause(); v.src = "";
                 document.getElementById('screen-player').classList.add('hide');
-                this.scr = 'list';
-                this.scan('#list-items .item-list');
+                this.scr = 'items';
+                this.scan();
             },
 
-            // --- NAVEGAÇÃO UI ---
-            nav: function(s) {
-                ['screen-login','screen-dash','screen-list'].forEach(id => document.getElementById(id).classList.add('hide'));
-                document.getElementById('screen-'+s).classList.remove('hide');
-                this.scr = s;
+            // --- UTIL ---
+            screen: function(id) {
+                ['screen-login','screen-dash','screen-list'].forEach(x => document.getElementById(x).classList.add('hide'));
+                document.getElementById('screen-'+id).classList.remove('hide');
+                this.idx = 0;
             },
-
+            
             back: function() {
-                if(this.scr === 'list') {
-                    this.nav('dash'); this.scan('#screen-dash .focusable');
-                } else if(this.scr === 'dash') {
-                    if(confirm("Deslogar?")) {
-                        localStorage.removeItem('stb_data');
-                        location.reload();
-                    }
+                if(this.scr === 'items') { this.scr = 'cats'; this.scan(); }
+                else if(this.scr === 'cats') { this.screen('dash'); this.scr='dash'; this.scan(); }
+                else if(this.scr === 'dash') { 
+                    if(confirm("Sair?")) location.reload(); 
                 }
             },
 
-            logout: function() {
-                 localStorage.removeItem('stb_data');
-                 location.reload();
-            },
-
-            loading: function(show) {
-                document.getElementById('loader').classList.toggle('hide', !show);
-            },
-
-            osd: function(msg) {
-                const o = document.getElementById('osd-msg');
-                o.innerText = msg;
-                o.style.display = 'block';
-                setTimeout(() => o.style.display = 'none', 2000);
+            load: function(s) { document.getElementById('loading').classList.toggle('hide', !s); },
+            
+            notify: function(msg) {
+                const n = document.getElementById('auto-play-msg');
+                n.innerText = msg; n.style.display = 'block';
+                setTimeout(() => n.style.display = 'none', 3000);
             }
         };
 
