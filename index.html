@@ -1,427 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C P2P CLEAN</title>
+    <title>R&C GOLD IPTV</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-        /* --- ESTILO P2P DARK CLEAN --- */
-        :root { --bg: #090909; --panel: #111; --focus: #FFD700; --text-dim: #888; }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
-        body { background: var(--bg); color: #fff; font-family: sans-serif; overflow: hidden; height: 100vh; width: 100vw; }
-        
-        /* LAYOUT PRINCIPAL */
-        #app { display: flex; height: 100%; width: 100%; }
-        .hide { display: none !important; }
-
-        /* 1. SIDEBAR (MENU ESQUERDO) */
-        #sidebar {
-            width: 80px; background: #000; border-right: 1px solid #222;
-            display: flex; flex-direction: column; align-items: center; padding-top: 30px; z-index: 2;
-        }
-        .menu-icon {
-            font-size: 24px; color: var(--text-dim); margin-bottom: 40px; 
-            width: 50px; height: 50px; display: flex; justify-content: center; align-items: center;
-            border-radius: 10px; transition: 0.2s;
-        }
-
-        /* 2. ÁREA DE LISTAS (MEIO) */
-        #list-area {
-            width: 400px; background: var(--panel); border-right: 1px solid #222;
-            display: flex; flex-direction: column; height: 100%;
-        }
-        .list-header { padding: 20px; font-weight: bold; color: var(--focus); border-bottom: 1px solid #222; text-transform: uppercase;}
-        .list-container { flex: 1; overflow-y: hidden; /* Scroll manual via JS */ position: relative; }
-        .list-scroll { position: absolute; top: 0; left: 0; width: 100%; }
-        
-        .item {
-            padding: 15px 20px; border-bottom: 1px solid #1a1a1a; color: #aaa;
-            font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        /* 3. ÁREA DE PREVIEW / DETALHES (DIREITA) */
-        #preview-area {
-            flex: 1; background: #050505; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; position: relative;
-        }
-        #bg-poster {
-            position: absolute; top:0; left:0; width: 100%; height: 100%; 
-            opacity: 0.3; background-size: cover; background-position: center; z-index: 0;
-        }
-        .info-box { z-index: 1; text-align: center; padding: 40px; max-width: 80%; }
-        .info-title { font-size: 40px; font-weight: bold; margin-bottom: 20px; text-shadow: 0 2px 10px #000; }
-        .info-meta { font-size: 20px; color: #ccc; }
-
-        /* 4. BUSCA */
-        #search-overlay {
-            position: absolute; top:0; left: 80px; width: 400px; height: 100%; background: #151515;
-            z-index: 10; border-right: 1px solid var(--focus); display: none; flex-direction: column;
-        }
-        #search-input {
-            width: 100%; padding: 20px; background: #222; color: #fff; border: none; font-size: 20px;
-            border-bottom: 2px solid var(--focus);
-        }
-
-        /* 5. PLAYER */
-        #player-fs { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index: 999; display: none; }
-        video { width: 100%; height: 100%; }
-        #osd { position: absolute; top: 30px; right: 30px; background: var(--focus); color: #000; padding: 10px 20px; font-weight: bold; border-radius: 5px; display: none; }
-
-        /* FOCO */
-        .focused {
-            background: var(--focus) !important; color: #000 !important;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); font-weight: bold; transform: scale(1.02);
-        }
-        .menu-icon.focused { background: #333; color: #fff; border-left: 4px solid var(--focus); }
-        .menu-icon.active { color: var(--focus); }
-    </style>
 </head>
-<body>
-
-    <script>
-        const CONFIG = {
-            url:  "http://SEU_DNS_AQUI:80",  // Ex: http://meuserver.com:80
-            user: "SEU_USUARIO",             // Ex: usuario123
-            pass: "SUA_SENHA"                // Ex: 12345
-        };
-    </script>
-    <div id="app">
-        <div id="sidebar">
-            <div class="menu-icon" id="menu-live">TV</div>
-            <div class="menu-icon" id="menu-movie">VOD</div>
-            <div class="menu-icon" id="menu-series">SER</div>
-            <div class="menu-icon" id="menu-search">🔍</div>
+<body class="theme-green"> <div id="login-screen" class="screen active">
+        <div class="login-box">
+            <h1>R&C GOLD PLAYER</h1>
+            <input type="text" id="server-url" placeholder="http://url.do.servidor">
+            <input type="text" id="username" placeholder="Usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button id="btn-connect" onclick="fazerLogin()">CONECTAR</button>
+            <p id="login-error" class="error-msg"></p>
         </div>
+    </div>
 
-        <div id="list-area">
-            <div class="list-header" id="header-title">CANAIS</div>
-            <div class="list-container">
-                <div class="list-scroll" id="dynamic-list">
-                    </div>
+    <div id="main-menu-screen" class="screen">
+        <div class="logo-area">
+            <img src="logo.png" alt="R&C GOLD">
+        </div>
+        <div class="menu-cards">
+            <div class="card active-card" tabindex="1" onclick="abrirCategoria('live')">📺 TV ao vivo</div>
+            <div class="card" tabindex="2" onclick="abrirCategoria('movies')">🎬 Filmes</div>
+            <div class="card" tabindex="3" onclick="abrirCategoria('series')">🎞️ Séries</div>
+            <div class="card" tabindex="4" onclick="abrirConfig()">⚙️ Configurações</div>
+        </div>
+        <div class="account-info-bar">
+             Status: <span id="acc-status">Conectado</span> | Expira: <span id="acc-expire">01/01/2030</span>
+        </div>
+    </div>
+
+    <div id="content-screen" class="screen">
+        <div class="sidebar-list" id="channel-list">
             </div>
-        </div>
-        
-        <div id="search-overlay">
-            <input type="text" id="search-input" placeholder="Digite para buscar...">
-            <div class="list-container">
-                <div class="list-scroll" id="search-results"></div>
-            </div>
-        </div>
-
-        <div id="preview-area">
-            <div id="bg-poster"></div>
-            <div class="info-box">
-                <div class="info-title" id="info-title">BEM VINDO</div>
-                <div class="info-meta" id="info-desc">Selecione uma categoria à esquerda</div>
+        <div class="player-container">
+            <video id="video-player" controls></video>
+            <div class="program-info" id="prog-info">
+                Selecione um conteúdo...
             </div>
         </div>
     </div>
 
-    <div id="player-fs">
-        <video id="video-player"></video>
-        <div id="osd">PLAY</div>
-    </div>
-
-    <script>
-        const App = {
-            state: 'sidebar', // sidebar, cats, items, search, player
-            focusIdx: 0,
-            menuIdx: 0,
-            catsData: [],
-            itemsData: [],
-            
-            // Controle de API
-            currentType: 'live', // live, movie, series
-            
-            init: function() {
-                if(CONFIG.url.includes("SEU_DNS")) {
-                    alert("⚠️ EDITE O ARQUIVO HTML COM SEUS DADOS DE LOGIN!");
-                    return;
-                }
-                
-                // Mapeia Menu
-                this.menuEls = [
-                    document.getElementById('menu-live'),
-                    document.getElementById('menu-movie'),
-                    document.getElementById('menu-series'),
-                    document.getElementById('menu-search')
-                ];
-
-                this.renderFocus();
-                document.addEventListener('keydown', (e) => this.onKey(e));
-                
-                // Carrega inicial (Live Categories)
-                this.loadCategories('live');
-            },
-
-            // --- NAVEGAÇÃO CENTRAL ---
-            onKey: function(e) {
-                const k = e.keyCode;
-
-                // PLAYER
-                if(this.state === 'player') {
-                    e.preventDefault();
-                    this.handlePlayer(k);
-                    return;
-                }
-
-                // BACK
-                if(k===8 || k===461 || k===10009) {
-                    if(this.state === 'items') { this.state = 'cats'; this.renderList(this.catsData, 'cat'); this.focusIdx = 0; }
-                    else if(this.state === 'cats' || this.state === 'search') { this.state = 'sidebar'; this.focusIdx = this.menuIdx; }
-                    this.renderFocus();
-                    return;
-                }
-
-                // NAVEGAÇÃO
-                if(k===38) this.move(-1); // Cima
-                if(k===40) this.move(1);  // Baixo
-                
-                if(k===39) { // Direita
-                    if(this.state === 'sidebar') {
-                        if(this.menuIdx === 3) { // Busca
-                            this.openSearch();
-                        } else {
-                            this.state = 'cats'; 
-                            this.focusIdx = 0;
-                        }
-                    } 
-                    else if(this.state === 'cats') {
-                        // Enter na categoria tbm serve
-                        this.enterCategory();
-                    }
-                    this.renderFocus();
-                }
-
-                if(k===37) { // Esquerda
-                    if(this.state === 'items') {
-                        this.state = 'cats';
-                        this.renderList(this.catsData, 'cat');
-                        this.focusIdx = 0;
-                    } 
-                    else if(this.state === 'cats' || this.state === 'search') {
-                        this.state = 'sidebar';
-                        this.focusIdx = this.menuIdx;
-                        // Fecha busca se tiver aberta
-                        document.getElementById('search-overlay').style.display = 'none';
-                    }
-                    this.renderFocus();
-                }
-
-                if(k===13) { // Enter
-                    if(this.state === 'sidebar') { /* Nada, usa direita */ }
-                    else if(this.state === 'cats') { this.enterCategory(); }
-                    else if(this.state === 'items') { this.playItem(); }
-                    else if(this.state === 'search') {
-                         if(document.activeElement.id === 'search-input') this.doSearch();
-                         else this.playItem(true); // Play item da busca
-                    }
-                }
-            },
-
-            move: function(dir) {
-                let max = 0;
-                if(this.state === 'sidebar') max = 3;
-                else if(this.state === 'cats') max = this.catsData.length - 1;
-                else if(this.state === 'items') max = this.itemsData.length - 1;
-                else if(this.state === 'search') {
-                     // Se foco no input
-                     if(document.activeElement.id === 'search-input' && dir === 1) {
-                         document.getElementById('search-input').blur();
-                         this.focusIdx = 0; // Vai pro primeiro item
-                         this.renderFocus(); return;
-                     }
-                     if(dir === -1 && this.focusIdx === 0) {
-                         document.getElementById('search-input').focus();
-                         return;
-                     }
-                     max = this.itemsData.length - 1;
-                }
-
-                this.focusIdx += dir;
-                if(this.focusIdx < 0) this.focusIdx = 0;
-                if(this.focusIdx > max) this.focusIdx = max;
-
-                if(this.state === 'sidebar') this.menuIdx = this.focusIdx; // Salva pos menu
-                
-                this.renderFocus();
-            },
-
-            renderFocus: function() {
-                // Limpa focos
-                document.querySelectorAll('.focused').forEach(e => e.classList.remove('focused'));
-
-                if(this.state === 'sidebar') {
-                    this.menuEls[this.focusIdx].classList.add('focused');
-                    this.updatePreview('MENU', 'Selecione uma opção');
-                } 
-                else {
-                    // Listas (Cats, Items, Search)
-                    const containerId = this.state === 'search' ? 'search-results' : 'dynamic-list';
-                    const list = document.getElementById(containerId);
-                    const items = list.children;
-                    
-                    if(items[this.focusIdx]) {
-                        const el = items[this.focusIdx];
-                        el.classList.add('focused');
-                        
-                        // Scroll Lógico (Mantém foco no meio)
-                        const itemH = 50; // Altura aproximada
-                        const listH = document.querySelector('.list-container').clientHeight;
-                        const scrollPos = (this.focusIdx * itemH) - (listH / 2) + (itemH / 2);
-                        list.style.transform = `translateY(-${Math.max(0, scrollPos)}px)`;
-
-                        // Update Preview se for item
-                        if(this.state === 'items' || (this.state === 'search' && document.activeElement.id !== 'search-input')) {
-                            const data = this.itemsData[this.focusIdx];
-                            if(data) {
-                                let img = data.stream_icon || data.cover || '';
-                                document.getElementById('bg-poster').style.backgroundImage = `url('${img}')`;
-                                document.getElementById('info-title').innerText = data.name;
-                                document.getElementById('info-desc').innerText = "Pressione OK para assistir";
-                            }
-                        }
-                    }
-                }
-            },
-
-            // --- LÓGICA DE DADOS ---
-            loadCategories: function(type) {
-                this.currentType = type;
-                // Visual Highlight Menu
-                this.menuEls.forEach(e => e.classList.remove('active'));
-                if(type==='live') this.menuEls[0].classList.add('active');
-                if(type==='movie') this.menuEls[1].classList.add('active');
-                if(type==='series') this.menuEls[2].classList.add('active');
-
-                const action = type==='live' ? 'get_live_categories' : (type==='movie'?'get_vod_categories':'get_series_categories');
-                
-                fetch(`${CONFIG.url}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=${action}`)
-                .then(r=>r.json()).then(d => {
-                    this.catsData = d;
-                    this.renderList(d, 'cat');
-                    document.getElementById('header-title').innerText = type === 'live' ? "CATEGORIAS TV" : "CATEGORIAS VOD";
-                });
-            },
-
-            enterCategory: function() {
-                const cat = this.catsData[this.focusIdx];
-                let action = '';
-                if(this.currentType==='live') action=`get_live_streams&category_id=${cat.category_id}`;
-                if(this.currentType==='movie') action=`get_vod_streams&category_id=${cat.category_id}`;
-                if(this.currentType==='series') action=`get_series&category_id=${cat.category_id}`;
-
-                document.getElementById('header-title').innerText = "CARREGANDO...";
-                
-                fetch(`${CONFIG.url}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=${action}`)
-                .then(r=>r.json()).then(d => {
-                    this.itemsData = d;
-                    this.renderList(d, 'item');
-                    this.state = 'items';
-                    this.focusIdx = 0;
-                    this.renderFocus();
-                    document.getElementById('header-title').innerText = cat.category_name;
-                });
-            },
-
-            renderList: function(data, mode) {
-                const list = document.getElementById(this.state === 'search' ? 'search-results' : 'dynamic-list');
-                list.innerHTML = '';
-                list.style.transform = 'translateY(0px)'; // Reset scroll
-                
-                data.forEach(i => {
-                    const div = document.createElement('div');
-                    div.className = 'item';
-                    div.innerText = mode === 'cat' ? i.category_name : i.name;
-                    list.appendChild(div);
-                });
-            },
-
-            updatePreview: function(title, desc) {
-                document.getElementById('info-title').innerText = title;
-                document.getElementById('info-desc').innerText = desc;
-                document.getElementById('bg-poster').style.backgroundImage = 'none';
-            },
-
-            // --- BUSCA ---
-            openSearch: function() {
-                this.state = 'search';
-                this.itemsData = [];
-                document.getElementById('search-overlay').style.display = 'flex';
-                document.getElementById('search-results').innerHTML = '';
-                document.getElementById('search-input').value = '';
-                document.getElementById('search-input').focus();
-            },
-
-            doSearch: function() {
-                const term = document.getElementById('search-input').value;
-                if(term.length < 3) return;
-                
-                // Busca em VOD (Padrão)
-                fetch(`${CONFIG.url}/player_api.php?username=${CONFIG.user}&password=${CONFIG.pass}&action=get_vod_streams`)
-                .then(r=>r.json()).then(d => {
-                    const res = d.filter(i => i.name.toLowerCase().includes(term.toLowerCase()));
-                    this.itemsData = res;
-                    this.currentType = 'movie'; // Assume filme
-                    this.renderList(res, 'item');
-                    // Tira foco do input
-                    document.getElementById('search-input').blur();
-                    this.focusIdx = 0;
-                    this.renderFocus();
-                });
-            },
-
-            // --- PLAYER ---
-            playItem: function(fromSearch=false) {
-                const item = this.itemsData[this.focusIdx];
-                let url = '';
-                
-                if(this.currentType === 'live') {
-                    url = `${CONFIG.url}/live/${CONFIG.user}/${CONFIG.pass}/${item.stream_id}.m3u8`;
-                } else {
-                    url = `${CONFIG.url}/movie/${CONFIG.user}/${CONFIG.pass}/${item.stream_id}.${item.container_extension||'mp4'}`;
-                }
-
-                const v = document.getElementById('video-player');
-                this.state = 'player';
-                document.getElementById('player-fs').style.display = 'block';
-
-                if(Hls.isSupported() && url.includes('.m3u8')) {
-                    const hls = new Hls();
-                    hls.loadSource(url);
-                    hls.attachMedia(v);
-                    hls.on(Hls.Events.MANIFEST_PARSED, ()=>v.play());
-                } else {
-                    v.src = url;
-                    v.play();
-                }
-            },
-
-            handlePlayer: function(k) {
-                const v = document.getElementById('video-player');
-                const osd = document.getElementById('osd');
-                
-                const showOsd = (txt) => {
-                    osd.innerText = txt; osd.style.display='block';
-                    setTimeout(()=>osd.style.display='none', 2000);
-                };
-
-                if(k===8 || k===461 || k===10009) { // Voltar
-                    v.pause(); v.src = "";
-                    document.getElementById('player-fs').style.display = 'none';
-                    this.state = document.getElementById('search-overlay').style.display === 'flex' ? 'search' : 'items';
-                }
-                if(k===13 || k===19) {
-                    v.paused ? (v.play(), showOsd("PLAY")) : (v.pause(), showOsd("PAUSE"));
-                }
-                if(k===39) { v.currentTime += 15; showOsd(">> 15s"); }
-                if(k===37) { v.currentTime -= 15; showOsd("<< 15s"); }
-            }
-        };
-
-        window.onload = () => App.init();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
