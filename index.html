@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R&C GOLD UNIVERSAL V12</title>
+    <title>R&C GOLD UNIVERSAL V14</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA GOLD V12 --- */
+        /* --- TEMA GOLD V14 --- */
         :root { 
             --bg: #050505; 
             --gold: #FFD700; 
@@ -51,11 +51,17 @@
         .btn { width: 100%; padding: 14px; margin-top: 20px; background: var(--gold); color: #000; border: none; cursor: pointer; text-transform: uppercase; font-weight: 900; border-radius: 6px; }
 
         /* DASHBOARD */
-        #dash-layer { flex-direction: column; background: #080808; }
-        .dash-grid { display: flex; gap: 40px; margin-top: 50px; }
+        #dash-layer { flex-direction: column; background: #080808; justify-content: space-between; }
+        .dash-header { margin-top: 60px; text-align: center; }
+        .dash-grid { display: flex; gap: 40px; margin-bottom: auto; margin-top: 40px; justify-content: center; }
         .card { width: 220px; height: 200px; background: #151515; border: 2px solid #333; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
         .card i { font-size: 60px; margin-bottom: 20px; color: #555; }
         .card span { font-size: 14px; font-weight: 700; color: #888; text-transform: uppercase; }
+
+        .dash-info { width: 90%; display: flex; justify-content: space-between; align-items: center; background: #111; border: 1px solid #333; border-radius: 8px; padding: 20px 40px; margin-bottom: 40px; align-self: center; }
+        .info-item { text-align: center; }
+        .info-label { font-size: 11px; color: #666; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px; }
+        .info-val { font-size: 16px; color: var(--gold); font-weight: 800; }
 
         /* CONTEÚDO */
         #content-layer { display: flex; }
@@ -75,13 +81,12 @@
         /* PLAYER */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         .vid-box { width: 100%; height: 50%; background: #000; position: relative; border-bottom: 2px solid #333; transform: translateZ(0); }
-        
-        /* FULLSCREEN TOTAL */
         .vid-box.fs { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; border: none !important; outline: none !important; }
         video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; }
 
         /* OSD */
         .osd-status { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--gold); padding: 10px 20px; border-radius: 5px; font-weight: 800; display: none; border: 1px solid var(--gold); z-index: 10000; }
+        
         .meta { padding: 30px; flex: 1; background: #050505; display: flex; flex-direction: column; }
         .meta-title { font-size: 26px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
         .meta-desc { font-size: 14px; color: #666; margin-bottom: auto; }
@@ -111,12 +116,30 @@
     </div>
 
     <div id="dash-layer" class="layer hide flex-center">
-        <div class="logo-txt" style="font-size:60px; margin-bottom: 60px;">R&C <span>GOLD</span></div>
+        <div class="dash-header">
+            <div class="logo-txt" style="font-size:60px;">R&C <span>GOLD</span></div>
+        </div>
+        
         <div class="dash-grid">
             <div id="m0" class="card focusable" onclick="App.openMode('live')"><i class="fas fa-tv"></i><span>TV AO VIVO</span></div>
             <div id="m1" class="card focusable" onclick="App.openMode('movie')"><i class="fas fa-film"></i><span>FILMES</span></div>
             <div id="m2" class="card focusable" onclick="App.openMode('series')"><i class="fas fa-video"></i><span>SÉRIES</span></div>
             <div id="m3" class="card focusable" onclick="App.logout()"><i class="fas fa-sign-out-alt"></i><span>SAIR</span></div>
+        </div>
+
+        <div class="dash-info">
+            <div class="info-item">
+                <div class="info-label">CRIADO EM</div>
+                <div class="info-val" id="info-created">...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">CONEXÕES</div>
+                <div class="info-val" id="info-conn">...</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">VENCIMENTO</div>
+                <div class="info-val" id="info-exp">...</div>
+            </div>
         </div>
     </div>
 
@@ -161,7 +184,6 @@
                 this.retryCount = 0;
                 this.url = url;
 
-                // VOD (Nativo com controles)
                 if (!isLive) {
                     this.video.controls = true; 
                     this.video.src = url;
@@ -169,7 +191,6 @@
                     return; 
                 }
 
-                // LIVE (Engine Híbrida)
                 this.video.controls = false;
                 var isPC = Hls.isSupported() && !/(SMART-TV|SmartTV|NetCast|Tizen|Web0S)/.test(navigator.userAgent);
                 if(isLive && isPC && url.indexOf('.m3u8') === -1) url = url.replace('.ts', '.m3u8');
@@ -254,17 +275,35 @@
                 if(h.indexOf('http')===-1) h='http://'+h;
                 document.getElementById('loader').classList.remove('hide');
                 document.getElementById('load-txt').innerText = "CONECTANDO...";
+                
                 this.req(h+"/player_api.php?username="+u+"&password="+p, function(d){
                     document.getElementById('loader').classList.add('hide');
                     if(d && d.user_info && d.user_info.auth==1) {
                         App.creds={h:h,u:u,p:p};
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
+                        
+                        var info = d.user_info;
+                        var dateCreated = new Date(info.created_at * 1000).toLocaleDateString("pt-BR");
+                        var dateExp = info.exp_date ? new Date(info.exp_date * 1000).toLocaleDateString("pt-BR") : "Ilimitado";
+                        document.getElementById('info-created').innerText = dateCreated;
+                        document.getElementById('info-conn').innerText = (info.active_cons||0) + " / " + (info.max_connections||1);
+                        document.getElementById('info-exp').innerText = dateExp;
+
                         App.setScr(1);
                     } else document.getElementById('msg-login').innerText="Login falhou.";
                 });
             },
             
-            logout: function() { localStorage.clear(); location.reload(); },
+            logout: function() { 
+                localStorage.clear(); 
+                // LIMPEZA COMPLETA DE MEMÓRIA
+                this.creds = {h:'', u:'', p:''};
+                document.getElementById('i0').value = "";
+                document.getElementById('i1').value = "";
+                document.getElementById('i2').value = "";
+                // Vai pra login
+                this.setScr(0);
+            },
 
             setScr: function(n) {
                 PlayerEngine.stop();
@@ -396,7 +435,11 @@
                 var id = item.stream_id || item.id;
                 var url = this.creds.h+"/"+type+"/"+this.creds.u+"/"+this.creds.p+"/"+id+"."+ext;
                 
-                if(this.currentPlayingUrl === url) { this.toggleFull(); return; }
+                if(this.currentPlayingUrl === url) { 
+                    if(this.mode !== 'live') this.toggleFull(); 
+                    return; 
+                }
+
                 this.currentPlayingUrl = url;
                 document.getElementById('meta-title').innerText = item.name || item.title;
                 document.getElementById('meta-desc').innerText = "Reproduzindo...";
@@ -406,7 +449,7 @@
                 for(var i=0;i<all.length;i++) all[i].classList.remove('playing-item');
                 if(document.getElementById('it'+this.idx)) document.getElementById('it'+this.idx).classList.add('playing-item');
                 this.zone=3; this.updateFocus();
-                if(this.mode==='live') this.osd("PLAY ▶");
+                if(this.mode==='live') this.osd("AO VIVO ▶");
             },
 
             back: function() {
@@ -455,7 +498,9 @@
             },
             
             move: function(d) {
-                if(this.scr===0) { if(d===1 && this.idx<3) this.idx++; if(d===0 && this.idx>0) this.idx--; }
+                if(this.scr===0) { 
+                    if(d===1 && this.idx<3) this.idx++; if(d===0 && this.idx>0) this.idx--; 
+                }
                 if(this.scr===1) { if(d===3 && this.idx<3) this.idx++; if(d===2 && this.idx>0) this.idx--; }
                 if(this.scr===2) {
                     if(this.zone===3) {
@@ -491,39 +536,25 @@
             }
         };
 
-        // --- SISTEMA DE CONTROLE INTELIGENTE ---
         document.addEventListener('keydown', function(e){
             var k=e.keyCode;
             
-            // 1. REGRA SUPREMA DE FULLSCREEN (Bloqueia tudo menos Video Controls)
             if(document.getElementById('vid-box').classList.contains('fs')) {
-                e.preventDefault(); // Mata teclado e foco do navegador
-                
+                e.preventDefault(); 
                 var v = document.getElementById('player');
-                // OK/ENTER (13) -> PLAY/PAUSE
                 if(k === 13) { 
-                    if(v.paused) v.play(); else v.pause();
+                    if(App.mode === 'live') { App.toggleFull(); }
+                    else { if(v.paused) v.play(); else v.pause(); }
                     return;
                 }
-                // SETA ESQ (37) -> -15s
-                if(k === 37) { 
-                    v.currentTime -= 15; App.osd("⏪ -15s"); 
-                    return;
+                if(k === 8 || k === 27 || k === 461) { App.toggleFull(); return; }
+                if(App.mode !== 'live') {
+                    if(k===37) v.currentTime-=15; 
+                    if(k===39) v.currentTime+=15;
                 }
-                // SETA DIR (39) -> +15s
-                if(k === 39) { 
-                    v.currentTime += 15; App.osd("⏩ +15s"); 
-                    return;
-                }
-                // VOLTAR/ESC -> Sair Fullscreen
-                if(k === 8 || k === 27 || k === 461) { 
-                    App.toggleFull(); 
-                    return;
-                }
-                return; // Ignora qualquer outra tecla
+                return; 
             }
 
-            // 2. CONTROLES DE LOGIN
             if(App.scr === 0) {
                 if(document.activeElement.tagName === 'INPUT' && (k===38 || k===40)) {
                     e.preventDefault(); App.move(k===40?1:0); return; 
@@ -531,36 +562,31 @@
                 if(k===13 && document.activeElement.tagName === 'BUTTON') {
                     e.preventDefault(); App.action(); return;
                 }
-                if(k===13) return; // Deixa teclado abrir no input
+                if(k===13) return; 
             }
 
-            // 3. CONTROLES DA BARRA DE PESQUISA (FUGA RÁPIDA)
             if(App.scr === 2 && document.activeElement.id === 'search') {
-                // Se apertar BAIXO (40), sai da busca e vai pra lista
-                if(k === 40) {
-                    e.preventDefault();
-                    document.getElementById('search').blur(); // Fecha teclado
-                    App.zone = 2; App.idx = 0; App.updateFocus();
-                    return;
-                }
-                // Se for ENTER (13), deixa buscar
+                if(k === 40) { e.preventDefault(); document.getElementById('search').blur(); App.zone = 2; App.idx = 0; App.updateFocus(); return; }
                 if(k === 13) { App.doSearch(); return; }
-                
-                // Se for outra tecla (letra/numero), deixa digitar
                 return; 
             }
 
-            // 4. NAVEGAÇÃO GERAL
-            if(k===403||k===82) { e.preventDefault(); App.toggleFull(); return; }
+            if(k===403||k===82) { e.preventDefault(); if(App.scr===2 && App.zone===3) App.toggleFull(); return; }
             if(k===404||k===71) { e.preventDefault(); if(App.scr===2){App.zone=0;App.idx=0;App.updateFocus();} return; }
             if(k===405||k===89) { e.preventDefault(); if(App.scr===2){App.zone=1;App.updateFocus();} return; }
             if(k===406||k===66) { e.preventDefault(); App.setScr(1); return; }
             
             if([37,38,39,40,13].indexOf(k)>-1) {
+                if(document.activeElement.id==='search' && k!==13 && k!==40) return;
                 e.preventDefault();
                 if(k===13) App.action(); else if(k===38) App.move(0); else if(k===40) App.move(1); else if(k===37) App.move(2); else if(k===39) App.move(3);
             }
-            if(k===8||k===461||k===27) { e.preventDefault(); App.back(); }
+            // TRAVA DE SEGURANÇA NO LOGIN: Se estiver na tela 0, Back não faz nada
+            if(k===8||k===461||k===27) { 
+                e.preventDefault(); 
+                if(App.scr === 0) return; // <--- TRAVA AQUI
+                App.back(); 
+            }
         });
     </script>
 </body>
