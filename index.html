@@ -1,48 +1,36 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>R&C GOLD IPTV</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-</head>
-<body class="theme-green"> <div id="login-screen" class="screen active">
-        <div class="login-box">
-            <h1>R&C GOLD PLAYER</h1>
-            <input type="text" id="server-url" placeholder="http://url.do.servidor">
-            <input type="text" id="username" placeholder="Usuário">
-            <input type="password" id="password" placeholder="Senha">
-            <button id="btn-connect" onclick="fazerLogin()">CONECTAR</button>
-            <p id="login-error" class="error-msg"></p>
-        </div>
-    </div>
+// Suponha que você já carregou a lista completa de séries da API e salvou em:
+let allSeriesGlobal = []; // Array gigante de objetos {name: "Nome", stream_id: 123, cover: "..."}
 
-    <div id="main-menu-screen" class="screen">
-        <div class="logo-area">
-            <img src="logo.png" alt="R&C GOLD">
-        </div>
-        <div class="menu-cards">
-            <div class="card active-card" tabindex="1" onclick="abrirCategoria('live')">📺 TV ao vivo</div>
-            <div class="card" tabindex="2" onclick="abrirCategoria('movies')">🎬 Filmes</div>
-            <div class="card" tabindex="3" onclick="abrirCategoria('series')">🎞️ Séries</div>
-            <div class="card" tabindex="4" onclick="abrirConfig()">⚙️ Configurações</div>
-        </div>
-        <div class="account-info-bar">
-             Status: <span id="acc-status">Conectado</span> | Expira: <span id="acc-expire">01/01/2030</span>
-        </div>
-    </div>
+// Função JS equivalente à sua lógica Python de filtrar nomes limpos
+function filtrarSeriesNaTV(termoBusca) {
+    const buscaLimpa = termoBusca.toLowerCase()
+        .replace("filmes", "")
+        .replace("movie", "")
+        .replace("series", "")
+        .replace("serie", "")
+        .strip();
 
-    <div id="content-screen" class="screen">
-        <div class="sidebar-list" id="channel-list">
-            </div>
-        <div class="player-container">
-            <video id="video-player" controls></video>
-            <div class="program-info" id="prog-info">
-                Selecione um conteúdo...
-            </div>
-        </div>
-    </div>
+    // Regex JS para tentar isolar o nome base (similar ao seu re.split do Python)
+    // Remove S01, E01, 1x01, etc para pegar só o nome da obra
+    const regexLimpador = /\s(S\d+|Ep\d+|Temporada|\d+x\d+|\d+)/i;
 
-    <script src="app.js"></script>
-</body>
-</html>
+    const candidatos = new Set(); // Usar Set para evitar duplicatas automaticamente
+
+    allSeriesGlobal.forEach(serie => {
+        if (serie.name.toLowerCase().includes(buscaLimpa)) {
+            // Tenta extrair o nome base limpo
+            let nomeBase = serie.name.split(regexLimpador)[0].trim();
+            if (nomeBase) {
+                candidatos.add(nomeBase);
+            }
+        }
+    });
+
+    // Converte o Set de volta para Array e ordena
+    const listaNomesOrdenada = Array.from(candidatos).sort();
+
+    return listaNomesOrdenada; // Retorna a lista limpa para exibir na UI de busca
+}
+
+// ATENÇÃO: Se 'allSeriesGlobal' tiver 50.000 itens, esse loop vai travar a TV por alguns segundos.
+// POR ISSO O IDEAL É UM BACKEND FAZER ESSA PESQUISA.
