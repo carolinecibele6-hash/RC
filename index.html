@@ -3,268 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV XEON V43 CLEANER</title>
+    <title>XEON V44 BARE METAL</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.0/hls.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILO V43 (PREMIUM DARK) --- */
-        :root {
-            --bg: #000;
-            --panel: #0a0a0a;
-            --primary: #ff0000;
-            --white: #fff;
-            --focus-shadow: 0 0 25px rgba(255, 0, 0, 0.9);
-        }
-
-        html { font-size: 1.3vw; }
-
+        /* --- MODO ULTRA DESEMPENHO (BARE METAL) --- */
         * { box-sizing: border-box; outline: none; user-select: none; }
         
         body {
             margin: 0; padding: 0;
-            background-color: var(--bg);
-            color: var(--white);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #000000; /* Preto absoluto - Zero processamento */
+            color: #ffffff;
+            font-family: Arial, sans-serif; /* Fonte padrão do sistema */
             overflow: hidden; height: 100vh; width: 100vw;
-            background: radial-gradient(circle at 90% 10%, #150000 0%, #000000 90%);
-            cursor: default;
         }
 
         .hidden { display: none !important; }
         .full-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        /* --- FOCO --- */
+        /* --- FOCO DE ALTO CONTRASTE (SEM SOMBRAS) --- */
         .focusable {
-            border: 0.2rem solid transparent; 
-            cursor: pointer; position: relative; z-index: 1;
+            border: 2px solid transparent; 
+            background: #111;
         }
         
-        .focusable:hover, .focused {
-            border-color: var(--primary);
-            background-color: #1f1f1f;
-            transform: scale(1.05);
-            z-index: 100;
-            box-shadow: var(--focus-shadow);
-            color: white !important;
-        }
-        
-        input.focused { 
-            background: #222 !important; 
-            border-color: var(--primary) !important;
-            transform: scale(1.02);
+        .focusable.focused {
+            border: 4px solid #ff0000; /* Borda grossa vermelha */
+            background: #333; /* Fundo cinza claro */
+            color: #fff !important;
+            transform: none; /* SEM ANIMAÇÃO DE ZOOM */
+            box-shadow: none; /* SEM SOMBRA */
+            z-index: 10;
         }
 
-        /* --- LOGIN --- */
+        /* --- TELA LOGIN --- */
         #login-screen { display: flex; align-items: center; justify-content: center; background: #000; }
         .login-box {
-            background: #0a0a0a; padding: 4rem; border-radius: 1rem;
-            width: 35rem; text-align: center; border: 0.1rem solid #333;
-            box-shadow: 0 2rem 5rem rgba(0,0,0,0.9);
+            background: #000; border: 2px solid #333; padding: 20px; width: 400px; text-align: center;
         }
-        .vip-crown { font-size: 3rem; color: #FFD700; margin-bottom: 0.5rem; display: block; text-shadow: 0 0 15px #FFD700; }
-        .logo-title { font-size: 2rem; font-weight: 800; margin-bottom: 2rem; color: var(--primary); letter-spacing: 0.2rem;}
+        .logo-title { font-size: 30px; font-weight: bold; color: #ff0000; margin-bottom: 20px; }
         
         .xeon-input {
-            width: 100%; padding: 1rem; margin-bottom: 1rem;
-            background: #111; border: 0.1rem solid #333; 
-            color: white; border-radius: 0.4rem; font-size: 1.1rem;
-            text-align: center;
+            width: 100%; padding: 10px; margin-bottom: 10px;
+            background: #fff; border: 1px solid #999; color: #000; font-size: 16px;
         }
         .btn-xeon {
-            width: 100%; padding: 1rem; background: #990000; margin-top: 1rem;
-            color: white; border: none; font-weight: bold; border-radius: 0.4rem; 
-            font-size: 1.2rem; text-transform: uppercase;
+            width: 100%; padding: 10px; background: #900; color: #fff; border: none; font-size: 18px; font-weight: bold;
         }
+        .btn-xeon.focused { background: #f00; border: 2px solid #fff; }
 
         /* --- DASHBOARD --- */
-        #dashboard-screen { display: flex; flex-direction: column; padding: 2rem 4rem; }
+        #dashboard-screen { padding: 20px; display: flex; flex-direction: column; }
+        .top-bar { height: 60px; border-bottom: 2px solid #333; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        .app-brand { font-size: 24px; font-weight: bold; color: #f00; }
         
-        .header-row {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 0.1rem solid #222; padding-bottom: 1rem; margin-bottom: 1rem;
-        }
-        .app-brand { font-size: 2rem; font-weight: bold; display: flex; align-items: center; gap: 1rem; }
-        .app-brand i { color: #FFD700; font-size: 1.5rem; }
-        
-        .clock-container { text-align: right; }
-        .clock-time { font-size: 1.8rem; font-weight: 300; font-family: monospace; color: #fff; }
-        .clock-date { font-size: 0.9rem; color: #888; text-transform: uppercase; }
-
-        .account-info-bar {
-            display: flex; justify-content: space-between; 
-            background: #0b0b0b; border: 0.1rem solid #222; border-radius: 0.5rem;
-            padding: 1.5rem; margin-bottom: 3rem;
-        }
-        .info-block { display: flex; flex-direction: column; gap: 0.3rem; }
-        .info-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.05rem; }
-        .info-value { font-size: 1.1rem; font-weight: bold; color: #fff; }
-        .status-active { color: #00ff00; text-shadow: 0 0 10px rgba(0,255,0,0.4); }
-
-        .menu-grid { display: flex; gap: 2rem; justify-content: center; height: 45vh; }
+        /* Menu Cards - Simples */
+        .menu-grid { display: flex; gap: 20px; justify-content: center; margin-top: 50px; }
         .menu-card {
-            background: #0f0f0f; flex: 1; max-width: 18rem;
-            border-radius: 0.8rem; border: 0.1rem solid #222;
+            width: 180px; height: 180px; background: #111; border: 2px solid #333;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 1rem 2rem rgba(0,0,0,0.5);
         }
-        .menu-card i { font-size: 4rem; margin-bottom: 1.5rem; color: #444; }
-        .menu-card h3 { font-size: 1.3rem; text-transform: uppercase; margin: 0; font-weight: 600; }
-        .focused.menu-card i { color: var(--primary); }
+        .menu-card i { font-size: 50px; margin-bottom: 10px; color: #888; }
+        .menu-card h3 { font-size: 18px; margin: 0; }
+        
+        .menu-card.focused { background: #333; border-color: #f00; }
+        .menu-card.focused i { color: #fff; }
 
         /* --- CONTEUDO --- */
         #content-screen { display: flex; height: 100vh; }
-        .sidebar {
-            width: 20rem; background: #080808; border-right: 0.1rem solid #222;
-            display: flex; flex-direction: column; z-index: 20;
-        }
-        .sidebar-header { padding: 1.5rem; font-weight: bold; color: var(--primary); text-align: center; border-bottom: 0.1rem solid #222; }
-        .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { 
-            padding: 1rem 1.5rem; color: #888; font-size: 1rem; border-bottom: 0.1rem solid #111;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            border-left: 0.3rem solid transparent;
-        }
-        .cat-item.active { 
-            color: white; background: #151515; 
-            border-left-color: var(--primary); font-weight: bold; 
-        }
+        .sidebar { width: 250px; background: #050505; border-right: 2px solid #222; display: flex; flex-direction: column; }
+        .cat-list { flex: 1; overflow-y: hidden; /* Remove scroll nativo pesado */ } 
+        
+        .cat-item { padding: 10px; color: #aaa; border-bottom: 1px solid #111; font-size: 14px; white-space: nowrap; overflow: hidden; }
+        .cat-item.active { background: #333; color: #fff; font-weight: bold; }
+        .cat-item.focused { background: #f00; color: #fff; }
 
-        .content-area { flex: 1; display: flex; flex-direction: column; background: #050505; position: relative; }
+        .content-area { flex: 1; display: flex; flex-direction: column; background: #000; position: relative; }
         
-        .content-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 2rem; background: #0a0a0a; border-bottom: 0.1rem solid #222;
-            height: 5rem;
-        }
-        .section-title { font-size: 1.5rem; font-weight: bold; color: #ccc; }
+        /* Header Conteudo */
+        .content-header { height: 50px; border-bottom: 2px solid #222; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
         
-        #search-btn {
-            width: 3rem; height: 3rem; border-radius: 50%;
-            background: #151515; border: 0.1rem solid #333;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: #888;
-        }
-        
-        #search-modal {
-            position: absolute; top: 5rem; left: 0; width: 100%;
-            background: rgba(0,0,0,0.95); padding: 1rem;
-            border-bottom: 0.1rem solid var(--primary); z-index: 50;
-            display: flex; justify-content: center;
-            transition: transform 0.2s; transform: translateY(-100%);
-        }
-        #search-modal.active { transform: translateY(0); }
-        
-        #local-search-input { 
-            width: 70%; padding: 0.8rem; background: #111; border: 0.1rem solid #333; 
-            color: white; border-radius: 2rem; text-align: center; font-size: 1.2rem;
-        }
-        
-        #grid {
-            padding: 2rem; overflow-y: auto; flex: 1;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-            gap: 1.5rem; align-content: start;
-        }
-        .item-card {
-            background: #111; border-radius: 0.4rem; overflow: hidden;
-            height: 15rem; position: relative; border: 0.1rem solid #222;
-        }
-        .poster { height: 75%; background-size: cover; background-position: center; }
-        .meta { padding: 0.5rem; font-size: 0.8rem; text-align: center; height: 25%; display: flex; align-items: center; justify-content: center; color: #ccc; }
+        /* Botão Busca - Simples */
+        #search-btn { width: 40px; height: 40px; background: #222; display: flex; align-items: center; justify-content: center; border: 1px solid #444; }
+        #search-btn.focused { background: #f00; border-color: #fff; }
 
-        /* --- EPISÓDIOS --- */
-        #episodes-screen { display: flex; flex-direction: column; background: #050505; }
-        .ep-header { padding: 2rem; background: #111; display: flex; justify-content: space-between; font-size: 1.5rem; }
-        .ep-list { flex: 1; overflow-y: auto; padding: 3rem; display: flex; flex-direction: column; gap: 0.5rem; }
-        .ep-item { padding: 1rem; background: #111; border-radius: 0.4rem; display: flex; justify-content: space-between; color: #999; border: 0.1rem solid #222; }
-        .ep-item.focused { background: #222; border-color: var(--primary); color: white; }
+        /* Modal Busca */
+        #search-modal { position: absolute; top: 50px; left: 0; width: 100%; background: #111; padding: 10px; display: none; border-bottom: 2px solid #f00; z-index: 99; }
+        #search-modal.active { display: block; }
+        #local-search-input { width: 100%; padding: 10px; font-size: 18px; color: #000; }
 
-        /* --- PLAYER --- */
-        #player-screen { background: black; z-index: 5000; cursor: none; }
+        /* Grid - Cards Pequenos e Leves */
+        #grid { 
+            padding: 20px; overflow: hidden; /* JS controla scroll */
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 10px; align-content: start;
+        }
+        
+        .item-card { height: 160px; background: #111; border: 1px solid #333; position: relative; }
+        .item-card.focused { border: 3px solid #f00; z-index: 5; }
+        
+        .poster { height: 120px; background-color: #222; background-size: cover; background-position: center; }
+        .meta { height: 40px; font-size: 12px; display: flex; align-items: center; justify-content: center; text-align: center; background: #000; color: #ccc; }
+        .item-card.focused .meta { background: #f00; color: #fff; }
+
+        /* Player */
+        #player-screen { background: #000; z-index: 9999; }
         #video-player { width: 100%; height: 100%; }
-        .spinner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 0.4rem solid rgba(255,255,255,0.1); border-top: 0.4rem solid var(--primary); border-radius: 50%; width: 5rem; height: 5rem; animation: spin 0.8s linear infinite; }
-        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-        #toast { position: fixed; top: 2rem; right: 2rem; background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 0.4rem; font-weight: bold; z-index: 6000; display: none; }
+        #toast { position: fixed; top: 10px; right: 10px; background: #f00; color: #fff; padding: 10px; font-weight: bold; display: none; font-size: 16px; border: 2px solid #fff; z-index: 10000; }
+        
+        /* Spinner Simples */
+        .spinner { position: absolute; top: 45%; left: 45%; color: red; font-size: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="toast">Notificação</div>
+    <div id="toast">Aviso</div>
 
     <div id="login-screen" class="full-screen">
         <div class="login-box">
-            <i class="fas fa-crown vip-crown"></i>
-            <div class="logo-title">NETRANGE VIP</div>
-            <input type="text" id="login-dns" class="xeon-input focusable" placeholder="URL DNS" data-idx="0">
-            <input type="text" id="login-user" class="xeon-input focusable" placeholder="USUÁRIO" data-idx="1">
-            <input type="password" id="login-pass" class="xeon-input focusable" placeholder="SENHA" data-idx="2">
-            <button id="btn-login" class="btn-xeon focusable" onclick="App.login()" data-idx="3">CONECTAR</button>
+            <div class="logo-title">XEON LITE</div>
+            <input type="text" id="login-dns" class="xeon-input focusable" placeholder="URL DNS">
+            <input type="text" id="login-user" class="xeon-input focusable" placeholder="Usuário">
+            <input type="password" id="login-pass" class="xeon-input focusable" placeholder="Senha">
+            <button id="btn-login" class="btn-xeon focusable" onclick="App.login()">ENTRAR</button>
         </div>
     </div>
 
     <div id="dashboard-screen" class="full-screen hidden">
-        <div class="header-row">
-            <div class="app-brand"><i class="fas fa-crown"></i> XEON VIP PLAYER</div>
-            <div class="clock-container" id="clock-display">
-                <div class="clock-time">00:00:00</div>
-                <div class="clock-date">...</div>
-            </div>
+        <div class="top-bar">
+            <div class="app-brand">XEON V44</div>
+            <div id="clock-display" style="font-size: 18px; font-weight: bold;">00:00</div>
         </div>
-
-        <div class="account-info-bar">
-            <div class="info-block"><span class="info-label">Usuário</span><span id="info-user" class="info-value">...</span></div>
-            <div class="info-block"><span class="info-label">Criado Em</span><span id="info-created" class="info-value">...</span></div>
-            <div class="info-block"><span class="info-label">Vencimento</span><span id="info-exp" class="info-value">...</span></div>
-            <div class="info-block"><span class="info-label">Conexões</span><span id="info-conn" class="info-value">...</span></div>
-            <div class="info-block"><span class="info-label">Status</span><span class="info-value status-active">ATIVO <i class="fas fa-check-circle"></i></span></div>
-        </div>
-
         <div class="menu-grid">
-            <div class="menu-card focusable" onclick="App.openCategory('live')"><i class="fas fa-tv"></i> <h3>TV Ao Vivo</h3></div>
-            <div class="menu-card focusable" onclick="App.openCategory('movie')"><i class="fas fa-film"></i> <h3>Filmes</h3></div>
-            <div class="menu-card focusable" onclick="App.openCategory('series')"><i class="fas fa-layer-group"></i> <h3>Séries</h3></div>
-            <div class="menu-card focusable" onclick="App.logout()"><i class="fas fa-sync-alt"></i> <h3>Trocar Playlist</h3></div>
+            <div class="menu-card focusable" onclick="App.openCategory('live')"><i class="fas fa-tv"></i><h3>TV</h3></div>
+            <div class="menu-card focusable" onclick="App.openCategory('movie')"><i class="fas fa-film"></i><h3>Filmes</h3></div>
+            <div class="menu-card focusable" onclick="App.openCategory('series')"><i class="fas fa-list"></i><h3>Séries</h3></div>
+            <div class="menu-card focusable" onclick="App.logout()"><i class="fas fa-times"></i><h3>Sair</h3></div>
         </div>
     </div>
 
     <div id="content-screen" class="full-screen hidden">
         <div class="sidebar">
-            <div class="sidebar-header">MENU</div>
+            <div style="padding:10px; font-weight:bold; border-bottom:1px solid #333; text-align:center;">MENU</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
         <div class="content-area">
             <div class="content-header">
-                <div class="section-title" id="section-title">Todos os Canais</div>
-                <div id="search-btn" class="focusable" onclick="App.toggleSearch()">
-                    <i class="fas fa-search"></i>
-                </div>
+                <span id="section-title">Lista</span>
+                <div id="search-btn" class="focusable" onclick="App.toggleSearch()"><i class="fas fa-search"></i></div>
             </div>
-            
             <div id="search-modal">
-                <input type="text" id="local-search-input" class="focusable" placeholder="Digite para buscar..." onkeydown="/*Handled*/">
+                <input type="text" id="local-search-input" placeholder="Pesquisar..." onkeydown="if(event.key==='Enter') App.contextSearch()">
             </div>
-
             <div id="grid"></div>
         </div>
     </div>
 
     <div id="episodes-screen" class="full-screen hidden">
-        <div class="ep-header"><span id="ep-series-title">Série</span> <span>[VOLTAR]</span></div>
-        <div id="ep-list" class="ep-list"></div>
+        <div style="padding:10px; border-bottom:1px solid #333; font-size:18px;">Episódios <span style="font-size:12px; color:#888;">(Voltar para sair)</span></div>
+        <div id="ep-list" style="padding:10px; overflow-y:auto; height:90%;"></div>
     </div>
 
     <div id="player-screen" class="full-screen hidden">
-        <div id="spinner" class="spinner hidden"></div>
+        <div id="spinner" class="spinner hidden">CARREGANDO...</div>
         <video id="video-player"></video>
     </div>
 
     <script>
+        // RELOGIO SIMPLES
         setInterval(() => {
-            const now = new Date();
+            const d = new Date();
             const el = document.getElementById('clock-display');
-            if(el) {
-                el.innerHTML = `<div class="clock-time">${now.toLocaleTimeString('pt-BR')}</div><div class="clock-date">${now.toLocaleDateString('pt-BR')}</div>`;
-            }
+            if(el) el.innerText = d.toLocaleTimeString('pt-BR');
         }, 1000);
 
         const State = {
@@ -272,9 +183,8 @@
             screen: 'login', currentType: '',
             activeCategoryElement: null, lastFocusedId: null,
             streams: [], playlist: [], playIndex: -1, hls: null,
-            searchTimer: null, searchEpoch: 0, // CARIMBO DE TEMPO
-            navLock: false, lastInputTime: 0,
-            searchOpen: false
+            searchOpen: false,
+            lastInputTime: 0 // Anti-bounce
         };
 
         const Utils = {
@@ -286,25 +196,22 @@
             storage: {
                 set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
                 get: (k) => JSON.parse(localStorage.getItem(k) || 'null')
-            },
-            cleanUrl: (url) => url.replace(/([^:]\/)\/+/g, "$1"),
-            tsToDate: (ts) => ts ? new Date(ts * 1000).toLocaleDateString('pt-BR') : '--'
+            }
         };
 
         const API = {
             auth: async (dns, u, p) => {
                 try {
                     if(!dns.startsWith('http')) dns = 'http://' + dns;
-                    if(dns.endsWith('/')) dns = dns.slice(0, -1);
                     const res = await fetch(`${dns}/player_api.php?username=${u}&password=${p}`);
                     const data = await res.json();
                     if(data.user_info && data.user_info.auth === 1) {
                         State.server = dns; State.user = u; State.pass = p;
-                        Utils.storage.set('xeon_v43', {dns, u, p});
-                        return data.user_info;
+                        Utils.storage.set('xeon_v44', {dns, u, p});
+                        return true;
                     }
-                    return null;
-                } catch(e) { return null; }
+                    return false;
+                } catch(e) { return false; }
             },
             get: async (action, catId) => {
                 let url = `${State.server}/player_api.php?username=${State.user}&password=${State.pass}&action=${action}`;
@@ -319,36 +226,22 @@
 
         const App = {
             init: async () => {
-                const saved = Utils.storage.get('xeon_v43');
+                const saved = Utils.storage.get('xeon_v44');
                 if(saved) {
                     document.getElementById('login-dns').value = saved.dns;
                     document.getElementById('login-user').value = saved.u;
                     document.getElementById('login-pass').value = saved.p;
-                    const info = await API.auth(saved.dns, saved.u, saved.p);
-                    if(info) App.loadDashboard(info);
+                    if(await API.auth(saved.dns, saved.u, saved.p)) App.showScreen('dashboard');
                 } else {
-                    setTimeout(() => document.getElementById('login-dns').focus(), 500);
+                    document.getElementById('login-dns').focus();
                 }
-                document.getElementById('local-search-input').addEventListener('input', () => {
-                    State.searchEpoch++; // NOVO CARIMBO
-                    clearTimeout(State.searchTimer);
-                    State.searchTimer = setTimeout(App.contextSearch, 500);
-                });
                 Nav.init();
             },
             login: async () => {
                 const d = document.getElementById('login-dns').value.trim();
                 const u = document.getElementById('login-user').value.trim();
                 const p = document.getElementById('login-pass').value.trim();
-                const info = await API.auth(d, u, p);
-                if(info) App.loadDashboard(info); else Utils.toast("Dados Inválidos");
-            },
-            loadDashboard: (info) => {
-                document.getElementById('info-user').innerText = info.username || State.user;
-                document.getElementById('info-exp').innerText = Utils.tsToDate(info.exp_date);
-                document.getElementById('info-created').innerText = info.created_at ? Utils.tsToDate(info.created_at) : 'N/A';
-                document.getElementById('info-conn').innerText = `${info.active_cons || 0} / ${info.max_connections}`;
-                App.showScreen('dashboard');
+                if(await API.auth(d, u, p)) App.showScreen('dashboard'); else Utils.toast("Erro Login");
             },
             logout: () => { localStorage.clear(); location.reload(); },
             showScreen: (id) => {
@@ -361,98 +254,72 @@
                 State.searchOpen = !State.searchOpen;
                 const modal = document.getElementById('search-modal');
                 if (State.searchOpen) {
-                    State.searchEpoch++; // Reseta buscas anteriores ao abrir
-                    document.getElementById('local-search-input').value = '';
                     modal.classList.add('active');
                     setTimeout(() => document.getElementById('local-search-input').focus(), 100);
                 } else {
                     modal.classList.remove('active');
-                    State.searchEpoch++; // Reseta buscas ao fechar
-                    document.getElementById('local-search-input').value = '';
-                    // Restaura a grid original se necessário, ou deixa como está
                     Nav.focus(document.getElementById('search-btn'));
                 }
             },
             openCategory: async (type) => {
                 State.currentType = type;
                 App.showScreen('content');
-                State.activeCategoryElement = null; State.lastFocusedId = null; 
+                State.activeCategoryElement = null; 
+                document.getElementById('grid').innerHTML = '<div style="padding:20px; text-align:center;">Carregando...</div>';
                 
-                // CARIMBO NOVO: INVALIDA TUDO QUE ESTAVA SENDO FEITO ANTES
-                State.searchEpoch = Date.now(); 
-                
-                State.searchOpen = false;
-                document.getElementById('search-modal').classList.remove('active');
-                
-                // LIMPA A GRID IMEDIATAMENTE (EVITA GHOST)
-                document.getElementById('grid').innerHTML = '<div style="padding:5rem; text-align:center;">Carregando...</div>';
-                
-                const list = document.getElementById('cat-list'); list.innerHTML = 'Carregando...';
                 const cats = await API.get(type==='live'?'get_live_categories':type==='movie'?'get_vod_categories':'get_series_categories');
-                
                 let html = `<div id="cat-all" class="cat-item focusable" onclick="App.loadItems('all', this)">Todos</div>`;
                 cats.forEach(c => html += `<div id="cat-${c.category_id}" class="cat-item focusable" onclick="App.loadItems('${c.category_id}', this)">${c.category_name}</div>`);
-                list.innerHTML = html;
-                setTimeout(() => { const f=document.getElementById('cat-all'); Nav.focus(f); State.activeCategoryElement=f; }, 150);
+                document.getElementById('cat-list').innerHTML = html;
+                
+                setTimeout(() => { 
+                    const first = document.getElementById('cat-all');
+                    Nav.focus(first); 
+                    State.activeCategoryElement = first;
+                }, 100);
             },
             loadItems: async (catId, element) => {
-                // GERA NOVO CARIMBO
-                State.searchEpoch = Date.now();
-                const myEpoch = State.searchEpoch; // Salva o carimbo desta execução
-
-                document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
-                if(element) { 
-                    element.classList.add('active'); 
-                    State.activeCategoryElement = element; 
-                    element.scrollIntoView({block:'center', behavior:'auto'}); 
-                    Nav.focus(element);
-                } 
-
-                if(catId === 'all') { document.getElementById('grid').innerHTML = '<div style="padding:5rem; text-align:center;">Use a busca.</div>'; State.streams = []; return; }
-                
-                // LIMPA GRID
-                document.getElementById('grid').innerHTML = '<div class="spinner" style="position:relative;"></div>';
+                if(element) {
+                    document.querySelectorAll('.cat-item').forEach(c => c.classList.remove('active'));
+                    element.classList.add('active');
+                    State.activeCategoryElement = element;
+                }
+                document.getElementById('grid').innerHTML = '<div style="padding:20px;">Carregando...</div>';
                 
                 const items = await API.get(State.currentType==='live'?'get_live_streams':State.currentType==='movie'?'get_vod_streams':'get_series', catId);
-                
-                // CHECAGEM DE SEGURANÇA: SE O CARIMBO MUDOU, ESSA RESPOSTA É LIXO
-                if (myEpoch !== State.searchEpoch) return;
-
-                State.streams = items; App.renderGrid(items);
+                State.streams = items;
+                App.renderGrid(items);
             },
             contextSearch: async () => {
                 const term = document.getElementById('local-search-input').value.toLowerCase();
-                if(term.length < 2) return;
-                
-                State.searchEpoch = Date.now(); // Novo carimbo
-                const myEpoch = State.searchEpoch;
-
-                document.getElementById('grid').innerHTML = '<div class="spinner" style="position:relative;"></div>';
-                
-                let src = [];
-                if(State.currentType==='live') src = await API.get('get_live_streams'); else src = await API.get(State.currentType==='movie'?'get_vod_streams':'get_series');
-                
-                if (myEpoch !== State.searchEpoch) return; // Checagem
-
-                const filtered = src.filter(i => (i.name||i.title||'').toLowerCase().includes(term)); 
-                State.streams = filtered;
+                const filtered = State.streams.filter(i => (i.name||i.title||'').toLowerCase().includes(term));
                 App.renderGrid(filtered);
+                App.toggleSearch(); // Fecha busca e foca no grid
+                setTimeout(() => {
+                    const first = document.querySelector('.item-card');
+                    if(first) Nav.focus(first);
+                }, 100);
             },
             renderGrid: (items) => {
                 const grid = document.getElementById('grid'); grid.innerHTML = '';
+                // LIMITADOR DE MEMÓRIA: SÓ RENDERIZA 48 ITENS
                 if(!items.length) { grid.innerHTML = 'Vazio.'; return; }
-                items.slice(0, 100).forEach(item => {
+                
+                const limit = items.slice(0, 48); 
+                limit.forEach(item => {
                     const id = item.stream_id || item.series_id;
-                    const d = document.createElement('div'); d.className = 'item-card focusable'; d.id = `item-${id}`;
+                    const d = document.createElement('div'); d.className = 'item-card focusable'; 
+                    d.id = `item-${id}`;
                     d.onclick = () => App.clickItem(item);
-                    d.innerHTML = `<div class="poster" style="background-image:url('${item.stream_icon||item.cover||''}')"></div><div class="meta">${item.name||item.title}</div>`;
+                    d.innerHTML = `<div class="poster" style="background-image:url('${item.stream_icon||item.cover||''}')"></div><div class="meta">${(item.name||item.title).substring(0, 20)}</div>`;
                     grid.appendChild(d);
                 });
-                if (State.lastFocusedId) setTimeout(() => { const el = document.getElementById(State.lastFocusedId); if (el) { Nav.focus(el); el.scrollIntoView({block:'center', behavior:'auto'}); } }, 150);
             },
             clickItem: (item) => {
                 State.lastFocusedId = `item-${item.stream_id || item.series_id}`;
-                if(State.currentType==='live') Player.playLive(item); else if(State.currentType==='movie') Player.playMovie(item); else App.openSeries(item);
+                if(State.currentType==='live') Player.playLive(item);
+                else if(State.currentType==='movie') Player.playMovie(item);
+                else App.openSeries(item);
             },
             openSeries: async (item) => {
                 Utils.toast("Abrindo...");
@@ -464,10 +331,12 @@
                 const list = document.getElementById('ep-list'); list.innerHTML = '';
                 eps.forEach((ep, i) => {
                     const d = document.createElement('div'); d.className = 'ep-item focusable'; d.id = `ep-idx-${i}`;
-                    d.innerHTML = `<span>S${ep.season} E${ep.episode_num}</span> <span>${ep.title}</span>`;
+                    d.style.marginBottom = "5px";
+                    d.innerHTML = `S${ep.season} E${ep.episode_num} - ${ep.title}`;
                     d.onclick = () => Player.playSeries(i); list.appendChild(d);
                 });
                 App.showScreen('episodes');
+                setTimeout(() => { const f=document.getElementById('ep-idx-0'); if(f) Nav.focus(f); }, 100);
             }
         };
 
@@ -477,11 +346,16 @@
             playMovie: (item) => Player.start(`${State.server}/movie/${State.user}/${State.pass}/${item.stream_id}.${item.container_extension||'mp4'}`),
             playSeries: (i) => { State.playIndex = i; const ep = State.playlist[i]; Player.start(`${State.server}/series/${State.user}/${State.pass}/${ep.id}.${ep.container_extension||'mp4'}`); },
             start: (url) => {
-                url = Utils.cleanUrl(url); document.getElementById('spinner').classList.remove('hidden'); App.showScreen('player');
+                document.getElementById('spinner').classList.remove('hidden'); App.showScreen('player');
                 const v = Player.video;
                 if(Hls.isSupported() && url.includes('.m3u8')) {
                     if(State.hls) State.hls.destroy();
-                    State.hls = new Hls({enableWorker:true, lowLatencyMode:true, backBufferLength:30});
+                    // CONFIGURAÇÃO ULTRA LEVE HLS
+                    State.hls = new Hls({
+                        maxBufferLength: 10, // Buffer minúsculo para economizar RAM
+                        maxMaxBufferLength: 10,
+                        enableWorker: false // Worker trava TVs velhas
+                    });
                     State.hls.loadSource(url); State.hls.attachMedia(v);
                     State.hls.on(Hls.Events.MANIFEST_PARSED, () => v.play());
                 } else { v.src = url; v.play(); }
@@ -490,148 +364,106 @@
             stop: () => {
                 const v = Player.video; v.pause(); v.removeAttribute('src'); v.load();
                 if(State.hls) { State.hls.destroy(); State.hls = null; }
-                if(State.currentType==='series') {
-                    App.showScreen('episodes');
-                    setTimeout(() => { const el = document.getElementById(`ep-idx-${State.playIndex}`); if(el) Nav.focus(el); }, 150);
-                } else {
+                if(State.currentType==='series') App.showScreen('episodes');
+                else {
                     App.showScreen('content');
-                    setTimeout(() => { if (State.lastFocusedId) { const el = document.getElementById(State.lastFocusedId); if (el) { Nav.focus(el); el.scrollIntoView({block:'center', behavior:'auto'}); } } }, 150);
+                    // Tenta focar de volta
+                    if(State.lastFocusedId) setTimeout(() => {
+                        const el = document.getElementById(State.lastFocusedId);
+                        if(el) { Nav.focus(el); el.scrollIntoView({block:'center'}); }
+                    }, 100);
                 }
-            },
-            action: (k) => { if (State.currentType === 'live') return; const v = Player.video; if(k==='Enter') v.paused?v.play():v.pause(); else if(k==='ArrowRight') v.currentTime+=30; else if(k==='ArrowLeft') v.currentTime-=10; }
+            }
         };
-        Player.video.addEventListener('ended', () => { if(State.currentType==='series' && State.playIndex+1 < State.playlist.length) { Utils.toast("Próximo..."); Player.playSeries(State.playIndex+1); } else Player.stop(); });
 
+        // --- NAVEGAÇÃO BÁSICA (SEM CALCULOS PESADOS) ---
         const Nav = {
             focused: null,
             init: () => {
                 window.addEventListener('keydown', (e) => {
                     const now = Date.now();
+                    // Anti-bounce simples (150ms)
+                    if (now - State.lastInputTime < 150) return;
+                    State.lastInputTime = now;
+
                     const k = e.key;
                     
                     if (document.activeElement.tagName === 'INPUT') {
                         if (k === 'Enter') { 
                             if(State.screen === 'login') App.login();
-                            else { 
-                                document.getElementById('local-search-input').blur();
-                                App.contextSearch();
-                            } 
-                            return; 
+                            else App.contextSearch(); 
                         }
-                        if (k === 'ArrowDown' && State.screen === 'content') {
-                            e.preventDefault();
-                            const gridItem = document.querySelector('.item-card');
-                            if (gridItem) Nav.focus(gridItem); 
-                            return;
+                        if (k === 'ArrowDown') { /* Sair da busca */
+                             const grid = document.querySelector('.item-card');
+                             if(grid) Nav.focus(grid);
                         }
-                        if (State.screen === 'login' && (k === 'ArrowDown' || k === 'ArrowUp')) {
-                            e.preventDefault();
-                            const c = parseInt(document.activeElement.dataset.idx);
-                            const n = k === 'ArrowDown' ? c + 1 : c - 1;
-                            const next = document.querySelector(`[data-idx="${n}"]`);
-                            if (next) next.focus();
-                            return;
-                        }
-                        return; 
-                    }
-
-                    if (now - State.lastInputTime < 200 || e.repeat) { e.preventDefault(); return; }
-                    State.lastInputTime = now;
-
-                    const isBack = k === 'Escape' || k === 'Backspace';
-                    const isEnter = k === 'Enter';
-
-                    if(State.screen === 'player') { if(isBack) Player.stop(); else { e.preventDefault(); Player.action(k); } return; }
-                    
-                    if(isBack && State.searchOpen) {
-                        App.toggleSearch();
                         return;
                     }
 
-                    if(isBack) {
-                        if(State.screen === 'episodes') {
-                            App.showScreen('content');
-                            setTimeout(() => { if (State.lastFocusedId) { const el = document.getElementById(State.lastFocusedId); if(el) { Nav.focus(el); el.scrollIntoView({block:'center', behavior:'auto'}); } } }, 150);
-                        }
+                    if(k === 'Escape' || k === 'Backspace') {
+                        if(State.screen === 'player') Player.stop();
+                        else if(State.screen === 'episodes') App.showScreen('content');
                         else if(State.screen === 'content') App.showScreen('dashboard');
                         return;
                     }
 
-                    const map = {'ArrowUp':'up', 'ArrowDown':'down', 'ArrowLeft':'left', 'ArrowRight':'right'};
+                    const map = {'ArrowUp':'up', 'ArrowDown':'down', 'ArrowLeft':'left', 'ArrowRight':'right', 'Enter':'enter'};
                     if(map[k]) { e.preventDefault(); Nav.move(map[k]); }
-                    else if(isEnter && Nav.focused) Nav.focused.click();
                 });
-                document.body.addEventListener('mouseover', e => { if(e.target.classList.contains('focusable')) Nav.focus(e.target); });
             },
             resetFocus: () => { const el = document.querySelector(`#${State.screen}-screen .focusable`); if(el) Nav.focus(el); },
             focus: (el) => {
                 if(Nav.focused) Nav.focused.classList.remove('focused');
                 Nav.focused = el; Nav.focused.classList.add('focused');
-                el.scrollIntoView({block:'center', behavior:'auto'});
-                if(el.tagName==='INPUT') el.focus(); else document.activeElement.blur();
+                el.scrollIntoView({block:'center', behavior:'auto'}); // Auto = Sem animação
             },
             move: (dir) => {
-                
-                // --- CIMA NA GRID (LÓGICA ESPECIAL) ---
+                if(dir === 'enter') { if(Nav.focused) Nav.focused.click(); return; }
+
+                // Lógica de LUPA
                 if (dir === 'up' && Nav.focused.classList.contains('item-card')) {
-                    const cur = Nav.focused.getBoundingClientRect();
-                    const next = Nav.findNext('up', cur);
-                    
-                    // SE ESTIVER NO TOPO, VAI PRA LUPA
-                    if (!next && cur.top < window.innerHeight * 0.4) {
-                        const searchBtn = document.getElementById('search-btn');
-                        if(searchBtn) Nav.focus(searchBtn);
+                    const rect = Nav.focused.getBoundingClientRect();
+                    // Se estiver no topo, vai pra lupa
+                    if(rect.top < 200) {
+                        Nav.focus(document.getElementById('search-btn'));
                         return;
                     }
-                    // SE TEM FILME, VAI PRO FILME
-                    if (next && next.classList.contains('item-card')) {
-                        Nav.focus(next);
-                        return;
-                    }
-                    // BLOQUEIA SAIR PARA CATEGORIA
-                    return;
                 }
 
-                // --- OUTROS MOVIMENTOS (LIVRES) ---
-                const cur = Nav.focused.getBoundingClientRect();
-                const next = Nav.findNext(dir, cur);
-                
-                // Ponte Sidebar -> Grid (Direita)
-                if (dir === 'right' && Nav.focused.classList.contains('cat-item')) {
-                    const firstGrid = document.querySelector('.item-card');
-                    if(firstGrid) { Nav.focus(firstGrid); return; }
-                }
-                
-                // Retorno Grid -> Sidebar (Esquerda)
-                if (dir === 'left' && Nav.focused.classList.contains('item-card') && cur.left < window.innerWidth * 0.3) {
-                    if(State.activeCategoryElement) Nav.focus(State.activeCategoryElement);
-                    else { const cat = document.querySelector('.cat-item'); if(cat) Nav.focus(cat); }
-                    return;
-                }
-
-                if (next) Nav.focus(next);
-            },
-            findNext: (dir, cur) => {
                 const els = Array.from(document.querySelectorAll(`#${State.screen}-screen .focusable`));
+                // Filtrar apenas visíveis se necessário, mas querySelectorAll já ajuda
+                
+                const cur = Nav.focused.getBoundingClientRect();
                 let best = null, minDist = Infinity;
+
                 els.forEach(el => {
                     if (el === Nav.focused) return;
-                    if (!State.searchOpen && el.id === 'local-search-input') return;
+                    // Ignora input de busca se fechado
+                    if(!State.searchOpen && el.id === 'local-search-input') return;
 
                     const rect = el.getBoundingClientRect();
+                    
+                    // Lógica de direção SIMPLIFICADA (Geometria Básica)
                     let ok = false;
-                    
-                    if(dir==='up') ok = rect.bottom <= cur.top + 30;
-                    if(dir==='down') ok = rect.top >= cur.bottom - 30;
-                    if(dir==='left') ok = rect.right <= cur.left + 30;
-                    if(dir==='right') ok = rect.left >= cur.right - 30;
-                    
+                    if(dir==='up') ok = rect.bottom <= cur.top && Math.abs((rect.left+rect.width/2) - (cur.left+cur.width/2)) < 50; 
+                    if(dir==='down') ok = rect.top >= cur.bottom && Math.abs((rect.left+rect.width/2) - (cur.left+cur.width/2)) < 50;
+                    if(dir==='left') ok = rect.right <= cur.left && Math.abs((rect.top+rect.height/2) - (cur.top+cur.height/2)) < 50;
+                    if(dir==='right') ok = rect.left >= cur.right && Math.abs((rect.top+rect.height/2) - (cur.top+cur.height/2)) < 50;
+
+                    // Fallback para grids irregulares (Sidebar -> Grid)
+                    if(!ok && dir === 'right' && Nav.focused.classList.contains('cat-item') && el.classList.contains('item-card')) ok = true;
+                    if(!ok && dir === 'left' && Nav.focused.classList.contains('item-card') && el.classList.contains('cat-item')) {
+                        // Só volta pra categoria ativa
+                        if(el.classList.contains('active')) ok = true;
+                    }
+
                     if (ok) {
                         const dist = Math.hypot(rect.x - cur.x, rect.y - cur.y);
                         if (dist < minDist) { minDist = dist; best = el; }
                     }
                 });
-                return best;
+
+                if(best) Nav.focus(best);
             }
         };
         App.init();
