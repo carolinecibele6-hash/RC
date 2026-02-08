@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV GOLD | V12 DEFINITIVE</title>
+    <title>IPTV GOLD | SMARTERS PRO</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA PREMIUM DARK/GOLD V12 --- */
+        /* --- TEMA DARK/GOLD SMARTERS --- */
         :root {
-            --bg: #000000;
-            --gold: #FFD700;
-            --gold-dim: #b8860b;
-            --panel: #0a0a0a;
-            --sel-bg: #1a1a1a;
+            --bg: #0a0a0a;
+            --gold: #d4af37;
+            --gold-light: #ffd700;
+            --panel: #141414;
+            --focus: linear-gradient(90deg, #d4af37 0%, #f9d423 100%);
+            --text-gray: #aaa;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
@@ -24,428 +25,498 @@
         body {
             background-color: var(--bg);
             color: #fff;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', sans-serif, Arial;
             width: 100vw; height: 100vh; overflow: hidden;
-            background: #000; /* Performance máxima */
+            /* Fundo abstrato premium escuro */
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://img.freepik.com/free-vector/gradient-black-background-with-golden-textures_23-2149150493.jpg');
+            background-size: cover;
         }
 
         .hide { display: none !important; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
 
-        /* --- FOCO --- */
+        /* --- FOCO SMARTERS (Branco/Dourado) --- */
+        .focusable { cursor: pointer; transition: transform 0.1s; border: 2px solid transparent; }
+        
         .focused {
             border: 2px solid #fff !important;
-            transform: scale(1.01);
+            background: var(--focus) !important;
+            color: #000 !important;
+            transform: scale(1.02);
             z-index: 100;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            font-weight: 800 !important;
         }
-        
-        /* CARD MENU FOCADO */
-        .home-card.focused {
-            background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%) !important;
-            border: none !important;
-        }
-        .home-card.focused i, .home-card.focused span { color: #000 !important; font-weight: 900; }
-
-        /* LISTA FOCADA (Barra Lateral Dourada) */
-        .list-item.focused, .cat-item.focused {
-            background: #222 !important;
-            border-left: 5px solid var(--gold) !important;
-            border-bottom: 1px solid #333 !important;
-            color: #fff !important;
-            transform: none !important;
-        }
-
-        /* PLAYER FOCADO */
-        #vid-container.focused {
-            background: #000 !important;
-            border: 3px solid var(--gold) !important;
-            transform: none !important;
-        }
+        .focused * { color: #000 !important; }
+        .focused img { border: 1px solid #000; }
 
         /* --- LOGIN --- */
-        .login-box { width: 400px; padding: 40px; background: #111; border: 1px solid #333; border-radius: 10px; text-align: center; }
-        .logo-txt { font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+        #login-layer { background: url('https://img.freepik.com/free-vector/gradient-black-background-with-golden-textures_23-2149150493.jpg') no-repeat center; background-size: cover; }
+        .login-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); }
+        
+        .login-box { 
+            position: relative; width: 400px; padding: 40px; 
+            background: rgba(20, 20, 20, 0.95); border-radius: 15px; 
+            border: 1px solid #333; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+        .logo-txt { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 5px; }
         .logo-txt span { color: var(--gold); }
-        .inp { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-weight: bold; }
-        .btn { width: 100%; padding: 12px; margin-top: 15px; background: var(--gold); color: #000; font-weight: 800; border: none; cursor: pointer; }
-        .cors-opt { font-size: 11px; color: #666; margin-top: 10px; }
+        .inp { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); text-align: center; font-weight: bold; border-radius: 5px; }
+        .btn-login { width: 100%; padding: 15px; margin-top: 20px; background: var(--gold); color: #000; font-weight: 900; border: none; border-radius: 5px; font-size: 16px; }
 
-        /* --- DASHBOARD V10 (CARDS) --- */
-        #dash-layer { display: flex; flex-direction: column; justify-content: space-between; padding: 40px; background: radial-gradient(circle, #1a1a1a 0%, #000000 100%); }
+        /* --- DASHBOARD (HOME) --- */
+        #dash-layer { padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .top-header { display: flex; justify-content: space-between; align-items: center; }
-        .welcome { font-size: 20px; color: #ccc; }
-        .welcome b { color: var(--gold); margin-left: 5px; font-size: 24px; }
-        .clock-box { text-align: center; }
-        .time-big { font-size: 40px; font-weight: 300; line-height: 1; }
-        .date-small { font-size: 12px; color: var(--gold); letter-spacing: 2px; }
-        .power-btn { font-size: 24px; color: #666; padding: 10px; border-radius: 50%; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; }
+        .user-pill { background: #222; padding: 10px 20px; border-radius: 30px; font-size: 12px; color: var(--gold); border: 1px solid #333; }
+        .time-big { font-size: 40px; font-weight: 300; }
 
-        .cards-area { display: flex; gap: 30px; justify-content: center; align-items: center; height: 50vh; }
-        .home-card { 
-            width: 240px; height: 320px; background: #0f0f0f; 
-            border: 1px solid #222; border-radius: 15px;
+        .menu-grid { display: flex; gap: 30px; height: 50vh; align-items: center; justify-content: center; }
+        .menu-card { 
+            width: 25%; height: 100%; 
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 1px solid #333; border-radius: 15px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: all 0.2s;
+            transition: 0.2s;
         }
-        .home-card i { font-size: 60px; margin-bottom: 30px; color: #ccc; }
-        .home-card span { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-card i { font-size: 60px; margin-bottom: 20px; color: #555; }
+        .menu-card span { font-size: 18px; font-weight: 800; text-transform: uppercase; color: #ddd; }
 
-        .bottom-info { 
-            display: flex; justify-content: center; gap: 50px; 
-            padding: 15px; background: rgba(255,255,255,0.05); border-radius: 50px; 
-            width: fit-content; margin: 0 auto; border: 1px solid #222;
-        }
-        .b-lbl { font-size: 10px; color: #666; font-weight: 800; display: block; margin-bottom: 2px; text-align: center; }
-        .b-val { font-size: 14px; color: var(--gold); font-weight: 700; text-align: center; }
+        .menu-card.live { border-bottom: 4px solid #d4af37; }
+        .menu-card.movie { border-bottom: 4px solid #d43737; }
+        .menu-card.series { border-bottom: 4px solid #377ad4; }
+        .menu-card.settings { border-bottom: 4px solid #888; }
 
-        /* --- 3 COLUNAS (FIXO) --- */
-        #content-layer { display: flex; height: 100vh; background: #000; overflow: hidden; }
-
-        /* Col 1: Categorias */
-        .col-cat { width: 22%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .head { padding: 15px; background: #000; color: var(--gold); text-align: center; font-weight: 800; border-bottom: 2px solid var(--gold); }
+        /* --- LAYOUT INTERNO (SMARTERS) --- */
+        #content-layer { display: flex; background: #000; }
+        
+        /* Sidebar (Categorias) */
+        .sidebar { width: 25%; background: #0f0f0f; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .sidebar-head { padding: 20px; background: #080808; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 2px solid var(--gold); font-size: 18px; }
         .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { padding: 14px 20px; border-bottom: 1px solid #151515; font-size: 13px; color: #888; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cat-item.active { background: #151515; border-left: 4px solid var(--gold); color: #fff; }
+        .cat-item { padding: 15px 20px; border-bottom: 1px solid #1a1a1a; font-size: 13px; font-weight: 600; color: #888; }
+        .cat-item.active { background: #1a1a1a; color: #fff; border-left: 5px solid var(--gold); }
 
-        /* Col 2: Lista (Canais/Filmes/Episódios) */
-        .col-list { width: 30%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .search-area { padding: 10px; background: #050505; border-bottom: 1px solid #222; }
-        .inp-search { width: 100%; background: #222; border: 1px solid #333; color: #fff; padding: 8px; text-align: center; border-radius: 4px; }
-        .item-list { flex: 1; overflow-y: auto; }
-        .list-item { padding: 14px 20px; border-bottom: 1px solid #1a1a1a; font-size: 14px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .list-item.playing { color: var(--gold); font-weight: 800; background: rgba(255, 215, 0, 0.1); border-left: 3px solid var(--gold); }
+        /* Main Content (Lista ou Grade) */
+        .main-area { flex: 1; display: flex; flex-direction: column; background: #050505; }
+        .top-tools { height: 60px; background: #080808; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #222; }
+        .search-bar { width: 100%; background: #151515; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 5px; text-align: center; }
         
-        /* Breadcrumb para Séries (Voltar) */
-        .bread-back { padding: 10px; background: #222; color: var(--gold); font-weight: 800; text-align: center; cursor: pointer; border-bottom: 1px solid var(--gold); }
+        .content-list { flex: 1; overflow-y: auto; padding: 20px; }
 
-        /* Col 3: Player & Info */
-        .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
+        /* Layout LISTA (Canais) */
+        .list-view .item { 
+            padding: 15px; margin-bottom: 5px; background: #111; 
+            border-radius: 5px; font-size: 14px; font-weight: 600; color: #ccc;
+            display: flex; justify-content: space-between;
+        }
+        .list-view .item.focused { background: var(--gold); color: #000; }
+
+        /* Layout GRADE (Filmes/Series) */
+        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .poster { 
+            height: 200px; background: #111; border-radius: 8px; overflow: hidden; 
+            position: relative; border: 1px solid #333;
+        }
+        .poster img { width: 100%; height: 100%; object-fit: cover; }
+        .poster-title { 
+            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); 
+            color: #fff; font-size: 10px; padding: 5px; text-align: center; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* --- INFO SÉRIE (PEDIDO: EPISÓDIOS EM TEXTO) --- */
+        #series-layer { display: flex; background: #050505; padding: 40px; }
+        .serie-left { width: 250px; flex-shrink: 0; text-align: center; }
+        .serie-cover { width: 100%; height: 350px; object-fit: cover; border: 3px solid var(--gold); border-radius: 10px; }
+        .serie-title { margin-top: 15px; font-size: 22px; font-weight: 900; color: var(--gold); }
         
-        #vid-container { width: 100%; aspect-ratio: 16/9; background: #000; position: relative; border-bottom: 2px solid #222; }
-        #vid-container.fs { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; border: none !important; }
-        
-        video { width: 100%; height: 100%; object-fit: contain; }
+        .serie-right { flex: 1; margin-left: 40px; display: flex; flex-direction: column; }
+        .ep-header { font-size: 16px; color: #fff; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .ep-list { flex: 1; overflow-y: auto; background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333; }
+        .ep-row { padding: 12px; border-bottom: 1px solid #222; font-size: 13px; color: #aaa; cursor: pointer; }
+        .ep-row:last-child { border: none; }
+        .ep-row.focused { background: var(--gold); color: #000; font-weight: 800; border-radius: 4px; }
 
-        .meta { flex: 1; padding: 25px; background: #080808; display: flex; flex-direction: column; overflow: hidden; }
-        .meta-title { font-size: 22px; color: var(--gold); font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        .meta-desc { font-size: 13px; color: #777; overflow-y: auto; flex: 1; line-height: 1.5; }
-        .keys { display: flex; gap: 15px; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; }
-        .key { font-size: 10px; color: #666; font-weight: 700; display: flex; align-items: center; gap: 5px; text-transform: uppercase; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        /* --- PLAYER --- */
+        #player-layer { background: #000; }
+        video { width: 100%; height: 100%; }
+        .osd { position: absolute; top: 20px; right: 20px; background: rgba(212, 175, 55, 0.2); color: var(--gold); padding: 5px 15px; border: 1px solid var(--gold); font-weight: bold; display:none;}
 
-        #loader { background: #000; z-index: 20000; flex-direction: column; color: var(--gold); font-weight: 800; }
-        .osd { position: absolute; top: 20px; right: 20px; background: rgba(255,215,0,0.9); color: #000; padding: 5px 15px; font-weight: 800; border-radius: 4px; display: none; z-index: 10001; }
+        /* Loader */
+        #loader { background: #000; z-index: 20000; flex-direction: column; color: var(--gold); }
+        .load-spin { font-size: 50px; margin-bottom: 20px; }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #333; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
     </style>
 </head>
 <body onload="App.init()">
 
     <div id="loader" class="layer hide flex-center">
-        <i class="fas fa-circle-notch fa-spin" style="font-size:40px; margin-bottom:20px"></i>
-        <div>CARREGANDO...</div>
+        <i class="fas fa-circle-notch fa-spin load-spin"></i>
+        <div style="font-weight:900; letter-spacing:2px">CARREGANDO...</div>
     </div>
 
     <div id="login-layer" class="layer flex-center">
+        <div class="login-overlay"></div>
         <div class="login-box">
             <div class="logo-txt">IPTV <span>GOLD</span></div>
-            <input type="text" id="i0" class="inp focusable" placeholder="URL DNS" autocomplete="off">
+            <div style="font-size:10px; color:#aaa; margin-bottom:20px; letter-spacing:3px;">SMARTERS EDITION</div>
+            
+            <input type="text" id="i0" class="inp focusable" placeholder="http://url-do-servidor:porta" autocomplete="off">
             <input type="text" id="i1" class="inp focusable" placeholder="USUÁRIO" autocomplete="off">
             <input type="password" id="i2" class="inp focusable" placeholder="SENHA" autocomplete="off">
-            <div class="cors-opt"><input type="checkbox" id="chk-proxy" class="focusable"> <label>Modo Proxy (Correção)</label></div>
-            <button id="i3" class="btn focusable" onclick="App.login()">ENTRAR</button>
-            <div id="msg-login" style="color:red; margin-top:10px; font-size:12px; font-weight:bold"></div>
+            
+            <button id="i3" class="btn-login focusable" onclick="App.tryLogin()">ENTRAR</button>
+            <div id="msg-login" style="color:#ff4444; margin-top:15px; font-size:12px; font-weight:bold;"></div>
         </div>
     </div>
 
     <div id="dash-layer" class="layer hide">
-        <div class="top-header">
-            <div class="welcome">OLÁ, <b id="user-name">VIP</b></div>
-            <div class="clock-box">
-                <div class="time-big" id="clock-time">00:00</div>
-                <div class="date-small" id="clock-date">DATA</div>
+        <div class="header">
+            <div class="user-pill"><i class="fas fa-user-circle"></i> <span id="user-display">USUÁRIO</span></div>
+            <div class="logo-txt" style="font-size:24px">GOLD <span>TV</span></div>
+            <div class="time-big" id="clock">00:00</div>
+        </div>
+
+        <div class="menu-grid">
+            <div id="m0" class="menu-card live focusable" onclick="App.open('live')">
+                <i class="fas fa-tv"></i><span>TV Ao Vivo</span>
             </div>
-            <div id="m3" class="power-btn focusable" onclick="App.logout()"><i class="fas fa-power-off"></i></div>
+            <div id="m1" class="menu-card movie focusable" onclick="App.open('movie')">
+                <i class="fas fa-film"></i><span>Filmes</span>
+            </div>
+            <div id="m2" class="menu-card series focusable" onclick="App.open('series')">
+                <i class="fas fa-layer-group"></i><span>Séries</span>
+            </div>
+            <div id="m3" class="menu-card settings focusable" onclick="App.logout()">
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+            </div>
         </div>
-        <div class="cards-area">
-            <div id="m0" class="home-card focusable" onclick="App.openMode('live')"><i class="fas fa-tv"></i><span>TV Ao Vivo</span></div>
-            <div id="m1" class="home-card focusable" onclick="App.openMode('movie')"><i class="fas fa-film"></i><span>Filmes</span></div>
-            <div id="m2" class="home-card focusable" onclick="App.openMode('series')"><i class="fas fa-layer-group"></i><span>Séries</span></div>
-        </div>
-        <div class="bottom-info">
-            <div><span class="b-lbl">CRIADO</span><span id="info-created" class="b-val">--</span></div>
-            <div><span class="b-lbl">VENCIMENTO</span><span id="info-exp" class="b-val" style="color:#f44">--</span></div>
-            <div><span class="b-lbl">CONEXÕES</span><span id="info-conn" class="b-val">--</span></div>
-        </div>
+        
+        <div style="text-align:center; font-size:12px; color:#555;">IPTV GOLD v9.0 - PHILCO EDITION</div>
     </div>
 
     <div id="content-layer" class="layer hide">
-        <div class="col-cat">
-            <div class="head">CATEGORIAS</div>
+        <div class="sidebar">
+            <div class="sidebar-head">CATEGORIAS</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
-        <div class="col-list">
-            <div class="search-area"><input type="text" id="search" class="inp-search focusable" placeholder="BUSCAR..."></div>
-            <div id="btn-back-series" class="bread-back hide focusable" onclick="App.exitSeries()">❮ VOLTAR PARA SÉRIES</div>
-            <div id="item-list" class="item-list"></div>
-        </div>
-        <div class="col-play">
-            <div id="vid-container" class="focusable">
-                <video id="player" playsinline webkit-playsinline></video>
-                <div id="osd" class="osd"></div>
+        <div class="main-area">
+            <div class="top-tools">
+                <input type="text" id="search" class="search-bar focusable" placeholder="DIGITE PARA BUSCAR..." onkeyup="App.searchLocal()">
             </div>
-            <div class="meta">
-                <div id="meta-title" class="meta-title">AGUARDANDO...</div>
-                <div id="meta-desc" class="meta-desc">Selecione um canal ou episódio.</div>
-                <div class="keys">
-                    <div class="key"><div class="dot" style="background:red"></div> TELA CHEIA</div>
-                    <div class="key"><div class="dot" style="background:green"></div> PRÓXIMO</div>
-                    <div class="key"><div class="dot" style="background:blue"></div> MENU</div>
-                </div>
-            </div>
+            <div id="content-area" class="content-list list-view"></div>
         </div>
     </div>
 
+    <div id="series-layer" class="layer hide">
+        <div class="serie-left">
+            <img id="ser-poster" class="serie-cover" src="">
+        </div>
+        <div class="serie-right">
+            <div id="ser-title" class="serie-title">...</div>
+            <div class="ep-header">LISTA DE EPISÓDIOS</div>
+            <div id="ep-list" class="ep-list"></div>
+        </div>
+    </div>
+
+    <div id="player-layer" class="layer hide">
+        <div id="osd" class="osd"></div>
+        <video id="player" controls style="width:100%;height:100%;background:#000"></video>
+    </div>
+
     <script>
+        // --- ENGINE ---
         var Player = {
-            hls: null, video: null, url: null, retry: 0,
+            hls: null, video: null,
             init: function() {
                 this.video = document.getElementById('player');
-                this.video.onerror = function() { Player.handleError(); };
-                this.video.onended = function() { if(App.mode!=='live') App.playNext(); };
+                this.video.onerror = function() { 
+                    // Tratamento silencioso de erro para não travar
+                    console.log("Erro Play"); 
+                };
             },
-            play: function(url, isLive) {
-                if(this.url===url && !this.video.paused) return;
-                this.stop(); this.url=url; this.retry=0; this.video.controls=true;
-                App.osd("CARREGANDO...");
+            play: function(url) {
+                if(this.hls) { this.hls.destroy(); this.hls=null; }
                 
-                var isVOD = url.match(/\.(mp4|mkv|avi)$/i) || !isLive;
-                if(isVOD) {
-                    this.video.src = url;
-                    this.video.play().catch(e=>console.log(e));
+                // Força m3u8 se for live TS (mais leve)
+                if(url.includes('/live/') && url.includes('.ts')) url = url.replace('.ts', '.m3u8');
+
+                if(Hls.isSupported()) {
+                    var config = { maxBufferLength: 10, manifestLoadingTimeOut: 10000 };
+                    this.hls = new Hls(config);
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(this.video);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { Player.video.play(); });
                 } else {
-                    if(url.indexOf('.m3u8')===-1 && url.indexOf('.ts')>-1) url=url.replace('.ts','.m3u8');
-                    if(Hls.isSupported()) {
-                        var config = { enableWorker: true, maxBufferLength: 10 };
-                        this.hls = new Hls(config);
-                        this.hls.loadSource(url);
-                        this.hls.attachMedia(this.video);
-                        this.hls.on(Hls.Events.MANIFEST_PARSED, function(){ Player.video.play(); });
-                    } else { this.video.src=url; this.video.play(); }
+                    this.video.src = url;
+                    this.video.play();
                 }
             },
-            handleError: function() {
-                this.retry++;
-                if(this.retry>2) { this.stop(); App.osd("SINAL OFFLINE."); return; }
-                App.osd("RECONECTANDO "+this.retry+"...");
-                setTimeout(()=>{ if(Player.hls) Player.hls.recoverMediaError(); else Player.video.load(); }, 1500);
-            },
             stop: function() {
-                if(this.hls) { this.hls.destroy(); this.hls=null; }
-                this.video.pause(); this.video.removeAttribute('src'); this.video.load();
+                if(this.hls) this.hls.destroy();
+                this.video.pause();
+                this.video.removeAttribute('src');
+                this.video.load();
             }
         };
 
         var App = {
-            scr: 0, zone: 0, idx: 0, creds: {}, data: [], filtered: [], seriesCache: [], insideSeries: false, playingIdx: -1,
+            scr: 0, idx: 0, creds: {}, data: [], filterData: [], mode: '',
             
             init: function() {
+                Player.init();
                 if(localStorage.getItem('gh')) {
                     document.getElementById('i0').value = localStorage.getItem('gh');
                     document.getElementById('i1').value = localStorage.getItem('gu');
                     document.getElementById('i2').value = localStorage.getItem('gp');
                 }
-                Player.init(); this.clock(); this.updateFocus();
+                this.clock();
+                this.focusFirst();
             },
-            clock: function() { setInterval(()=>{ var d=new Date(); document.getElementById('clock-time').innerText=d.getHours()+":"+(d.getMinutes()<10?'0':'')+d.getMinutes(); document.getElementById('clock-date').innerText=d.toLocaleDateString('pt-BR'); },1000); },
-            req: function(url, cb) {
-                var p=document.getElementById('chk-proxy').checked;
-                var u=p ? 'https://api.allorigins.win/raw?url='+encodeURIComponent(url) : url;
-                var x=new XMLHttpRequest(); x.open("GET",u,true); x.timeout=15000;
-                x.onload=function(){ try{cb(JSON.parse(x.responseText));}catch(e){cb(null);} }; x.onerror=function(){cb(null);}; x.send();
+
+            clock: function() {
+                setInterval(() => {
+                    var d = new Date();
+                    document.getElementById('clock').innerText = d.getHours() + ":" + (d.getMinutes()<10?'0':'') + d.getMinutes();
+                }, 1000);
             },
-            login: function() {
-                var h=document.getElementById('i0').value.trim();
-                var u=document.getElementById('i1').value.trim();
-                var p=document.getElementById('i2').value.trim();
-                if(!h||!u||!p) return;
-                if(h.endsWith('/')) h=h.slice(0,-1); if(h.indexOf('http')===-1) h='http://'+h;
+
+            // Login com Fallback (Se falhar direto, tenta proxy)
+            tryLogin: function() {
+                var h = document.getElementById('i0').value.trim();
+                var u = document.getElementById('i1').value.trim();
+                var p = document.getElementById('i2').value.trim();
+                
+                if(!h || !u || !p) { document.getElementById('msg-login').innerText = "Preencha tudo!"; return; }
+                if(h.endsWith('/')) h = h.slice(0, -1);
+                if(h.indexOf('http') === -1) h = 'http://' + h;
+
                 document.getElementById('loader').classList.remove('hide');
-                this.req(h+"/player_api.php?username="+u+"&password="+p, function(d){
-                    document.getElementById('loader').classList.add('hide');
-                    if(d && d.user_info && d.user_info.auth==1) {
-                        App.creds={h:h,u:u,p:p}; localStorage.setItem('gh',h); localStorage.setItem('gu',u); localStorage.setItem('gp',p);
-                        document.getElementById('user-name').innerText = d.user_info.username;
-                        document.getElementById('info-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString() : "Ilimitado";
-                        document.getElementById('info-conn').innerText = d.user_info.active_cons+"/"+d.user_info.max_connections;
-                        App.setScr(1);
-                    } else document.getElementById('msg-login').innerText="Erro Login. Tente Proxy.";
+                document.getElementById('msg-login').innerText = "";
+
+                // Tenta Direto
+                var api = `${h}/player_api.php?username=${u}&password=${p}`;
+                this.req(api, function(d) {
+                    if(d && d.user_info) {
+                        App.successLogin(d, h, u, p);
+                    } else {
+                        // Se falhar, tenta via Proxy Público (AllOrigins)
+                        console.log("Tentando Proxy...");
+                        var proxyApi = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(api);
+                        App.req(proxyApi, function(d2) {
+                            if(d2 && d2.user_info) {
+                                App.successLogin(d2, h, u, p);
+                            } else {
+                                document.getElementById('loader').classList.add('hide');
+                                document.getElementById('msg-login').innerText = "Erro de Conexão ou Dados Inválidos.";
+                            }
+                        });
+                    }
                 });
             },
+
+            req: function(url, cb) {
+                var x = new XMLHttpRequest();
+                x.open("GET", url, true);
+                x.timeout = 10000;
+                x.onload = function() { try { cb(JSON.parse(x.responseText)); } catch(e) { cb(null); } };
+                x.onerror = function() { cb(null); };
+                x.send();
+            },
+
+            successLogin: function(d, h, u, p) {
+                document.getElementById('loader').classList.add('hide');
+                if(d.user_info.auth == 0) {
+                    document.getElementById('msg-login').innerText = "Conta Vencida ou Inválida.";
+                    return;
+                }
+                this.creds = {h:h, u:u, p:p};
+                localStorage.setItem('gh', h); localStorage.setItem('gu', u); localStorage.setItem('gp', p);
+                document.getElementById('user-display').innerText = d.user_info.username;
+                this.setScr(1);
+            },
+
             logout: function() { localStorage.clear(); location.reload(); },
+
             setScr: function(n) {
-                if(n===1) { Player.stop(); App.data=[]; }
-                document.querySelectorAll('.layer').forEach(e=>e.classList.add('hide'));
+                Player.stop();
+                document.querySelectorAll('.layer').forEach(e => e.classList.add('hide'));
                 if(n===0) document.getElementById('login-layer').classList.remove('hide');
                 if(n===1) document.getElementById('dash-layer').classList.remove('hide');
                 if(n===2) document.getElementById('content-layer').classList.remove('hide');
-                this.scr=n; this.zone=0; this.idx=0; this.updateFocus();
+                if(n===3) document.getElementById('player-layer').classList.remove('hide');
+                if(n===4) document.getElementById('series-layer').classList.remove('hide');
+                this.scr = n;
+                setTimeout(() => this.focusFirst(), 100);
             },
-            openMode: function(m) {
-                this.mode=m; this.setScr(2);
-                document.getElementById('cat-list').innerHTML=''; document.getElementById('item-list').innerHTML='';
+
+            open: function(m) {
+                this.mode = m;
+                this.setScr(2);
+                document.getElementById('cat-list').innerHTML = '';
+                document.getElementById('content-area').innerHTML = '';
                 document.getElementById('loader').classList.remove('hide');
-                var act = (m==='live')?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
-                this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
+
+                var act = (m==='live') ? 'get_live_categories' : (m==='movie'?'get_vod_categories':'get_series_categories');
+                // Usa proxy fallback na API também se necessário, mas vamos direto por enquanto
+                var url = `${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`;
+                
+                this.req(url, function(d) {
                     document.getElementById('loader').classList.add('hide');
                     if(d) {
-                        var h=''; for(var i=0; i<d.length; i++) h+=`<div class="cat-item" id="c${i}" onclick="App.loadCat(${i},'${d[i].category_id}')">${d[i].category_name}</div>`;
-                        document.getElementById('cat-list').innerHTML=h;
-                        App.zone=0; App.idx=0; App.updateFocus();
+                        var h = '';
+                        for(var i=0; i<d.length; i++) {
+                            h += `<div class="cat-item focusable" tabindex="0" onclick="App.loadCat('${d[i].category_id}', this)">${d[i].category_name}</div>`;
+                        }
+                        document.getElementById('cat-list').innerHTML = h;
+                        var f = document.querySelector('.cat-item'); if(f) f.focus();
                     }
                 });
             },
-            loadCat: function(idx, cid) {
-                document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active'));
-                document.getElementById('c'+idx).classList.add('active');
+
+            loadCat: function(cid, el) {
+                if(el) {
+                    document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active'));
+                    el.classList.add('active');
+                }
                 document.getElementById('loader').classList.remove('hide');
-                this.insideSeries = false; document.getElementById('btn-back-series').classList.add('hide');
-                var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act+"&category_id="+cid, function(d){
+                
+                var act = (this.mode==='live') ? 'get_live_streams' : (this.mode==='movie'?'get_vod_streams':'get_series');
+                var url = `${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}&category_id=${cid}`;
+
+                this.req(url, function(d) {
                     document.getElementById('loader').classList.add('hide');
-                    if(d) { App.data=d; App.filtered=d; App.renderList(); App.zone=1; App.idx=0; App.updateFocus(); }
+                    App.data = d || [];
+                    App.filterData = App.data; // Reset filtro
+                    App.renderList();
                 });
             },
+
+            // Renderiza com visual apropriado
             renderList: function() {
-                var h=''; var max=this.filtered.length>200?200:this.filtered.length;
-                if(max===0) h='<div style="padding:15px">Vazio</div>';
+                var el = document.getElementById('content-area');
+                el.innerHTML = '';
+                
+                // Configura Classe (Grid ou List)
+                if(this.mode === 'live') {
+                    el.className = 'content-list list-view';
+                } else {
+                    el.className = 'content-list grid-view';
+                }
+
+                var d = this.filterData;
+                var max = d.length > 100 ? 100 : d.length; // Limite Philco
+                
+                var html = '';
                 for(var i=0; i<max; i++) {
-                    var n = this.filtered[i].name || this.filtered[i].title;
-                    h+=`<div class="list-item" id="r${i}" onclick="App.clickItem(${i})">${n}</div>`;
+                    var item = d[i];
+                    var name = item.name || item.title;
+                    var img = item.stream_icon || item.cover;
+                    
+                    if(this.mode === 'live') {
+                        html += `<div class="item focusable" tabindex="0" onclick="App.clickItem(${i})">${name} <i class="fas fa-play"></i></div>`;
+                    } else {
+                        if(!img || img.length < 5) img = 'https://via.placeholder.com/150x220?text=GOLD';
+                        html += `<div class="poster focusable" tabindex="0" onclick="App.clickItem(${i})">
+                                    <img src="${img}" onerror="this.src='https://via.placeholder.com/150x220?text=ERRO'">
+                                    <div class="poster-title">${name}</div>
+                                 </div>`;
+                    }
                 }
-                document.getElementById('item-list').innerHTML=h;
+                el.innerHTML = html;
             },
-            clickItem: function(i) {
-                var item = this.filtered[i];
-                // LÓGICA DE SÉRIES (Drill-Down)
-                if(this.mode === 'series' && !this.insideSeries) {
-                    this.loadEpisodes(item);
-                    return;
+
+            // Busca Instantânea Local (Não trava TV)
+            searchLocal: function() {
+                var term = document.getElementById('search').value.toLowerCase();
+                if(term.length < 2) {
+                    this.filterData = this.data;
+                } else {
+                    this.filterData = this.data.filter(item => (item.name || item.title).toLowerCase().includes(term));
                 }
-                // PLAY
-                var id = item.stream_id || item.id; // Series ep has 'id'
-                var ext = item.container_extension || 'mp4';
-                var type = (this.mode==='live')?'live':(this.mode==='movie'?'movie':'series');
-                var url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${id}.${ext}`;
-                document.getElementById('meta-title').innerText = item.name || item.title;
-                document.getElementById('meta-desc').innerText = "Reproduzindo...";
-                document.querySelectorAll('.list-item').forEach(e=>e.classList.remove('playing'));
-                document.getElementById('r'+i).classList.add('playing');
-                this.playingIdx = i; this.zone=2; this.updateFocus();
-                Player.play(url, this.mode==='live');
+                this.renderList();
             },
-            loadEpisodes: function(item) {
-                document.getElementById('loader').classList.remove('hide');
-                this.seriesCache = this.filtered; // Salva lista de séries
-                this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action=get_series_info&series_id="+item.series_id, function(d){
-                    document.getElementById('loader').classList.add('hide');
+
+            clickItem: function(idx) {
+                var item = this.filterData[idx];
+                
+                if(this.mode === 'series') {
+                    this.loadSeries(item);
+                } else {
+                    var type = (this.mode === 'live') ? 'live' : 'movie';
+                    var ext = item.container_extension || 'mp4';
+                    var url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${item.stream_id}.${ext}`;
+                    
+                    this.setScr(3);
+                    Player.play(url);
+                }
+            },
+
+            loadSeries: function(item) {
+                this.setScr(4);
+                document.getElementById('ser-title').innerText = item.name;
+                document.getElementById('ser-poster').src = item.cover || '';
+                document.getElementById('ep-list').innerHTML = '<div style="padding:20px">Carregando episódios...</div>';
+
+                var url = `${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=get_series_info&series_id=${item.series_id}`;
+                
+                this.req(url, function(d) {
                     if(d && d.episodes) {
-                        var eps=[];
-                        for(var k in d.episodes) { for(var j=0; j<d.episodes[k].length; j++) eps.push(d.episodes[k][j]); }
-                        App.filtered = eps;
-                        App.insideSeries = true;
-                        document.getElementById('btn-back-series').classList.remove('hide');
-                        App.renderList();
-                        App.zone=1; App.idx=0; App.updateFocus();
+                        var h = '';
+                        for(var k in d.episodes) {
+                            var eps = d.episodes[k];
+                            for(var j=0; j<eps.length; j++) {
+                                var ep = eps[j];
+                                var ext = ep.container_extension || 'mp4';
+                                h += `<div class="ep-row focusable" tabindex="0" onclick="App.playEp('${ep.id}', '${ext}')">
+                                        ${ep.title}
+                                      </div>`;
+                            }
+                        }
+                        document.getElementById('ep-list').innerHTML = h;
+                        var f = document.querySelector('.ep-row'); if(f) f.focus();
                     }
                 });
             },
-            exitSeries: function() {
-                this.filtered = this.seriesCache;
-                this.insideSeries = false;
-                document.getElementById('btn-back-series').classList.add('hide');
-                this.renderList();
-                this.zone=1; this.idx=0; this.updateFocus();
+
+            playEp: function(id, ext) {
+                var url = `${this.creds.h}/series/${this.creds.u}/${this.creds.p}/${id}.${ext}`;
+                this.setScr(3);
+                Player.play(url);
             },
-            playNext: function() {
-                if(this.playingIdx < this.filtered.length-1) {
-                    App.osd("PRÓXIMO VÍDEO >>"); setTimeout(()=>App.clickItem(App.playingIdx+1), 2000);
-                }
-            },
-            toggleFull: function() {
-                var el=document.getElementById('vid-container');
-                if(el.classList.contains('fs')) el.classList.remove('fs'); else { el.classList.add('fs'); App.osd("TELA CHEIA"); }
-            },
-            osd: function(t) { var o=document.getElementById('osd'); o.innerText=t; o.style.display='block'; setTimeout(()=>o.style.display='none',3000); },
-            updateFocus: function() {
-                document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
-                var el;
-                if(this.scr===0) el=document.getElementById('i'+this.idx)||document.getElementById('chk-proxy');
-                else if(this.scr===1) el=document.getElementById('m'+this.idx);
-                else if(this.scr===2) {
-                    if(this.zone===0) el=document.getElementById('c'+this.idx);
-                    else if(this.zone===1) el=document.getElementById('r'+this.idx)||document.getElementById('search')||document.getElementById('btn-back-series');
-                    else if(this.zone===2) el=document.getElementById('vid-container');
-                }
-                if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); if(el.tagName==='INPUT') el.focus(); else document.activeElement.blur(); }
-            },
-            move: function(d) {
-                if(this.scr===0) { if(d===1 && this.idx<4) this.idx++; if(d===0 && this.idx>0) this.idx--; }
-                else if(this.scr===1) {
-                    if(this.idx<=2) { if(d===3) this.idx++; if(d===2) this.idx--; if(d===0) this.idx=3; } else if(d===1) this.idx=1;
-                }
-                else if(this.scr===2) {
-                    if(this.zone===0) { if(d===1) this.idx++; if(d===0 && this.idx>0) this.idx--; if(d===3) { this.zone=1; this.idx=0; } }
-                    else if(this.zone===1) { 
-                        var limit = this.filtered.length-1;
-                        if(d===1 && this.idx<limit) this.idx++; 
-                        if(d===0) { if(this.idx>0) this.idx--; else if(this.insideSeries) document.getElementById('btn-back-series').focus(); }
-                        if(d===2) { this.zone=0; this.idx=0; } 
-                        if(d===3) this.zone=2;
-                    }
-                    else if(this.zone===2) { if(d===2) this.zone=1; }
-                }
-                this.updateFocus();
-            },
-            enter: function() {
-                if(this.scr===0) this.login();
-                else if(this.scr===1) { if(this.idx===3) this.logout(); else this.openMode(['live','movie','series'][this.idx]); }
-                else if(this.scr===2) {
-                    if(this.zone===0) { var cid=document.getElementById('c'+this.idx).getAttribute('onclick'); eval(cid); } // Trick to get ID
-                    else if(this.zone===1) { 
-                        if(document.activeElement.id==='btn-back-series') this.exitSeries();
-                        else this.clickItem(this.idx); 
-                    }
-                    else if(this.zone===2) this.toggleFull();
-                }
-            },
-            back: function() {
-                if(document.getElementById('vid-container').classList.contains('fs')) { this.toggleFull(); return; }
-                if(this.zone===2) { this.zone=1; this.updateFocus(); return; }
-                if(this.zone===1) { 
-                    if(this.insideSeries) this.exitSeries(); 
-                    else { this.zone=0; this.updateFocus(); } 
-                    return; 
-                }
-                if(this.zone===0) { this.setScr(1); return; }
-                if(this.scr===1) this.setScr(0);
+
+            focusFirst: function() {
+                var el = document.querySelector('.focusable');
+                if(el) el.focus();
             }
         };
 
+        // --- CONTROLE REMOTO ---
         document.addEventListener('keydown', function(e) {
-            var k=e.keyCode;
-            if(document.activeElement.tagName==='INPUT' && k!==13 && k!==40) return;
-            e.preventDefault();
-            if(k===37) App.move(2); if(k===38) App.move(0); if(k===39) App.move(3); if(k===40) App.move(1);
-            if(k===13) App.enter();
-            if(k===8||k===27||k===461) App.back();
-            if(k===403||k===82) App.toggleFull();
+            var k = e.keyCode;
+            // Back (8), Escape (27), Return (461), Exit (10009)
+            if(k===8 || k===27 || k===461 || k===10009) {
+                e.preventDefault();
+                if(App.scr === 3) App.setScr(2); // Player -> Lista
+                else if(App.scr === 4) App.setScr(2); // Serie -> Lista
+                else if(App.scr === 2) App.setScr(1); // Lista -> Home
+                else if(App.scr === 1) App.setScr(0); // Home -> Login
+            }
+            
+            // Enter em Inputs
+            if(k===13 && document.activeElement.tagName === 'INPUT') {
+                if(App.scr===0) App.tryLogin();
+            }
         });
+
+        // Adiciona classe focused manualmente (Correção CSS :focus)
+        document.addEventListener('focusin', e => e.target.classList.add('focused'));
+        document.addEventListener('focusout', e => e.target.classList.remove('focused'));
+
     </script>
 </body>
 </html>
