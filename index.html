@@ -9,12 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA GOLD VIP (OTIMIZADO) --- */
+        /* --- TEMA GOLD VIP --- */
         :root { 
             --bg: #000000; 
             --gold: #FFD700; 
             --gold-dim: #b39700;
-            --gray: #1a1a1a;
             --blue: #33b5e5;
         }
         
@@ -34,15 +33,27 @@
 
         button, .smart-card, .cat-item, .item, .power-btn, .key { cursor: pointer; border: 2px solid transparent; }
 
-        /* --- FOCO VIP --- */
+        /* --- SISTEMA DE FOCO INTELIGENTE --- */
+        /* Foco Genérico */
         .focused {
             border: 2px solid #fff !important;
             background: var(--gold) !important;
             color: #000 !important;
-            transform: scale(1.02);
             z-index: 50;
-            box-shadow: 0 5px 0px rgba(180, 140, 0, 1);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5);
             font-weight: 900 !important;
+        }
+        
+        /* Foco APENAS nos itens de lista e botões (Pode ter zoom leve) */
+        .item.focused, .cat-item.focused, .smart-card.focused, .btn.focused {
+            transform: scale(1.02); /* Zoom permitido aqui */
+        }
+
+        /* --- CORREÇÃO DA JANELINHA (SEM ZOOM) --- */
+        #vid-box.focused {
+            transform: none !important; /* PROIBIDO DAR ZOOM */
+            border: 4px solid var(--gold) !important; /* Apenas borda grossa */
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
         }
         
         .focused i, .focused span, .focused div { color: #000 !important; }
@@ -52,7 +63,6 @@
             width: 400px; padding: 40px; 
             background: #0a0a0a; border: 1px solid #333; 
             border-radius: 8px; text-align: center;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.1);
         }
         .logo-txt { font-size: 36px; font-weight: 900; letter-spacing: -2px; color:#fff; margin-bottom: 20px; }
         .logo-txt span { color: var(--gold); }
@@ -69,29 +79,20 @@
 
         /* DASHBOARD */
         #dash-layer { padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
-        
         .top-bar { display: flex; justify-content: space-between; align-items: center; height: 60px; border-bottom: 1px solid #222; margin-bottom: 20px; }
         .dash-logo { font-size: 30px; font-weight: 900; }
         .dash-logo span { color: var(--gold); }
         .clock-time { font-size: 24px; font-weight: 700; color: var(--gold); }
-        
         .dash-grid { display: flex; gap: 30px; justify-content: center; align-items: center; flex: 1; }
         
         .smart-card { 
-            width: 250px; height: 280px;
-            background: #0e0e0e;
-            border: 1px solid #222;
+            width: 250px; height: 280px; background: #0e0e0e; border: 1px solid #222;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: transform 0.2s;
         }
         .smart-card i { font-size: 60px; margin-bottom: 20px; color: #444; }
         .smart-card span { font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #888; }
 
-        /* BARRA DE INFORMAÇÕES DA CONTA (Restaurada) */
-        .account-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-top: 20px; border-top: 1px solid #222;
-        }
+        .account-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid #222; }
         .acc-info { text-align: center; }
         .acc-lbl { display: block; font-size: 10px; color: #666; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
         .acc-val { font-size: 14px; color: #fff; font-weight: bold; }
@@ -114,16 +115,24 @@
         .fav-icon { float: right; color: var(--gold); }
 
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; }
-        .vid-box { width: 100%; height: 45vh; background: #000; position: relative; border-bottom: 2px solid #222; }
-        #vid-box.fs { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; border: none; }
-        video { width: 100%; height: 100%; background: #000; }
+        
+        /* JANELINHA DO PLAYER */
+        .vid-box { 
+            width: 100%; height: 45vh; background: #000; position: relative; border-bottom: 2px solid #222; 
+            /* Importante para não dar bug visual na TV */
+            transform-style: preserve-3d;
+        }
+        
+        #vid-box.fs { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; border: none !important; 
+        }
+        
+        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
 
         .meta { padding: 25px; flex: 1; overflow: hidden; display: flex; flex-direction: column; }
         .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 10px; }
         .meta-epg { font-size: 12px; background: #222; color: #fff; padding: 4px 8px; border-radius: 3px; display: inline-block; margin-bottom: 10px; }
         .meta-desc { font-size: 13px; color: #666; overflow-y: auto; flex: 1; }
-        
-        /* Botões de Legenda (Incluindo Azul) */
         .keys { display: flex; gap: 15px; margin-top: 15px; border-top: 1px solid #222; padding-top: 15px; flex-wrap: wrap; }
         .key { font-size: 11px; font-weight: bold; color: #555; display: flex; align-items: center; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -159,7 +168,6 @@
             <div id="clock-time" class="clock-time">00:00</div>
             <div id="m3" class="power-btn focusable" onclick="App.logout()" style="color:#fff"><i class="fas fa-power-off"></i></div>
         </div>
-
         <div class="dash-grid">
             <div id="m0" class="smart-card focusable" onclick="App.openMode('live')">
                 <i class="fas fa-tv"></i><span>TV AO VIVO</span>
@@ -171,20 +179,10 @@
                 <i class="fas fa-layer-group"></i><span>SÉRIES</span>
             </div>
         </div>
-        
         <div class="account-bar">
-            <div class="acc-info">
-                <span class="acc-lbl">USUÁRIO</span>
-                <span id="info-user" class="acc-val">...</span>
-            </div>
-            <div class="acc-info">
-                <span class="acc-lbl">VENCIMENTO</span>
-                <span id="info-exp" class="acc-val gold">...</span>
-            </div>
-            <div class="acc-info">
-                <span class="acc-lbl">TELAS (ATIVAS/MAX)</span>
-                <span id="info-conn" class="acc-val">...</span>
-            </div>
+            <div class="acc-info"><span class="acc-lbl">USUÁRIO</span><span id="info-user" class="acc-val">...</span></div>
+            <div class="acc-info"><span class="acc-lbl">VENCIMENTO</span><span id="info-exp" class="acc-val gold">...</span></div>
+            <div class="acc-info"><span class="acc-lbl">TELAS</span><span id="info-conn" class="acc-val">...</span></div>
         </div>
     </div>
 
@@ -210,7 +208,7 @@
                 <div id="meta-desc" class="meta-desc">Selecione para assistir.</div>
                 
                 <div class="keys">
-                    <div class="key"><div class="dot" style="background:#ff4444"></div> TELA CHEIA</div>
+                    <div class="key"><div class="dot" style="background:#ff4444"></div> TELA CHEIA (OK)</div>
                     <div class="key"><div class="dot" style="background:#00C851"></div> VOLTAR</div>
                     <div class="key"><div class="dot" style="background:#ffbb33"></div> BUSCAR</div>
                     <div class="key"><div class="dot" style="background:var(--blue)"></div> MENU</div>
@@ -234,6 +232,7 @@
             isFav: function(id) { return this.list.indexOf(id) > -1; }
         };
 
+        // --- ENGINE DO PLAYER TURBO (FUTEBOL) ---
         var PlayerEngine = {
             hls: null, video: null, url: null, retryCount: 0, monitorTimer: null, lastTime: 0, stallCount: 0,
             init: function() { 
@@ -261,10 +260,14 @@
             },
             startHls: function(url) {
                 if(this.hls) this.hls.destroy();
+                // CONFIGURAÇÃO TURBO PARA TV (ANTI-TRAVAMENTO)
                 var config = { 
-                    enableWorker: true, 
-                    maxBufferLength: 20,
-                    maxMaxBufferLength: 40,
+                    enableWorker: true,
+                    // Buffer mais curto para Live (menos delay)
+                    maxBufferLength: 10, 
+                    maxMaxBufferLength: 20,
+                    // Limpa buffer passado para salvar RAM (Crucial para TV)
+                    backBufferLength: 0, 
                     startLevel: -1, 
                     manifestLoadingTimeOut: 15000,
                     capLevelToPlayerSize: true
@@ -284,16 +287,17 @@
                 this.monitorTimer = setInterval(function() {
                     var v = PlayerEngine.video;
                     if(!v || !PlayerEngine.url || v.paused) return;
+                    // Detecção de travamento (Imagem parada por 2 segs)
                     if(Math.abs(v.currentTime - PlayerEngine.lastTime) < 0.1) {
                         PlayerEngine.stallCount++;
-                        if(PlayerEngine.stallCount > 5) { App.osd("RECONECTANDO..."); PlayerEngine.recover(); }
+                        if(PlayerEngine.stallCount > 4) { App.osd("SINC. AO VIVO..."); PlayerEngine.recover(); }
                     } else { PlayerEngine.stallCount = 0; PlayerEngine.lastTime = v.currentTime; }
                 }, 2000);
             },
             stopMonitor: function() { if(this.monitorTimer) clearInterval(this.monitorTimer); },
             recover: function() {
                 this.retryCount++;
-                if(this.retryCount > 5) { this.stop(); App.osd("SINAL INSTÁVEL"); return; }
+                if(this.retryCount > 8) { this.stop(); App.osd("SEM SINAL"); return; }
                 setTimeout(function(){ 
                     PlayerEngine.stop(); 
                     setTimeout(function(){ 
@@ -363,7 +367,6 @@
                         App.creds={h:h,u:u,p:p};
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
                         
-                        // --- PREENCHENDO DADOS COMPLETOS ---
                         var info = d.user_info;
                         var exp = info.exp_date ? new Date(info.exp_date*1000).toLocaleDateString("pt-BR") : "Ilimitado";
                         var conn = (info.active_cons || 0) + " / " + (info.max_connections || 1);
@@ -643,6 +646,8 @@
                     if(this.zone===0) this.loadContent(this.idx);
                     if(this.zone===1) this.doSearch();
                     if(this.zone===2) this.clickItem();
+                    // --- CORREÇÃO DO BOTÃO OK NA JANELINHA ---
+                    // Se estiver na janelinha (zone 3), OK vira Fullscreen
                     if(this.zone===3) this.toggleFull(); 
                 }
             }
@@ -695,8 +700,6 @@
             if(k===403||k===82) if(App.scr===2) App.toggleFull(); 
             if(k===404||k===71) if(App.scr===2) { App.zone=0; App.idx=0; App.updateFocus(); } 
             if(k===405||k===89) if(App.scr===2) { App.zone=1; App.updateFocus(); } 
-            
-            // --- BOTÃO AZUL: VOLTAR AO MENU ---
             if(k===406||k===66||k===275) { e.preventDefault(); App.setScr(1); } 
         });
     </script>
