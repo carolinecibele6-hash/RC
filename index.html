@@ -3,163 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R&C GOLD | PREMIUM</title>
+    <title>R&C GOLD PREMIUM</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        :root { 
-            --gold: #FFD700; 
+        :root {
+            --gold: #FFD700;
             --gold-dark: #B8860B;
-            --bg-dark: #050505;
-            --card-bg: rgba(25, 25, 25, 0.9);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-body: #050505;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-font-smoothing: antialiased; }
         
         body {
-            background-color: var(--bg-dark); 
+            background: var(--bg-body);
             color: #fff;
-            font-family: 'Montserrat', sans-serif;
-            width: 100vw; height: 100vh; overflow: hidden;
-            background: radial-gradient(circle at top right, #1a1a1a 0%, #050505 100%);
+            font-family: 'Inter', sans-serif;
+            width: 100vw; height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at 20% 20%, #1a1a1a 0%, #050505 100%);
         }
 
-        .hide { display: none !important; }
-        .flex-center { display: flex; align-items: center; justify-content: center; }
-        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: var(--bg-dark); }
-
-        /* FOCO PREMIUM */
-        .focused {
-            border: 3px solid #fff !important;
-            background: linear-gradient(135deg, var(--gold) 0%, #FFA500 100%) !important;
-            color: #000 !important;
-            transform: scale(1.04);
-            z-index: 50;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
-        }
-        .focused i, .focused span { color: #000 !important; }
-
-        /* LOGIN */
-        .login-box { 
-            width: 420px; padding: 40px; 
-            background: var(--card-bg); border: 1px solid #333; 
-            border-radius: 15px; text-align: center; 
-            backdrop-filter: blur(10px);
-        }
-        .logo-txt { font-size: 38px; font-weight: 900; color:#fff; margin-bottom: 30px; }
-        .logo-txt span { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.3); }
-        .inp { width: 100%; padding: 15px; margin: 10px 0; background: #111; border: 1px solid #444; color: #fff; border-radius: 8px; font-weight: bold; transition: var(--transition); }
-        .btn { width: 100%; padding: 16px; margin-top: 20px; background: var(--gold); color: #000; border: none; font-weight: 900; border-radius: 8px; text-transform: uppercase; }
-
-        /* DASHBOARD */
-        #dash-layer { padding: 40px 60px; display: flex; flex-direction: column; justify-content: space-between; }
-        .dash-grid { display: flex; gap: 30px; justify-content: center; align-items: center; flex: 1; }
-        .smart-card { 
-            width: 260px; height: 300px;
-            background: var(--card-bg); border: 1px solid #222;
-            border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        /* --- SISTEMA DE FOCO PROFISSIONAL --- */
+        .focusable {
             transition: var(--transition);
+            will-change: transform, box-shadow;
+            border: 2px solid transparent;
         }
-        .smart-card i { font-size: 70px; margin-bottom: 20px; color: var(--gold); opacity: 0.8; }
-        .smart-card span { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
 
-        /* PLAYER & LISTS */
-        #content-layer { display: flex; }
-        .col-cat { width: 20%; background: #080808; border-right: 1px solid #222; }
-        .cat-head { padding: 25px; background: #111; color: var(--gold); font-weight: 900; font-size: 14px; letter-spacing: 2px; border-bottom: 2px solid var(--gold); }
-        .cat-item { padding: 18px 25px; border-bottom: 1px solid #151515; color: #888; font-weight: 600; transition: var(--transition); }
-        .cat-item.active { background: #111; color: #fff; border-left: 4px solid var(--gold); }
+        .focused {
+            transform: scale(1.03);
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 25px rgba(255, 214, 0, 0.4);
+            background: rgba(255, 214, 0, 0.15) !important;
+            z-index: 100;
+        }
 
-        .col-list { width: 30%; background: #0d0d0d; border-right: 1px solid #222; }
-        .item { padding: 16px 20px; border-bottom: 1px solid #181818; color: #bbb; font-size: 14px; transition: var(--transition); display: flex; justify-content: space-between; align-items: center; }
-        .item.playing { color: var(--gold); background: #151515; font-weight: bold; }
+        /* --- LAYERS --- */
+        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; transition: opacity 0.5s ease; }
+        .hide { opacity: 0; pointer-events: none; display: none !important; }
 
-        .col-play { flex: 1; background: #000; display: flex; flex-direction: column; }
-        .vid-box { width: 100%; height: 50vh; background: #000; position: relative; overflow: hidden; }
+        /* --- DASHBOARD LUXO --- */
+        .dash-container { 
+            display: flex; flex-direction: column; width: 100%; padding: 50px 80px; 
+            justify-content: space-between;
+        }
+
+        .dash-grid { display: flex; gap: 30px; justify-content: center; align-items: center; flex: 1; }
+
+        .smart-card {
+            width: 300px; height: 180px;
+            background: var(--bg-card);
+            border-radius: 15px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .smart-card i { font-size: 50px; color: var(--gold); margin-bottom: 15px; }
+        .smart-card span { font-weight: 800; letter-spacing: 1px; font-size: 14px; }
+
+        /* --- PLAYER & CONTEÚDO --- */
+        .sidebar { width: 300px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border-right: 1px solid #222; }
+        .main-content { flex: 1; display: flex; flex-direction: column; background: #000; }
+        
+        .video-wrapper { 
+            position: relative; width: 100%; height: 60%; 
+            background: #000; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,1);
+        }
+
         video { width: 100%; height: 100%; object-fit: contain; }
 
-        .meta { padding: 30px; flex: 1; background: linear-gradient(to bottom, #0d0d0d, #050505); }
-        .meta-title { font-size: 26px; color: var(--gold); font-weight: 900; margin-bottom: 8px; }
-        .meta-desc { color: #666; font-size: 14px; line-height: 1.6; }
+        .content-info { padding: 30px; flex: 1; background: linear-gradient(to bottom, #0a0a0a, #000); }
+        
+        /* --- ESTILIZAÇÃO LISTAS --- */
+        .list-item {
+            padding: 15px 25px;
+            margin: 5px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #aaa;
+            background: rgba(255,255,255,0.02);
+        }
 
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .active-cat { border-left: 4px solid var(--gold); color: #fff; background: rgba(255,214,0,0.1); }
 
-        /* LOADING ANIMATION */
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s infinite linear; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* --- LOADING --- */
+        .loader-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
     </style>
 </head>
 <body onload="App.init()">
 
-    <div id="loader" class="layer flex-center hide" style="z-index: 99999; background: rgba(0,0,0,0.8);">
-        <div class="spinner"></div>
-        <div id="load-txt" style="margin-top: 20px; font-weight: 900; color: var(--gold);">CARREGANDO...</div>
+    <div id="loader" class="loader-overlay hide">
+        <div style="width: 50px; height: 50px; border: 5px solid #222; border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h2 style="margin-top: 20px; color: var(--gold); letter-spacing: 2px;">R&C GOLD</h2>
     </div>
 
-    <div id="login-layer" class="layer flex-center">
-        <div class="login-box">
-            <div class="logo-txt">R&C <span>GOLD</span></div>
-            <input type="text" id="i0" class="inp" placeholder="DNS (Ex: http://url.com)">
-            <input type="text" id="i1" class="inp" placeholder="USUÁRIO">
-            <input type="password" id="i2" class="inp" placeholder="SENHA">
-            <button id="i3" class="btn" onclick="App.login()">ACESSAR AGORA</button>
-            <div id="msg-login" style="color:#ff4444; margin-top:15px; font-size:13px; font-weight: 600;"></div>
+    <div id="login-layer" class="layer" style="align-items: center; justify-content: center;">
+        <div style="width: 400px; padding: 40px; background: var(--bg-card); border-radius: 20px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);">
+            <h1 style="font-size: 35px; margin-bottom: 30px;">R&C <span style="color:var(--gold)">GOLD</span></h1>
+            <input type="text" id="i0" class="focusable" placeholder="URL DNS" style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid #333; color:#fff; border-radius:8px;">
+            <input type="text" id="i1" class="focusable" placeholder="USUÁRIO" style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid #333; color:#fff; border-radius:8px;">
+            <input type="password" id="i2" class="focusable" placeholder="SENHA" style="width:100%; padding:15px; margin:10px 0; background:#111; border:1px solid #333; color:#fff; border-radius:8px;">
+            <button id="i3" class="focusable" onclick="App.login()" style="width:100%; padding:15px; margin-top:20px; background:var(--gold); border:none; border-radius:8px; font-weight:800; color:#000;">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="dash-layer" class="layer hide">
+        <div class="dash-container">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <h1 style="font-size: 40px;">R&C <span style="color:var(--gold)">GOLD</span></h1>
+                <div id="clock" style="text-align:right">
+                    <div id="time" style="font-size:30px; font-weight:800">00:00</div>
+                    <div id="date" style="color:var(--gold); font-size:12px">FEVEREIRO 2026</div>
+                </div>
+            </div>
+
+            <div class="dash-grid">
+                <div id="m0" class="smart-card focusable" onclick="App.openMode('live')">
+                    <i class="fas fa-tv"></i><span>TV AO VIVO</span>
+                </div>
+                <div id="m1" class="smart-card focusable" onclick="App.openMode('movie')">
+                    <i class="fas fa-film"></i><span>FILMES</span>
+                </div>
+                <div id="m2" class="smart-card focusable" onclick="App.openMode('series')">
+                    <i class="fas fa-video"></i><span>SÉRIES</span>
+                </div>
+                <div id="m3" class="smart-card focusable" onclick="App.logout()">
+                    <i class="fas fa-power-off" style="color:#ff4444"></i><span>SAIR</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:20px">
+                <div style="background:rgba(255,255,255,0.05); padding:15px 30px; border-radius:50px; border:1px solid rgba(255,255,255,0.1)">
+                    <small style="display:block; color:#666; font-size:10px; font-weight:800">VENCIMENTO</small>
+                    <span id="exp-date" style="color:var(--gold); font-weight:800">--/--/----</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content-layer" class="layer hide">
+        <div class="sidebar">
+            <div style="padding:25px; font-weight:800; color:var(--gold); border-bottom:1px solid #222">CATEGORIAS</div>
+            <div id="cat-list" style="overflow-y:auto; height: calc(100% - 70px);"></div>
+        </div>
+        <div class="sidebar" style="background: rgba(0,0,0,0.4);">
+            <div style="padding:15px;">
+                <input type="text" id="search" class="focusable" placeholder="BUSCAR..." style="width:100%; padding:10px; background:#111; border:1px solid #333; color:#fff; border-radius:5px; font-size:12px;">
+            </div>
+            <div id="item-list" style="overflow-y:auto; height: calc(100% - 80px);"></div>
+        </div>
+        <div class="main-content">
+            <div id="vid-box" class="video-wrapper focusable">
+                <video id="player"></video>
+            </div>
+            <div class="content-info">
+                <h2 id="meta-title" style="color:var(--gold); font-size:28px; margin-bottom:10px">R&C GOLD PREMIUM</h2>
+                <p id="meta-desc" style="color:#888; line-height:1.6; font-size:14px">Selecione um canal ou filme para iniciar a transmissão.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // ... (FavManager e PlayerEngine seguem lógica similar, mas otimizados para buffers da Philco)
-        // Dica: No PlayerEngine.startHls, aumente o 'fragLoadingTimeOut' para 30000 em TVs lentas.
-        
-        // FOCO INTELIGENTE
+        // Lógica de animação simplificada para performance
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         var App = {
-            // ... (sua lógica de estado)
+            scr: 0, zone: 0, idx: 0, 
+            creds: { h: '', u: '', p: '' },
             
-            updateFocus: function() {
-                const prev = document.querySelector('.focused');
-                if(prev) prev.classList.remove('focused');
-
-                let el;
-                if(this.scr===0) el=document.getElementById('i'+this.idx);
-                // ... (mapeamento de IDs)
-
-                if(el) {
-                    el.classList.add('focused');
-                    // Scroll suave otimizado
-                    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+            init: function() {
+                this.setupClock();
+                this.updateFocus();
+                // Carregar cache
+                if(localStorage.getItem('rc_u')) {
+                    document.getElementById('i0').value = localStorage.getItem('rc_h');
+                    document.getElementById('i1').value = localStorage.getItem('rc_u');
+                    document.getElementById('i2').value = localStorage.getItem('rc_p');
                 }
             },
 
-            renderList: function(keepIdx) {
-                const list = document.getElementById('item-list');
-                list.innerHTML = ''; // Limpa rápido
-                
-                // Renderização em chunks para não travar a UI
-                const d = this.fullData;
-                const chunk = 50; 
-                let i = 0;
+            setupClock: function() {
+                setInterval(() => {
+                    const now = new Date();
+                    document.getElementById('time').innerText = now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                }, 1000);
+            },
 
-                const draw = () => {
-                    let html = '';
-                    for(let j=0; j<chunk && i<d.length; j++, i++) {
-                        const n = d[i].name || d[i].title;
-                        const id = d[i].stream_id || d[i].series_id;
-                        html += `<div class="item" id="row-${i}" onclick="App.itemClick(${i})">
-                                    <span>${n}</span>
-                                    ${FavManager.isFav(id) ? '<i class="fas fa-star" style="color:var(--gold)"></i>' : ''}
-                                 </div>`;
-                    }
-                    list.insertAdjacentHTML('beforeend', html);
-                    if(i < d.length && i < 300) window.requestAnimationFrame(draw);
-                };
-                draw();
+            setLayer: function(id) {
+                document.querySelectorAll('.layer').forEach(l => l.classList.add('hide'));
+                document.getElementById(id + '-layer').classList.remove('hide');
+            },
+
+            // Sistema de Navegação via Teclado Otimizado
+            updateFocus: function() {
+                document.querySelectorAll('.focused').forEach(el => el.classList.remove('focused'));
+                let target;
+                if(this.scr === 0) target = document.getElementById('i' + this.idx);
+                if(this.scr === 1) target = document.getElementById('m' + this.idx);
+                
+                if(target) {
+                    target.classList.add('focused');
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if(target.tagName === 'INPUT') target.focus();
+                }
+            },
+
+            login: function() {
+                const h = document.getElementById('i0').value;
+                const u = document.getElementById('i1').value;
+                const p = document.getElementById('i2').value;
+                
+                document.getElementById('loader').classList.remove('hide');
+                
+                // Simulação de login - Integre com sua player_api.php aqui
+                setTimeout(() => {
+                    this.creds = { h, u, p };
+                    localStorage.setItem('rc_u', u);
+                    document.getElementById('loader').classList.add('hide');
+                    this.scr = 1; this.idx = 0;
+                    this.setLayer('dash');
+                    this.updateFocus();
+                }, 1500);
             }
         };
+
+        // Captura de Teclas (Remotes de TV)
+        document.addEventListener('keydown', (e) => {
+            switch(e.keyCode) {
+                case 38: // Cima
+                    if(App.idx > 0) App.idx--;
+                    App.updateFocus();
+                    break;
+                case 40: // Baixo
+                    App.idx++;
+                    App.updateFocus();
+                    break;
+                case 13: // Enter
+                    App.login(); 
+                    break;
+            }
+        });
     </script>
 </body>
 </html>
