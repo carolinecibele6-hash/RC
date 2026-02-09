@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R&C GOLD ORIGINAL</title>
+    <title>R&C GOLD</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA GOLD VIP APLICADO AO ORIGINAL --- */
+        /* --- TEMA GOLD VIP (VISUAL PREMIUM) --- */
         :root { 
             --bg: #000000; 
             --gold: #FFD700; 
@@ -50,20 +50,16 @@
             background: #111; border: 1px solid var(--border-dim); 
             border-radius: 12px; text-align: center; 
         }
-        .logo-txt { font-size: 32px; font-weight: 900; letter-spacing: -1px; color:#fff; }
+        .logo-txt { font-size: 32px; font-weight: 900; letter-spacing: -1px; color:#fff; margin-bottom: 20px; }
         .logo-txt span { color: var(--gold); }
-        .inp { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); text-align: center; font-weight: bold; border-radius: 6px; }
-        .btn { width: 100%; padding: 14px; margin-top: 20px; background: var(--gold); color: #000; border: none; text-transform: uppercase; font-weight: 900; border-radius: 6px; }
+        .inp { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); text-align: center; font-weight: bold; border-radius: 6px; font-size: 16px; }
+        .btn { width: 100%; padding: 14px; margin-top: 20px; background: var(--gold); color: #000; border: none; text-transform: uppercase; font-weight: 900; border-radius: 6px; cursor: pointer; }
 
-        /* DASHBOARD (MENU PRINCIPAL CENTRALIZADO) */
-        #dash-layer { 
-            display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
-        }
+        /* DASHBOARD CENTRALIZADO */
+        #dash-layer { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .top-bar { position: absolute; top: 40px; width: 90%; display: flex; justify-content: space-between; align-items: center; }
         .dash-logo { font-size: 40px; font-weight: 900; letter-spacing: -2px; }
         .dash-logo span { color: var(--gold); }
-        .dash-clock { text-align: right; }
         .clock-time { font-size: 32px; font-weight: 700; color: #fff; }
 
         .dash-grid { display: flex; gap: 40px; align-items: center; justify-content: center; flex: 1; }
@@ -77,7 +73,7 @@
         .smart-card i { font-size: 70px; margin-bottom: 25px; color: #555; }
         .smart-card span { font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #ccc; }
 
-        /* BARRA DE INFORMAÇÕES SEPARADA */
+        /* INFO BAR */
         .bottom-bar { position: absolute; bottom: 40px; display: flex; gap: 30px; }
         .info-pill { 
             background: #0b0b0b; padding: 15px 35px; border-radius: 50px; 
@@ -106,7 +102,6 @@
         .vid-box { width: 100%; height: 50vh; background: #000; position: relative; border-bottom: 2px solid #333; }
         video { width: 100%; height: 100%; object-fit: contain; }
         
-        /* FULLSCREEN SEM BUG */
         .vid-box.fs { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 9999 !important; border: none !important; }
 
         .meta { padding: 35px; flex: 1; background: #080808; display: flex; flex-direction: column; }
@@ -118,7 +113,7 @@
         .key { font-size: 12px; font-weight: bold; color: #aaa; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
         .dot { width: 14px; height: 14px; border-radius: 50%; }
 
-        #osd { position: absolute; top: 30px; right: 30px; background: rgba(0,0,0,0.9); color: var(--gold); padding: 10px 20px; border: 1px solid var(--gold); border-radius: 6px; font-weight: 800; display: none; z-index: 10000; }
+        #osd { position: absolute; top: 30px; right: 30px; background: rgba(0,0,0,0.9); color: var(--primary); padding: 10px 20px; border: 1px solid var(--primary); border-radius: 6px; font-weight: 800; display: none; z-index: 10000; }
         #loader { background: rgba(0,0,0,0.98); z-index: 20000; flex-direction: column; color: var(--gold); }
     </style>
 </head>
@@ -132,9 +127,9 @@
     <div id="login-layer" class="layer flex-center">
         <div class="login-box">
             <div class="logo-txt">R&C <span>GOLD</span></div>
-            <input type="text" id="i0" class="inp focusable" placeholder="URL DNS">
-            <input type="text" id="i1" class="inp focusable" placeholder="USUÁRIO">
-            <input type="password" id="i2" class="inp focusable" placeholder="SENHA">
+            <input type="text" id="i0" class="inp focusable" placeholder="URL DNS" autocomplete="off">
+            <input type="text" id="i1" class="inp focusable" placeholder="USUÁRIO" autocomplete="off">
+            <input type="password" id="i2" class="inp focusable" placeholder="SENHA" autocomplete="off">
             <button id="i3" class="btn focusable" onclick="App.login()">CONECTAR</button>
             <div id="msg-login" style="color:#ff4444; margin-top:10px; font-size:12px; font-weight:bold;"></div>
         </div>
@@ -153,8 +148,7 @@
         </div>
 
         <div class="bottom-bar">
-            <div class="info-pill"><span class="lbl">USUÁRIO</span><span id="info-user" class="val highlight">...</span></div>
-            <div class="info-pill"><span class="lbl">VENCIMENTO</span><span id="info-exp" class="val highlight">...</span></div>
+            <div class="info-pill"><span class="lbl">VENCIMENTO</span><span id="info-exp" class="val">...</span></div>
             <div id="m3" class="info-pill focusable" onclick="App.logout()"><span class="lbl">SISTEMA</span><span class="val" style="color:#ff4444">SAIR</span></div>
         </div>
     </div>
@@ -166,7 +160,7 @@
         </div>
         <div class="col-list">
             <div class="search-area">
-                <input type="text" id="search" class="inp-search focusable" placeholder="PESQUISAR...">
+                <input type="text" id="search" class="inp-search focusable" placeholder="PESQUISAR..." autocomplete="off">
             </div>
             <div id="item-list" class="item-list"></div>
         </div>
@@ -178,10 +172,10 @@
             <div class="meta">
                 <div id="meta-title" class="meta-title">R&C GOLD</div>
                 <div id="meta-epg" class="meta-epg"></div>
-                <div id="meta-desc" class="meta-desc">Selecione um conteúdo para iniciar.</div>
+                <div id="meta-desc" class="meta-desc">Selecione um conteúdo.</div>
                 <div class="keys">
                     <div class="key"><div class="dot" style="background:#ff4444"></div> FULLSCREEN</div>
-                    <div class="key"><div class="dot" style="background:#00C851"></div> CATEGORIAS</div>
+                    <div class="key"><div class="dot" style="background:#00C851"></div> TOPO</div>
                     <div class="key"><div class="dot" style="background:#ffbb33"></div> BUSCA</div>
                     <div class="key"><div class="dot" style="background:#33b5e5"></div> MENU</div>
                 </div>
@@ -190,9 +184,6 @@
     </div>
 
     <script>
-        // O código JavaScript abaixo é o seu ORIGINAL, com FavManager, PlayerEngine e App originais.
-        // Apenas as IDs de foco foram mantidas para casar com o novo HTML.
-
         var PlayerEngine = {
             hls: null, video: null, url: null,
             init: function() { this.video = document.getElementById('player'); },
@@ -220,7 +211,9 @@
                 this.updateFocus();
             },
             req: function(url, cb) {
-                var x = new XMLHttpRequest(); x.open("GET", url, true); x.onload = function() { if(x.status===200) cb(JSON.parse(x.responseText)); else cb(null); }; x.send();
+                var x = new XMLHttpRequest(); x.open("GET", url, true); 
+                x.onload = function() { if(x.status===200) cb(JSON.parse(x.responseText)); else cb(null); }; 
+                x.send();
             },
             login: function() {
                 var h = document.getElementById('i0').value, u = document.getElementById('i1').value, p = document.getElementById('i2').value;
@@ -230,7 +223,6 @@
                     if(d && d.user_info && d.user_info.auth==1) {
                         App.creds={h:h,u:u,p:p};
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
-                        document.getElementById('info-user').innerText = u;
                         document.getElementById('info-exp').innerText = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString("pt-BR") : "Ilimitado";
                         App.setScr(1);
                     } else document.getElementById('msg-login').innerText="Erro de Login";
@@ -245,23 +237,22 @@
                 this.scr=n; this.zone=0; this.idx=0; this.updateFocus();
             },
             openMode: function(m) {
-                this.mode = m; this.setScr(2); this.loading(true);
+                this.mode = m; this.setScr(2);
                 var act = (m==='live')?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                 this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, (d)=>{
-                    this.loading(false);
                     if(d) {
+                        this.catData = d;
                         var h = ''; d.forEach((c,i)=>{h+='<div class="cat-item" id="c'+i+'" data-id="'+c.category_id+'" onclick="App.catClick('+i+')">'+c.category_name+'</div>'});
                         document.getElementById('cat-list').innerHTML = h; App.catClick(0);
                     }
                 });
             },
             catClick: function(i) {
-                this.idx = i; this.zone = 0; var cid = this.catData[i]?.category_id || document.getElementById('c'+i).getAttribute('data-id');
+                this.idx = i; this.zone = 0; var cid = this.catData[i].category_id;
                 document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active')); document.getElementById('c'+i).classList.add('active');
-                this.loading(true);
                 var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act+"&category_id="+cid, (d)=>{
-                    this.loading(false); if(d) { App.fullData = d; App.renderList(); }
+                    if(d) { App.fullData = d; App.renderList(); }
                 });
             },
             renderList: function() {
@@ -277,7 +268,6 @@
                 document.getElementById('meta-title').innerText = item.name || item.title;
                 PlayerEngine.play(url, this.mode==='live');
             },
-            loading: function(s) { document.getElementById('loader').classList.toggle('hide', !s); },
             updateFocus: function() {
                 document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused'));
                 var el;
@@ -289,18 +279,44 @@
                     if(this.zone===2) el=document.getElementById('row-'+this.idx);
                     if(this.zone===3) el=document.getElementById('vid-box');
                 }
-                if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); if(el.tagName==='INPUT')el.focus(); }
+                if(el) { el.classList.add('focused'); el.scrollIntoView({block:'center'}); }
+            },
+            move: function(d) {
+                if(this.scr===0) { // Navegação Login
+                    if(d===1 && this.idx < 3) this.idx++; // Seta Baixo
+                    if(d===0 && this.idx > 0) this.idx--; // Seta Cima
+                }
+                else if(this.scr===1) { // Navegação Menu Principal
+                    if(d===3 && this.idx < 3) this.idx++; // Seta Direita
+                    if(d===2 && this.idx > 0) this.idx--; // Seta Esquerda
+                }
+                else if(this.scr===2) { // Navegação Conteúdo
+                    if(this.zone===0) { // Categorias
+                        if(d===1) this.idx++;
+                        if(d===0 && this.idx > 0) this.idx--;
+                        if(d===3) { this.zone=2; this.idx=0; }
+                    } else if(this.zone===2) { // Lista de Itens
+                        if(d===1) this.idx++;
+                        if(d===0 && this.idx > 0) this.idx--;
+                        if(d===2) { this.zone=0; this.idx=0; }
+                    }
+                }
+                this.updateFocus();
+            },
+            enter: function() {
+                if(this.scr===0) { if(this.idx===3) this.login(); }
+                else if(this.scr===1) { if(this.idx===3) this.logout(); else this.openMode(['live','movie','series'][this.idx]); }
+                else if(this.scr===2) { if(this.zone===0) this.catClick(this.idx); else if(this.zone===2) this.playItem(this.idx); }
             }
         };
 
-        // CONTROLES DE NAVEGAÇÃO BÁSICOS
         document.addEventListener('keydown', (e)=>{
             var k = e.keyCode;
-            if(k===38) { e.preventDefault(); if(App.idx>0) App.idx--; App.updateFocus(); } // Cima
-            if(k===40) { e.preventDefault(); App.idx++; App.updateFocus(); } // Baixo
-            if(k===37) { if(App.zone===2) { App.zone=0; App.idx=0; App.updateFocus(); } } // Esq
-            if(k===39) { if(App.zone===0) { App.zone=2; App.idx=0; App.updateFocus(); } } // Dir
-            if(k===13) { App.enter(); } // Enter
+            if(k===38) { e.preventDefault(); App.move(0); } // Cima
+            if(k===40) { e.preventDefault(); App.move(1); } // Baixo
+            if(k===37) { e.preventDefault(); App.move(2); } // Esquerda
+            if(k===39) { e.preventDefault(); App.move(3); } // Direita
+            if(k===13) { e.preventDefault(); App.enter(); } // Enter
         });
     </script>
 </body>
