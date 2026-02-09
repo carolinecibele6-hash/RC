@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R&C GOLD V6</title>
+    <title>R&C GOLD V7</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -22,8 +22,7 @@
             background-color: var(--bg); color: #fff;
             font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
-            /* Fundo precisa ser gerenciado com cuidado para não tapar o vídeo */
-            background: #000; 
+            background-image: radial-gradient(circle at 50% 0%, #222 0%, #000 70%);
             position: relative;
         }
 
@@ -42,39 +41,43 @@
             transform: scale(1.1); border: 3px solid var(--gold) !important; z-index: 100;
         }
 
-        /* --- CORREÇÃO DO "BURACO DO VÍDEO" (SOUND NO IMAGE) --- */
+        /* --- CORREÇÃO RADICAL DO PLAYER (CAMADAS) --- */
         
-        .col-play { flex: 1; display: flex; flex-direction: column; position: relative; }
-        /* Removemos o background #000 daqui para não tapar o vídeo */
+        /* Container da coluna do player */
+        .col-play { flex: 1; display: flex; flex-direction: column; position: relative; background: transparent; }
         .col-play.hide-me { display: none; }
 
+        /* A CAIXA DO VÍDEO (JANELA) */
         .vid-box { 
             width: 100%; height: 45vh; 
-            /* TRANSPARENTE! Crucial para Philco ver o vídeo atrás */
-            background: transparent !important; 
+            background: transparent !important; /* CRUCIAL: Deixa ver o vídeo atrás */
             position: relative; 
             border-bottom: 2px solid #333; 
         }
         
+        /* O ELEMENTO DE VÍDEO */
         video { 
             position: absolute; top: 0; left: 0; 
             width: 100% !important; height: 100% !important; 
-            /* Transparente para deixar o hardware renderizar */
-            background: transparent !important; 
+            background: transparent !important; /* CRUCIAL: Sem cor de fundo */
             object-fit: contain !important; 
         }
 
-        /* TELA CHEIA REFORÇADA */
+        /* MODO TELA CHEIA (FULLSCREEN) */
         .fs-mode {
             position: fixed !important;
             top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100% !important; height: 100% !important;
             z-index: 99999 !important;
-            background: #000 !important; /* Fundo preto no fullscreen para esconder o site */
+            background: transparent !important; /* Fundo transparente para o vídeo hardware */
             border: none !important; margin: 0 !important;
         }
-        /* Mas o vídeo dentro da tela cheia continua transparente */
-        .fs-mode video { background: transparent !important; }
+
+        /* Quando em Fullscreen, colocamos um fundo preto atrás de TUDO, menos do vídeo */
+        .fs-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 99990; display: none;
+        }
 
         /* Login */
         .login-box { width: 400px; max-width: 90%; padding: 40px; background: #111; border: 1px solid #333; border-radius: 12px; text-align: center; }
@@ -145,6 +148,8 @@
     </style>
 </head>
 <body onload="App.init()">
+    
+    <div id="fs-backdrop" class="fs-backdrop"></div>
 
     <div id="loader" class="hide flex-center">
         <i class="fas fa-circle-notch fa-spin" style="font-size:50px; margin-bottom:20px"></i>
@@ -189,7 +194,7 @@
     </div>
 
     <div id="content-layer" class="layer hide">
-        <div class="col-cat">
+        <div id="col-cat-container" class="col-cat">
             <div class="cat-head">CATEGORIAS</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
@@ -223,7 +228,7 @@
 
     <script>
         var FavManager = {
-            key: 'rc_favs_v6', list: [],
+            key: 'rc_favs_v7', list: [],
             init: function() { var s = localStorage.getItem(this.key); this.list = s ? JSON.parse(s) : []; },
             toggle: function(id) {
                 var idx = this.list.indexOf(id);
@@ -515,19 +520,39 @@
             
             toggleFull: function() {
                 var b = document.getElementById('vid-box'); 
+                var backdrop = document.getElementById('fs-backdrop');
+                var colCat = document.getElementById('col-cat-container');
+                var colList = document.getElementById('col-list-container');
+                var colPlay = document.getElementById('col-play-container');
+
                 if(b.classList.contains('fs-mode')) {
                     this.exitFull(); 
                 } else { 
                     b.classList.add('fs-mode'); 
-                    // Garante que o container do player apareça
-                    document.getElementById('col-play-container').classList.remove('hide-me');
+                    backdrop.style.display = 'block'; // Fundo preto atrás
+                    
+                    // ESCONDE O RESTO DA INTERFACE PARA O VIDEO SUBIR
+                    colCat.classList.add('hide');
+                    colList.classList.add('hide');
+                    colPlay.classList.remove('hide-me');
+                    
                     App.osd("TELA CHEIA"); 
                     App.zone = 3; App.updateFocus();
                 }
             },
             exitFull: function() { 
                 var b = document.getElementById('vid-box');
+                var backdrop = document.getElementById('fs-backdrop');
+                var colCat = document.getElementById('col-cat-container');
+                var colList = document.getElementById('col-list-container');
+                
                 b.classList.remove('fs-mode'); 
+                backdrop.style.display = 'none';
+
+                // MOSTRA A INTERFACE DE VOLTA
+                colCat.classList.remove('hide');
+                colList.classList.remove('hide');
+
                 if(this.mode !== 'live') document.getElementById('col-play-container').classList.add('hide-me');
                 this.zone = 2; this.updateFocus();
             },
@@ -621,11 +646,11 @@
             if(document.activeElement.tagName === 'INPUT' && App.scr===2 && k===13) { App.doSearch(); return; }
             if(document.activeElement.tagName === 'INPUT' && k===40) { e.preventDefault(); App.move(1); return; }
 
-            // BOTÕES COLORIDOS - COM PREVENT DEFAULT OBRIGATÓRIO
-            if(k===403||k===112||k===82) { e.preventDefault(); App.toggleFull(); } // Vermelho
-            if(k===404||k===113||k===71) { e.preventDefault(); App.zone=2; App.idx=0; App.updateFocus(); } // Verde
-            if(k===405||k===114||k===89) { e.preventDefault(); App.zone=1; App.updateFocus(); } // Amarelo
-            if(k===406||k===115||k===66) { e.preventDefault(); App.setScr(1); } // Azul
+            // --- BOTÕES COLORIDOS ORIGINAIS RESTAURADOS ---
+            if(k===403||k===82) if(App.scr===2) App.toggleFull(); // Vermelho
+            if(k===404||k===71) if(App.scr===2) { App.zone=0; App.idx=0; App.updateFocus(); } // Verde
+            if(k===405||k===89) if(App.scr===2) { App.zone=1; App.updateFocus(); } // Amarelo
+            if(k===406||k===66||k===275) { e.preventDefault(); App.setScr(1); } // Azul
 
             if(document.getElementById('vid-box').classList.contains('fs-mode')) {
                 var v = document.getElementById('player');
