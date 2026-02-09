@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R&C GOLD VIP</title>
+    <title>R&C GOLD VIP FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA GOLD VIP OTIMIZADO --- */
+        /* --- TEMA GOLD VIP (VISUAL TRAVADO) --- */
         :root { 
             --bg: #000000; 
             --panel: #111111;
@@ -32,7 +32,6 @@
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: var(--bg); }
 
-        /* ESTADO DE FOCO VIP */
         .focused {
             border: 2px solid #fff !important;
             background: var(--primary) !important;
@@ -42,10 +41,10 @@
             z-index: 50;
         }
         
-        /* CORREÇÃO: Player focado não deve ter escala se estiver em fullscreen */
-        .vid-wrapper.fs-mode.focused {
+        /* CORREÇÃO JANELA: Remove scale e sombra do player focado para evitar bug visual */
+        .vid-wrapper.focused {
             transform: none !important;
-            border: none !important;
+            border: 2px solid var(--primary) !important;
             box-shadow: none !important;
         }
         
@@ -64,7 +63,7 @@
         .inp { width: 100%; padding: 14px; margin: 10px 0; background: #050505; border: 1px solid var(--border-dim); color: var(--primary); text-align: center; border-radius: 6px; font-size: 16px; font-weight: bold; }
         .btn { width: 100%; padding: 16px; margin-top: 25px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 6px; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* DASHBOARD CENTRALIZADO */
+        /* DASHBOARD */
         #dash-layer { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             height: 100vh; width: 100vw; position: relative; 
@@ -82,12 +81,10 @@
             border: 1px solid var(--border-dim);
             border-radius: 16px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: transform 0.2s; /* Animação suave só no menu */
         }
         .smart-card i { font-size: 60px; margin-bottom: 25px; color: #555; }
         .smart-card span { font-size: 18px; font-weight: 700; color: #ccc; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* INFO BAR */
         .account-bar {
             display: flex; align-items: center; justify-content: center;
             background: #0b0b0b; padding: 20px 40px;
@@ -106,7 +103,7 @@
         .col-cat { width: 25%; background: #050505; border-right: 1px solid var(--border-dim); display: flex; flex-direction: column; }
         .cat-head { padding: 25px; font-weight: 900; color: var(--primary); font-size: 22px; text-align: center; border-bottom: 1px solid var(--border-dim); background: #000; letter-spacing: 1px; }
         .cat-list { flex: 1; overflow-y: auto; padding-top: 10px; }
-        .cat-item { padding: 15px 30px; color: #888; font-size: 15px; font-weight: 600; border-left: 4px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background 0.1s; }
+        .cat-item { padding: 15px 30px; color: #888; font-size: 15px; font-weight: 600; border-left: 4px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .cat-item.active { background: #111; color: #fff; border-left-color: var(--primary); }
 
         .col-list { width: 30%; background: #0a0a0a; display: flex; flex-direction: column; border-right: 1px solid var(--border-dim); }
@@ -116,21 +113,22 @@
         .item { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #bbb; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .item.playing { color: var(--primary); font-weight: 900; background: #151000; border-left: 3px solid var(--primary); }
         
-        /* PLAYER CONTAINER OTIMIZADO */
+        /* --- CORREÇÃO DO PLAYER (SEM ZOOM/BUG) --- */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
         
         .vid-wrapper { 
             width: 100%; height: 50vh; 
             background: #000; position: relative; 
             border-bottom: 2px solid var(--border-dim);
-            /* OTIMIZAÇÃO: Animação apenas na borda/cor, não no layout */
-            transition: border 0.1s, box-shadow 0.1s; 
-            will-change: transform; /* Prepara GPU */
+            /* REMOVIDO transition e transform para acabar com o Zoom */
         }
         
-        video { width: 100%; height: 100%; background: #000; object-fit: contain; }
+        video { 
+            width: 100%; height: 100%; background: #000; 
+            object-fit: contain !important; /* CORREÇÃO: Garante que nunca terá zoom/corte */
+        }
         
-        /* CLASSE FULLSCREEN INSTANTÂNEA */
+        /* FULLSCREEN INSTANTÂNEO (SEM ANIMAÇÃO) */
         .vid-wrapper.fs-mode {
             position: fixed !important;
             top: 0 !important; left: 0 !important;
@@ -138,9 +136,7 @@
             z-index: 99999 !important;
             border: none !important;
             box-shadow: none !important;
-            transform: none !important;
-            transition: none !important; /* MATA A ANIMAÇÃO DE ZOOM */
-            animation: none !important;
+            background: #000 !important;
         }
 
         .meta { padding: 40px; flex: 1; background: #080808; display: flex; flex-direction: column; overflow: hidden; }
@@ -230,23 +226,52 @@
 
         var Player = {
             hls: null, el: null, url: null,
-            init: function() { this.el = document.getElementById('player'); this.el.onerror = () => App.osd("Erro de Reprodução"); },
+            init: function() { 
+                this.el = document.getElementById('player'); 
+                this.el.onerror = () => App.osd("Erro / Codec não suportado"); 
+            },
             reset: function() {
                 if(this.hls) { this.hls.destroy(); this.hls = null; }
                 this.el.pause(); this.el.removeAttribute('src'); this.el.load();
             },
-            play: function(url, isLive) {
-                this.reset(); this.url = url;
-                if(isLive && url.indexOf('.m3u8')===-1 && url.indexOf('.ts')>-1) url=url.replace('.ts','.m3u8');
-                if(Hls.isSupported()) {
-                    this.hls = new Hls(HlsConfig); this.hls.loadSource(url); this.hls.attachMedia(this.el);
-                    this.hls.on(Hls.Events.MANIFEST_PARSED, ()=>{this.el.play().catch(e=>{})});
-                    this.hls.on(Hls.Events.ERROR, (e,d)=>{ if(d.fatal) { if(d.type===Hls.ErrorTypes.NETWORK_ERROR) this.hls.startLoad(); else this.reset(); }});
-                } else if(this.el.canPlayType('application/vnd.apple.mpegurl')) { this.el.src=url; this.el.play(); }
+            play: function(url, isLive, extension) {
+                this.reset(); 
+                this.url = url;
+                console.log("Playing:", url, "Ext:", extension);
+
+                // --- CORREÇÃO VODs (FILMES) ---
+                // Se NÃO for .m3u8 e NÃO for Live, usa player nativo direto (MP4/MKV)
+                var isHls = (extension === 'm3u8' || isLive || url.includes('.m3u8'));
+
+                if(isHls) {
+                    if(url.indexOf('.m3u8')===-1 && url.indexOf('.ts')>-1) url=url.replace('.ts','.m3u8');
+                    
+                    if(Hls.isSupported()) {
+                        this.hls = new Hls(HlsConfig); 
+                        this.hls.loadSource(url); 
+                        this.hls.attachMedia(this.el);
+                        this.hls.on(Hls.Events.MANIFEST_PARSED, ()=>{this.el.play().catch(e=>{})});
+                        this.hls.on(Hls.Events.ERROR, (e,d)=>{ 
+                            if(d.fatal) { 
+                                if(d.type===Hls.ErrorTypes.NETWORK_ERROR) this.hls.startLoad(); 
+                                else this.reset(); 
+                            }
+                        });
+                    } else if(this.el.canPlayType('application/vnd.apple.mpegurl')) { 
+                        this.el.src=url; this.el.play(); 
+                    }
+                } else {
+                    // MODO VOD NATIVO (MP4/MKV/AVI)
+                    // Isso conserta os filmes que ficavam com tela preta
+                    this.el.src = url;
+                    this.el.play().catch(e => {
+                        console.log("Erro Play Nativo:", e);
+                        App.osd("Erro ao abrir vídeo");
+                    });
+                }
             },
             toggleFull: function() {
                 var w=document.getElementById('vid-wrapper');
-                // Toggler mais limpo e rápido
                 if(w.classList.contains('fs-mode')) { 
                     w.classList.remove('fs-mode'); 
                     App.osd("MODO JANELA"); 
@@ -305,7 +330,6 @@
 
             openMode: function(m) {
                 this.mode=m; this.setScr(2); this.loading(true);
-                // LIMPEZA TOTAL
                 document.getElementById('cat-list').innerHTML = ''; document.getElementById('item-list').innerHTML = '';
                 document.getElementById('meta-title').innerText = "Carregando..."; document.getElementById('meta-desc').innerText = "";
                 Player.reset(); this.catData = []; this.data = [];
@@ -323,8 +347,6 @@
             clickCat: function(i) {
                 this.idx=i; this.zone=0; var cid=this.catData[i].category_id;
                 document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active')); document.getElementById('c'+i).classList.add('active');
-                
-                // LIMPEZA LISTA
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:#555">Carregando...</div>';
                 this.data = [];
                 
@@ -350,7 +372,9 @@
                 
                 var item=this.data[i];
                 var id=item.stream_id||item.series_id;
-                var ext=(this.mode==='live')?'ts':(item.container_extension||'mp4');
+                // Detecta extensão corretamente para VOD
+                var ext = item.container_extension || 'mp4';
+                if(this.mode==='live') ext = 'ts';
 
                 document.getElementById('meta-title').innerText=item.name||item.title;
                 document.querySelectorAll('.item').forEach(e=>e.classList.remove('playing')); document.getElementById('r'+i).classList.add('playing');
@@ -358,7 +382,8 @@
                 if(this.mode==='series') { App.osd("Séries: Use Modo Completo"); return; }
                 
                 var url=`${this.creds.h}/${this.mode}/${this.creds.u}/${this.creds.p}/${id}.${ext}`;
-                Player.play(url, this.mode==='live');
+                // Passa a extensão para o player decidir se usa HLS ou Nativo
+                Player.play(url, this.mode==='live', ext);
             },
 
             doSearch: function() {
