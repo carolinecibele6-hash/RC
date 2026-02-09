@@ -41,7 +41,6 @@
             z-index: 50;
         }
         
-        /* CORREÇÃO JANELA: Remove scale e sombra do player focado para evitar bug visual */
         .vid-wrapper.focused {
             transform: none !important;
             border: 2px solid var(--primary) !important;
@@ -113,22 +112,10 @@
         .item { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #bbb; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .item.playing { color: var(--primary); font-weight: 900; background: #151000; border-left: 3px solid var(--primary); }
         
-        /* --- CORREÇÃO DO PLAYER (SEM ZOOM/BUG) --- */
         .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
+        .vid-wrapper { width: 100%; height: 50vh; background: #000; position: relative; border-bottom: 2px solid var(--border-dim); }
+        video { width: 100%; height: 100%; background: #000; object-fit: contain !important; }
         
-        .vid-wrapper { 
-            width: 100%; height: 50vh; 
-            background: #000; position: relative; 
-            border-bottom: 2px solid var(--border-dim);
-            /* REMOVIDO transition e transform para acabar com o Zoom */
-        }
-        
-        video { 
-            width: 100%; height: 100%; background: #000; 
-            object-fit: contain !important; /* CORREÇÃO: Garante que nunca terá zoom/corte */
-        }
-        
-        /* FULLSCREEN INSTANTÂNEO (SEM ANIMAÇÃO) */
         .vid-wrapper.fs-mode {
             position: fixed !important;
             top: 0 !important; left: 0 !important;
@@ -226,65 +213,32 @@
 
         var Player = {
             hls: null, el: null, url: null,
-            init: function() { 
-                this.el = document.getElementById('player'); 
-                this.el.onerror = () => App.osd("Erro / Codec não suportado"); 
-            },
+            init: function() { this.el = document.getElementById('player'); this.el.onerror = () => App.osd("Erro / Codec não suportado"); },
             reset: function() {
                 if(this.hls) { this.hls.destroy(); this.hls = null; }
                 this.el.pause(); this.el.removeAttribute('src'); this.el.load();
             },
             play: function(url, isLive, extension) {
-                this.reset(); 
-                this.url = url;
-                console.log("Playing:", url, "Ext:", extension);
-
-                // --- CORREÇÃO VODs (FILMES) ---
-                // Se NÃO for .m3u8 e NÃO for Live, usa player nativo direto (MP4/MKV)
+                this.reset(); this.url = url;
                 var isHls = (extension === 'm3u8' || isLive || url.includes('.m3u8'));
-
                 if(isHls) {
-                    if(url.indexOf('.m3u8')===-1 && url.indexOf('.ts')>-1) url=url.replace('.ts','.m3u8');
-                    
                     if(Hls.isSupported()) {
-                        this.hls = new Hls(HlsConfig); 
-                        this.hls.loadSource(url); 
-                        this.hls.attachMedia(this.el);
+                        this.hls = new Hls(HlsConfig); this.hls.loadSource(url); this.hls.attachMedia(this.el);
                         this.hls.on(Hls.Events.MANIFEST_PARSED, ()=>{this.el.play().catch(e=>{})});
-                        this.hls.on(Hls.Events.ERROR, (e,d)=>{ 
-                            if(d.fatal) { 
-                                if(d.type===Hls.ErrorTypes.NETWORK_ERROR) this.hls.startLoad(); 
-                                else this.reset(); 
-                            }
-                        });
-                    } else if(this.el.canPlayType('application/vnd.apple.mpegurl')) { 
-                        this.el.src=url; this.el.play(); 
-                    }
+                    } else if(this.el.canPlayType('application/vnd.apple.mpegurl')) { this.el.src=url; this.el.play(); }
                 } else {
-                    // MODO VOD NATIVO (MP4/MKV/AVI)
-                    // Isso conserta os filmes que ficavam com tela preta
-                    this.el.src = url;
-                    this.el.play().catch(e => {
-                        console.log("Erro Play Nativo:", e);
-                        App.osd("Erro ao abrir vídeo");
-                    });
+                    this.el.src = url; this.el.play().catch(e => App.osd("Erro ao abrir vídeo"));
                 }
             },
             toggleFull: function() {
                 var w=document.getElementById('vid-wrapper');
-                if(w.classList.contains('fs-mode')) { 
-                    w.classList.remove('fs-mode'); 
-                    App.osd("MODO JANELA"); 
-                } else { 
-                    w.classList.add('fs-mode'); 
-                    App.osd("TELA CHEIA"); 
-                }
+                if(w.classList.contains('fs-mode')) { w.classList.remove('fs-mode'); App.osd("MODO JANELA"); }
+                else { w.classList.add('fs-mode'); App.osd("TELA CHEIA"); }
             }
         };
 
         var App = {
             scr: 0, zone: 0, idx: 0, creds: {h:'', u:'', p:''}, data: [], fullData: [], catData: [],
-            
             init: function() {
                 if(localStorage.getItem('vp_h')) {
                     document.getElementById('i0').value=localStorage.getItem('vp_h');
@@ -294,13 +248,11 @@
                 Player.init(); setInterval(()=>{var d=new Date();document.getElementById('clock').innerText=d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes();},1000);
                 this.updateFocus();
             },
-
             req: function(url, cb) {
                 var x = new XMLHttpRequest(); x.open("GET", url, true); x.timeout = 15000;
                 x.onload=function(){if(x.status===200){try{cb(JSON.parse(x.responseText))}catch(e){cb(null)}}else cb(null)};
                 x.onerror=function(){cb(null)}; x.send();
             },
-
             login: function() {
                 var h=document.getElementById('i0').value.trim(), u=document.getElementById('i1').value.trim(), p=document.getElementById('i2').value.trim();
                 if(!h.startsWith('http')) h='http://'+h;
@@ -319,7 +271,6 @@
                 });
             },
             logout: function() { localStorage.clear(); location.reload(); },
-
             setScr: function(n) {
                 document.querySelectorAll('.layer').forEach(e=>e.classList.add('hide'));
                 if(n===0) document.getElementById('login-layer').classList.remove('hide');
@@ -327,13 +278,11 @@
                 if(n===2) document.getElementById('content-layer').classList.remove('hide');
                 this.scr=n; this.zone=0; this.idx=0; this.updateFocus();
             },
-
             openMode: function(m) {
                 this.mode=m; this.setScr(2); this.loading(true);
                 document.getElementById('cat-list').innerHTML = ''; document.getElementById('item-list').innerHTML = '';
                 document.getElementById('meta-title').innerText = "Carregando..."; document.getElementById('meta-desc').innerText = "";
                 Player.reset(); this.catData = []; this.data = [];
-                
                 var act=(m==='live')?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                 this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, (d)=>{
                     this.loading(false);
@@ -343,54 +292,46 @@
                     }
                 });
             },
-
             clickCat: function(i) {
                 this.idx=i; this.zone=0; var cid=this.catData[i].category_id;
                 document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active')); document.getElementById('c'+i).classList.add('active');
                 document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:#555">Carregando...</div>';
-                this.data = [];
-                
                 this.loading(true);
                 var act=(this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
                 this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act+"&category_id="+cid, (d)=>{
                     this.loading(false); 
                     if(d) { this.fullData=d; this.renderList(d); }
-                    else { document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:#555">Vazio</div>'; }
                 });
             },
-
             renderList: function(list) {
                 this.data=list; var h='', max=list.length>100?100:list.length;
                 if(max === 0) { document.getElementById('item-list').innerHTML = '<div style="padding:20px; color:#555">Vazio</div>'; return; }
                 for(var i=0;i<max;i++) { var n=list[i].name||list[i].title; h+=`<div class="item" id="r${i}" onclick="App.playItem(${i})">${n}</div>`; }
                 document.getElementById('item-list').innerHTML=h; this.zone=2; this.idx=0; this.updateFocus();
             },
-
             playItem: function(i) {
                 Player.reset();
-                document.getElementById('meta-title').innerText = ""; document.getElementById('meta-desc').innerText = ""; document.getElementById('meta-epg').innerText = "";
-                
-                var item=this.data[i];
-                var id=item.stream_id||item.series_id;
-                // Detecta extensão corretamente para VOD
-                var ext = item.container_extension || 'mp4';
-                if(this.mode==='live') ext = 'ts';
-
+                var item=this.data[i], id=item.stream_id||item.series_id, ext=item.container_extension||'mp4';
+                if(this.mode==='live') ext='ts';
                 document.getElementById('meta-title').innerText=item.name||item.title;
                 document.querySelectorAll('.item').forEach(e=>e.classList.remove('playing')); document.getElementById('r'+i).classList.add('playing');
-                
-                if(this.mode==='series') { App.osd("Séries: Use Modo Completo"); return; }
-                
+                if(this.mode==='series') { App.osd("Modo Séries"); }
                 var url=`${this.creds.h}/${this.mode}/${this.creds.u}/${this.creds.p}/${id}.${ext}`;
-                // Passa a extensão para o player decidir se usa HLS ou Nativo
                 Player.play(url, this.mode==='live', ext);
             },
-
+            // --- FIX BUSCA: FILTRA POR TIPO DE CONTEÚDO ---
             doSearch: function() {
-                var q=document.getElementById('search').value.toLowerCase(); if(q.length<2) return;
-                var res=this.fullData.filter(i=>(i.name||i.title).toLowerCase().includes(q)); this.renderList(res);
+                var q=document.getElementById('search').value.toLowerCase(); 
+                if(q.length<2) return;
+                var res=this.fullData.filter(i => {
+                    var matchName = (i.name||i.title||"").toLowerCase().includes(q);
+                    // Garante que o item corresponde ao modo atual (Série tem series_id, Filme tem stream_id)
+                    if(this.mode === 'series') return matchName && i.series_id;
+                    if(this.mode === 'movie') return matchName && i.stream_id;
+                    return matchName;
+                });
+                this.renderList(res);
             },
-
             move: function(d) {
                 if(this.scr===1) { if(d===1&&this.idx<3)this.idx++; if(d===3&&this.idx>0)this.idx--; }
                 else if(this.scr===2) { 
@@ -401,18 +342,15 @@
                 }
                 this.updateFocus();
             },
-
             enter: function() {
                 if(this.scr===0) this.login();
                 else if(this.scr===1) { if(this.idx===3)this.logout(); else this.openMode(['live','movie','series'][this.idx]); }
                 else if(this.scr===2) { if(this.zone===0)this.clickCat(this.idx); else if(this.zone===2)this.playItem(this.idx); else if(this.zone===1)this.doSearch(); else if(this.zone===3)Player.toggleFull(); }
             },
-
             back: function() {
                 if(document.getElementById('vid-wrapper').classList.contains('fs-mode')) { Player.toggleFull(); return; }
                 if(this.scr===2) { if(this.zone===3){this.zone=2;this.updateFocus();return;} this.setScr(1); }
             },
-
             updateFocus: function() {
                 document.querySelectorAll('.focused').forEach(e=>e.classList.remove('focused')); var el;
                 if(this.scr===0) el=document.getElementById('i'+this.idx);
@@ -435,7 +373,6 @@
             if(k===404||k===71) { e.preventDefault(); App.zone=0; App.idx=0; App.updateFocus(); }
             if(k===405||k===89) { e.preventDefault(); App.zone=1; App.updateFocus(); }
             if(k===406||k===66||k===275) { e.preventDefault(); App.setScr(1); }
-
             if(k===37) App.move(3); if(k===38) App.move(0); if(k===39) App.move(1); if(k===40) App.move(2);
             if(k===13) App.enter(); if(k===8||k===27||k===461||k===10009) App.back();
             if(document.activeElement.tagName==='INPUT') {
