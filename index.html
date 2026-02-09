@@ -2,521 +2,680 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPTV GOLD | SMARTERS PRO</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>R&C GOLD FINAL</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
-        /* --- TEMA DARK/GOLD SMARTERS --- */
-        :root {
-            --bg: #0a0a0a;
-            --gold: #d4af37;
-            --gold-light: #ffd700;
-            --panel: #141414;
-            --focus: linear-gradient(90deg, #d4af37 0%, #f9d423 100%);
-            --text-gray: #aaa;
+        :root { 
+            --bg: #000000; 
+            --gold: #FFD700; 
+            --card-bg: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            --focus-grad: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; }
-
+        
+        /* RESET TOTAL PARA EVITAR BARRAS BRANCAS NA TV */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            background-color: var(--bg);
-            color: #fff;
-            font-family: 'Montserrat', sans-serif, Arial;
+            background-color: var(--bg); color: #fff;
+            font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
-            /* Fundo abstrato premium escuro */
-            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://img.freepik.com/free-vector/gradient-black-background-with-golden-textures_23-2149150493.jpg');
-            background-size: cover;
+            background-image: radial-gradient(circle at 50% 0%, #222 0%, #000 70%);
+            position: relative;
         }
 
         .hide { display: none !important; }
-        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
+        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
 
-        /* --- FOCO SMARTERS (Branco/Dourado) --- */
-        .focusable { cursor: pointer; transition: transform 0.1s; border: 2px solid transparent; }
-        
+        /* Foco */
         .focused {
-            border: 2px solid #fff !important;
-            background: var(--focus) !important;
+            border: 3px solid #fff !important;
+            background: var(--focus-grad) !important;
             color: #000 !important;
-            transform: scale(1.02);
-            z-index: 100;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
-            font-weight: 800 !important;
+            transform: scale(1.02); /* Reduzi o zoom para não quebrar layout */
+            z-index: 50;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
         }
-        .focused * { color: #000 !important; }
-        .focused img { border: 1px solid #000; }
-
-        /* --- LOGIN --- */
-        #login-layer { background: url('https://img.freepik.com/free-vector/gradient-black-background-with-golden-textures_23-2149150493.jpg') no-repeat center; background-size: cover; }
-        .login-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); }
         
+        /* Foco específico da Grade */
+        .item.grid-poster.focused {
+            transform: scale(1.1); border: 3px solid var(--gold) !important; z-index: 100;
+        }
+
+        /* --- CORREÇÃO DO PLAYER (JANELINHA E FULLSCREEN) --- */
+        
+        /* Container do Player (Modo Janela) */
+        .vid-box { 
+            width: 100%; 
+            height: 45vh; /* Altura fixa para a janela */
+            background: #000; 
+            position: relative; /* Importante para segurar o video absolute */
+            border-bottom: 2px solid #333; 
+            overflow: hidden; /* Corta o que passar */
+        }
+        
+        /* O Vídeo em si */
+        video { 
+            position: absolute; /* Trava dentro do pai */
+            top: 0; left: 0; 
+            width: 100% !important; 
+            height: 100% !important; 
+            background: #000; 
+            object-fit: contain !important; /* Mantém proporção correta */
+        }
+
+        /* MODO TELA CHEIA (FORÇADO PARA TV) */
+        #vid-box.fs {
+            position: fixed !important; 
+            top: 0 !important; left: 0 !important; 
+            right: 0 !important; bottom: 0 !important;
+            width: 100% !important; height: 100% !important;
+            margin: 0 !important; padding: 0 !important;
+            z-index: 99999 !important; 
+            border: none !important; 
+            background: #000 !important;
+        }
+
+        /* Login */
         .login-box { 
-            position: relative; width: 400px; padding: 40px; 
-            background: rgba(20, 20, 20, 0.95); border-radius: 15px; 
-            border: 1px solid #333; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            width: 400px; max-width: 90%; padding: 40px; 
+            background: #111; border: 1px solid #333; border-radius: 12px; text-align: center; 
         }
-        .logo-txt { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 5px; }
+        .logo-txt { font-size: 32px; font-weight: 900; letter-spacing: -1px; color:#fff; }
         .logo-txt span { color: var(--gold); }
-        .inp { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: var(--gold); text-align: center; font-weight: bold; border-radius: 5px; }
-        .btn-login { width: 100%; padding: 15px; margin-top: 20px; background: var(--gold); color: #000; font-weight: 900; border: none; border-radius: 5px; font-size: 16px; }
+        .inp { width: 100%; padding: 14px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-weight: bold; border-radius: 6px; }
+        .btn { width: 100%; padding: 14px; margin-top: 20px; background: var(--gold); color: #000; border: none; cursor: pointer; text-transform: uppercase; font-weight: 900; border-radius: 6px; }
 
-        /* --- DASHBOARD (HOME) --- */
-        #dash-layer { padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #333; }
-        .user-pill { background: #222; padding: 10px 20px; border-radius: 30px; font-size: 12px; color: var(--gold); border: 1px solid #333; }
-        .time-big { font-size: 40px; font-weight: 300; }
-
-        .menu-grid { display: flex; gap: 30px; height: 50vh; align-items: center; justify-content: center; }
-        .menu-card { 
-            width: 25%; height: 100%; 
-            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-            border: 1px solid #333; border-radius: 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.2s;
+        /* Dashboard */
+        #dash-layer { display: flex; flex-direction: column; padding: 40px 60px; justify-content: space-between; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
+        .dash-logo { font-size: 40px; font-weight: 900; }
+        .dash-logo span { color: var(--gold); }
+        .clock-time { font-size: 28px; font-weight: 700; text-align: center; }
+        .clock-date { font-size: 14px; color: #888; font-weight: 600; text-align: center; }
+        .power-btn { font-size: 28px; color: #666; padding: 15px; border-radius: 50%; }
+        .dash-grid { display: flex; gap: 40px; justify-content: center; align-items: center; flex: 1; }
+        .smart-card { 
+            width: 280px; height: 320px; background: var(--card-bg); border: 2px solid #333;
+            border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        .menu-card i { font-size: 60px; margin-bottom: 20px; color: #555; }
-        .menu-card span { font-size: 18px; font-weight: 800; text-transform: uppercase; color: #ddd; }
+        .smart-card i { font-size: 80px; margin-bottom: 30px; color: #555; }
+        .smart-card span { font-size: 20px; font-weight: 800; color: #ccc; }
+        .bottom-bar { display: flex; justify-content: space-between; align-items: flex-end; }
+        .info-pill { background: rgba(255, 255, 255, 0.05); padding: 10px 25px; border-radius: 30px; border: 1px solid #333; }
+        .lbl { font-size: 11px; color: #888; font-weight: 700; display: block; margin-bottom: 3px; }
+        .val { font-size: 16px; color: var(--gold); font-weight: 800; }
 
-        .menu-card.live { border-bottom: 4px solid #d4af37; }
-        .menu-card.movie { border-bottom: 4px solid #d43737; }
-        .menu-card.series { border-bottom: 4px solid #377ad4; }
-        .menu-card.settings { border-bottom: 4px solid #888; }
-
-        /* --- LAYOUT INTERNO (SMARTERS) --- */
-        #content-layer { display: flex; background: #000; }
+        /* CONTEÚDO */
+        #content-layer { display: flex; height: 100vh; }
         
-        /* Sidebar (Categorias) */
-        .sidebar { width: 25%; background: #0f0f0f; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .sidebar-head { padding: 20px; background: #080808; text-align: center; font-weight: 900; color: var(--gold); border-bottom: 2px solid var(--gold); font-size: 18px; }
+        .col-cat { width: 25%; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .cat-head { padding: 20px; background: #111; color: var(--gold); font-weight: 900; text-align: center; border-bottom: 2px solid var(--gold); }
         .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { padding: 15px 20px; border-bottom: 1px solid #1a1a1a; font-size: 13px; font-weight: 600; color: #888; }
-        .cat-item.active { background: #1a1a1a; color: #fff; border-left: 5px solid var(--gold); }
+        .cat-item { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #999; font-size: 14px; font-weight: 600; display: block; }
+        .cat-item.active { border-left: 5px solid var(--gold); background: #181818; color: #fff; }
 
-        /* Main Content (Lista ou Grade) */
-        .main-area { flex: 1; display: flex; flex-direction: column; background: #050505; }
-        .top-tools { height: 60px; background: #080808; display: flex; align-items: center; padding: 0 20px; border-bottom: 1px solid #222; }
-        .search-bar { width: 100%; background: #151515; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 5px; text-align: center; }
+        .col-list { width: 35%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; transition: width 0.3s; }
+        .col-list.vod-mode { width: 75% !important; border-right: none; }
         
-        .content-list { flex: 1; overflow-y: auto; padding: 20px; }
-
-        /* Layout LISTA (Canais) */
-        .list-view .item { 
-            padding: 15px; margin-bottom: 5px; background: #111; 
-            border-radius: 5px; font-size: 14px; font-weight: 600; color: #ccc;
-            display: flex; justify-content: space-between;
+        /* BARRA DE PESQUISA PEQUENA */
+        .search-area { padding: 10px; background: #080808; border-bottom: 1px solid #333; display: flex; justify-content: center; }
+        .inp-search { 
+            width: 60%; 
+            background: #222; border: 1px solid #333; color: #fff; 
+            padding: 8px; text-align: center; font-weight: bold; 
+            border-radius: 20px; text-transform: uppercase; font-size: 14px;
         }
-        .list-view .item.focused { background: var(--gold); color: #000; }
-
-        /* Layout GRADE (Filmes/Series) */
-        .grid-view { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-        .poster { 
-            height: 200px; background: #111; border-radius: 8px; overflow: hidden; 
-            position: relative; border: 1px solid #333;
+        
+        .item-list { flex: 1; overflow-y: auto; padding: 10px; }
+        
+        .item.text-row { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #bbb; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        .item.text-row.playing { color: var(--gold); font-weight: bold; background: #181818; border-left: 3px solid var(--gold); }
+        
+        .grid-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; align-content: flex-start; padding-left: 15px; }
+        .item.grid-poster { 
+            width: 150px; height: 240px; 
+            background: #000; border: 2px solid #333; border-radius: 8px; 
+            display: flex; flex-direction: column; overflow: hidden;
+            position: relative; transition: transform 0.2s; margin-bottom: 10px;
         }
-        .poster img { width: 100%; height: 100%; object-fit: cover; }
+        .poster-img { width: 100%; height: 190px; object-fit: cover; background: #222; }
         .poster-title { 
-            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); 
-            color: #fff; font-size: 10px; padding: 5px; text-align: center; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            height: 50px; padding: 5px; font-size: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            text-align: center; background: #1a1a1a; color: #ccc; font-weight: 700;
         }
 
-        /* --- INFO SÉRIE (PEDIDO: EPISÓDIOS EM TEXTO) --- */
-        #series-layer { display: flex; background: #050505; padding: 40px; }
-        .serie-left { width: 250px; flex-shrink: 0; text-align: center; }
-        .serie-cover { width: 100%; height: 350px; object-fit: cover; border: 3px solid var(--gold); border-radius: 10px; }
-        .serie-title { margin-top: 15px; font-size: 22px; font-weight: 900; color: var(--gold); }
+        .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
+        .col-play.hide-me { display: none; }
+
+        .meta { padding: 20px; flex: 1; background: #080808; display: flex; flex-direction: column; }
+        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 5px; }
+        .meta-desc { font-size: 13px; color: #777; overflow-y: auto; flex: 1; margin-bottom: 10px; }
+
+        .keys { display: flex; gap: 15px; padding-top: 15px; border-top: 1px solid #222; flex-wrap: wrap; margin-top: auto; }
+        .key { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+
+        #loader { background: rgba(0,0,0,0.95); z-index: 20000; flex-direction: column; color: var(--gold); font-weight: 900; }
+        .osd-status { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--gold); padding: 10px 20px; border-radius: 5px; font-weight: 800; display: none; border: 1px solid var(--gold); z-index: 10000; pointer-events: none; }
         
-        .serie-right { flex: 1; margin-left: 40px; display: flex; flex-direction: column; }
-        .ep-header { font-size: 16px; color: #fff; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .ep-list { flex: 1; overflow-y: auto; background: #111; padding: 10px; border-radius: 10px; border: 1px solid #333; }
-        .ep-row { padding: 12px; border-bottom: 1px solid #222; font-size: 13px; color: #aaa; cursor: pointer; }
-        .ep-row:last-child { border: none; }
-        .ep-row.focused { background: var(--gold); color: #000; font-weight: 800; border-radius: 4px; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
-        /* --- PLAYER --- */
-        #player-layer { background: #000; }
-        video { width: 100%; height: 100%; }
-        .osd { position: absolute; top: 20px; right: 20px; background: rgba(212, 175, 55, 0.2); color: var(--gold); padding: 5px 15px; border: 1px solid var(--gold); font-weight: bold; display:none;}
-
-        /* Loader */
-        #loader { background: #000; z-index: 20000; flex-direction: column; color: var(--gold); }
-        .load-spin { font-size: 50px; margin-bottom: 20px; }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        @media (max-width: 768px) {
+            .item.grid-poster { width: 45%; height: 220px; }
+            .col-cat { display: none; } 
+            .col-list.vod-mode { width: 100% !important; }
+            .col-list { width: 40%; } /* Ajuste mobile */
+        }
     </style>
 </head>
 <body onload="App.init()">
 
-    <div id="loader" class="layer hide flex-center">
-        <i class="fas fa-circle-notch fa-spin load-spin"></i>
-        <div style="font-weight:900; letter-spacing:2px">CARREGANDO...</div>
+    <div id="loader" class="hide flex-center">
+        <i class="fas fa-circle-notch fa-spin" style="font-size:50px; margin-bottom:20px"></i>
+        <div id="load-txt">CARREGANDO...</div>
     </div>
 
     <div id="login-layer" class="layer flex-center">
-        <div class="login-overlay"></div>
         <div class="login-box">
-            <div class="logo-txt">IPTV <span>GOLD</span></div>
-            <div style="font-size:10px; color:#aaa; margin-bottom:20px; letter-spacing:3px;">SMARTERS EDITION</div>
-            
-            <input type="text" id="i0" class="inp focusable" placeholder="http://url-do-servidor:porta" autocomplete="off">
+            <div class="logo-txt">R&C <span>GOLD</span></div>
+            <input type="text" id="i0" class="inp focusable" placeholder="URL DNS" autocomplete="off">
             <input type="text" id="i1" class="inp focusable" placeholder="USUÁRIO" autocomplete="off">
             <input type="password" id="i2" class="inp focusable" placeholder="SENHA" autocomplete="off">
-            
-            <button id="i3" class="btn-login focusable" onclick="App.tryLogin()">ENTRAR</button>
-            <div id="msg-login" style="color:#ff4444; margin-top:15px; font-size:12px; font-weight:bold;"></div>
+            <button id="i3" class="btn focusable" onclick="App.login()">CONECTAR</button>
+            <div id="msg-login" style="color:red; margin-top:10px; font-size:12px;"></div>
         </div>
     </div>
 
     <div id="dash-layer" class="layer hide">
-        <div class="header">
-            <div class="user-pill"><i class="fas fa-user-circle"></i> <span id="user-display">USUÁRIO</span></div>
-            <div class="logo-txt" style="font-size:24px">GOLD <span>TV</span></div>
-            <div class="time-big" id="clock">00:00</div>
+        <div class="top-bar">
+            <div class="dash-logo">R&C <span>GOLD</span></div>
+            <div class="dash-clock">
+                <div id="clock-time" class="clock-time">00:00</div>
+                <div id="clock-date" class="clock-date">--/--/----</div>
+            </div>
+            <div id="m3" class="power-btn focusable" onclick="App.logout()"><i class="fas fa-power-off"></i></div>
         </div>
-
-        <div class="menu-grid">
-            <div id="m0" class="menu-card live focusable" onclick="App.open('live')">
-                <i class="fas fa-tv"></i><span>TV Ao Vivo</span>
+        <div class="dash-grid">
+            <div id="m0" class="smart-card focusable" onclick="App.openMode('live')">
+                <i class="fas fa-tv"></i><span>TV AO VIVO</span>
             </div>
-            <div id="m1" class="menu-card movie focusable" onclick="App.open('movie')">
-                <i class="fas fa-film"></i><span>Filmes</span>
+            <div id="m1" class="smart-card focusable" onclick="App.openMode('movie')">
+                <i class="fas fa-film"></i><span>FILMES</span>
             </div>
-            <div id="m2" class="menu-card series focusable" onclick="App.open('series')">
-                <i class="fas fa-layer-group"></i><span>Séries</span>
-            </div>
-            <div id="m3" class="menu-card settings focusable" onclick="App.logout()">
-                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+            <div id="m2" class="smart-card focusable" onclick="App.openMode('series')">
+                <i class="fas fa-video"></i><span>SÉRIES</span>
             </div>
         </div>
-        
-        <div style="text-align:center; font-size:12px; color:#555;">IPTV GOLD v9.0 - PHILCO EDITION</div>
+        <div class="bottom-bar">
+            <div class="info-pill"><span class="lbl">VENCIMENTO</span><span id="info-exp" class="val">...</span></div>
+            <div class="info-pill" style="text-align: right;"><span class="lbl">TELAS ATIVAS</span><span id="info-conn" class="val">...</span></div>
+        </div>
     </div>
 
     <div id="content-layer" class="layer hide">
-        <div class="sidebar">
-            <div class="sidebar-head">CATEGORIAS</div>
+        <div class="col-cat">
+            <div class="cat-head">CATEGORIAS</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
-        <div class="main-area">
-            <div class="top-tools">
-                <input type="text" id="search" class="search-bar focusable" placeholder="DIGITE PARA BUSCAR..." onkeyup="App.searchLocal()">
+        
+        <div id="col-list-container" class="col-list">
+            <div class="search-area">
+                <input type="text" id="search" class="inp-search focusable" placeholder="PESQUISAR..." autocomplete="off">
             </div>
-            <div id="content-area" class="content-list list-view"></div>
+            <div id="item-list" class="item-list"></div>
         </div>
-    </div>
 
-    <div id="series-layer" class="layer hide">
-        <div class="serie-left">
-            <img id="ser-poster" class="serie-cover" src="">
+        <div id="col-play-container" class="col-play">
+            <div id="vid-box" class="vid-box focusable">
+                <video id="player" playsinline webkit-playsinline></video>
+                <div id="osd" class="osd-status"></div>
+            </div>
+            <div class="meta">
+                <div id="meta-title" class="meta-title">R&C GOLD</div>
+                <div id="meta-epg" class="meta-epg hide"></div>
+                <div id="meta-desc" class="meta-desc">Selecione um conteúdo.</div>
+                
+                <div class="keys">
+                    <div class="key"><div class="dot" style="background:#ff4444"></div> TELA CHEIA</div>
+                    <div class="key"><div class="dot" style="background:#00C851"></div> TOPO</div>
+                    <div class="key"><div class="dot" style="background:#ffbb33"></div> BUSCAR</div>
+                    <div class="key"><div class="dot" style="background:#33b5e5"></div> MENU</div>
+                </div>
+            </div>
         </div>
-        <div class="serie-right">
-            <div id="ser-title" class="serie-title">...</div>
-            <div class="ep-header">LISTA DE EPISÓDIOS</div>
-            <div id="ep-list" class="ep-list"></div>
-        </div>
-    </div>
-
-    <div id="player-layer" class="layer hide">
-        <div id="osd" class="osd"></div>
-        <video id="player" controls style="width:100%;height:100%;background:#000"></video>
     </div>
 
     <script>
-        // --- ENGINE ---
-        var Player = {
-            hls: null, video: null,
-            init: function() {
-                this.video = document.getElementById('player');
-                this.video.onerror = function() { 
-                    // Tratamento silencioso de erro para não travar
-                    console.log("Erro Play"); 
-                };
+        var FavManager = {
+            key: 'rc_favs_v4', list: [],
+            init: function() { var s = localStorage.getItem(this.key); this.list = s ? JSON.parse(s) : []; },
+            toggle: function(id) {
+                var idx = this.list.indexOf(id);
+                if(idx > -1) this.list.splice(idx, 1); else this.list.push(id);
+                localStorage.setItem(this.key, JSON.stringify(this.list));
+                if(App.idx < App.fullData.length) App.renderList(true);
             },
-            play: function(url) {
-                if(this.hls) { this.hls.destroy(); this.hls=null; }
-                
-                // Força m3u8 se for live TS (mais leve)
-                if(url.includes('/live/') && url.includes('.ts')) url = url.replace('.ts', '.m3u8');
+            isFav: function(id) { return this.list.indexOf(id) > -1; }
+        };
 
-                if(Hls.isSupported()) {
-                    var config = { maxBufferLength: 10, manifestLoadingTimeOut: 10000 };
+        var PlayerEngine = {
+            hls: null, video: null, url: null, retryCount: 0,
+            init: function() { 
+                this.video = document.getElementById('player'); 
+                this.video.onerror = function() { PlayerEngine.handleError(); };
+            },
+            play: function(url, isLive) {
+                if(this.url === url && !this.video.paused) return;
+                this.stop(); this.url = url; this.retryCount = 0;
+                this.video.controls = false; 
+                
+                // Força o estilo correto ao iniciar
+                if(isLive) this.video.style.objectFit = 'contain';
+
+                if (Hls.isSupported() && (url.includes('.m3u8') || isLive)) {
+                    var config = { enableWorker: true, maxBufferLength: 30, manifestLoadingTimeOut: 15000 };
                     this.hls = new Hls(config);
                     this.hls.loadSource(url);
                     this.hls.attachMedia(this.video);
-                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { Player.video.play(); });
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { PlayerEngine.video.play().catch(function(e){}); });
+                    this.hls.on(Hls.Events.ERROR, function(e, data) {
+                        if(data.fatal) {
+                            if(data.type === Hls.ErrorTypes.NETWORK_ERROR) PlayerEngine.hls.startLoad();
+                            else PlayerEngine.handleError();
+                        }
+                    });
                 } else {
-                    this.video.src = url;
-                    this.video.play();
+                    this.video.src = url; 
+                    this.video.play().catch(function(e){});
                 }
             },
-            stop: function() {
-                if(this.hls) this.hls.destroy();
-                this.video.pause();
-                this.video.removeAttribute('src');
-                this.video.load();
+            handleError: function() {
+                this.retryCount++;
+                if(this.retryCount > 3) {
+                    App.osd("SINAL RUIM. PULANDO...");
+                    setTimeout(function(){ App.nextItem(); }, 1500); // Aguarda um pouco antes de pular
+                } else {
+                    setTimeout(function(){ 
+                         PlayerEngine.stop(); 
+                         if(PlayerEngine.url) PlayerEngine.play(PlayerEngine.url, App.mode==='live'); 
+                    }, 1500);
+                }
+            },
+            stop: function() { 
+                if(this.hls) { this.hls.destroy(); this.hls = null; } 
+                if(this.video) { this.video.pause(); this.video.removeAttribute('src'); this.video.load(); } 
             }
         };
 
         var App = {
-            scr: 0, idx: 0, creds: {}, data: [], filterData: [], mode: '',
-            
+            scr: 0, zone: 0, idx: 0, lastCatIdx: 0, creds: {}, fullData: [], storedList: [], memIdx: 0, globalData: null, isFolder: false, seriesEps: [], playingId: null, mode: '', cols: 1,
+
             init: function() {
-                Player.init();
-                if(localStorage.getItem('gh')) {
-                    document.getElementById('i0').value = localStorage.getItem('gh');
-                    document.getElementById('i1').value = localStorage.getItem('gu');
-                    document.getElementById('i2').value = localStorage.getItem('gp');
+                FavManager.init();
+                if(localStorage.getItem('rc_h')) {
+                    document.getElementById('i0').value = localStorage.getItem('rc_h');
+                    document.getElementById('i1').value = localStorage.getItem('rc_u');
+                    document.getElementById('i2').value = localStorage.getItem('rc_p');
                 }
-                this.clock();
-                this.focusFirst();
+                PlayerEngine.init();
+                document.getElementById('player').onended = function() { App.nextItem(); }; 
+                setInterval(this.updateClock, 1000);
+                this.updateClock();
+                this.updateFocus();
             },
 
-            clock: function() {
-                setInterval(() => {
-                    var d = new Date();
-                    document.getElementById('clock').innerText = d.getHours() + ":" + (d.getMinutes()<10?'0':'') + d.getMinutes();
-                }, 1000);
-            },
-
-            // Login com Fallback (Se falhar direto, tenta proxy)
-            tryLogin: function() {
-                var h = document.getElementById('i0').value.trim();
-                var u = document.getElementById('i1').value.trim();
-                var p = document.getElementById('i2').value.trim();
-                
-                if(!h || !u || !p) { document.getElementById('msg-login').innerText = "Preencha tudo!"; return; }
-                if(h.endsWith('/')) h = h.slice(0, -1);
-                if(h.indexOf('http') === -1) h = 'http://' + h;
-
-                document.getElementById('loader').classList.remove('hide');
-                document.getElementById('msg-login').innerText = "";
-
-                // Tenta Direto
-                var api = `${h}/player_api.php?username=${u}&password=${p}`;
-                this.req(api, function(d) {
-                    if(d && d.user_info) {
-                        App.successLogin(d, h, u, p);
-                    } else {
-                        // Se falhar, tenta via Proxy Público (AllOrigins)
-                        console.log("Tentando Proxy...");
-                        var proxyApi = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(api);
-                        App.req(proxyApi, function(d2) {
-                            if(d2 && d2.user_info) {
-                                App.successLogin(d2, h, u, p);
-                            } else {
-                                document.getElementById('loader').classList.add('hide');
-                                document.getElementById('msg-login').innerText = "Erro de Conexão ou Dados Inválidos.";
-                            }
-                        });
-                    }
-                });
+            updateClock: function() {
+                var now = new Date();
+                var h = now.getHours(); var m = now.getMinutes(); if(m<10) m='0'+m;
+                document.getElementById('clock-time').innerText = h + ":" + m;
+                document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR');
             },
 
             req: function(url, cb) {
-                var x = new XMLHttpRequest();
-                x.open("GET", url, true);
-                x.timeout = 10000;
-                x.onload = function() { try { cb(JSON.parse(x.responseText)); } catch(e) { cb(null); } };
-                x.onerror = function() { cb(null); };
-                x.send();
+                var x = new XMLHttpRequest(); x.open("GET", url, true); x.timeout = 25000;
+                x.onload = function() { if(x.status===200) { try{cb(JSON.parse(x.responseText));}catch(e){cb(null);} } else cb(null); };
+                x.onerror = function(){ cb('ERR_NET'); }; x.send();
             },
 
-            successLogin: function(d, h, u, p) {
-                document.getElementById('loader').classList.add('hide');
-                if(d.user_info.auth == 0) {
-                    document.getElementById('msg-login').innerText = "Conta Vencida ou Inválida.";
-                    return;
-                }
-                this.creds = {h:h, u:u, p:p};
-                localStorage.setItem('gh', h); localStorage.setItem('gu', u); localStorage.setItem('gp', p);
-                document.getElementById('user-display').innerText = d.user_info.username;
-                this.setScr(1);
+            login: function() {
+                var h = document.getElementById('i0').value.trim();
+                var u = document.getElementById('i1').value.trim();
+                var p = document.getElementById('i2').value.trim();
+                if(h.endsWith('/')) h = h.slice(0, -1);
+                if(h.indexOf('http') === -1) h = 'http://' + h;
+                
+                document.getElementById('loader').classList.remove('hide');
+                document.getElementById('load-txt').innerText = "CONECTANDO...";
+                
+                this.req(h+"/player_api.php?username="+u+"&password="+p, function(d){
+                    document.getElementById('loader').classList.add('hide');
+                    if(d && d.user_info && d.user_info.auth==1) {
+                        App.creds={h:h,u:u,p:p};
+                        localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
+                        var exp = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString("pt-BR") : "Ilimitado";
+                        document.getElementById('info-exp').innerText = exp;
+                        document.getElementById('info-conn').innerText = (d.user_info.active_cons || 0) + " / " + (d.user_info.max_connections || 1);
+                        App.setScr(1);
+                    } else document.getElementById('msg-login').innerText="Login Falhou";
+                });
             },
-
             logout: function() { localStorage.clear(); location.reload(); },
 
             setScr: function(n) {
-                Player.stop();
-                document.querySelectorAll('.layer').forEach(e => e.classList.add('hide'));
+                if(n===1) PlayerEngine.stop();
+                document.querySelectorAll('.layer').forEach(function(l){l.classList.add('hide')});
                 if(n===0) document.getElementById('login-layer').classList.remove('hide');
                 if(n===1) document.getElementById('dash-layer').classList.remove('hide');
                 if(n===2) document.getElementById('content-layer').classList.remove('hide');
-                if(n===3) document.getElementById('player-layer').classList.remove('hide');
-                if(n===4) document.getElementById('series-layer').classList.remove('hide');
-                this.scr = n;
-                setTimeout(() => this.focusFirst(), 100);
+                this.scr=n; this.zone=0; this.idx=0; this.updateFocus();
             },
 
-            open: function(m) {
-                this.mode = m;
-                this.setScr(2);
-                document.getElementById('cat-list').innerHTML = '';
-                document.getElementById('content-area').innerHTML = '';
-                document.getElementById('loader').classList.remove('hide');
-
-                var act = (m==='live') ? 'get_live_categories' : (m==='movie'?'get_vod_categories':'get_series_categories');
-                // Usa proxy fallback na API também se necessário, mas vamos direto por enquanto
-                var url = `${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}`;
+            openMode: function(m) {
+                PlayerEngine.stop();
+                this.mode = m; this.setScr(2); this.isFolder = false; this.globalData = null; this.playingId = null;
+                document.getElementById('cat-list').innerHTML = ''; document.getElementById('item-list').innerHTML = '';
+                document.getElementById('search').value = '';
                 
-                this.req(url, function(d) {
+                var listCont = document.getElementById('col-list-container');
+                var playCont = document.getElementById('col-play-container');
+                
+                if(m === 'live') {
+                    listCont.classList.remove('vod-mode'); playCont.classList.remove('hide-me');
+                } else {
+                    listCont.classList.add('vod-mode'); playCont.classList.add('hide-me');
+                }
+
+                document.getElementById('loader').classList.remove('hide');
+                var act = (m==='live')?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
+                this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
                     document.getElementById('loader').classList.add('hide');
-                    if(d) {
-                        var h = '';
-                        for(var i=0; i<d.length; i++) {
-                            h += `<div class="cat-item focusable" tabindex="0" onclick="App.loadCat('${d[i].category_id}', this)">${d[i].category_name}</div>`;
-                        }
+                    if(d && d!=='ERR_NET') {
+                        var h = '<div class="cat-item" id="c0" data-id="fav" onclick="App.catClick(0)">⭐ FAVORITOS</div>';
+                        for(var i=0;i<d.length;i++) h += '<div class="cat-item" id="c'+(i+1)+'" data-id="'+d[i].category_id+'" onclick="App.catClick('+(i+1)+')">'+d[i].category_name+'</div>';
                         document.getElementById('cat-list').innerHTML = h;
-                        var f = document.querySelector('.cat-item'); if(f) f.focus();
+                        App.zone=0; App.idx=0; App.updateFocus();
                     }
                 });
             },
 
-            loadCat: function(cid, el) {
-                if(el) {
-                    document.querySelectorAll('.cat-item').forEach(e=>e.classList.remove('active'));
-                    el.classList.add('active');
-                }
-                document.getElementById('loader').classList.remove('hide');
-                
-                var act = (this.mode==='live') ? 'get_live_streams' : (this.mode==='movie'?'get_vod_streams':'get_series');
-                var url = `${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=${act}&category_id=${cid}`;
+            catClick: function(i) { this.idx=i; this.zone=0; this.loadContent(i); },
 
-                this.req(url, function(d) {
+            loadContent: function(catIdx) {
+                this.lastCatIdx = catIdx; 
+                var el = document.getElementById('c'+catIdx); if(!el) return;
+                var cid = el.getAttribute('data-id');
+                document.querySelectorAll('.cat-item').forEach(function(e){e.classList.remove('active')});
+                el.classList.add('active');
+                
+                document.getElementById('loader').classList.remove('hide');
+                document.getElementById('item-list').innerHTML = '';
+                
+                var onData = function(d) {
                     document.getElementById('loader').classList.add('hide');
-                    App.data = d || [];
-                    App.filterData = App.data; // Reset filtro
-                    App.renderList();
-                });
+                    if(d && d!=='ERR_NET') { App.fullData = d; App.isFolder = false; App.renderList(); }
+                };
+
+                if(cid === 'fav') {
+                     var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                     this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
+                        if(d && d!=='ERR_NET') { App.fullData = d.filter(function(x){ return FavManager.isFav(x.stream_id || x.series_id); }); App.isFolder=false; App.renderList(); }
+                        document.getElementById('loader').classList.add('hide');
+                     });
+                } else {
+                    var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
+                    this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act+"&category_id="+cid, onData);
+                }
             },
 
-            // Renderiza com visual apropriado
-            renderList: function() {
-                var el = document.getElementById('content-area');
-                el.innerHTML = '';
+            renderList: function(keepIdx) {
+                var d = this.fullData;
+                var listEl = document.getElementById('item-list');
+                var max = d.length > 300 ? 300 : d.length; 
+                if(max===0) { listEl.innerHTML = '<div style="padding:20px;">Vazio</div>'; return; }
                 
-                // Configura Classe (Grid ou List)
-                if(this.mode === 'live') {
-                    el.className = 'content-list list-view';
+                var h = '';
+                var isGrid = (this.mode !== 'live' && !this.isFolder);
+
+                if(isGrid) {
+                    listEl.className = 'item-list grid-container';
+                    var cw = listEl.clientWidth;
+                    this.cols = Math.floor(cw / 165); 
+                    if(this.cols < 1) this.cols = 1;
                 } else {
-                    el.className = 'content-list grid-view';
+                    listEl.className = 'item-list';
+                    this.cols = 1;
                 }
 
-                var d = this.filterData;
-                var max = d.length > 100 ? 100 : d.length; // Limite Philco
-                
-                var html = '';
                 for(var i=0; i<max; i++) {
                     var item = d[i];
-                    var name = item.name || item.title;
-                    var img = item.stream_icon || item.cover;
+                    var n = item.name || item.title;
+                    var id = item.stream_id || item.series_id;
+                    var icn = FavManager.isFav(id) ? ' <i class="fas fa-star" style="color:gold"></i>' : '';
                     
-                    if(this.mode === 'live') {
-                        html += `<div class="item focusable" tabindex="0" onclick="App.clickItem(${i})">${name} <i class="fas fa-play"></i></div>`;
+                    if(isGrid) {
+                        var img = item.stream_icon || item.cover || 'img/no-poster.png';
+                        h += '<div class="item grid-poster" id="row-'+i+'" onclick="App.itemClick('+i+')">';
+                        h += '<img src="'+img+'" class="poster-img" onerror="this.src=\'https://via.placeholder.com/150x220?text=SEM+CAPA\'">';
+                        h += '<div class="poster-title">'+n.substring(0,30)+icn+'</div>';
+                        h += '</div>';
                     } else {
-                        if(!img || img.length < 5) img = 'https://via.placeholder.com/150x220?text=GOLD';
-                        html += `<div class="poster focusable" tabindex="0" onclick="App.clickItem(${i})">
-                                    <img src="${img}" onerror="this.src='https://via.placeholder.com/150x220?text=ERRO'">
-                                    <div class="poster-title">${name}</div>
-                                 </div>`;
+                        h += '<div class="item text-row" id="row-'+i+'" onclick="App.itemClick('+i+')">'+n+icn+'</div>';
                     }
                 }
-                el.innerHTML = html;
-            },
-
-            // Busca Instantânea Local (Não trava TV)
-            searchLocal: function() {
-                var term = document.getElementById('search').value.toLowerCase();
-                if(term.length < 2) {
-                    this.filterData = this.data;
-                } else {
-                    this.filterData = this.data.filter(item => (item.name || item.title).toLowerCase().includes(term));
-                }
-                this.renderList();
-            },
-
-            clickItem: function(idx) {
-                var item = this.filterData[idx];
+                listEl.innerHTML = h;
                 
+                this.zone = 2;
+                if(!keepIdx) { this.idx = 0; }
+                this.updateFocus();
+            },
+
+            itemClick: function(i) { this.idx=i; this.zone=2; this.clickItem(); },
+            
+            clickItem: function() {
+                if(this.isFolder) { 
+                    this.playStream(this.seriesEps[this.idx]); 
+                    this.toggleFull(); 
+                    return; 
+                }
+
+                var item = this.fullData[this.idx];
+                
+                if(this.mode === 'movie') {
+                    if(item) { this.playStream(item); this.toggleFull(); }
+                    return;
+                }
+
+                if(this.mode === 'live') {
+                    if(item) this.playStream(item);
+                    return;
+                }
+
                 if(this.mode === 'series') {
-                    this.loadSeries(item);
-                } else {
-                    var type = (this.mode === 'live') ? 'live' : 'movie';
-                    var ext = item.container_extension || 'mp4';
-                    var url = `${this.creds.h}/${type}/${this.creds.u}/${this.creds.p}/${item.stream_id}.${ext}`;
-                    
-                    this.setScr(3);
-                    Player.play(url);
+                    if(item) {
+                        this.storedList = [...this.fullData]; this.memIdx = this.idx;
+                        document.getElementById('loader').classList.remove('hide');
+                        this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action=get_series_info&series_id="+item.series_id, function(d){
+                            document.getElementById('loader').classList.add('hide');
+                            if(d && d.episodes) {
+                                var eps = [];
+                                for(var k in d.episodes) for(var j=0; j<d.episodes[k].length; j++) eps.push(d.episodes[k][j]);
+                                App.seriesEps = eps; App.fullData = eps; 
+                                App.isFolder = true; 
+                                App.renderList();
+                            }
+                        });
+                    }
                 }
             },
 
-            loadSeries: function(item) {
-                this.setScr(4);
-                document.getElementById('ser-title').innerText = item.name;
-                document.getElementById('ser-poster').src = item.cover || '';
-                document.getElementById('ep-list').innerHTML = '<div style="padding:20px">Carregando episódios...</div>';
+            playStream: function(item) {
+                var ext = (this.mode==='live')?'ts':(item.container_extension||'mp4');
+                var type = (this.mode==='live')?'live':(this.mode==='movie'?'movie':'series');
+                var id = item.stream_id || item.id;
+                var url = this.creds.h+"/"+type+"/"+this.creds.u+"/"+this.creds.p+"/"+id+"."+ext;
+                this.playingId = id; 
+                document.getElementById('meta-title').innerText = item.name || item.title;
+                PlayerEngine.play(url, this.mode==='live');
+            },
 
-                var url = `${this.creds.h}/player_api.php?username=${this.creds.u}&password=${this.creds.p}&action=get_series_info&series_id=${item.series_id}`;
-                
-                this.req(url, function(d) {
-                    if(d && d.episodes) {
-                        var h = '';
-                        for(var k in d.episodes) {
-                            var eps = d.episodes[k];
-                            for(var j=0; j<eps.length; j++) {
-                                var ep = eps[j];
-                                var ext = ep.container_extension || 'mp4';
-                                h += `<div class="ep-row focusable" tabindex="0" onclick="App.playEp('${ep.id}', '${ext}')">
-                                        ${ep.title}
-                                      </div>`;
-                            }
-                        }
-                        document.getElementById('ep-list').innerHTML = h;
-                        var f = document.querySelector('.ep-row'); if(f) f.focus();
+            nextItem: function() {
+                if(this.idx < this.fullData.length - 1) {
+                    this.idx++;
+                    this.updateFocus();
+                    this.clickItem();
+                } else {
+                    App.osd("FIM DA LISTA");
+                    App.exitFull();
+                }
+            },
+
+            doSearch: function() {
+                var t = document.getElementById('search').value.toLowerCase();
+                if(t.length < 2) return;
+                var cb = function(d) {
+                    if(d) { 
+                        App.fullData = d.filter(function(x){ return (x.name||x.title||"").toLowerCase().indexOf(t) > -1 }); 
+                        App.isFolder = false; App.renderList(); App.zone=2; App.idx=0; App.updateFocus();
                     }
-                });
+                };
+                if(App.globalData) cb(App.globalData);
+                else {
+                    var act = (App.mode==='live')?'get_live_streams':(App.mode==='movie'?'get_vod_streams':'get_series');
+                    App.req(App.creds.h+"/player_api.php?username="+App.creds.u+"&password="+App.creds.p+"&action="+act, function(d){ App.globalData=d; cb(d); });
+                }
+            },
+            
+            toggleFull: function() {
+                var b = document.getElementById('vid-box'); 
+                if(b.classList.contains('fs')) this.exitFull(); 
+                else { 
+                    b.classList.add('fs'); document.getElementById('col-play-container').classList.remove('hide-me');
+                    App.osd("TELA CHEIA"); 
+                    App.zone = 3; App.updateFocus();
+                }
+            },
+            exitFull: function() { 
+                var b = document.getElementById('vid-box');
+                b.classList.remove('fs'); 
+                if(this.mode !== 'live') document.getElementById('col-play-container').classList.add('hide-me');
+                this.zone = 2; this.updateFocus();
+            },
+            osd: function(t) { var o=document.getElementById('osd'); o.innerText=t; o.style.display='block'; setTimeout(function(){o.style.display='none'},2000); },
+            
+            back: function() {
+                if(document.getElementById('vid-box').classList.contains('fs')) { this.exitFull(); return; }
+                if(this.zone===3) { this.exitFull(); return; }
+                if(this.zone===2 && this.isFolder) {
+                    this.isFolder = false; this.fullData = this.storedList; 
+                    this.renderList(true);
+                    this.idx = this.memIdx; this.updateFocus(); return; 
+                }
+                if(this.zone===2) { this.zone=0; this.idx=this.lastCatIdx; this.updateFocus(); return; }
+                if(this.zone===1) { this.zone=2; this.idx=0; this.updateFocus(); return; }
+                if(this.zone===0) { this.setScr(1); return; }
+            },
+            
+            updateFocus: function() {
+                document.querySelectorAll('.focused').forEach(function(e){e.classList.remove('focused')});
+                var el;
+                if(this.scr===0) el=document.getElementById('i'+this.idx);
+                if(this.scr===1) el=document.getElementById('m'+this.idx);
+                if(this.scr===2) {
+                    if(this.zone===0) el=document.getElementById('c'+this.idx);
+                    if(this.zone===1) el=document.getElementById('search');
+                    if(this.zone===2) el=document.getElementById('row-'+this.idx);
+                    if(this.zone===3) el=document.getElementById('vid-box');
+                }
+                if(el) {
+                    el.classList.add('focused'); 
+                    if(el.tagName==='INPUT') el.focus(); else document.activeElement.blur();
+                    el.scrollIntoView({block:'center',behavior:'smooth', inline: 'nearest'}); 
+                }
             },
 
-            playEp: function(id, ext) {
-                var url = `${this.creds.h}/series/${this.creds.u}/${this.creds.p}/${id}.${ext}`;
-                this.setScr(3);
-                Player.play(url);
+            move: function(d) {
+                if(this.scr===0) { if(d===1&&this.idx<3) this.idx++; if(d===0&&this.idx>0) this.idx--; }
+                if(this.scr===1) { 
+                    if(this.idx <= 2) { 
+                        if(d===3 && this.idx<2) this.idx++; if(d===2 && this.idx>0) this.idx--; if(d===0) this.idx=3; 
+                    } else if(this.idx===3 && d===1) this.idx=1;
+                }
+                if(this.scr===2) {
+                    if(this.zone===3) { if(d===2 && this.mode==='live') { this.zone=2; this.updateFocus(); } return; }
+                    
+                    if(this.zone===0) { 
+                        var max = document.getElementById('cat-list').children.length-1;
+                        if(d===1 && this.idx<max) this.idx++;
+                        if(d===0 && this.idx>0) this.idx--;
+                        if(d===3 && App.fullData.length>0) { this.zone=2; this.idx=0; }
+                    }
+                    else if(this.zone===2) { 
+                        var max = App.fullData.length-1;
+                        if(App.cols > 1) {
+                            if(d===1) { if(this.idx + App.cols <= max) this.idx += App.cols; else this.idx = max; } 
+                            else if(d===0) { if(this.idx - App.cols >= 0) this.idx -= App.cols; else this.zone=1; } 
+                            else if(d===3) { if(this.idx < max) this.idx++; } 
+                            else if(d===2) { if(this.idx > 0) this.idx--; else { this.zone=0; this.idx=this.lastCatIdx; } } 
+                        } else {
+                            if(d===1 && this.idx < max) this.idx++;
+                            else if(d===0) { if(this.idx > 0) this.idx--; else this.zone=1; }
+                            else if(d===2) { this.zone=0; this.idx=this.lastCatIdx; }
+                            else if(d===3 && this.mode==='live') this.zone=3; 
+                        }
+                    }
+                    else if(this.zone===1) { 
+                        if(d===1) { this.zone=2; this.idx=0; }
+                        if(d===2) { this.zone=0; this.idx=this.lastCatIdx; }
+                    }
+                }
+                this.updateFocus();
             },
-
-            focusFirst: function() {
-                var el = document.querySelector('.focusable');
-                if(el) el.focus();
+            enter: function() {
+                if(this.scr===0) this.login();
+                else if(this.scr===1) { 
+                    if(this.idx===3) this.logout(); else this.openMode(['live','movie','series'][this.idx]); 
+                }
+                else if(this.scr===2) {
+                    if(this.zone===0) this.loadContent(this.idx);
+                    if(this.zone===1) this.doSearch();
+                    if(this.zone===2) this.clickItem();
+                    if(this.zone===3) this.toggleFull();
+                }
             }
         };
 
-        // --- CONTROLE REMOTO ---
         document.addEventListener('keydown', function(e) {
-            var k = e.keyCode;
-            // Back (8), Escape (27), Return (461), Exit (10009)
-            if(k===8 || k===27 || k===461 || k===10009) {
-                e.preventDefault();
-                if(App.scr === 3) App.setScr(2); // Player -> Lista
-                else if(App.scr === 4) App.setScr(2); // Serie -> Lista
-                else if(App.scr === 2) App.setScr(1); // Lista -> Home
-                else if(App.scr === 1) App.setScr(0); // Home -> Login
+            var k=e.keyCode;
+            if(document.activeElement.tagName === 'INPUT' && App.scr===0 && k===13) { App.login(); return; }
+            if(document.activeElement.tagName === 'INPUT' && App.scr===2 && k===13) { App.doSearch(); return; }
+            if(document.activeElement.tagName === 'INPUT' && k===40) { e.preventDefault(); App.move(1); return; }
+
+            if(k===403||k===112) { App.toggleFull(); } 
+            if(k===404||k===113) { App.zone=2; App.idx=0; App.updateFocus(); } 
+            if(k===405||k===114) { App.zone=1; App.updateFocus(); } 
+            if(k===406||k===115) { App.setScr(1); } 
+
+            if(document.getElementById('vid-box').classList.contains('fs')) {
+                var v = document.getElementById('player');
+                if(k===39) { v.currentTime+=30; App.osd(">> 30s"); return; }
+                if(k===37) { v.currentTime-=30; App.osd("<< 30s"); return; }
+                if(k===13||k===19) { v.paused?v.play():v.pause(); return; }
+                if(k===403||k===461||k===27) { App.exitFull(); return; }
             }
-            
-            // Enter em Inputs
-            if(k===13 && document.activeElement.tagName === 'INPUT') {
-                if(App.scr===0) App.tryLogin();
-            }
+
+            if(k===37) { e.preventDefault(); App.move(2); } if(k===38) { e.preventDefault(); App.move(0); }
+            if(k===39) { e.preventDefault(); App.move(3); } if(k===40) { e.preventDefault(); App.move(1); }
+            if(k===13) { e.preventDefault(); App.enter(); }
+            if(k===8||k===27||k===461) { e.preventDefault(); if(App.scr>0) App.back(); }
         });
-
-        // Adiciona classe focused manualmente (Correção CSS :focus)
-        document.addEventListener('focusin', e => e.target.classList.add('focused'));
-        document.addEventListener('focusout', e => e.target.classList.remove('focused'));
-
     </script>
 </body>
 </html>
