@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R&C GOLD V7</title>
+    <title>R&C GOLD V8</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -22,8 +22,8 @@
             background-color: var(--bg); color: #fff;
             font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
-            background-image: radial-gradient(circle at 50% 0%, #222 0%, #000 70%);
-            position: relative;
+            /* Fundo preto padrão, mas cuidaremos da transparência no vídeo */
+            background: #000; 
         }
 
         .hide { display: none !important; }
@@ -41,42 +41,52 @@
             transform: scale(1.1); border: 3px solid var(--gold) !important; z-index: 100;
         }
 
-        /* --- CORREÇÃO RADICAL DO PLAYER (CAMADAS) --- */
+        /* --- ESTRUTURA FLEXÍVEL --- */
+        #content-layer { display: flex; height: 100vh; width: 100vw; }
+        .col-cat { width: 25%; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .col-list { width: 35%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
         
-        /* Container da coluna do player */
-        .col-play { flex: 1; display: flex; flex-direction: column; position: relative; background: transparent; }
+        /* MODO VOD (2 Colunas) */
+        .col-list.vod-mode { width: 75% !important; border-right: none; }
+        
+        /* COLUNA DO PLAYER (Onde a mágica acontece) */
+        .col-play { 
+            flex: 1; 
+            display: flex; flex-direction: column; 
+            position: relative; 
+            background: transparent !important; /* Transparente para ver o vídeo */
+        }
         .col-play.hide-me { display: none; }
 
-        /* A CAIXA DO VÍDEO (JANELA) */
+        /* CAIXA DO VÍDEO */
         .vid-box { 
             width: 100%; height: 45vh; 
-            background: transparent !important; /* CRUCIAL: Deixa ver o vídeo atrás */
+            background: transparent !important; /* CRUCIAL: SEM FUNDO */
             position: relative; 
             border-bottom: 2px solid #333; 
         }
         
-        /* O ELEMENTO DE VÍDEO */
         video { 
             position: absolute; top: 0; left: 0; 
             width: 100% !important; height: 100% !important; 
-            background: transparent !important; /* CRUCIAL: Sem cor de fundo */
+            background: transparent !important; /* CRUCIAL: SEM FUNDO */
             object-fit: contain !important; 
         }
 
-        /* MODO TELA CHEIA (FULLSCREEN) */
-        .fs-mode {
+        /* --- CLASSE MÁGICA DE TELA CHEIA --- */
+        /* Quando ativada, ela NÃO é um popup. Ela muda o layout da página. */
+        body.fullscreen-active .col-cat { display: none !important; }
+        body.fullscreen-active .col-list { display: none !important; }
+        body.fullscreen-active .meta { display: none !important; }
+        body.fullscreen-active .dash-layer { display: none !important; }
+        
+        body.fullscreen-active .vid-box {
+            width: 100vw !important;
+            height: 100vh !important;
+            border: none !important;
             position: fixed !important;
-            top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-            width: 100% !important; height: 100% !important;
-            z-index: 99999 !important;
-            background: transparent !important; /* Fundo transparente para o vídeo hardware */
-            border: none !important; margin: 0 !important;
-        }
-
-        /* Quando em Fullscreen, colocamos um fundo preto atrás de TUDO, menos do vídeo */
-        .fs-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 99990; display: none;
+            top: 0; left: 0;
+            z-index: 99999;
         }
 
         /* Login */
@@ -103,20 +113,16 @@
         .lbl { font-size: 11px; color: #888; font-weight: 700; display: block; margin-bottom: 3px; }
         .val { font-size: 16px; color: var(--gold); font-weight: 800; }
 
-        /* Conteúdo */
-        #content-layer { display: flex; height: 100vh; }
-        .col-cat { width: 25%; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        /* Elementos de Lista */
         .cat-head { padding: 20px; background: #111; color: var(--gold); font-weight: 900; text-align: center; border-bottom: 2px solid var(--gold); }
         .cat-list { flex: 1; overflow-y: auto; }
         .cat-item { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #999; font-size: 14px; font-weight: 600; display: block; }
         .cat-item.active { border-left: 5px solid var(--gold); background: #181818; color: #fff; }
-
-        .col-list { width: 35%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; transition: width 0.3s; }
-        .col-list.vod-mode { width: 75% !important; border-right: none; }
         
         .search-area { padding: 10px; background: #080808; border-bottom: 1px solid #333; display: flex; justify-content: center; }
         .inp-search { width: 60%; background: #222; border: 1px solid #333; color: #fff; padding: 8px; text-align: center; font-weight: bold; border-radius: 20px; text-transform: uppercase; font-size: 14px; }
         .item-list { flex: 1; overflow-y: auto; padding: 10px; }
+        
         .item.text-row { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #bbb; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
         .item.text-row.playing { color: var(--gold); font-weight: bold; background: #181818; border-left: 3px solid var(--gold); }
         
@@ -128,7 +134,6 @@
         .meta { padding: 20px; flex: 1; background: #080808; display: flex; flex-direction: column; }
         .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 5px; }
         .meta-desc { font-size: 13px; color: #777; overflow-y: auto; flex: 1; margin-bottom: 10px; }
-
         .keys { display: flex; gap: 15px; padding-top: 15px; border-top: 1px solid #222; flex-wrap: wrap; margin-top: auto; }
         .key { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
@@ -136,9 +141,6 @@
         #loader { background: rgba(0,0,0,0.95); z-index: 20000; flex-direction: column; color: var(--gold); font-weight: 900; }
         .osd-status { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--gold); padding: 10px 20px; border-radius: 5px; font-weight: 800; display: none; border: 1px solid var(--gold); z-index: 10000; pointer-events: none; }
         
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-
         @media (max-width: 768px) {
             .item.grid-poster { width: 45%; height: 220px; }
             .col-cat { display: none; } 
@@ -148,8 +150,6 @@
     </style>
 </head>
 <body onload="App.init()">
-    
-    <div id="fs-backdrop" class="fs-backdrop"></div>
 
     <div id="loader" class="hide flex-center">
         <i class="fas fa-circle-notch fa-spin" style="font-size:50px; margin-bottom:20px"></i>
@@ -228,7 +228,7 @@
 
     <script>
         var FavManager = {
-            key: 'rc_favs_v7', list: [],
+            key: 'rc_favs_v8', list: [],
             init: function() { var s = localStorage.getItem(this.key); this.list = s ? JSON.parse(s) : []; },
             toggle: function(id) {
                 var idx = this.list.indexOf(id);
@@ -250,7 +250,6 @@
                 this.stop(); this.url = url; this.retryCount = 0;
                 this.video.controls = false; 
 
-                // Tenta Nativo primeiro
                 var canPlay = this.video.canPlayType('application/vnd.apple.mpegurl');
                 if (canPlay === 'probably' || canPlay === 'maybe') {
                     this.video.src = url;
@@ -352,10 +351,13 @@
                 var listCont = document.getElementById('col-list-container');
                 var playCont = document.getElementById('col-play-container');
                 
+                // MODO VOD x LIVE
                 if(m === 'live') {
-                    listCont.classList.remove('vod-mode'); playCont.classList.remove('hide-me');
+                    listCont.classList.remove('vod-mode'); 
+                    playCont.classList.remove('hide-me');
                 } else {
-                    listCont.classList.add('vod-mode'); playCont.classList.add('hide-me');
+                    listCont.classList.add('vod-mode'); 
+                    playCont.classList.add('hide-me');
                 }
 
                 document.getElementById('loader').classList.remove('hide');
@@ -445,6 +447,7 @@
             itemClick: function(i) { this.idx=i; this.zone=2; this.clickItem(); },
             
             clickItem: function() {
+                // SÉRIES EPISÓDIOS
                 if(this.isFolder) { 
                     this.playStream(this.seriesEps[this.idx]); 
                     this.toggleFull(); 
@@ -453,16 +456,19 @@
 
                 var item = this.fullData[this.idx];
                 
+                // FILMES
                 if(this.mode === 'movie') {
                     if(item) { this.playStream(item); this.toggleFull(); }
                     return;
                 }
 
+                // TV
                 if(this.mode === 'live') {
                     if(item) this.playStream(item);
                     return;
                 }
 
+                // SÉRIES CAPAS
                 if(this.mode === 'series') {
                     if(item) {
                         this.storedList = [...this.fullData]; this.memIdx = this.idx;
@@ -519,47 +525,32 @@
             },
             
             toggleFull: function() {
-                var b = document.getElementById('vid-box'); 
-                var backdrop = document.getElementById('fs-backdrop');
-                var colCat = document.getElementById('col-cat-container');
-                var colList = document.getElementById('col-list-container');
-                var colPlay = document.getElementById('col-play-container');
+                // Se for VOD e não tiver video, não faz nada
+                if(this.mode !== 'live' && !this.playingId) return;
 
-                if(b.classList.contains('fs-mode')) {
+                var b = document.body;
+                
+                if(b.classList.contains('fullscreen-active')) {
                     this.exitFull(); 
                 } else { 
-                    b.classList.add('fs-mode'); 
-                    backdrop.style.display = 'block'; // Fundo preto atrás
-                    
-                    // ESCONDE O RESTO DA INTERFACE PARA O VIDEO SUBIR
-                    colCat.classList.add('hide');
-                    colList.classList.add('hide');
-                    colPlay.classList.remove('hide-me');
-                    
+                    b.classList.add('fullscreen-active');
+                    // Garante que o player esteja visivel em modo VOD
+                    if(this.mode!=='live') document.getElementById('col-play-container').classList.remove('hide-me');
                     App.osd("TELA CHEIA"); 
                     App.zone = 3; App.updateFocus();
                 }
             },
+            
             exitFull: function() { 
-                var b = document.getElementById('vid-box');
-                var backdrop = document.getElementById('fs-backdrop');
-                var colCat = document.getElementById('col-cat-container');
-                var colList = document.getElementById('col-list-container');
-                
-                b.classList.remove('fs-mode'); 
-                backdrop.style.display = 'none';
-
-                // MOSTRA A INTERFACE DE VOLTA
-                colCat.classList.remove('hide');
-                colList.classList.remove('hide');
-
+                document.body.classList.remove('fullscreen-active');
                 if(this.mode !== 'live') document.getElementById('col-play-container').classList.add('hide-me');
                 this.zone = 2; this.updateFocus();
             },
+            
             osd: function(t) { var o=document.getElementById('osd'); o.innerText=t; o.style.display='block'; setTimeout(function(){o.style.display='none'},2000); },
             
             back: function() {
-                if(document.getElementById('vid-box').classList.contains('fs-mode')) { this.exitFull(); return; }
+                if(document.body.classList.contains('fullscreen-active')) { this.exitFull(); return; }
                 if(this.zone===3) { this.exitFull(); return; }
                 if(this.zone===2 && this.isFolder) {
                     this.isFolder = false; this.fullData = this.storedList; 
@@ -646,13 +637,13 @@
             if(document.activeElement.tagName === 'INPUT' && App.scr===2 && k===13) { App.doSearch(); return; }
             if(document.activeElement.tagName === 'INPUT' && k===40) { e.preventDefault(); App.move(1); return; }
 
-            // --- BOTÕES COLORIDOS ORIGINAIS RESTAURADOS ---
-            if(k===403||k===82) if(App.scr===2) App.toggleFull(); // Vermelho
-            if(k===404||k===71) if(App.scr===2) { App.zone=0; App.idx=0; App.updateFocus(); } // Verde
-            if(k===405||k===89) if(App.scr===2) { App.zone=1; App.updateFocus(); } // Amarelo
-            if(k===406||k===66||k===275) { e.preventDefault(); App.setScr(1); } // Azul
+            // -- BOTÕES COLORIDOS ORIGINAIS --
+            if(k===403||k===112||k===82) { e.preventDefault(); App.toggleFull(); } // Vermelho
+            if(k===404||k===113||k===71) { e.preventDefault(); App.zone=0; App.idx=0; App.updateFocus(); } // Verde
+            if(k===405||k===114||k===89) { e.preventDefault(); App.zone=1; App.updateFocus(); } // Amarelo
+            if(k===406||k===115||k===66) { e.preventDefault(); App.setScr(1); } // Azul
 
-            if(document.getElementById('vid-box').classList.contains('fs-mode')) {
+            if(document.body.classList.contains('fullscreen-active')) {
                 var v = document.getElementById('player');
                 if(k===39) { v.currentTime+=30; App.osd(">> 30s"); return; }
                 if(k===37) { v.currentTime-=30; App.osd("<< 30s"); return; }
