@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GoldStream STB Fix</title>
+    <title>GoldStream STB Fix v3</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,15 +17,14 @@
         .hide { display: none !important; }
         .screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
 
-        /* Foco - Melhorado para TV */
+        /* Foco */
         .focusable { border: 3px solid transparent; cursor: pointer; transition: all 0.1s; }
-        /* O seletor :focus é importante para TVs que usam navegação nativa do browser */
         .focusable:focus, .focusable.focused, .focusable:hover { 
             border-color: var(--gold) !important; 
             transform: scale(1.02); 
             z-index: 50; 
             box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); 
-            background-color: #333; /* Destaque leve no fundo */
+            background-color: #333; 
         }
 
         /* Login */
@@ -35,6 +34,9 @@
         .logo span { color: var(--gold); }
         .inp { width: 100%; padding: 12px; margin: 8px 0; background: #222; border: 1px solid #333; color: #fff; text-align: center; border-radius: 4px; font-size: 16px; }
         .btn { width: 100%; padding: 12px; margin-top: 15px; background: var(--gold); color: #000; font-weight: 700; border: none; border-radius: 4px; font-size: 16px; }
+        
+        /* Área de Log de Erro */
+        #log-msg { color: #ff5555; margin-top: 15px; font-size: 13px; white-space: pre-wrap; background: rgba(50,0,0,0.5); padding: 5px; border-radius: 4px; display: none; }
 
         /* Dashboard */
         #dash-screen { display: flex; background: var(--bg); }
@@ -88,7 +90,7 @@
             <input id="u" class="inp focusable" placeholder="Usuário" tabindex="2">
             <input type="password" id="p" class="inp focusable" placeholder="Senha" tabindex="3">
             <button id="btn-login" class="btn focusable" onclick="App.login()" tabindex="4">CONECTAR</button>
-            <div id="log-msg" style="color:#d44; margin-top:10px; font-size:12px"></div>
+            <div id="log-msg"></div>
         </div>
     </div>
 
@@ -123,14 +125,12 @@
             playIdx: 0, hls: null, skipT: null, cacheGlob: null, activeState: 'login',
 
             init: function() {
-                // Recupera dados salvos
                 if(localStorage.getItem('gh')) {
                     document.getElementById('h').value = localStorage.getItem('gh');
                     document.getElementById('u').value = localStorage.getItem('gu');
                     document.getElementById('p').value = localStorage.getItem('gp');
                 }
                 
-                // Listener global de teclas
                 document.addEventListener('keydown', (e) => this.key(e));
                 
                 const s = document.getElementById('search');
@@ -140,62 +140,89 @@
                     e.stopPropagation(); 
                 });
 
-                // Tenta focar no primeiro campo após carregar
                 setTimeout(() => {
                     const firstInput = document.getElementById('h');
-                    if(firstInput) {
-                        firstInput.focus();
-                        firstInput.classList.add('focused');
-                    }
+                    if(firstInput) { firstInput.focus(); firstInput.classList.add('focused'); }
                 }, 500);
             },
 
-            // --- FUNÇÃO DE REQUISIÇÃO (COMPATÍVEL) ---
-            req: async function(a, p='') {
-                const {h,u,pass} = this.auth;
-                // Remove barras duplicadas, exceto http://
-                let baseUrl = h;
-                if(baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
-                
-                const url = `${baseUrl}/player_api.php?username=${u}&password=${pass}&action=${a}${p}`;
-                
-                try {
-                    // Fetch simples sem AbortController para compatibilidade
-                    const r = await fetch(url);
-                    if(!r.ok) throw new Error("Erro HTTP: " + r.status);
-                    return await r.json();
-                } catch(e) { 
-                    console.error("Erro Req:", e);
-                    document.getElementById('log-msg').innerText = "Erro: " + e.message;
-                    return null; 
-                }
+            // --- NOVO SISTEMA DE CONEXÃO (XMLHttpRequest) ---
+            req: function(a, p='') {
+                return new Promise((resolve, reject) => {
+                    const {h,u,pass} = this.auth;
+                    let baseUrl = h;
+                    if(baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1);
+                    
+                    const url = `${baseUrl}/player_api.php?username=${u}&password=${pass}&action=${a}${p}`;
+                    const log = document.getElementById('log-msg');
+                    
+                    // console.log para debug remoto se possível
+                    console.log("Requesting: " + url);
+
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', url, true);
+                    xhr.timeout = 25000; // 25s timeout para servidores lentos
+
+                    xhr.onload = () => {
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            try {
+                                const data = JSON.parse(xhr.responseText);
+                                resolve(data);
+                            } catch (e) {
+                                log.style.display = 'block';
+                                log.innerText = "Erro: Servidor não enviou JSON válido.\nVerifique se a URL está correta.";
+                                resolve(null);
+                            }
+                        } else {
+                            log.style.display = 'block';
+                            log.innerText = `Erro HTTP: ${xhr.status}.\nO servidor rejeitou a conexão.`;
+                            resolve(null);
+                        }
+                    };
+
+                    xhr.onerror = () => {
+                        log.style.display = 'block';
+                        log.innerText = "ERRO DE REDE / BLOQUEIO (CORS)\n1. Verifique se o DNS está correto.\n2. A TV pode estar bloqueando 'http' não seguro.\n3. O servidor pode estar offline.";
+                        resolve(null);
+                    };
+
+                    xhr.ontimeout = () => {
+                        log.style.display = 'block';
+                        log.innerText = "Tempo Esgotado.\nO servidor demorou muito para responder.";
+                        resolve(null);
+                    };
+
+                    xhr.send();
+                });
             },
 
             login: async function() {
                 const msg = document.getElementById('log-msg');
-                msg.innerText = "Preparando...";
+                msg.style.display = 'block';
+                msg.style.color = '#fff';
+                msg.innerText = "Tentando conectar...";
 
-                // Limpeza de espaços (Trim)
                 let h = document.getElementById('h').value.trim();
                 let u = document.getElementById('u').value.trim();
                 let pass = document.getElementById('p').value.trim();
 
                 if(!h || !u || !pass) {
                     msg.innerText = "Preencha todos os campos!";
+                    msg.style.color = '#ff5555';
                     return;
                 }
 
-                // Correção de URL
+                // Garante protocolo se o usuario esqueceu
                 if(h.endsWith('/')) h = h.slice(0, -1);
                 if(!h.startsWith('http')) h = 'http://' + h; 
 
                 this.auth = { h, u, pass };
                 
-                msg.innerText = "Conectando... (Aguarde)";
-                
+                // Faz o teste
                 const d = await this.req('user_info');
                 
                 if(d && d.user_info && d.user_info.auth == 1) {
+                    // SUCESSO
                     localStorage.setItem('gh', h); 
                     localStorage.setItem('gu', u); 
                     localStorage.setItem('gp', pass);
@@ -205,10 +232,10 @@
                     this.activeState = 'dash';
                     this.mode('live');
                 } else if (d && d.user_info && d.user_info.auth == 0) {
-                    msg.innerText = "Login Inválido (Verifique Usuário/Senha)";
-                } else {
-                    msg.innerText = "Falha de Conexão. Verifique a URL.";
-                }
+                    msg.style.color = '#ff5555';
+                    msg.innerText = "Login Falhou: Usuário ou Senha incorretos.";
+                } 
+                // Se d for null, o erro já foi mostrado dentro do req()
             },
 
             mode: async function(m) {
@@ -231,7 +258,7 @@
                     document.getElementById('cats').innerHTML = h;
                     if(cats.length>0) this.loadCat(cats[0].category_id);
                 } else {
-                    document.getElementById('cats').innerHTML = 'Erro ao carregar categorias.';
+                    document.getElementById('cats').innerHTML = 'Erro ao carregar lista.';
                 }
             },
 
@@ -244,7 +271,7 @@
                 }
 
                 document.getElementById('grid').className = 'grid';
-                document.getElementById('grid').innerHTML = '<div style="padding:20px">Carregando canais...</div>';
+                document.getElementById('grid').innerHTML = '<div style="padding:20px">Carregando...</div>';
                 
                 let act = this.modeVal=='live'?'get_live_streams':(this.modeVal=='movie'?'get_vod_streams':'get_series');
                 const list = await this.req(act, `&category_id=${cid}`);
@@ -256,9 +283,8 @@
             render: function(list) {
                 const g = document.getElementById('grid');
                 g.innerHTML = '';
-                if(!list || list.length===0) { g.innerHTML='<div style="padding:20px">Nenhum conteúdo encontrado.</div>'; return; }
+                if(!list || list.length===0) { g.innerHTML='<div style="padding:20px">Vazio</div>'; return; }
                 
-                // Limite de 100 itens para performance na TV
                 list.slice(0, 100).forEach((i, idx) => {
                     const n = i.name || i.title;
                     const img = i.stream_icon || i.cover || '';
@@ -282,7 +308,7 @@
                 if(!t || t.length < 3) return;
                 const stat = document.getElementById('status');
                 stat.innerText = "Buscando Global...";
-                document.getElementById('grid').innerHTML = '<div style="padding:20px">Baixando dados do servidor...</div>';
+                document.getElementById('grid').innerHTML = '<div style="padding:20px">Aguarde...</div>';
 
                 if(!this.cacheGlob) {
                     let act = this.modeVal=='live'?'get_live_streams':(this.modeVal=='movie'?'get_vod_streams':'get_series');
@@ -296,7 +322,7 @@
                     stat.innerText = `${res.length} resultados.`;
                     this.render(res);
                 } else {
-                    stat.innerText = "Falha na busca.";
+                    stat.innerText = "Falha.";
                     this.render([]);
                 }
             },
@@ -421,10 +447,9 @@
                 }, 100);
             },
 
-            // --- SISTEMA DE CONTROLE REMOTO ---
+            // --- NAVEGAÇÃO POR SETAS ---
             key: function(e) {
                 const k = e.keyCode;
-                // Backspace(8), ESC(27), Return-TV(461/10009)
                 if([8,27,461,10009].includes(k)) {
                     e.preventDefault();
                     if(this.activeState === 'player') this.close();
@@ -433,14 +458,14 @@
                         document.getElementById('crumb').style.display='none';
                     }
                 }
-                else if(k === 13) { // Enter
+                else if(k === 13) { 
                     const act = document.activeElement;
                     if(act && act.classList.contains('focusable') && act.tagName !== 'INPUT') {
                         e.preventDefault();
                         act.click();
                     }
                 }
-                else if([37,38,39,40].includes(k)) { // Setas
+                else if([37,38,39,40].includes(k)) { 
                     if(this.activeState === 'player') return; 
                     e.preventDefault();
                     this.moveFocus(k);
