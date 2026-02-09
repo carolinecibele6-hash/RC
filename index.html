@@ -3,222 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>R&C GOLD V8</title>
+    <title>R&C GOLD VIP</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <style>
+        /* --- TEMA GOLD VIP PERFORMANCE (SEM BLUR/SOMBRAS PESADAS) --- */
         :root { 
-            --bg: #000000; 
-            --gold: #FFD700; 
-            --card-bg: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-            --focus-grad: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            --bg: #050505; 
+            --panel: #111111;
+            --gold: #D4AF37; /* Ouro Metálico */
+            --gold-dim: #8a7018;
+            --text-main: #e0e0e0;
+            --focus-border: #FFD700;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg); color: #fff;
+            background-color: var(--bg); 
+            color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
             width: 100vw; height: 100vh; overflow: hidden;
-            /* Fundo preto padrão, mas cuidaremos da transparência no vídeo */
-            background: #000; 
+            /* Gradiente simples é mais leve que imagem */
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
         }
 
         .hide { display: none !important; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
-        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: #000; }
+        .layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: var(--bg); }
 
+        /* Performance Hacks para Netrange */
+        .focusable {
+            transition: transform 0.1s linear;
+            will-change: transform; /* Avisa o navegador que vai mexer */
+            -webkit-backface-visibility: hidden; /* Evita flicker */
+        }
+
+        /* FOCO DE ALTO DESEMPENHO (Bordas em vez de Shadows) */
         .focused {
-            border: 3px solid #fff !important;
-            background: var(--focus-grad) !important;
+            border: 3px solid var(--focus-border) !important;
+            background: linear-gradient(90deg, #D4AF37 0%, #AA8822 100%) !important;
             color: #000 !important;
-            transform: scale(1.02); z-index: 50;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-        }
-        .item.grid-poster.focused {
-            transform: scale(1.1); border: 3px solid var(--gold) !important; z-index: 100;
-        }
-
-        /* --- ESTRUTURA FLEXÍVEL --- */
-        #content-layer { display: flex; height: 100vh; width: 100vw; }
-        .col-cat { width: 25%; background: #0b0b0b; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        .col-list { width: 35%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
-        
-        /* MODO VOD (2 Colunas) */
-        .col-list.vod-mode { width: 75% !important; border-right: none; }
-        
-        /* COLUNA DO PLAYER (Onde a mágica acontece) */
-        .col-play { 
-            flex: 1; 
-            display: flex; flex-direction: column; 
-            position: relative; 
-            background: transparent !important; /* Transparente para ver o vídeo */
-        }
-        .col-play.hide-me { display: none; }
-
-        /* CAIXA DO VÍDEO */
-        .vid-box { 
-            width: 100%; height: 45vh; 
-            background: transparent !important; /* CRUCIAL: SEM FUNDO */
-            position: relative; 
-            border-bottom: 2px solid #333; 
+            transform: scale(1.03) translateZ(0); /* Aceleração 3D */
+            z-index: 50;
+            box-shadow: none !important; /* Sombras matam TVs antigas */
         }
         
-        video { 
-            position: absolute; top: 0; left: 0; 
-            width: 100% !important; height: 100% !important; 
-            background: transparent !important; /* CRUCIAL: SEM FUNDO */
-            object-fit: contain !important; 
-        }
+        .focused i, .focused span, .focused div, .focused .val, .focused .lbl { color: #000 !important; }
 
-        /* --- CLASSE MÁGICA DE TELA CHEIA --- */
-        /* Quando ativada, ela NÃO é um popup. Ela muda o layout da página. */
-        body.fullscreen-active .col-cat { display: none !important; }
-        body.fullscreen-active .col-list { display: none !important; }
-        body.fullscreen-active .meta { display: none !important; }
-        body.fullscreen-active .dash-layer { display: none !important; }
-        
-        body.fullscreen-active .vid-box {
-            width: 100vw !important;
-            height: 100vh !important;
-            border: none !important;
-            position: fixed !important;
-            top: 0; left: 0;
-            z-index: 99999;
+        /* LOGIN */
+        .login-box { 
+            width: 380px; padding: 30px; 
+            background: var(--panel); border: 1px solid #333; 
+            border-radius: 8px; text-align: center; 
         }
-
-        /* Login */
-        .login-box { width: 400px; max-width: 90%; padding: 40px; background: #111; border: 1px solid #333; border-radius: 12px; text-align: center; }
-        .logo-txt { font-size: 32px; font-weight: 900; letter-spacing: -1px; color:#fff; }
+        .logo-txt { font-size: 30px; font-weight: 900; letter-spacing: 1px; color:#fff; margin-bottom: 20px;}
         .logo-txt span { color: var(--gold); }
-        .inp { width: 100%; padding: 14px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; text-align: center; font-weight: bold; border-radius: 6px; }
-        .btn { width: 100%; padding: 14px; margin-top: 20px; background: var(--gold); color: #000; border: none; cursor: pointer; text-transform: uppercase; font-weight: 900; border-radius: 6px; }
-
-        /* Dashboard */
-        #dash-layer { display: flex; flex-direction: column; padding: 40px 60px; justify-content: space-between; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
-        .dash-logo { font-size: 40px; font-weight: 900; }
-        .dash-logo span { color: var(--gold); }
-        .clock-time { font-size: 28px; font-weight: 700; text-align: center; }
-        .clock-date { font-size: 14px; color: #888; font-weight: 600; text-align: center; }
-        .power-btn { font-size: 28px; color: #666; padding: 15px; border-radius: 50%; }
-        .dash-grid { display: flex; gap: 40px; justify-content: center; align-items: center; flex: 1; }
-        .smart-card { width: 280px; height: 320px; background: var(--card-bg); border: 2px solid #333; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .smart-card i { font-size: 80px; margin-bottom: 30px; color: #555; }
-        .smart-card span { font-size: 20px; font-weight: 800; color: #ccc; }
-        .bottom-bar { display: flex; justify-content: space-between; align-items: flex-end; }
-        .info-pill { background: rgba(255, 255, 255, 0.05); padding: 10px 25px; border-radius: 30px; border: 1px solid #333; }
-        .lbl { font-size: 11px; color: #888; font-weight: 700; display: block; margin-bottom: 3px; }
-        .val { font-size: 16px; color: var(--gold); font-weight: 800; }
-
-        /* Elementos de Lista */
-        .cat-head { padding: 20px; background: #111; color: var(--gold); font-weight: 900; text-align: center; border-bottom: 2px solid var(--gold); }
-        .cat-list { flex: 1; overflow-y: auto; }
-        .cat-item { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #999; font-size: 14px; font-weight: 600; display: block; }
-        .cat-item.active { border-left: 5px solid var(--gold); background: #181818; color: #fff; }
-        
-        .search-area { padding: 10px; background: #080808; border-bottom: 1px solid #333; display: flex; justify-content: center; }
-        .inp-search { width: 60%; background: #222; border: 1px solid #333; color: #fff; padding: 8px; text-align: center; font-weight: bold; border-radius: 20px; text-transform: uppercase; font-size: 14px; }
-        .item-list { flex: 1; overflow-y: auto; padding: 10px; }
-        
-        .item.text-row { padding: 15px 25px; border-bottom: 1px solid #1a1a1a; color: #bbb; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-        .item.text-row.playing { color: var(--gold); font-weight: bold; background: #181818; border-left: 3px solid var(--gold); }
-        
-        .grid-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; align-content: flex-start; padding-left: 15px; }
-        .item.grid-poster { width: 150px; height: 240px; background: #000; border: 2px solid #333; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; position: relative; transition: transform 0.2s; margin-bottom: 10px; }
-        .poster-img { width: 100%; height: 190px; object-fit: cover; background: #222; }
-        .poster-title { height: 50px; padding: 5px; font-size: 10px; display: flex; align-items: center; justify-content: center; text-align: center; background: #1a1a1a; color: #ccc; font-weight: 700; }
-
-        .meta { padding: 20px; flex: 1; background: #080808; display: flex; flex-direction: column; }
-        .meta-title { font-size: 22px; color: var(--gold); font-weight: 800; margin-bottom: 5px; }
-        .meta-desc { font-size: 13px; color: #777; overflow-y: auto; flex: 1; margin-bottom: 10px; }
-        .keys { display: flex; gap: 15px; padding-top: 15px; border-top: 1px solid #222; flex-wrap: wrap; margin-top: auto; }
-        .key { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
-
-        #loader { background: rgba(0,0,0,0.95); z-index: 20000; flex-direction: column; color: var(--gold); font-weight: 900; }
-        .osd-status { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--gold); padding: 10px 20px; border-radius: 5px; font-weight: 800; display: none; border: 1px solid var(--gold); z-index: 10000; pointer-events: none; }
-        
-        @media (max-width: 768px) {
-            .item.grid-poster { width: 45%; height: 220px; }
-            .col-cat { display: none; } 
-            .col-list.vod-mode { width: 100% !important; }
-            .col-list { width: 40%; }
+        .inp { 
+            width: 100%; padding: 12px; margin: 8px 0; 
+            background: #000; border: 1px solid #444; 
+            color: var(--gold); text-align: center; font-weight: bold; border-radius: 4px; 
+            font-size: 16px;
         }
+        .btn { 
+            width: 100%; padding: 12px; margin-top: 15px; 
+            background: var(--gold-dim); color: #fff; border: 1px solid var(--gold); 
+            cursor: pointer; text-transform: uppercase; font-weight: 900; border-radius: 4px; 
+        }
+
+        /* DASHBOARD OTIMIZADO */
+        #dash-layer { display: flex; flex-direction: column; padding: 30px 50px; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; height: 60px; border-bottom: 1px solid #222; margin-bottom: 20px; }
+        .dash-logo { font-size: 32px; font-weight: 800; }
+        .dash-logo span { color: var(--gold); }
+        
+        .dash-info-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-bottom: 20px; background: #0a0a0a; padding: 10px; border-radius: 5px; border: 1px solid #222;
+        }
+        .d-item { text-align: center; }
+        .d-lbl { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .d-val { font-size: 14px; color: var(--gold); font-weight: 700; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        .dash-grid { 
+            display: flex; gap: 30px; justify-content: center; align-items: center; flex: 1; 
+        }
+        .smart-card { 
+            width: 220px; height: 260px;
+            background: linear-gradient(145deg, #151515, #0a0a0a);
+            border: 1px solid #333;
+            border-radius: 10px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .smart-card i { font-size: 60px; margin-bottom: 20px; color: #444; }
+        .smart-card span { font-size: 16px; font-weight: 700; color: #999; letter-spacing: 1px; }
+
+        .power-btn { 
+            position: absolute; bottom: 30px; right: 50px;
+            font-size: 24px; color: #d63031; padding: 10px 20px; border: 1px solid #d63031; border-radius: 5px;
+        }
+
+        /* CONTEÚDO (LAYOUT LEVE) */
+        #content-layer { display: flex; height: 100vh; }
+        
+        .col-cat { width: 22%; background: #080808; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .cat-head { padding: 15px; background: #000; color: var(--gold); font-weight: 800; text-align: center; border-bottom: 1px solid var(--gold); font-size: 14px; }
+        .cat-list { flex: 1; overflow-y: auto; overflow-x: hidden; }
+        .cat-item { 
+            padding: 12px 15px; border-bottom: 1px solid #151515; 
+            color: #888; font-size: 13px; font-weight: 600; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .cat-item.active { background: #1a1a1a; color: var(--gold); border-left: 4px solid var(--gold); }
+
+        .col-list { width: 30%; background: #111; border-right: 1px solid #222; display: flex; flex-direction: column; }
+        .search-area { padding: 10px; background: #000; border-bottom: 1px solid #333; }
+        .inp-search { width: 100%; background: #222; border: none; color: #fff; padding: 8px; text-align: center; border-radius: 2px; text-transform: uppercase; font-size: 12px;}
+        .item-list { flex: 1; overflow-y: auto; overflow-x: hidden; }
+        .item { 
+            padding: 12px 15px; border-bottom: 1px solid #1a1a1a; 
+            color: #aaa; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .item.playing { color: var(--gold); font-weight: bold; background: #181818; }
+        
+        /* PLAYER & META */
+        .col-play { flex: 1; background: #000; display: flex; flex-direction: column; position: relative; }
+        .vid-box { width: 100%; height: 50vh; background: #000; position: relative; border-bottom: 1px solid var(--gold); }
+        video { width: 100%; height: 100%; object-fit: contain; }
+
+        .meta { padding: 20px; flex: 1; background: #0a0a0a; overflow: hidden; }
+        .meta-title { font-size: 20px; color: var(--gold); font-weight: 700; margin-bottom: 5px; }
+        .meta-epg { font-size: 12px; color: #fff; background: #222; padding: 2px 8px; border-radius: 3px; display: inline-block; margin-bottom: 10px; }
+        .meta-desc { font-size: 13px; color: #777; line-height: 1.4; height: 60px; overflow: hidden; }
+        
+        /* Teclas de Atalho */
+        .keys { display: flex; gap: 15px; margin-top: 15px; border-top: 1px solid #222; padding-top: 10px; }
+        .key { font-size: 10px; color: #666; display: flex; align-items: center; gap: 5px; font-weight: bold; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* Loader & OSD */
+        #loader { background: rgba(0,0,0,0.9); z-index: 20000; flex-direction: column; color: var(--gold); font-weight: 900; }
+        .osd-status { 
+            position: absolute; top: 20px; right: 20px; 
+            background: #000; color: var(--gold); border: 1px solid var(--gold);
+            padding: 8px 15px; font-weight: 800; display: none; z-index: 10000; 
+        }
+        
+        /* Fullscreen */
+        #vid-box.fs {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; border: none;
+        }
+
+        /* Scrollbar Fina */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; }
     </style>
 </head>
 <body onload="App.init()">
 
     <div id="loader" class="hide flex-center">
-        <i class="fas fa-circle-notch fa-spin" style="font-size:50px; margin-bottom:20px"></i>
+        <i class="fas fa-spinner fa-spin" style="font-size:40px; margin-bottom:15px"></i>
         <div id="load-txt">CARREGANDO...</div>
     </div>
 
     <div id="login-layer" class="layer flex-center">
         <div class="login-box">
-            <div class="logo-txt">R&C <span>GOLD</span></div>
-            <input type="text" id="i0" class="inp focusable" placeholder="URL DNS" autocomplete="off">
+            <div class="logo-txt">R&C <span>GOLD VIP</span></div>
+            <input type="text" id="i0" class="inp focusable" placeholder="URL / DNS" autocomplete="off">
             <input type="text" id="i1" class="inp focusable" placeholder="USUÁRIO" autocomplete="off">
             <input type="password" id="i2" class="inp focusable" placeholder="SENHA" autocomplete="off">
-            <button id="i3" class="btn focusable" onclick="App.login()">CONECTAR</button>
-            <div id="msg-login" style="color:red; margin-top:10px; font-size:12px;"></div>
+            <button id="i3" class="btn focusable" onclick="App.login()">ENTRAR</button>
+            <div id="msg-login" style="color:#d63031; margin-top:10px; font-size:12px;"></div>
         </div>
     </div>
 
     <div id="dash-layer" class="layer hide">
         <div class="top-bar">
-            <div class="dash-logo">R&C <span>GOLD</span></div>
-            <div class="dash-clock">
-                <div id="clock-time" class="clock-time">00:00</div>
-                <div id="clock-date" class="clock-date">--/--/----</div>
+            <div class="dash-logo">R&C <span>VIP</span></div>
+            <div style="text-align:right">
+                <div id="clock-time" style="font-size:24px; font-weight:700; color:#fff">12:00</div>
+                <div id="clock-date" style="font-size:12px; color:#666; font-weight:600">--/--</div>
             </div>
-            <div id="m3" class="power-btn focusable" onclick="App.logout()"><i class="fas fa-power-off"></i></div>
         </div>
+
+        <div class="dash-info-grid">
+            <div class="d-item"><div class="d-lbl">USUÁRIO</div><div id="d-user" class="d-val">...</div></div>
+            <div class="d-item"><div class="d-lbl">VENCIMENTO</div><div id="d-exp" class="d-val">...</div></div>
+            <div class="d-item"><div class="d-lbl">TELAS</div><div id="d-conn" class="d-val">...</div></div>
+            <div class="d-item"><div class="d-lbl">CRIADO EM</div><div id="d-created" class="d-val">...</div></div>
+        </div>
+
         <div class="dash-grid">
             <div id="m0" class="smart-card focusable" onclick="App.openMode('live')">
-                <i class="fas fa-tv"></i><span>TV AO VIVO</span>
+                <i class="fas fa-broadcast-tower"></i><span>TV AO VIVO</span>
             </div>
             <div id="m1" class="smart-card focusable" onclick="App.openMode('movie')">
                 <i class="fas fa-film"></i><span>FILMES</span>
             </div>
             <div id="m2" class="smart-card focusable" onclick="App.openMode('series')">
-                <i class="fas fa-video"></i><span>SÉRIES</span>
+                <i class="fas fa-layer-group"></i><span>SÉRIES</span>
             </div>
         </div>
-        <div class="bottom-bar">
-            <div class="info-pill"><span class="lbl">VENCIMENTO</span><span id="info-exp" class="val">...</span></div>
-            <div class="info-pill" style="text-align: right;"><span class="lbl">TELAS ATIVAS</span><span id="info-conn" class="val">...</span></div>
+
+        <div id="m3" class="power-btn focusable" onclick="App.logout()">
+            <i class="fas fa-sign-out-alt"></i> SAIR
         </div>
     </div>
 
     <div id="content-layer" class="layer hide">
-        <div id="col-cat-container" class="col-cat">
+        <div class="col-cat">
             <div class="cat-head">CATEGORIAS</div>
             <div id="cat-list" class="cat-list"></div>
         </div>
-        
-        <div id="col-list-container" class="col-list">
+        <div class="col-list">
             <div class="search-area">
-                <input type="text" id="search" class="inp-search focusable" placeholder="PESQUISAR..." autocomplete="off">
+                <input type="text" id="search" class="inp-search focusable" placeholder="BUSCAR..." autocomplete="off">
             </div>
             <div id="item-list" class="item-list"></div>
         </div>
-
-        <div id="col-play-container" class="col-play">
+        <div class="col-play">
             <div id="vid-box" class="vid-box focusable">
                 <video id="player" playsinline webkit-playsinline></video>
                 <div id="osd" class="osd-status"></div>
             </div>
             <div class="meta">
-                <div id="meta-title" class="meta-title">R&C GOLD</div>
+                <div id="meta-title" class="meta-title">R&C GOLD VIP</div>
                 <div id="meta-epg" class="meta-epg hide"></div>
-                <div id="meta-desc" class="meta-desc">Selecione um conteúdo.</div>
+                <div id="meta-desc" class="meta-desc">Selecione um canal ou filme para iniciar. Sistema otimizado para Philco.</div>
                 
                 <div class="keys">
                     <div class="key"><div class="dot" style="background:#ff4444"></div> TELA CHEIA</div>
-                    <div class="key"><div class="dot" style="background:#00C851"></div> TOPO</div>
+                    <div class="key"><div class="dot" style="background:#00C851"></div> TOPO LISTA</div>
                     <div class="key"><div class="dot" style="background:#ffbb33"></div> BUSCAR</div>
                     <div class="key"><div class="dot" style="background:#33b5e5"></div> MENU</div>
                 </div>
@@ -227,8 +245,9 @@
     </div>
 
     <script>
+        /* --- GESTOR DE FAVORITOS --- */
         var FavManager = {
-            key: 'rc_favs_v8', list: [],
+            key: 'rc_favs_vip', list: [],
             init: function() { var s = localStorage.getItem(this.key); this.list = s ? JSON.parse(s) : []; },
             toggle: function(id) {
                 var idx = this.list.indexOf(id);
@@ -239,102 +258,159 @@
             isFav: function(id) { return this.list.indexOf(id) > -1; }
         };
 
+        /* --- MOTOR DE REPRODUÇÃO (OTIMIZADO PARA BAIXA MEMÓRIA) --- */
         var PlayerEngine = {
             hls: null, video: null, url: null, retryCount: 0,
             init: function() { 
                 this.video = document.getElementById('player'); 
-                this.video.onerror = function() { PlayerEngine.handleError(); };
+                this.video.onerror = function() { PlayerEngine.recover(); };
             },
             play: function(url, isLive) {
                 if(this.url === url && !this.video.paused) return;
                 this.stop(); this.url = url; this.retryCount = 0;
                 this.video.controls = false; 
-
-                var canPlay = this.video.canPlayType('application/vnd.apple.mpegurl');
-                if (canPlay === 'probably' || canPlay === 'maybe') {
+                
+                // Configuração Anti-Travamento para TV com pouca RAM
+                if (Hls.isSupported()) {
+                    if(this.hls) this.hls.destroy();
+                    var config = {
+                        maxBufferLength: 10, // Reduzido para economizar RAM
+                        maxMaxBufferLength: 20, 
+                        maxBufferHole: 0.5,
+                        capLevelToPlayerSize: true, // Renderiza só o necessário para o tamanho da tela
+                        liveSyncDurationCount: 3, // Mantém Live perto do tempo real
+                        enableWorker: true, // WebWorker ajuda a não travar a UI
+                        manifestLoadingTimeOut: 15000,
+                        backBufferLength: 0 // Não guarda cache do que já passou (Economiza RAM)
+                    };
+                    this.hls = new Hls(config);
+                    this.hls.loadSource(url);
+                    this.hls.attachMedia(this.video);
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, function() { PlayerEngine.video.play().catch(function(e){}); });
+                    this.hls.on(Hls.Events.ERROR, function(event, data) {
+                        if (data.fatal) {
+                            if(data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                                console.log("Erro Rede HLS, recuperando...");
+                                PlayerEngine.hls.startLoad();
+                            } else {
+                                PlayerEngine.recover();
+                            }
+                        }
+                    });
+                } else if (this.video.canPlayType('application/vnd.apple.mpegurl')) {
+                    // Fallback nativo (Safari/WebOS antigo)
                     this.video.src = url;
-                    this.video.play().catch(function(e){ if(Hls.isSupported()) PlayerEngine.startHls(url); });
-                } else if (Hls.isSupported()) {
-                    this.startHls(url);
+                    this.video.play().catch(function(e){});
                 } else {
-                    this.video.src = url; this.video.play().catch(e=>{});
+                    this.video.src = url;
+                    this.video.play().catch(function(e){});
                 }
             },
-            startHls: function(url) {
-                if(this.hls) this.hls.destroy();
-                var config = { enableWorker: false, maxBufferLength: 10 };
-                this.hls = new Hls(config);
-                this.hls.loadSource(url);
-                this.hls.attachMedia(this.video);
-                this.hls.on(Hls.Events.MANIFEST_PARSED, function() { PlayerEngine.video.play().catch(function(e){}); });
-            },
-            handleError: function() {
+            recover: function() {
                 this.retryCount++;
-                if(this.retryCount > 3) { App.osd("ERRO SINAL. PULANDO..."); setTimeout(function(){ App.nextItem(); }, 1000); }
-                else { setTimeout(function(){ PlayerEngine.stop(); if(PlayerEngine.url) PlayerEngine.play(PlayerEngine.url, App.mode==='live'); }, 1000); }
+                if(this.retryCount > 10) { App.osd("SINAL INSTÁVEL"); return; }
+                console.log("Tentando recuperar stream: " + this.retryCount);
+                setTimeout(function(){ 
+                    if(PlayerEngine.hls) { PlayerEngine.hls.recoverMediaError(); }
+                    else { PlayerEngine.video.load(); PlayerEngine.video.play(); }
+                }, 1000);
             },
             stop: function() { 
                 if(this.hls) { this.hls.destroy(); this.hls = null; } 
-                if(this.video) { this.video.pause(); this.video.removeAttribute('src'); this.video.load(); } 
+                if(this.video) { 
+                    this.video.pause(); 
+                    this.video.removeAttribute('src'); 
+                    this.video.load(); // Força limpeza do buffer de memória da TV
+                } 
             }
         };
 
+        /* --- LÓGICA DO APLICATIVO --- */
         var App = {
-            scr: 0, zone: 0, idx: 0, lastCatIdx: 0, creds: {}, fullData: [], storedList: [], memIdx: 0, globalData: null, isFolder: false, seriesEps: [], playingId: null, mode: '', cols: 1,
+            scr: 0, zone: 0, idx: 0, lastCatIdx: 0, creds: {}, fullData: [], storedList: [], memIdx: 0, globalData: null, isFolder: false, seriesEps: [], playingId: null,
 
             init: function() {
                 FavManager.init();
+                // Recupera credenciais
                 if(localStorage.getItem('rc_h')) {
                     document.getElementById('i0').value = localStorage.getItem('rc_h');
                     document.getElementById('i1').value = localStorage.getItem('rc_u');
                     document.getElementById('i2').value = localStorage.getItem('rc_p');
                 }
                 PlayerEngine.init();
-                document.getElementById('player').onended = function() { App.nextItem(); }; 
-                setInterval(this.updateClock, 1000);
+                
+                // Evento fim de vídeo para séries
+                document.getElementById('player').onended = function() { 
+                    if(App.mode==='series' && App.isFolder && App.idx < App.seriesEps.length-1) {
+                        App.idx++; App.updateFocus(); App.playStream(App.seriesEps[App.idx]);
+                    } else App.exitFull(); 
+                };
+
+                setInterval(this.updateClock, 60000); // Atualiza relógio a cada min (menos CPU)
                 this.updateClock();
                 this.updateFocus();
             },
 
             updateClock: function() {
                 var now = new Date();
-                var h = now.getHours(); var m = now.getMinutes(); if(m<10) m='0'+m;
-                document.getElementById('clock-time').innerText = h + ":" + m;
-                document.getElementById('clock-date').innerText = now.toLocaleDateString('pt-BR');
+                var h = now.getHours(); var m = now.getMinutes();
+                if(m<10) m='0'+m; if(h<10) h='0'+h;
+                var elT = document.getElementById('clock-time'); if(elT) elT.innerText = h + ":" + m;
+                var elD = document.getElementById('clock-date'); if(elD) elD.innerText = now.toLocaleDateString('pt-BR');
             },
 
             req: function(url, cb) {
-                var x = new XMLHttpRequest(); x.open("GET", url, true); x.timeout = 25000;
+                var x = new XMLHttpRequest(); 
+                x.open("GET", url, true); 
+                x.timeout = 15000; // Timeout rápido para não travar
                 x.onload = function() { if(x.status===200) { try{cb(JSON.parse(x.responseText));}catch(e){cb(null);} } else cb(null); };
-                x.onerror = function(){ cb('ERR_NET'); }; x.send();
+                x.onerror = function(){ cb('ERR_NET'); }; 
+                x.send();
+            },
+
+            tsToDate: function(ts) {
+                if(!ts) return "---";
+                var d = new Date(ts * 1000);
+                return d.toLocaleDateString("pt-BR");
             },
 
             login: function() {
                 var h = document.getElementById('i0').value.trim();
                 var u = document.getElementById('i1').value.trim();
                 var p = document.getElementById('i2').value.trim();
+                
+                // Normaliza URL
                 if(h.endsWith('/')) h = h.slice(0, -1);
                 if(h.indexOf('http') === -1) h = 'http://' + h;
                 
                 document.getElementById('loader').classList.remove('hide');
-                document.getElementById('load-txt').innerText = "CONECTANDO...";
+                document.getElementById('load-txt').innerText = "VERIFICANDO...";
                 
                 this.req(h+"/player_api.php?username="+u+"&password="+p, function(d){
                     document.getElementById('loader').classList.add('hide');
+                    if(d === 'ERR_NET') {
+                        document.getElementById('msg-login').innerHTML = "ERRO DE REDE!<br>Verifique DNS ou Internet.";
+                        return;
+                    }
                     if(d && d.user_info && d.user_info.auth==1) {
                         App.creds={h:h,u:u,p:p};
                         localStorage.setItem('rc_h', h); localStorage.setItem('rc_u', u); localStorage.setItem('rc_p', p);
-                        var exp = d.user_info.exp_date ? new Date(d.user_info.exp_date*1000).toLocaleDateString("pt-BR") : "Ilimitado";
-                        document.getElementById('info-exp').innerText = exp;
-                        document.getElementById('info-conn').innerText = (d.user_info.active_cons || 0) + " / " + (d.user_info.max_connections || 1);
+                        
+                        // --- PREENCHE DASHBOARD (NOVA FUNCIONALIDADE) ---
+                        var i = d.user_info;
+                        document.getElementById('d-user').innerText = i.username || u;
+                        document.getElementById('d-exp').innerText = App.tsToDate(i.exp_date);
+                        document.getElementById('d-created').innerText = App.tsToDate(i.created_at);
+                        document.getElementById('d-conn').innerText = (i.active_cons || 0) + " / " + (i.max_connections || 1);
+                        
                         App.setScr(1);
-                    } else document.getElementById('msg-login').innerText="Login Falhou";
+                    } else document.getElementById('msg-login').innerText="DADOS INVÁLIDOS";
                 });
             },
             logout: function() { localStorage.clear(); location.reload(); },
 
             setScr: function(n) {
-                if(n===1) PlayerEngine.stop();
+                if(n===1) { PlayerEngine.stop(); }
                 document.querySelectorAll('.layer').forEach(function(l){l.classList.add('hide')});
                 if(n===0) document.getElementById('login-layer').classList.remove('hide');
                 if(n===1) document.getElementById('dash-layer').classList.remove('hide');
@@ -343,34 +419,30 @@
             },
 
             openMode: function(m) {
-                PlayerEngine.stop();
+                PlayerEngine.stop(); this.resetInfo();
                 this.mode = m; this.setScr(2); this.isFolder = false; this.globalData = null; this.playingId = null;
                 document.getElementById('cat-list').innerHTML = ''; document.getElementById('item-list').innerHTML = '';
-                document.getElementById('search').value = '';
-                
-                var listCont = document.getElementById('col-list-container');
-                var playCont = document.getElementById('col-play-container');
-                
-                // MODO VOD x LIVE
-                if(m === 'live') {
-                    listCont.classList.remove('vod-mode'); 
-                    playCont.classList.remove('hide-me');
-                } else {
-                    listCont.classList.add('vod-mode'); 
-                    playCont.classList.add('hide-me');
-                }
-
                 document.getElementById('loader').classList.remove('hide');
+                document.getElementById('search').value = '';
+
                 var act = (m==='live')?'get_live_categories':(m==='movie'?'get_vod_categories':'get_series_categories');
                 this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
                     document.getElementById('loader').classList.add('hide');
                     if(d && d!=='ERR_NET') {
+                        // Constrói HTML em string única (Mais rápido que criar elementos 1 por 1)
                         var h = '<div class="cat-item" id="c0" data-id="fav" onclick="App.catClick(0)">⭐ FAVORITOS</div>';
                         for(var i=0;i<d.length;i++) h += '<div class="cat-item" id="c'+(i+1)+'" data-id="'+d[i].category_id+'" onclick="App.catClick('+(i+1)+')">'+d[i].category_name+'</div>';
                         document.getElementById('cat-list').innerHTML = h;
                         App.zone=0; App.idx=0; App.updateFocus();
                     }
                 });
+            },
+            
+            resetInfo: function() {
+                document.getElementById('meta-title').innerText = "R&C GOLD VIP";
+                document.getElementById('meta-desc').innerText = "Selecione para assistir.";
+                document.getElementById('meta-epg').classList.add('hide');
+                var v = document.getElementById('player'); v.removeAttribute('src'); v.load();
             },
 
             catClick: function(i) { this.idx=i; this.zone=0; this.loadContent(i); },
@@ -382,62 +454,45 @@
                 document.querySelectorAll('.cat-item').forEach(function(e){e.classList.remove('active')});
                 el.classList.add('active');
                 
+                document.getElementById('search').value = '';
                 document.getElementById('loader').classList.remove('hide');
                 document.getElementById('item-list').innerHTML = '';
-                
+
                 var onData = function(d) {
                     document.getElementById('loader').classList.add('hide');
                     if(d && d!=='ERR_NET') { App.fullData = d; App.isFolder = false; App.renderList(); }
                 };
 
+                var urlBase = this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p;
+
                 if(cid === 'fav') {
                      var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                     this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act, function(d){
+                     this.req(urlBase+"&action="+act, function(d){
                         if(d && d!=='ERR_NET') { App.fullData = d.filter(function(x){ return FavManager.isFav(x.stream_id || x.series_id); }); App.isFolder=false; App.renderList(); }
                         document.getElementById('loader').classList.add('hide');
                      });
                 } else {
                     var act = (this.mode==='live')?'get_live_streams':(this.mode==='movie'?'get_vod_streams':'get_series');
-                    this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action="+act+"&category_id="+cid, onData);
+                    this.req(urlBase+"&action="+act+"&category_id="+cid, onData);
                 }
             },
 
             renderList: function(keepIdx) {
                 var d = this.fullData;
-                var listEl = document.getElementById('item-list');
-                var max = d.length > 300 ? 300 : d.length; 
-                if(max===0) { listEl.innerHTML = '<div style="padding:20px;">Vazio</div>'; return; }
+                // LIMITE DE SEGURANÇA PARA TVS FRACAS:
+                // Renderizar 10.000 itens trava o navegador. Limitamos a 500 visíveis.
+                // A busca funciona no servidor ou na lista global, mas o DOM recebe menos nós.
+                var max = d.length > 500 ? 500 : d.length; 
+                if(max===0) { document.getElementById('item-list').innerHTML = '<div style="padding:20px;">Nenhum conteúdo.</div>'; return; }
                 
-                var h = '';
-                var isGrid = (this.mode !== 'live' && !this.isFolder);
-
-                if(isGrid) {
-                    listEl.className = 'item-list grid-container';
-                    var cw = listEl.clientWidth;
-                    this.cols = Math.floor(cw / 165); 
-                    if(this.cols < 1) this.cols = 1;
-                } else {
-                    listEl.className = 'item-list';
-                    this.cols = 1;
-                }
-
+                var h = []; // Array join é mais rápido que string concat em JS antigo
                 for(var i=0; i<max; i++) {
-                    var item = d[i];
-                    var n = item.name || item.title;
-                    var id = item.stream_id || item.series_id;
+                    var n = d[i].name || d[i].title;
+                    var id = d[i].stream_id || d[i].series_id;
                     var icn = FavManager.isFav(id) ? ' <i class="fas fa-star" style="color:gold"></i>' : '';
-                    
-                    if(isGrid) {
-                        var img = item.stream_icon || item.cover || 'img/no-poster.png';
-                        h += '<div class="item grid-poster" id="row-'+i+'" onclick="App.itemClick('+i+')">';
-                        h += '<img src="'+img+'" class="poster-img" loading="lazy" onerror="this.src=\'https://via.placeholder.com/150x220?text=SEM+CAPA\'">';
-                        h += '<div class="poster-title">'+n.substring(0,30)+icn+'</div>';
-                        h += '</div>';
-                    } else {
-                        h += '<div class="item text-row" id="row-'+i+'" onclick="App.itemClick('+i+')">'+n+icn+'</div>';
-                    }
+                    h.push('<div class="item" id="row-'+i+'" onclick="App.itemClick('+i+')">'+n+icn+'</div>');
                 }
-                listEl.innerHTML = h;
+                document.getElementById('item-list').innerHTML = h.join('');
                 
                 this.zone = 2;
                 if(!keepIdx) { this.idx = 0; }
@@ -445,45 +500,22 @@
             },
 
             itemClick: function(i) { this.idx=i; this.zone=2; this.clickItem(); },
-            
             clickItem: function() {
-                // SÉRIES EPISÓDIOS
-                if(this.isFolder) { 
-                    this.playStream(this.seriesEps[this.idx]); 
-                    this.toggleFull(); 
-                    return; 
-                }
-
+                if(this.isFolder) { this.playStream(this.seriesEps[this.idx]); return; }
                 var item = this.fullData[this.idx];
-                
-                // FILMES
-                if(this.mode === 'movie') {
-                    if(item) { this.playStream(item); this.toggleFull(); }
-                    return;
-                }
-
-                // TV
-                if(this.mode === 'live') {
-                    if(item) this.playStream(item);
-                    return;
-                }
-
-                // SÉRIES CAPAS
-                if(this.mode === 'series') {
-                    if(item) {
-                        this.storedList = [...this.fullData]; this.memIdx = this.idx;
-                        document.getElementById('loader').classList.remove('hide');
-                        this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action=get_series_info&series_id="+item.series_id, function(d){
-                            document.getElementById('loader').classList.add('hide');
-                            if(d && d.episodes) {
-                                var eps = [];
-                                for(var k in d.episodes) for(var j=0; j<d.episodes[k].length; j++) eps.push(d.episodes[k][j]);
-                                App.seriesEps = eps; App.fullData = eps; 
-                                App.isFolder = true; 
-                                App.renderList();
-                            }
-                        });
-                    }
+                if(this.mode !== 'series') { if(item) this.playStream(item); return; }
+                if(item) {
+                    this.storedList = [...this.fullData]; this.memIdx = this.idx;
+                    document.getElementById('loader').classList.remove('hide');
+                    this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action=get_series_info&series_id="+item.series_id, function(d){
+                        document.getElementById('loader').classList.add('hide');
+                        if(d && d.episodes) {
+                            var eps = [];
+                            for(var k in d.episodes) for(var j=0; j<d.episodes[k].length; j++) eps.push(d.episodes[k][j]);
+                            App.seriesEps = eps; App.fullData = eps; App.isFolder = true; App.renderList();
+                            document.getElementById('meta-title').innerText = "SÉRIE: " + (item.name || item.title);
+                        }
+                    });
                 }
             },
 
@@ -492,70 +524,75 @@
                 var type = (this.mode==='live')?'live':(this.mode==='movie'?'movie':'series');
                 var id = item.stream_id || item.id;
                 var url = this.creds.h+"/"+type+"/"+this.creds.u+"/"+this.creds.p+"/"+id+"."+ext;
+                
                 this.playingId = id; 
                 document.getElementById('meta-title').innerText = item.name || item.title;
+                document.getElementById('meta-desc').innerText = "Carregando fluxo...";
+                document.getElementById('meta-epg').classList.add('hide');
+                
+                if(this.mode === 'live') {
+                    this.req(this.creds.h+"/player_api.php?username="+this.creds.u+"&password="+this.creds.p+"&action=get_short_epg&stream_id="+id, function(d){
+                        if(d && d.epg_listings && d.epg_listings.length > 0) {
+                            var t = d.epg_listings[0].title; 
+                            try { if(window.atob && /^[A-Za-z0-9+/=]+$/.test(t)) t=atob(t); }catch(e){}
+                            document.getElementById('meta-epg').innerText = t; 
+                            document.getElementById('meta-epg').classList.remove('hide');
+                        }
+                    });
+                }
                 PlayerEngine.play(url, this.mode==='live');
+                document.querySelectorAll('.item').forEach(function(e){e.classList.remove('playing')});
+                var r = document.getElementById('row-'+this.idx); if(r) r.classList.add('playing');
             },
 
-            nextItem: function() {
-                if(this.idx < this.fullData.length - 1) {
-                    this.idx++;
-                    this.updateFocus();
-                    this.clickItem();
-                } else {
-                    App.osd("FIM DA LISTA");
-                    App.exitFull();
+            syncFocusToPlaying: function() {
+                if(!this.playingId) return;
+                // Busca simples
+                for(var i=0; i<this.fullData.length; i++) {
+                    var id = this.fullData[i].stream_id || this.fullData[i].series_id || this.fullData[i].id;
+                    if(id == this.playingId) { this.idx = i; this.updateFocus(); return; }
                 }
             },
 
             doSearch: function() {
                 var t = document.getElementById('search').value.toLowerCase();
                 if(t.length < 2) return;
-                var cb = function(d) {
-                    if(d) { 
-                        App.fullData = d.filter(function(x){ return (x.name||x.title||"").toLowerCase().indexOf(t) > -1 }); 
-                        App.isFolder = false; App.renderList(); App.zone=2; App.idx=0; App.updateFocus();
-                    }
+                document.getElementById('item-list').innerHTML = '<div style="padding:20px">Filtrando...</div>';
+                
+                var filterAndRender = function(sourceData) {
+                    App.fullData = sourceData.filter(function(x){ return (x.name||x.title||"").toLowerCase().indexOf(t) > -1 }); 
+                    App.isFolder = false; 
+                    App.renderList(); 
+                    App.zone = 2; App.idx = 0; App.updateFocus();
                 };
-                if(App.globalData) cb(App.globalData);
+
+                if(App.globalData) filterAndRender(App.globalData);
                 else {
                     var act = (App.mode==='live')?'get_live_streams':(App.mode==='movie'?'get_vod_streams':'get_series');
-                    App.req(App.creds.h+"/player_api.php?username="+App.creds.u+"&password="+App.creds.p+"&action="+act, function(d){ App.globalData=d; cb(d); });
+                    App.req(App.creds.h+"/player_api.php?username="+App.creds.u+"&password="+App.creds.p+"&action="+act, function(d){ 
+                        if(d && d!=='ERR_NET') { App.globalData=d; filterAndRender(d); }
+                    });
                 }
             },
             
             toggleFull: function() {
-                // Se for VOD e não tiver video, não faz nada
-                if(this.mode !== 'live' && !this.playingId) return;
-
-                var b = document.body;
-                
-                if(b.classList.contains('fullscreen-active')) {
-                    this.exitFull(); 
-                } else { 
-                    b.classList.add('fullscreen-active');
-                    // Garante que o player esteja visivel em modo VOD
-                    if(this.mode!=='live') document.getElementById('col-play-container').classList.remove('hide-me');
-                    App.osd("TELA CHEIA"); 
-                    App.zone = 3; App.updateFocus();
-                }
+                var b = document.getElementById('vid-box'); 
+                if(b.classList.contains('fs')) this.exitFull(); 
+                else { b.classList.add('fs'); App.osd("TELA CHEIA"); }
             },
-            
             exitFull: function() { 
-                document.body.classList.remove('fullscreen-active');
-                if(this.mode !== 'live') document.getElementById('col-play-container').classList.add('hide-me');
-                this.zone = 2; this.updateFocus();
+                document.getElementById('vid-box').classList.remove('fs'); 
+                this.syncFocusToPlaying();
+                this.updateFocus();
             },
-            
-            osd: function(t) { var o=document.getElementById('osd'); o.innerText=t; o.style.display='block'; setTimeout(function(){o.style.display='none'},2000); },
+            osd: function(t) { var o=document.getElementById('osd'); o.innerText=t; o.style.display='block'; setTimeout(function(){o.style.display='none'},2500); },
             
             back: function() {
-                if(document.body.classList.contains('fullscreen-active')) { this.exitFull(); return; }
-                if(this.zone===3) { this.exitFull(); return; }
+                if(document.getElementById('vid-box').classList.contains('fs')) { this.exitFull(); return; }
+                if(this.zone===3) { this.zone=2; this.syncFocusToPlaying(); this.updateFocus(); return; }
                 if(this.zone===2 && this.isFolder) {
-                    this.isFolder = false; this.fullData = this.storedList; 
-                    this.renderList(true);
-                    this.idx = this.memIdx; this.updateFocus(); return; 
+                    this.isFolder = false; this.fullData = this.storedList; this.renderList(true); 
+                    this.idx = this.memIdx; this.updateFocus(); document.getElementById('meta-title').innerText = "R&C GOLD VIP"; return; 
                 }
                 if(this.zone===2) { this.zone=0; this.idx=this.lastCatIdx; this.updateFocus(); return; }
                 if(this.zone===1) { this.zone=2; this.idx=0; this.updateFocus(); return; }
@@ -566,7 +603,10 @@
                 document.querySelectorAll('.focused').forEach(function(e){e.classList.remove('focused')});
                 var el;
                 if(this.scr===0) el=document.getElementById('i'+this.idx);
-                if(this.scr===1) el=document.getElementById('m'+this.idx);
+                if(this.scr===1) {
+                    if(this.idx===3) el=document.getElementById('m3');
+                    else el=document.getElementById('m'+this.idx);
+                }
                 if(this.scr===2) {
                     if(this.zone===0) el=document.getElementById('c'+this.idx);
                     if(this.zone===1) el=document.getElementById('search');
@@ -575,41 +615,58 @@
                 }
                 if(el) {
                     el.classList.add('focused'); 
-                    if(el.tagName==='INPUT') el.focus(); else document.activeElement.blur();
-                    el.scrollIntoView({block:'center',behavior:'smooth', inline: 'nearest'}); 
+                    if(el.tagName==='INPUT') { el.focus(); } else { 
+                        // Blur inputs para esconder teclado virtual na TV
+                        var inps = document.getElementsByTagName('input');
+                        for(var k=0; k<inps.length;k++) inps[k].blur();
+                        el.focus(); 
+                    }
+                    if(el.tagName!=='INPUT') el.scrollIntoView({block:'center',behavior:'smooth'}); 
                 }
             },
 
             move: function(d) {
-                if(this.scr===0) { if(d===1&&this.idx<3) this.idx++; if(d===0&&this.idx>0) this.idx--; }
+                // TELA DE LOGIN
+                if(this.scr===0) { 
+                    if(d===1 && this.idx<3) this.idx++; 
+                    if(d===0 && this.idx>0) this.idx--; 
+                }
+                // DASHBOARD
                 if(this.scr===1) { 
                     if(this.idx <= 2) { 
-                        if(d===3 && this.idx<2) this.idx++; if(d===2 && this.idx>0) this.idx--; if(d===0) this.idx=3; 
-                    } else if(this.idx===3 && d===1) this.idx=1;
+                        if(d===3 && this.idx<2) this.idx++; 
+                        if(d===2 && this.idx>0) this.idx--; 
+                        if(d===1) this.idx=3; // Descer para botão Sair
+                    } else {
+                        if(d===0) this.idx=1; // Subir para Filmes
+                    }
                 }
+                // CONTEÚDO
                 if(this.scr===2) {
-                    if(this.zone===3) { if(d===2 && this.mode==='live') { this.zone=2; this.updateFocus(); } return; }
-                    
+                    // Player
+                    if(this.zone===3) { 
+                        if(d===2) { this.zone=2; this.syncFocusToPlaying(); this.updateFocus(); } 
+                        return; 
+                    }
+                    // Categorias
                     if(this.zone===0) { 
                         var max = document.getElementById('cat-list').children.length-1;
                         if(d===1 && this.idx<max) this.idx++;
                         if(d===0 && this.idx>0) this.idx--;
-                        if(d===3 && App.fullData.length>0) { this.zone=2; this.idx=0; }
+                        if(d===3) { this.zone=2; this.idx=0; }
                     }
+                    // Lista de Itens
                     else if(this.zone===2) { 
-                        var max = App.fullData.length-1;
-                        if(App.cols > 1) {
-                            if(d===1) { if(this.idx + App.cols <= max) this.idx += App.cols; else this.idx = max; } 
-                            else if(d===0) { if(this.idx - App.cols >= 0) this.idx -= App.cols; else this.zone=1; } 
-                            else if(d===3) { if(this.idx < max) this.idx++; } 
-                            else if(d===2) { if(this.idx > 0) this.idx--; else { this.zone=0; this.idx=this.lastCatIdx; } } 
-                        } else {
-                            if(d===1 && this.idx < max) this.idx++;
-                            else if(d===0) { if(this.idx > 0) this.idx--; else this.zone=1; }
-                            else if(d===2) { this.zone=0; this.idx=this.lastCatIdx; }
-                            else if(d===3 && this.mode==='live') this.zone=3; 
+                        var max = document.getElementById('item-list').children.length-1;
+                        if(d===1 && this.idx<max) this.idx++; 
+                        else if(d===0) { 
+                            if(this.idx > 0) this.idx--; 
+                            else this.zone = 1; // Vai para Busca
                         }
+                        else if(d===2) { this.zone=0; this.idx=this.lastCatIdx; } 
+                        else if(d===3) this.zone=3; // Vai para Player
                     }
+                    // Busca
                     else if(this.zone===1) { 
                         if(d===1) { this.zone=2; this.idx=0; }
                         if(d===2) { this.zone=0; this.idx=this.lastCatIdx; }
@@ -617,44 +674,66 @@
                 }
                 this.updateFocus();
             },
+
             enter: function() {
                 if(this.scr===0) this.login();
-                else if(this.scr===1) { 
-                    if(this.idx===3) this.logout(); else this.openMode(['live','movie','series'][this.idx]); 
+                if(this.scr===1) { 
+                    if(this.idx===3) this.logout();
+                    else this.openMode(['live','movie','series'][this.idx]); 
                 }
-                else if(this.scr===2) {
+                if(this.scr===2) {
                     if(this.zone===0) this.loadContent(this.idx);
                     if(this.zone===1) this.doSearch();
                     if(this.zone===2) this.clickItem();
-                    if(this.zone===3) this.toggleFull();
+                    if(this.zone===3) this.toggleFull(); 
                 }
             }
         };
 
+        /* --- CONTROLE REMOTO --- */
         document.addEventListener('keydown', function(e) {
             var k=e.keyCode;
-            if(document.activeElement.tagName === 'INPUT' && App.scr===0 && k===13) { App.login(); return; }
-            if(document.activeElement.tagName === 'INPUT' && App.scr===2 && k===13) { App.doSearch(); return; }
-            if(document.activeElement.tagName === 'INPUT' && k===40) { e.preventDefault(); App.move(1); return; }
-
-            // -- BOTÕES COLORIDOS ORIGINAIS --
-            if(k===403||k===112||k===82) { e.preventDefault(); App.toggleFull(); } // Vermelho
-            if(k===404||k===113||k===71) { e.preventDefault(); App.zone=0; App.idx=0; App.updateFocus(); } // Verde
-            if(k===405||k===114||k===89) { e.preventDefault(); App.zone=1; App.updateFocus(); } // Amarelo
-            if(k===406||k===115||k===66) { e.preventDefault(); App.setScr(1); } // Azul
-
-            if(document.body.classList.contains('fullscreen-active')) {
-                var v = document.getElementById('player');
-                if(k===39) { v.currentTime+=30; App.osd(">> 30s"); return; }
-                if(k===37) { v.currentTime-=30; App.osd("<< 30s"); return; }
-                if(k===13||k===19) { v.paused?v.play():v.pause(); return; }
-                if(k===403||k===461||k===27) { App.exitFull(); return; }
+            
+            // Entrada manual (Teclado)
+            if(document.activeElement.tagName === 'INPUT') {
+                if(App.scr === 0 && k === 13) { e.preventDefault(); App.login(); return; }
+                if(App.scr === 2 && k === 13) { App.doSearch(); return; }
+                if(k===40 && App.scr===2) { e.preventDefault(); App.zone=2; App.idx=0; App.updateFocus(); return; }
             }
 
-            if(k===37) { e.preventDefault(); App.move(2); } if(k===38) { e.preventDefault(); App.move(0); }
-            if(k===39) { e.preventDefault(); App.move(3); } if(k===40) { e.preventDefault(); App.move(1); }
-            if(k===13) { e.preventDefault(); App.enter(); }
-            if(k===8||k===27||k===461) { e.preventDefault(); if(App.scr>0) App.back(); }
+            // Atalhos do Player em Tela Cheia
+            if(document.getElementById('vid-box').classList.contains('fs')) {
+                var v = document.getElementById('player');
+                if(k===39 || k===417) { v.currentTime += 30; App.osd(">> 30s"); return; } 
+                if(k===37 || k===412) { v.currentTime -= 30; App.osd("<< 30s"); return; } 
+                if(k===13 || k===415 || k===19 || k===179) { 
+                   if(v.paused) { v.play(); App.osd("▶ PLAY"); } else { v.pause(); App.osd("⏸ PAUSE"); }
+                   return;
+                }
+                if(k===13||k===403||k===82||k===27||k===461||k===8) { e.preventDefault(); App.toggleFull(); return; }
+            }
+
+            // Teclas Numéricas (Add Favorito)
+            if(k===48 || k===96) { 
+                if(App.scr===2 && App.zone===2) { 
+                    var it=App.fullData[App.idx]; 
+                    if(it) { FavManager.toggle(it.stream_id||it.series_id); App.osd("FAVORITOS ATUALIZADO"); }
+                } 
+            }
+            
+            // Navegação Padrão
+            if(k===37) { e.preventDefault(); App.move(2); } // Esq
+            if(k===38) { e.preventDefault(); App.move(0); } // Cima
+            if(k===39) { e.preventDefault(); App.move(3); } // Dir
+            if(k===40) { e.preventDefault(); App.move(1); } // Baixo
+            if(k===13) { e.preventDefault(); App.enter(); } // OK
+            if(k===8||k===27||k===461) { e.preventDefault(); if(App.scr>0) App.back(); } // Voltar
+            
+            // Teclas Coloridas
+            if(k===403||k===82) if(App.scr===2) App.toggleFull(); // Vermelho (Tela Cheia)
+            if(k===404||k===71) if(App.scr===2) { App.zone=0; App.idx=0; App.updateFocus(); } // Verde (Topo)
+            if(k===405||k===89) if(App.scr===2) { App.zone=1; App.updateFocus(); } // Amarelo (Busca)
+            if(k===406||k===66||k===275) { e.preventDefault(); App.setScr(1); } // Azul (Menu)
         });
     </script>
 </body>
